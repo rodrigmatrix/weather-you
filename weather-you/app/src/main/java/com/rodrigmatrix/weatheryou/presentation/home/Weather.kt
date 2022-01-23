@@ -1,9 +1,12 @@
 package com.rodrigmatrix.weatheryou.presentation.home
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -18,13 +21,14 @@ import com.airbnb.lottie.compose.*
 import com.airbnb.lottie.compose.LottieCompositionSpec.RawRes
 import com.rodrigmatrix.weatheryou.R
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
+import com.rodrigmatrix.weatheryou.presentation.extensions.temperatureString
 import com.rodrigmatrix.weatheryou.presentation.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.presentation.utils.PreviewWeatherList
 import java.util.*
 
 @Composable
 fun WeatherLocationList(weatherLocationList: List<WeatherLocation>) {
-    LazyColumn {
+    LazyColumn(Modifier.scrollable(rememberScrollState(), orientation = Orientation.Vertical)) {
         items(weatherLocationList) { item ->
             WeatherLocation(item)
         }
@@ -59,7 +63,7 @@ fun WeatherLocation(weatherLocation: WeatherLocation) {
         ) {
             Column {
                 Text(
-                    text = weatherLocation.currentWeather.toString() + "°",
+                    text = weatherLocation.currentWeather.temperatureString(),
                     style = MaterialTheme.typography.headlineLarge,
                     modifier = Modifier.padding(start = 16.dp, end = 16.dp)
                 )

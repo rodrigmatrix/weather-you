@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.rodrigmatrix.weatheryou.R
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
+import com.rodrigmatrix.weatheryou.presentation.details.DetailsScreen
 import com.rodrigmatrix.weatheryou.presentation.home.HomeScreen
 import com.rodrigmatrix.weatheryou.presentation.home.WeatherLocation
 import com.rodrigmatrix.weatheryou.presentation.home.WeatherLocationList
@@ -27,7 +28,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             WeatherYouTheme {
                 Surface(Modifier.fillMaxSize()) {
-                    HomeScreen()
+                    DetailsScreen()
                 }
             }
         }
