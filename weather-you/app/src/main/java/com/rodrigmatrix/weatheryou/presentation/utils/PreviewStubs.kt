@@ -65,41 +65,41 @@ val PreviewHourlyForecast = listOf(
     Hour(
         temperature = 10.0,
         icon = R.raw.weather_rainynight,
-        time = "12"
+        time = "Now"
     ),
     Hour(
-        temperature = 10.0,
+        temperature = 9.0,
         icon = R.raw.weather_night,
-        time = "12"
+        time = "6AM"
     ),
     Hour(
-        temperature = 10.0,
+        temperature = 9.0,
         icon = R.raw.weather_partly_cloudy,
-        time = "12"
+        time = "7AM"
     ),
     Hour(
-        temperature = 10.0,
+        temperature = 8.0,
         icon = R.raw.weather_thunder,
-        time = "12"
+        time = "8AM"
     ),
     Hour(
-        temperature = 10.0,
+        temperature = 6.0,
         icon = R.raw.weather_rainynight,
-        time = "12"
+        time = "9AM"
     ),
     Hour(
-        temperature = 10.0,
+        temperature = 6.0,
         icon = R.raw.weather_rainynight,
-        time = "12"
+        time = "11AM"
     ),
     Hour(
-        temperature = 10.0,
+        temperature = 5.0,
         icon = R.raw.weather_stormshowersday,
-        time = "12"
+        time = "12PM"
     ),
     Hour(
-        temperature = 10.0,
+        temperature = 2.0,
         icon = R.raw.weather_rainynight,
-        time = "12"
+        time = "1PM"
     )
 )

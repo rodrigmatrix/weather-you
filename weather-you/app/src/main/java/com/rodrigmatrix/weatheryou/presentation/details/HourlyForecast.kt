@@ -13,10 +13,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.airbnb.lottie.compose.*
 import com.rodrigmatrix.weatheryou.domain.model.Hour
 import com.rodrigmatrix.weatheryou.presentation.extensions.temperatureString
+import com.rodrigmatrix.weatheryou.presentation.theme.WeatherYouTheme
+import com.rodrigmatrix.weatheryou.presentation.utils.PreviewHourlyForecast
 
 @Composable
 fun HourlyForecast(
@@ -78,13 +81,21 @@ fun HourRow(hour: Hour) {
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(bottom = 10.dp)
-                .size(36.dp)
+                .size(42.dp)
         )
         Text(
             text = hour.time,
             modifier = Modifier.align(Alignment.CenterHorizontally),
             style = MaterialTheme.typography.bodyMedium
         )
+    }
+}
+
+@Preview(name = "Hourly Forecast preview")
+@Composable
+fun WeatherLocationPreview() {
+    WeatherYouTheme {
+        HourlyForecast(PreviewHourlyForecast)
     }
 }
 

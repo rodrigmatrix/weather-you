@@ -27,16 +27,22 @@ import com.rodrigmatrix.weatheryou.presentation.utils.PreviewWeatherList
 import java.util.*
 
 @Composable
-fun WeatherLocationList(weatherLocationList: List<WeatherLocation>) {
-    LazyColumn(Modifier.scrollable(rememberScrollState(), orientation = Orientation.Vertical)) {
+fun WeatherLocationList(
+    weatherLocationList: List<WeatherLocation>,
+    onItemClick: (WeatherLocation) -> Unit
+) {
+    LazyColumn {
         items(weatherLocationList) { item ->
-            WeatherLocation(item)
+            WeatherLocation(item, onItemClick)
         }
     }
 }
 
 @Composable
-fun WeatherLocation(weatherLocation: WeatherLocation) {
+fun WeatherLocation(
+    weatherLocation: WeatherLocation,
+    onItemClick: (WeatherLocation) -> Unit
+) {
     Surface(
         color = MaterialTheme.colorScheme.secondaryContainer,
         shape = RoundedCornerShape(24.dp),
@@ -49,7 +55,7 @@ fun WeatherLocation(weatherLocation: WeatherLocation) {
                 bottom = 10.dp
             )
             .clickable {
-
+                onItemClick(weatherLocation)
             }
     ) {
         val composition by rememberLottieComposition(RawRes(weatherLocation.currentWeatherIcon))
@@ -94,6 +100,6 @@ fun WeatherLocation(weatherLocation: WeatherLocation) {
 @Composable
 fun WeatherLocationPreview() {
     WeatherYouTheme {
-        WeatherLocationList(PreviewWeatherList)
+        WeatherLocationList(PreviewWeatherList, { })
     }
 }
