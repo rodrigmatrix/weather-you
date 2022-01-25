@@ -1,11 +1,13 @@
 package com.rodrigmatrix.weatheryou.presentation.details
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -13,10 +15,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.airbnb.lottie.compose.*
+import com.rodrigmatrix.weatheryou.R
 import com.rodrigmatrix.weatheryou.domain.model.Hour
+import com.rodrigmatrix.weatheryou.presentation.components.WeatherYouDivider
 import com.rodrigmatrix.weatheryou.presentation.extensions.temperatureString
 import com.rodrigmatrix.weatheryou.presentation.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.presentation.utils.PreviewHourlyForecast
@@ -33,7 +38,7 @@ fun HourlyForecast(
     ) {
         Column {
             Text(
-                text = "Daily Forecast",
+                text = stringResource(R.string.daily_forecast),
                 modifier = Modifier
                     .padding(
                         start = 16.dp,
@@ -41,7 +46,7 @@ fun HourlyForecast(
                         bottom = 10.dp,
                         top = 10.dp
                     ),
-                style = MaterialTheme.typography.headlineMedium
+                style = MaterialTheme.typography.headlineSmall
             )
             LazyRow(Modifier.padding(start = 16.dp, end = 16.dp)) {
                 items(hoursList) { item ->

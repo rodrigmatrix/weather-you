@@ -31,7 +31,7 @@ fun WeatherLocationList(
     weatherLocationList: List<WeatherLocation>,
     onItemClick: (WeatherLocation) -> Unit
 ) {
-    LazyColumn {
+    LazyColumn(modifier = Modifier.fillMaxHeight()) {
         items(weatherLocationList) { item ->
             WeatherLocation(item, onItemClick)
         }
