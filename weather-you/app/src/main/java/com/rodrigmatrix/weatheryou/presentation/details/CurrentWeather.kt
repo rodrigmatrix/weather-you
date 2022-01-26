@@ -65,22 +65,24 @@ fun CurrentWeather(
                     )
                 }
                 Text(
-                    text = weatherLocation.name + " " + weatherLocation.currentTime,
+                    text = weatherLocation.name,
                     style = MaterialTheme.typography.titleMedium
+                )
+                Text(
+                    text = weatherLocation.currentTime,
+                    style = MaterialTheme.typography.titleSmall
                 )
                 Text(
                     text = weatherLocation.currentWeather.temperatureString(),
                     style = MaterialTheme.typography.headlineLarge,
-                    fontSize = 80.sp,
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                    fontSize = 80.sp
                 )
                 Text(
                     text = stringResource(
                         R.string.feels_like_x,
                         weatherLocation.feelsLike.temperatureString()
                     ),
-                    style = MaterialTheme.typography.titleSmall,
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                    style = MaterialTheme.typography.titleSmall
                 )
             }
             Column(horizontalAlignment = Alignment.CenterHorizontally) {

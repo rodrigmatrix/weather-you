@@ -7,53 +7,53 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class HourResponse(
     @SerialName("cloudcover")
-    val cloudcover: Double?,
+    val cloudcover: Double? = null,
     @SerialName("conditions")
-    val conditions: String?,
+    val conditions: String? = null,
     @SerialName("datetime")
-    val datetime: String?,
+    val datetime: String? = null,
     @SerialName("datetimeEpoch")
-    val datetimeEpoch: Int?,
+    val datetimeEpoch: Int? = null,
     @SerialName("dew")
-    val dew: Double?,
+    val dew: Double? = null,
     @SerialName("feelslike")
-    val feelslike: Double?,
+    val feelslike: Double? = null,
     @SerialName("humidity")
-    val humidity: Double?,
+    val humidity: Double? = null,
     @SerialName("icon")
-    val icon: String?,
+    val icon: String? = null,
     @SerialName("precip")
-    val precip: Double?,
+    val precip: Double? = null,
     @SerialName("precipprob")
-    val precipprob: Double?,
+    val precipprob: Double? = null,
     @SerialName("preciptype")
-    val preciptype: List<String>?,
+    val preciptype: List<String>? = null,
     @SerialName("pressure")
-    val pressure: Double?,
+    val pressure: Double? = null,
     @SerialName("severerisk")
-    val severerisk: Double?,
+    val severerisk: Double? = null,
     @SerialName("snow")
-    val snow: Double?,
+    val snow: Double? = null,
     @SerialName("snowdepth")
-    val snowdepth: Double?,
+    val snowdepth: Double? = null,
     @SerialName("solarenergy")
-    val solarenergy: Double?,
+    val solarenergy: Double? = null,
     @SerialName("solarradiation")
-    val solarradiation: Double?,
+    val solarradiation: Double? = null,
     @SerialName("source")
-    val source: String?,
+    val source: String? = null,
     @SerialName("stations")
-    val stations: List<String>?,
+    val stations: List<String>? = null,
     @SerialName("temp")
-    val temp: Double?,
+    val temp: Double? = null,
     @SerialName("uvindex")
-    val uvindex: Double?,
+    val uvindex: Double? = null,
     @SerialName("visibility")
-    val visibility: Double?,
+    val visibility: Double? = null,
     @SerialName("winddir")
-    val winddir: Double?,
+    val winddir: Double? = null,
     @SerialName("windgust")
-    val windgust: Double?,
+    val windgust: Double? = null,
     @SerialName("windspeed")
-    val windspeed: Double?
+    val windspeed: Double? = null
 )

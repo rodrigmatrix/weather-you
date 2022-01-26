@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material3.MaterialTheme
@@ -22,9 +23,12 @@ import com.airbnb.lottie.compose.*
 import com.rodrigmatrix.weatheryou.R
 import com.rodrigmatrix.weatheryou.domain.model.Hour
 import com.rodrigmatrix.weatheryou.presentation.components.WeatherYouDivider
+import com.rodrigmatrix.weatheryou.presentation.extensions.getHourString
 import com.rodrigmatrix.weatheryou.presentation.extensions.temperatureString
 import com.rodrigmatrix.weatheryou.presentation.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.presentation.utils.PreviewHourlyForecast
+
+private const val FIRST_INDEX = 0
 
 @Composable
 fun HourlyForecast(
@@ -49,8 +53,8 @@ fun HourlyForecast(
                 style = MaterialTheme.typography.headlineSmall
             )
             LazyRow(Modifier.padding(start = 16.dp, end = 16.dp)) {
-                items(hoursList) { item ->
-                    HourRow(item)
+                itemsIndexed(hoursList) { index, item  ->
+                    HourRow(item, index == FIRST_INDEX)
                 }
             }
         }
@@ -59,7 +63,7 @@ fun HourlyForecast(
 }
 
 @Composable
-fun HourRow(hour: Hour) {
+fun HourRow(hour: Hour, isCurrentHour: Boolean) {
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(hour.icon))
     val progress by animateLottieCompositionAsState(
         composition,
@@ -89,7 +93,11 @@ fun HourRow(hour: Hour) {
                 .size(42.dp)
         )
         Text(
-            text = hour.time,
+            text = if (isCurrentHour) {
+                stringResource(R.string.now)
+            } else {
+                hour.dateTime.getHourString()
+            },
             modifier = Modifier.align(Alignment.CenterHorizontally),
             style = MaterialTheme.typography.bodyMedium
         )

@@ -7,75 +7,75 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class DayResponse(
     @SerialName("cloudcover")
-    val cloudcover: Double?,
+    val cloudcover: Double? = null,
     @SerialName("conditions")
-    val conditions: String?,
+    val conditions: String? = null,
     @SerialName("datetime")
-    val datetime: String?,
+    val datetime: String? = null,
     @SerialName("datetimeEpoch")
-    val datetimeEpoch: Int?,
+    val datetimeEpoch: Int? = null,
     @SerialName("description")
-    val description: String?,
+    val description: String? = null,
     @SerialName("dew")
-    val dew: Double?,
+    val dew: Double? = null,
     @SerialName("feelslike")
-    val feelslike: Double?,
+    val feelslike: Double? = null,
     @SerialName("feelslikemax")
-    val feelslikemax: Double?,
+    val feelslikemax: Double? = null,
     @SerialName("feelslikemin")
-    val feelslikemin: Double?,
+    val feelslikemin: Double? = null,
     @SerialName("hours")
-    val hours: List<HourResponse>?,
+    val hours: List<HourResponse>? = null,
     @SerialName("humidity")
-    val humidity: Double?,
+    val humidity: Double? = null,
     @SerialName("icon")
-    val icon: String?,
+    val icon: String? = null,
     @SerialName("moonphase")
-    val moonphase: Double?,
+    val moonphase: Double? = null,
     @SerialName("precip")
-    val precip: Double?,
+    val precip: Double? = null,
     @SerialName("precipprob")
-    val precipprob: Double?,
+    val precipprob: Double? = null,
     @SerialName("preciptype")
-    val preciptype: List<String>?,
+    val preciptype: List<String>? = null,
     @SerialName("pressure")
-    val pressure: Double?,
+    val pressure: Double? = null,
     @SerialName("severerisk")
-    val severerisk: Double?,
+    val severerisk: Double? = null,
     @SerialName("snow")
-    val snow: Double?,
+    val snow: Double? = null,
     @SerialName("snowdepth")
-    val snowdepth: Double?,
+    val snowdepth: Double? = null,
     @SerialName("solarenergy")
-    val solarenergy: Double?,
+    val solarenergy: Double? = null,
     @SerialName("solarradiation")
-    val solarradiation: Double?,
+    val solarradiation: Double? = null,
     @SerialName("source")
-    val source: String?,
+    val source: String? = null,
     @SerialName("stations")
-    val stations: List<String>?,
+    val stations: List<String>? = null,
     @SerialName("sunrise")
-    val sunrise: String?,
+    val sunrise: String? = null,
     @SerialName("sunriseEpoch")
-    val sunriseEpoch: Int?,
+    val sunriseEpoch: Int? = null,
     @SerialName("sunset")
-    val sunset: String?,
+    val sunset: String? = null,
     @SerialName("sunsetEpoch")
-    val sunsetEpoch: Int?,
+    val sunsetEpoch: Int? = null,
     @SerialName("temp")
-    val temp: Double?,
+    val temp: Double? = null,
     @SerialName("tempmax")
-    val tempmax: Double?,
+    val tempmax: Double? = null,
     @SerialName("tempmin")
-    val tempmin: Double?,
+    val tempmin: Double? = null,
     @SerialName("uvindex")
-    val uvindex: Double?,
+    val uvindex: Double? = null,
     @SerialName("visibility")
-    val visibility: Double?,
+    val visibility: Double? = null,
     @SerialName("winddir")
-    val winddir: Double?,
+    val winddir: Double? = null,
     @SerialName("windgust")
-    val windgust: Double?,
+    val windgust: Double? = null,
     @SerialName("windspeed")
-    val windspeed: Double?
+    val windspeed: Double? = null
 )

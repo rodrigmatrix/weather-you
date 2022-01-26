@@ -7,23 +7,21 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class VisualCrossingWeatherResponse(
     @SerialName("address")
-    val address: String?,
+    val address: String? = null,
     @SerialName("currentConditions")
-    val currentConditions: CurrentConditionsResponse?,
+    val currentConditions: CurrentConditionsResponse? = null,
     @SerialName("days")
-    val dayResponses: List<DayResponse>?,
+    val days: List<DayResponse>? = null,
     @SerialName("latitude")
-    val latitude: Double?,
+    val latitude: Double? = null,
     @SerialName("longitude")
-    val longitude: Double?,
+    val longitude: Double? = null,
     @SerialName("queryCost")
-    val queryCost: Int?,
+    val queryCost: Int? = null,
     @SerialName("resolvedAddress")
-    val resolvedAddress: String?,
-    @SerialName("stations")
-    val stations: StationsResponse?,
+    val resolvedAddress: String? = null,
     @SerialName("timezone")
-    val timezone: String?,
+    val timezone: String? = null,
     @SerialName("tzoffset")
-    val tzoffset: Double?
+    val tzoffset: Double? = null
 )

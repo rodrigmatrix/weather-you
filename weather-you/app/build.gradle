@@ -1,8 +1,14 @@
 plugins {
     id 'com.android.application'
-    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
     id 'kotlinx-serialization'
+    id 'kotlin-parcelize'
 }
+
+def localPropertiesFile = rootProject.file("local.properties")
+def localProperties = new Properties()
+localProperties.load(new FileInputStream(localPropertiesFile))
 
 android {
     compileSdk 32
@@ -13,6 +19,9 @@ android {
         targetSdk 32
         versionCode 1
         versionName "1.0"
+
+        buildConfigField "String", "VISUAL_CODING_URL", "\"https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/\""
+        buildConfigField "String", "VISUAL_CODING_TOKEN", localProperties['visualcoding.token']
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -59,6 +68,26 @@ dependencies {
     implementation "com.google.accompanist:accompanist-navigation-animation:0.16.1"
     implementation "com.google.accompanist:accompanist-flowlayout:0.24.0-alpha"
     implementation "com.google.accompanist:accompanist-swiperefresh:0.17.0"
+
+    implementation "io.insert-koin:koin-android:3.1.2"
+    implementation "io.insert-koin:koin-androidx-compose:3.1.2"
+
+    implementation "com.squareup.retrofit2:retrofit:2.9.0"
+    implementation "com.squareup.okhttp3:okhttp:4.9.3"
+    implementation "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.8.0"
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.0"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0"
+
+    implementation "joda-time:joda-time:2.10.13"
+
+
+    implementation "androidx.room:room-runtime:2.4.1"
+//    kpat "androidx.room:room-compiler:2.4.1"
+    implementation "androidx.room:room-ktx:2.4.1"
+
+
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

@@ -7,16 +7,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.presentation.utils.PreviewFutureDaysForecast
 import com.rodrigmatrix.weatheryou.presentation.utils.PreviewHourlyForecast
 import com.rodrigmatrix.weatheryou.presentation.utils.PreviewWeatherLocation
 
 @Composable
-fun DetailsScreen() {
+fun DetailsScreen(
+    weatherLocation: WeatherLocation
+) {
     LazyColumn {
         item {
             CurrentWeather(
-                PreviewWeatherLocation,
+                weatherLocation,
                 modifier = Modifier.padding(
                     start = 16.dp,
                     end = 16.dp,
@@ -27,7 +30,7 @@ fun DetailsScreen() {
         }
         item {
             HourlyForecast(
-                hoursList = PreviewHourlyForecast,
+                hoursList = weatherLocation.hours,
                 modifier = Modifier.padding(
                     start = 16.dp,
                     end = 16.dp,
@@ -38,7 +41,7 @@ fun DetailsScreen() {
         }
         item {
             FutureDaysForecast(
-                futureDaysList = PreviewFutureDaysForecast,
+                futureDaysList = weatherLocation.days,
                 modifier = Modifier
                     .padding(
                         start = 16.dp,

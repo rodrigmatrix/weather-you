@@ -16,6 +16,8 @@ import com.airbnb.lottie.compose.*
 import com.rodrigmatrix.weatheryou.R
 import com.rodrigmatrix.weatheryou.domain.model.Day
 import com.rodrigmatrix.weatheryou.presentation.components.WeatherYouDivider
+import com.rodrigmatrix.weatheryou.presentation.extensions.getDateWithMonth
+import com.rodrigmatrix.weatheryou.presentation.extensions.getHourString
 import com.rodrigmatrix.weatheryou.presentation.extensions.temperatureString
 
 @Composable
@@ -40,15 +42,15 @@ fun FutureDaysForecast(
                     ),
                 style = MaterialTheme.typography.headlineSmall
             )
-            futureDaysList.forEach { item ->
-                DayRow(item)
+            futureDaysList.forEachIndexed { index, day ->
+                DayRow(day, index == 0)
             }
         }
     }
 }
 
 @Composable
-fun DayRow(day: Day) {
+fun DayRow(day: Day, isToday: Boolean) {
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(day.icon))
     val progress by animateLottieCompositionAsState(
         composition,
@@ -73,7 +75,11 @@ fun DayRow(day: Day) {
                 .align(Alignment.CenterVertically)
         ) {
             Text(
-                text = day.dateTime,
+                text = if (isToday) {
+                    stringResource(R.string.today)
+                } else {
+                    day.dateTime.getDateWithMonth()
+                },
                 modifier = Modifier,
                 style = MaterialTheme.typography.bodyMedium
             )

@@ -13,7 +13,8 @@ val PreviewWeatherLocation = WeatherLocation(
     lowestTemperature = 0.0,
     currentWeatherDescription = "Snow",
     currentWeatherIcon = R.raw.weather_snow_sunny,
-    currentTime = "11:00 PM"
+    currentTime = "11:00 PM",
+    timeZone = ""
 )
 
 val PreviewWeatherList = listOf(
@@ -25,7 +26,8 @@ val PreviewWeatherList = listOf(
         lowestTemperature = 0.0,
         currentWeatherDescription = "Snow",
         currentWeatherIcon = R.raw.weather_snow_sunny,
-        currentTime = "11:00 PM"
+        currentTime = "11:00 PM",
+        timeZone = ""
     ),
     WeatherLocation(
         name = "Montreal",
@@ -35,7 +37,8 @@ val PreviewWeatherList = listOf(
         lowestTemperature = 0.0,
         currentWeatherDescription = "Snow",
         currentWeatherIcon = R.raw.weather_stormshowersday,
-        currentTime = "10:00 PM"
+        currentTime = "10:00 PM",
+        timeZone = ""
     ),
     WeatherLocation(
         name = "Montreal",
@@ -45,7 +48,8 @@ val PreviewWeatherList = listOf(
         lowestTemperature = 0.0,
         currentWeatherDescription = "Snow",
         currentWeatherIcon = R.raw.weather_snow,
-        currentTime = "10:00 PM"
+        currentTime = "10:00 PM",
+        timeZone = ""
     ),
     WeatherLocation(
         name = "Montreal",
@@ -55,7 +59,8 @@ val PreviewWeatherList = listOf(
         lowestTemperature = 0.0,
         currentWeatherDescription = "Snow",
         currentWeatherIcon = R.raw.weather_mist,
-        currentTime = "10:00 PM"
+        currentTime = "10:00 PM",
+        timeZone = ""
     ),
     WeatherLocation(
         name = "Montreal",
@@ -65,7 +70,8 @@ val PreviewWeatherList = listOf(
         lowestTemperature = 0.0,
         currentWeatherDescription = "Snow",
         currentWeatherIcon = R.raw.weather_thunder,
-        currentTime = "10:00 PM"
+        currentTime = "10:00 PM",
+        timeZone = ""
     ),
     WeatherLocation(
         name = "Montreal",
@@ -75,7 +81,8 @@ val PreviewWeatherList = listOf(
         lowestTemperature = 0.0,
         currentWeatherDescription = "Snow",
         currentWeatherIcon = R.raw.weather_sunny,
-        currentTime = "10:00 PM"
+        currentTime = "10:00 PM",
+        timeZone = ""
     ),
     WeatherLocation(
         name = "Montreal",
@@ -85,7 +92,8 @@ val PreviewWeatherList = listOf(
         lowestTemperature = 0.0,
         currentWeatherDescription = "Snow",
         currentWeatherIcon = R.raw.weather_night,
-        currentTime = "10:00 PM"
+        currentTime = "10:00 PM",
+        timeZone = ""
     ),
     WeatherLocation(
         name = "Montreal",
@@ -95,7 +103,8 @@ val PreviewWeatherList = listOf(
         lowestTemperature = 0.0,
         currentWeatherDescription = "Snow",
         currentWeatherIcon = R.raw.weather_partly_cloudy,
-        currentTime = "10:00 PM"
+        currentTime = "10:00 PM",
+        timeZone = ""
     ),
     WeatherLocation(
         name = "Montreal",
@@ -105,7 +114,8 @@ val PreviewWeatherList = listOf(
         lowestTemperature = 0.0,
         currentWeatherDescription = "Snow",
         currentWeatherIcon = R.raw.weather_rainynight,
-        currentTime = "10:00 PM"
+        currentTime = "10:00 PM",
+        timeZone = ""
     )
 )
 
@@ -113,42 +123,50 @@ val PreviewHourlyForecast = listOf(
     Hour(
         temperature = 1.0,
         icon = R.raw.weather_rainynight,
-        time = "Now"
+        dateTime = "Now",
+        weatherCondition = "wd"
     ),
     Hour(
         temperature = 9.0,
         icon = R.raw.weather_night,
-        time = "6AM"
+        dateTime = "6AM",
+        weatherCondition = ""
     ),
     Hour(
         temperature = 9.0,
         icon = R.raw.weather_partly_cloudy,
-        time = "7AM"
+        dateTime = "7AM",
+        weatherCondition = ""
     ),
     Hour(
         temperature = 8.0,
         icon = R.raw.weather_thunder,
-        time = "8AM"
+        dateTime = "8AM",
+        weatherCondition = ""
     ),
     Hour(
         temperature = 6.0,
         icon = R.raw.weather_rainynight,
-        time = "9AM"
+        dateTime = "9AM",
+        weatherCondition = ""
     ),
     Hour(
         temperature = 6.0,
         icon = R.raw.weather_rainynight,
-        time = "11AM"
+        dateTime = "11AM",
+        weatherCondition = ""
     ),
     Hour(
         temperature = 5.0,
         icon = R.raw.weather_stormshowersday,
-        time = "12PM"
+        dateTime = "12PM",
+        weatherCondition = ""
     ),
     Hour(
         temperature = 2.0,
         icon = R.raw.weather_rainynight,
-        time = "1PM"
+        dateTime = "1PM",
+        weatherCondition = ""
     )
 )
 
