@@ -1,8 +1,8 @@
 package com.rodrigmatrix.weatheryou.presentation.utils
 
 import com.rodrigmatrix.weatheryou.R
-import com.rodrigmatrix.weatheryou.domain.model.Day
-import com.rodrigmatrix.weatheryou.domain.model.Hour
+import com.rodrigmatrix.weatheryou.domain.model.WeatherDay
+import com.rodrigmatrix.weatheryou.domain.model.WeatherHour
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 
 val PreviewWeatherLocation = WeatherLocation(
@@ -14,7 +14,9 @@ val PreviewWeatherLocation = WeatherLocation(
     currentWeatherDescription = "Snow",
     currentWeatherIcon = R.raw.weather_snow_sunny,
     currentTime = "11:00 PM",
-    timeZone = ""
+    timeZone = "",
+    precipitationProbability = 60.0,
+    precipitationType = "snow"
 )
 
 val PreviewWeatherList = listOf(
@@ -27,7 +29,9 @@ val PreviewWeatherList = listOf(
         currentWeatherDescription = "Snow",
         currentWeatherIcon = R.raw.weather_snow_sunny,
         currentTime = "11:00 PM",
-        timeZone = ""
+        timeZone = "",
+        precipitationProbability = 0.0,
+        precipitationType = ""
     ),
     WeatherLocation(
         name = "Montreal",
@@ -38,7 +42,9 @@ val PreviewWeatherList = listOf(
         currentWeatherDescription = "Snow",
         currentWeatherIcon = R.raw.weather_stormshowersday,
         currentTime = "10:00 PM",
-        timeZone = ""
+        timeZone = "",
+        precipitationProbability = 0.0,
+        precipitationType = ""
     ),
     WeatherLocation(
         name = "Montreal",
@@ -49,7 +55,9 @@ val PreviewWeatherList = listOf(
         currentWeatherDescription = "Snow",
         currentWeatherIcon = R.raw.weather_snow,
         currentTime = "10:00 PM",
-        timeZone = ""
+        timeZone = "",
+        precipitationProbability = 0.0,
+        precipitationType = ""
     ),
     WeatherLocation(
         name = "Montreal",
@@ -60,7 +68,9 @@ val PreviewWeatherList = listOf(
         currentWeatherDescription = "Snow",
         currentWeatherIcon = R.raw.weather_mist,
         currentTime = "10:00 PM",
-        timeZone = ""
+        timeZone = "",
+        precipitationProbability = 0.0,
+        precipitationType = ""
     ),
     WeatherLocation(
         name = "Montreal",
@@ -71,7 +81,9 @@ val PreviewWeatherList = listOf(
         currentWeatherDescription = "Snow",
         currentWeatherIcon = R.raw.weather_thunder,
         currentTime = "10:00 PM",
-        timeZone = ""
+        timeZone = "",
+        precipitationProbability = 0.0,
+        precipitationType = ""
     ),
     WeatherLocation(
         name = "Montreal",
@@ -82,7 +94,9 @@ val PreviewWeatherList = listOf(
         currentWeatherDescription = "Snow",
         currentWeatherIcon = R.raw.weather_sunny,
         currentTime = "10:00 PM",
-        timeZone = ""
+        timeZone = "",
+        precipitationProbability = 0.0,
+        precipitationType = ""
     ),
     WeatherLocation(
         name = "Montreal",
@@ -93,7 +107,9 @@ val PreviewWeatherList = listOf(
         currentWeatherDescription = "Snow",
         currentWeatherIcon = R.raw.weather_night,
         currentTime = "10:00 PM",
-        timeZone = ""
+        timeZone = "",
+        precipitationProbability = 0.0,
+        precipitationType = ""
     ),
     WeatherLocation(
         name = "Montreal",
@@ -104,7 +120,9 @@ val PreviewWeatherList = listOf(
         currentWeatherDescription = "Snow",
         currentWeatherIcon = R.raw.weather_partly_cloudy,
         currentTime = "10:00 PM",
-        timeZone = ""
+        timeZone = "",
+        precipitationProbability = 0.0,
+        precipitationType = ""
     ),
     WeatherLocation(
         name = "Montreal",
@@ -115,150 +133,183 @@ val PreviewWeatherList = listOf(
         currentWeatherDescription = "Snow",
         currentWeatherIcon = R.raw.weather_rainynight,
         currentTime = "10:00 PM",
-        timeZone = ""
+        timeZone = "",
+        precipitationProbability = 0.0,
+        precipitationType = ""
     )
 )
 
 val PreviewHourlyForecast = listOf(
-    Hour(
+    WeatherHour(
         temperature = 1.0,
         icon = R.raw.weather_rainynight,
         dateTime = "Now",
-        weatherCondition = "wd"
+        weatherCondition = "wd",
+        precipitationProbability = 0.0,
+        precipitationType = ""
     ),
-    Hour(
+    WeatherHour(
         temperature = 9.0,
         icon = R.raw.weather_night,
         dateTime = "6AM",
-        weatherCondition = ""
+        weatherCondition = "",
+        precipitationProbability = 0.0,
+        precipitationType = ""
     ),
-    Hour(
+    WeatherHour(
         temperature = 9.0,
         icon = R.raw.weather_partly_cloudy,
         dateTime = "7AM",
-        weatherCondition = ""
+        weatherCondition = "",
+        precipitationProbability = 0.0,
+        precipitationType = ""
     ),
-    Hour(
+    WeatherHour(
         temperature = 8.0,
         icon = R.raw.weather_thunder,
         dateTime = "8AM",
-        weatherCondition = ""
+        weatherCondition = "",
+        precipitationProbability = 0.0,
+        precipitationType = ""
     ),
-    Hour(
+    WeatherHour(
         temperature = 6.0,
         icon = R.raw.weather_rainynight,
         dateTime = "9AM",
-        weatherCondition = ""
+        weatherCondition = "",
+        precipitationProbability = 0.0,
+        precipitationType = ""
     ),
-    Hour(
+    WeatherHour(
         temperature = 6.0,
         icon = R.raw.weather_rainynight,
         dateTime = "11AM",
-        weatherCondition = ""
+        weatherCondition = "",
+        precipitationProbability = 0.0,
+        precipitationType = ""
     ),
-    Hour(
+    WeatherHour(
         temperature = 5.0,
         icon = R.raw.weather_stormshowersday,
         dateTime = "12PM",
-        weatherCondition = ""
+        weatherCondition = "",
+        precipitationProbability = 0.0,
+        precipitationType = ""
     ),
-    Hour(
+    WeatherHour(
         temperature = 2.0,
         icon = R.raw.weather_rainynight,
         dateTime = "1PM",
-        weatherCondition = ""
+        weatherCondition = "",
+        precipitationProbability = 0.0,
+        precipitationType = ""
     )
 )
 
 val PreviewFutureDaysForecast = listOf(
-    Day(
+    WeatherDay(
         dateTime = "Today",
         weatherCondition = "Parcialmente nublado",
         temperature = 10.0,
         maxTemperature = 14.0,
         minTemperature = 1.0,
         icon = R.raw.weather_stormshowersday,
-        hours = PreviewHourlyForecast
+        hours = PreviewHourlyForecast,
+        precipitationProbability = 0.0,
+        precipitationType = "",
+        windSpeed = 0.0,
+        humidity = 0.0,
+        sunrise = "7:00AM",
+        sunset = "7:00AM",
     ),
-    Day(
+    WeatherDay(
         dateTime = "Tomorrow",
-        weatherCondition = "Parcialmente nublado",
+        weatherCondition = "Cloudy",
         temperature = 10.0,
         maxTemperature = 14.0,
         minTemperature = 1.0,
         icon = R.raw.weather_rainynight,
-        hours = PreviewHourlyForecast
+        hours = PreviewHourlyForecast,
+        precipitationProbability = 80.0,
+        precipitationType = "rain",
+        windSpeed = 0.0,
+        humidity = 0.0,
+        sunrise = "7:00AM",
+        sunset = "7:00AM",
     ),
-    Day(
+    WeatherDay(
         dateTime = "Monday, Jan 7",
-        weatherCondition = "Parcialmente nublado",
+        weatherCondition = "Cloudy",
         temperature = 10.0,
         maxTemperature = 14.0,
         minTemperature = 1.0,
         icon = R.raw.weather_stormshowersday,
-        hours = PreviewHourlyForecast
+        hours = PreviewHourlyForecast,
+        precipitationProbability = 0.0,
+        precipitationType = "",
+        windSpeed = 0.0,
+        humidity = 0.0,
+        sunrise = "7:00AM",
+        sunset = "7:00AM",
     ),
-    Day(
+    WeatherDay(
         dateTime = "Monday, Jan 7",
-        weatherCondition = "Parcialmente nublado",
+        weatherCondition = "Cloudy",
         temperature = 10.0,
         maxTemperature = 14.0,
         minTemperature = 1.0,
         icon = R.raw.weather_thunder,
-        hours = PreviewHourlyForecast
+        hours = PreviewHourlyForecast,
+        precipitationProbability = 0.0,
+        precipitationType = "",
+        windSpeed = 0.0,
+        humidity = 0.0,
+        sunrise = "7:00AM",
+        sunset = "7:00AM",
     ),
-    Day(
+    WeatherDay(
         dateTime = "Monday, Jan 7",
-        weatherCondition = "Parcialmente nublado",
+        weatherCondition = "Cloudy",
         temperature = 10.0,
         maxTemperature = 14.0,
         minTemperature = 1.0,
         icon = R.raw.weather_thunder,
-        hours = PreviewHourlyForecast
+        hours = PreviewHourlyForecast,
+        precipitationProbability = 0.0,
+        precipitationType = "",
+        windSpeed = 0.0,
+        humidity = 0.0,
+        sunrise = "7:00AM",
+        sunset = "7:00AM",
     ),
-    Day(
+    WeatherDay(
         dateTime = "Monday, Jan 7",
-        weatherCondition = "Parcialmente nublado",
+        weatherCondition = "Cloudy",
         temperature = 10.0,
         maxTemperature = 14.0,
         minTemperature = 1.0,
         icon = R.raw.weather_thunder,
-        hours = PreviewHourlyForecast
+        hours = PreviewHourlyForecast,
+        precipitationProbability = 0.0,
+        precipitationType = "",
+        windSpeed = 0.0,
+        humidity = 0.0,
+        sunrise = "7:00AM",
+        sunset = "7:00AM",
     ),
-    Day(
+    WeatherDay(
         dateTime = "Monday, Jan 7",
-        weatherCondition = "Parcialmente nublado",
+        weatherCondition = "Cloudy",
         temperature = 10.0,
         maxTemperature = 14.0,
         minTemperature = 1.0,
         icon = R.raw.weather_snow,
-        hours = PreviewHourlyForecast
-    ),
-    Day(
-        dateTime = "Monday, Jan 7",
-        weatherCondition = "Parcialmente nublado",
-        temperature = 10.0,
-        maxTemperature = 14.0,
-        minTemperature = 1.0,
-        icon = R.raw.weather_snow_sunny,
-        hours = PreviewHourlyForecast
-    ),
-    Day(
-        dateTime = "Monday, Jan 7",
-        weatherCondition = "Parcialmente nublado",
-        temperature = 10.0,
-        maxTemperature = 14.0,
-        minTemperature = 1.0,
-        icon = R.raw.weather_snownight,
-        hours = PreviewHourlyForecast
-    ),
-    Day(
-        dateTime = "Monday, Jan 7",
-        weatherCondition = "Parcialmente nublado",
-        temperature = 10.0,
-        maxTemperature = 14.0,
-        minTemperature = 1.0,
-        icon = R.raw.weather_sunny,
-        hours = PreviewHourlyForecast
+        hours = PreviewHourlyForecast,
+        precipitationProbability = 0.0,
+        precipitationType = "",
+        windSpeed = 0.0,
+        humidity = 0.0,
+        sunrise = "7:00AM",
+        sunset = "7:00AM",
     )
 )

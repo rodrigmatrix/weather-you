@@ -9,7 +9,9 @@ data class WeatherLocation(
     val feelsLike: Double,
     val currentWeatherIcon: Int,
     val currentTime: String,
-    val days: List<Day> = emptyList(),
-    val hours: List<Hour> = emptyList(),
-    val timeZone: String
+    val days: List<WeatherDay> = emptyList(),
+    val hours: List<WeatherHour> = emptyList(),
+    val timeZone: String,
+    val precipitationProbability: Double,
+    val precipitationType: String
 )

@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import java.util.*
 
 class WeatherRepositoryImpl(
     private val visualCrossingRemoteDataSource: VisualCrossingRemoteDataSource,
@@ -17,7 +18,7 @@ class WeatherRepositoryImpl(
     override fun addLocation(locationName: String): Flow<WeatherLocation> {
         return visualCrossingRemoteDataSource.getWeather(
             locationName,
-            VisualCrossingUnits.Metric.unit
+            getMetricUnit()
         ).map(visualCrossingRemoteMapper::map)
     }
 
@@ -40,5 +41,13 @@ class WeatherRepositoryImpl(
 
     override fun deleteLocation(weatherLocation: WeatherLocation): Flow<Unit> {
         TODO("Not yet implemented")
+    }
+
+    private fun getMetricUnit(): String {
+        return when (Locale.getDefault()) {
+            Locale.UK -> VisualCrossingUnits.UK.unit
+            Locale.US -> VisualCrossingUnits.US.unit
+            else -> VisualCrossingUnits.Metric.unit
+        }
     }
 }

@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.sp
 import com.airbnb.lottie.compose.*
 import com.rodrigmatrix.weatheryou.R
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
+import com.rodrigmatrix.weatheryou.presentation.extensions.percentageString
 import com.rodrigmatrix.weatheryou.presentation.extensions.temperatureString
 
 @Composable
@@ -84,6 +85,16 @@ fun CurrentWeather(
                     ),
                     style = MaterialTheme.typography.titleSmall
                 )
+                if (weatherLocation.precipitationType.isNotEmpty()) {
+                    Text(
+                        text = stringResource(
+                            R.string.chance_of_precipitation,
+                            weatherLocation.precipitationType,
+                            weatherLocation.precipitationProbability.percentageString()
+                        ),
+                        style = MaterialTheme.typography.titleSmall
+                    )
+                }
             }
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 LottieAnimation(

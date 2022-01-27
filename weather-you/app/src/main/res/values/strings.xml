@@ -5,8 +5,13 @@
     <string name="low_lowercase_x">L%s</string>
     <string name="day_x">Day %s</string>
     <string name="night_x">Night %s</string>
-    <string name="next_15_days_forecast">Next 15 days forecast</string>
+    <string name="next_x_days_forecast">Next %d days forecast</string>
     <string name="daily_forecast">Daily Forecast</string>
     <string name="now">Now</string>
     <string name="today">Today</string>
+    <string name="show_all_days_forecast">Show all days forecast button</string>
+    <string name="chance_of_precipitation">Chance of %s: %s</string>
+    <string name="wind_x">Wind: %s</string>
+    <string name="humidity_x">Humidity: %s</string>
+    <string name="sunrise_sunset_x_y">Sunrise/sunset: %s/%s</string>
 </resources>

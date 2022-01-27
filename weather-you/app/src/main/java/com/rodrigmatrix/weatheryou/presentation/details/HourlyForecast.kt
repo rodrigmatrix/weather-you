@@ -5,10 +5,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -21,7 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.airbnb.lottie.compose.*
 import com.rodrigmatrix.weatheryou.R
-import com.rodrigmatrix.weatheryou.domain.model.Hour
+import com.rodrigmatrix.weatheryou.domain.model.WeatherHour
 import com.rodrigmatrix.weatheryou.presentation.components.WeatherYouDivider
 import com.rodrigmatrix.weatheryou.presentation.extensions.getHourString
 import com.rodrigmatrix.weatheryou.presentation.extensions.temperatureString
@@ -32,7 +30,7 @@ private const val FIRST_INDEX = 0
 
 @Composable
 fun HourlyForecast(
-    hoursList: List<Hour>,
+    hoursList: List<WeatherHour>,
     modifier: Modifier = Modifier
 ) {
     Surface(
@@ -52,6 +50,11 @@ fun HourlyForecast(
                     ),
                 style = MaterialTheme.typography.headlineSmall
             )
+            WeatherYouDivider(
+                Modifier
+                    .padding(bottom = 10.dp)
+                    .height(1.dp)
+            )
             LazyRow(Modifier.padding(start = 16.dp, end = 16.dp)) {
                 itemsIndexed(hoursList) { index, item  ->
                     HourRow(item, index == FIRST_INDEX)
@@ -63,7 +66,7 @@ fun HourlyForecast(
 }
 
 @Composable
-fun HourRow(hour: Hour, isCurrentHour: Boolean) {
+fun HourRow(hour: WeatherHour, isCurrentHour: Boolean) {
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(hour.icon))
     val progress by animateLottieCompositionAsState(
         composition,
@@ -82,7 +85,7 @@ fun HourRow(hour: Hour, isCurrentHour: Boolean) {
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(bottom = 10.dp),
-            style = MaterialTheme.typography.bodyMedium
+            style = MaterialTheme.typography.bodySmall
         )
         LottieAnimation(
             composition,
@@ -90,7 +93,7 @@ fun HourRow(hour: Hour, isCurrentHour: Boolean) {
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(bottom = 10.dp)
-                .size(42.dp)
+                .size(34.dp)
         )
         Text(
             text = if (isCurrentHour) {
@@ -99,7 +102,7 @@ fun HourRow(hour: Hour, isCurrentHour: Boolean) {
                 hour.dateTime.getHourString()
             },
             modifier = Modifier.align(Alignment.CenterHorizontally),
-            style = MaterialTheme.typography.bodyMedium
+            style = MaterialTheme.typography.bodySmall
         )
     }
 }
