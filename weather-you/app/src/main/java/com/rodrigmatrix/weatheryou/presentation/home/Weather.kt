@@ -1,5 +1,6 @@
 package com.rodrigmatrix.weatheryou.presentation.home
 
+import android.content.res.Configuration
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
@@ -96,7 +97,8 @@ fun WeatherLocation(
     }
 }
 
-@Preview(name = "Weather location preview")
+@Preview
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun WeatherLocationPreview() {
     WeatherYouTheme {

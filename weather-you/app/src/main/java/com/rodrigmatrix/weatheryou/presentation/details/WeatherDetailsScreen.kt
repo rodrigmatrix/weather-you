@@ -1,5 +1,6 @@
 package com.rodrigmatrix.weatheryou.presentation.details
 
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
@@ -8,15 +9,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Devices
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.UiMode
 import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
+import com.rodrigmatrix.weatheryou.presentation.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.presentation.utils.PreviewFutureDaysForecast
 import com.rodrigmatrix.weatheryou.presentation.utils.PreviewHourlyForecast
 import com.rodrigmatrix.weatheryou.presentation.utils.PreviewWeatherLocation
 import org.koin.androidx.compose.getViewModel
 
 @Composable
-fun DetailsScreen(
+fun WeatherDetailsScreen(
     weatherLocation: WeatherLocation,
     viewModel: WeatherDetailsViewModel = getViewModel()
 ) {
@@ -76,5 +81,21 @@ fun WeatherDetailsScreen(
                     )
             )
         }
+    }
+}
+
+@Preview(uiMode = UI_MODE_NIGHT_YES)
+@Preview(device = Devices.PIXEL_C, uiMode = UI_MODE_NIGHT_YES)
+@Composable
+fun WeatherDetailsScreenPreview() {
+    WeatherYouTheme {
+        WeatherDetailsScreen(
+            viewState = WeatherDetailsViewState(
+                weatherLocation = PreviewWeatherLocation,
+                todayWeatherHoursList = PreviewHourlyForecast,
+                futureDaysList = PreviewFutureDaysForecast
+            ),
+            onExpandedButtonClick = { }
+        )
     }
 }

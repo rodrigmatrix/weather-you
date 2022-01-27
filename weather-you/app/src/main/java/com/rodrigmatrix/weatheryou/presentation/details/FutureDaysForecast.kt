@@ -1,5 +1,6 @@
 package com.rodrigmatrix.weatheryou.presentation.details
 
+import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -216,6 +217,7 @@ fun ExpandedCardContent(
 }
 
 @Preview
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun FutureDaysForecastPreview() {
     WeatherYouTheme {

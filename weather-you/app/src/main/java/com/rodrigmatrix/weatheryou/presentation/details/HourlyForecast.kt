@@ -1,5 +1,6 @@
 package com.rodrigmatrix.weatheryou.presentation.details
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -107,7 +108,8 @@ fun HourRow(hour: WeatherHour, isCurrentHour: Boolean) {
     }
 }
 
-@Preview(name = "Hourly Forecast preview")
+@Preview
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun WeatherLocationPreview() {
     WeatherYouTheme {
