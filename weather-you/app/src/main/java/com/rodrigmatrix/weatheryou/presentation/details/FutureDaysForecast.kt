@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.airbnb.lottie.compose.*
 import com.rodrigmatrix.weatheryou.R
 import com.rodrigmatrix.weatheryou.domain.model.WeatherDay
+import com.rodrigmatrix.weatheryou.presentation.components.ExpandButton
 import com.rodrigmatrix.weatheryou.presentation.components.WeatherYouDivider
 import com.rodrigmatrix.weatheryou.presentation.extensions.*
 import com.rodrigmatrix.weatheryou.presentation.theme.WeatherYouTheme
@@ -43,13 +44,6 @@ fun FutureDaysForecast(
     onExpandedButtonClick: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val angle: Float by animateFloatAsState(
-        targetValue = if (isExpanded) 0F else 180F,
-        animationSpec = tween(
-            durationMillis = 400,
-            easing = FastOutSlowInEasing
-        )
-    )
     Surface(
         color = MaterialTheme.colorScheme.secondaryContainer,
         shape = RoundedCornerShape(16.dp),
@@ -72,23 +66,14 @@ fun FutureDaysForecast(
                         ),
                     style = MaterialTheme.typography.headlineSmall
                 )
-                IconButton(
-                    onClick = {
-                        onExpandedButtonClick(isExpanded.not())
+                ExpandButton(
+                    isExpanded = isExpanded,
+                    contentDescription = stringResource(R.string.show_all_days_forecast),
+                    onExpandButtonClick = {
+                        onExpandedButtonClick(it)
                     },
-                    modifier = Modifier
-                        .padding(start = 8.dp, end = 8.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.onBackground.copy(alpha = 0.1f))
-                        .size(34.dp)
-
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_arrow_up),
-                        contentDescription = stringResource(R.string.show_all_days_forecast),
-                        modifier = Modifier.rotate(angle)
-                    )
-                }
+                    modifier = Modifier.padding(start = 8.dp, end = 8.dp)
+                )
             }
             futureDaysList.forEachIndexed { index, day ->
                 DayRow(day, index == 0)
