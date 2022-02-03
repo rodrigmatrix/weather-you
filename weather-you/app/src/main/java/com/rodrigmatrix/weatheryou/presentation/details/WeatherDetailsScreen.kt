@@ -1,6 +1,7 @@
 package com.rodrigmatrix.weatheryou.presentation.details
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
@@ -52,7 +53,7 @@ fun WeatherDetailsScreen(
                         end = 16.dp,
                         top = 10.dp,
                         bottom = 10.dp
-                    )
+                    ).focusable()
                 )
             }
         }
@@ -64,7 +65,7 @@ fun WeatherDetailsScreen(
                     end = 16.dp,
                     top = 10.dp,
                     bottom = 10.dp
-                )
+                ).focusable()
             )
         }
         item {
@@ -84,7 +85,9 @@ fun WeatherDetailsScreen(
     }
 }
 
+@Preview
 @Preview(uiMode = UI_MODE_NIGHT_YES)
+@Preview(device = Devices.PIXEL_C)
 @Preview(device = Devices.PIXEL_C, uiMode = UI_MODE_NIGHT_YES)
 @Composable
 fun WeatherDetailsScreenPreview() {

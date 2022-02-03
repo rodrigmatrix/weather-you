@@ -5,11 +5,11 @@ import kotlinx.coroutines.flow.Flow
 
 interface WeatherRepository {
 
-    fun addLocation(locationName: String): Flow<WeatherLocation>
+    fun addLocation(locationName: String): Flow<Unit>
 
-    fun getLocation(resolvedAddress: String): Flow<WeatherLocation>
+    fun fetchLocation(resolvedAddress: String): Flow<WeatherLocation>
 
-    fun getLocationsList(): Flow<List<WeatherLocation>>
+    fun fetchLocationsList(): Flow<List<WeatherLocation>>
 
-    fun deleteLocation(weatherLocation: WeatherLocation): Flow<Unit>
+    fun deleteLocation(locationName: String): Flow<Unit>
 }

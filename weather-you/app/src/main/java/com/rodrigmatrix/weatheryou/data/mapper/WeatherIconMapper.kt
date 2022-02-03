@@ -1,42 +1,91 @@
 package com.rodrigmatrix.weatheryou.data.mapper
 
 import com.rodrigmatrix.weatheryou.R
+import com.rodrigmatrix.weatheryou.domain.model.WeatherIcon
 
 class WeatherIconMapper {
 
-    fun map(source: String): Int {
+    fun map(source: String): WeatherIcon {
         return when(source) {
-            "partly-cloudy-day" -> R.raw.weather_partly_cloudy
+            "partly-cloudy-day" -> WeatherIcon(
+                animatedIcon = R.raw.weather_partly_cloudy,
+                staticIcon = R.drawable.ic_weather_partly_cloudy
+            )
 
-            "partly-cloudy-night" -> R.raw.weather_cloudynight
+            "partly-cloudy-night" -> WeatherIcon(
+                animatedIcon = R.raw.weather_cloudynight,
+                staticIcon = R.drawable.ic_weather_cloudynight
+            )
 
-            "cloudy" -> R.raw.weather_windy
+            "cloudy" -> WeatherIcon(
+                animatedIcon = R.raw.weather_windy,
+                staticIcon = R.drawable.ic_weather_windy
+            )
 
-            "wind" -> R.raw.weather_windy
+            "wind" -> WeatherIcon(
+                animatedIcon = R.raw.weather_windy,
+                staticIcon = R.drawable.ic_weather_windy
+            )
 
-            "clear-day" -> R.raw.weather_sunny
+            "clear-day"-> WeatherIcon(
+                animatedIcon = R.raw.weather_sunny,
+                staticIcon = R.drawable.ic_weather_sunny
+            )
 
-            "clear-night" -> R.raw.weather_night
+            "clear-night" -> WeatherIcon(
+                animatedIcon = R.raw.weather_night,
+                staticIcon = R.drawable.ic_weather_night
+            )
 
-            "snow" -> R.raw.weather_snow
+            "snow" -> WeatherIcon(
+                animatedIcon = R.raw.weather_snow,
+                staticIcon = R.drawable.ic_weather_snow
+            )
 
-            "snow-night" -> R.raw.weather_snownight
+            "snow-night" -> WeatherIcon(
+                animatedIcon = R.raw.weather_snownight,
+                staticIcon = R.drawable.ic_weather_snownight
+            )
 
-            "rain" -> R.raw.weather_partly_shower
+            "rain" -> WeatherIcon(
+                animatedIcon = R.raw.weather_partly_shower,
+                staticIcon = R.drawable.ic_weather_partly_shower
+            )
 
-            "fog" -> R.raw.weather_mist
+            "fog" -> WeatherIcon(
+                animatedIcon = R.raw.weather_mist,
+                staticIcon = R.drawable.ic_weather_mist
+            )
 
-            "snow-showers-day" -> R.raw.weather_snow
+            "snow-showers-day" -> WeatherIcon(
+                animatedIcon = R.raw.weather_snow,
+                staticIcon = R.drawable.ic_weather_snow
+            )
 
-            "snow-showers-night" -> R.raw.weather_snownight
+            "snow-showers-night" -> WeatherIcon(
+                animatedIcon = R.raw.weather_snownight,
+                staticIcon = R.drawable.ic_weather_snownight
+            )
 
-            "thunder-rain" -> R.raw.weather_storm
+            "thunder-rain" -> WeatherIcon(
+                animatedIcon = R.raw.weather_storm,
+                staticIcon = R.drawable.ic_weather_storm
+            )
 
-            "thunder-showers-day" -> R.raw.weather_stormshowersday
+            "thunder-showers-day" -> WeatherIcon(
+                animatedIcon = R.raw.weather_stormshowersday,
+                staticIcon = R.drawable.ic_weather_stormshowersday
+            )
 
-            "thunder-showers-night" -> R.raw.weather_storm
+            "thunder-showers-night" -> WeatherIcon(
+                animatedIcon = R.raw.weather_storm,
+                staticIcon = R.drawable.ic_weather_storm
+            )
 
-            else -> R.raw.weather_sunny
+            else -> WeatherIcon(
+                animatedIcon = R.raw.weather_sunny,
+                staticIcon = R.drawable.ic_weather_sunny
+            )
         }
     }
 }

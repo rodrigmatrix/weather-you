@@ -4,6 +4,13 @@
     package="com.rodrigmatrix.weatheryou">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <uses-feature android:name="android.hardware.touchscreen"
+        android:required="false" />
+
+    <uses-feature android:name="android.software.leanback"
+        android:required="false" />
 
     <application
         android:allowBackup="true"
@@ -15,17 +22,28 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.WeatherYou"
         tools:targetApi="31"
-        android:name=".WeatherYouApp">
+        android:name=".WeatherYouApp"
+        android:banner="@drawable/ic_arrow_down">
         <activity
             android:name=".presentation.navigation.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.WeatherYou">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+<!--        <activity-->
+<!--            android:name=".presentation.tv.home.HomeTvActivity"-->
+<!--            android:exported="true"-->
+<!--            android:theme="@style/Theme.WeatherYou">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+<!--                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />-->
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
+<!--        </activity>-->
     </application>
 
 </manifest>

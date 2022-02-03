@@ -3,18 +3,14 @@ package com.rodrigmatrix.weatheryou.presentation.details
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -22,16 +18,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.airbnb.lottie.compose.*
 import com.rodrigmatrix.weatheryou.R
 import com.rodrigmatrix.weatheryou.domain.model.WeatherDay
 import com.rodrigmatrix.weatheryou.presentation.components.ExpandButton
+import com.rodrigmatrix.weatheryou.presentation.components.WeatherIcon
 import com.rodrigmatrix.weatheryou.presentation.components.WeatherYouDivider
 import com.rodrigmatrix.weatheryou.presentation.extensions.*
 import com.rodrigmatrix.weatheryou.presentation.theme.WeatherYouTheme
@@ -73,7 +66,7 @@ fun FutureDaysForecast(
                     onExpandButtonClick = {
                         onExpandedButtonClick(it)
                     },
-                    modifier = Modifier.padding(start = 8.dp, end = 8.dp)
+                    modifier = Modifier.padding(start = 16.dp, end = 16.dp)
                 )
             }
             futureDaysList.forEachIndexed { index, day ->
@@ -88,11 +81,6 @@ fun DayRow(day: WeatherDay, isToday: Boolean) {
     var isExpanded by rememberSaveable {
         mutableStateOf(false)
     }
-    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(day.icon))
-    val progress by animateLottieCompositionAsState(
-        composition,
-        iterations = LottieConstants.IterateForever
-    )
     WeatherYouDivider(Modifier.height(1.dp))
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -130,9 +118,8 @@ fun DayRow(day: WeatherDay, isToday: Boolean) {
         }
         Row {
             Column {
-                LottieAnimation(
-                    composition,
-                    progress,
+                WeatherIcon(
+                    weatherIcon = day.weatherIcon,
                     modifier = Modifier
                         .size(42.dp)
                 )
@@ -196,8 +183,8 @@ fun ExpandedCardContent(
             Text(
                 text = stringResource(
                     R.string.sunrise_sunset_x_y,
-                    day.sunrise.getHourString(),
-                    day.sunset.getHourString()
+                    day.sunrise.getHourWithMinutesString(),
+                    day.sunset.getHourWithMinutesString()
                 ),
                 style = MaterialTheme.typography.titleSmall,
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp)

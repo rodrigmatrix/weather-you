@@ -5,7 +5,10 @@ import com.rodrigmatrix.weatheryou.core.viewmodel.ViewModel
 import com.rodrigmatrix.weatheryou.domain.repository.WeatherRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
@@ -17,14 +20,21 @@ class HomeViewModel(
         loadLocations()
     }
 
-    private fun loadLocations() {
+    fun loadLocations() {
         viewModelScope.launch {
-            weatherRepository.getLocationsList()
+            weatherRepository.fetchLocationsList()
                 .flowOn(coroutineDispatcher)
                 .onStart { setState { it.copy(isLoading = true) } }
                 .onCompletion { setState { it.copy(isLoading = false) } }
+                .catch { exception -> setState { it.copy(error = exception) } }
                 .collect { weatherLocationsList ->
-                    setState { it.copy(locationsList = weatherLocationsList) }
+                    setState {
+                        it.copy(
+                            locationsList = weatherLocationsList,
+                            error = null,
+                            isLoading = false
+                        )
+                    }
                 }
         }
     }

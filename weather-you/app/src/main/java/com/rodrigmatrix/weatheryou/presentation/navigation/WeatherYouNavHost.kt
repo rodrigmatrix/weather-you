@@ -5,8 +5,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
+import com.rodrigmatrix.weatheryou.presentation.about.AboutScreen
+import com.rodrigmatrix.weatheryou.presentation.addLocation.AddLocationScreen
 import com.rodrigmatrix.weatheryou.presentation.details.WeatherDetailsScreen
 import com.rodrigmatrix.weatheryou.presentation.home.HomeScreen
+import com.rodrigmatrix.weatheryou.presentation.settings.SettingsScreen
 import com.rodrigmatrix.weatheryou.presentation.utils.PreviewWeatherLocation
 
 @Composable
@@ -16,19 +19,30 @@ fun WeatherYouNavHost(navHostController: NavHostController) {
     }
     NavHost(
         navHostController,
-        startDestination = Screen.Home.route
+        startDestination = HomeEntries.Home.route
     ) {
-
-        composable(Screen.Home.route) {
+        composable(HomeEntries.Home.route) {
             HomeScreen(
                 onItemClick = {
                     weather = it
-                    navHostController.navigate(Screen.Details.route)
+                    navHostController.navigate(NavigationEntries.DETAILS_ROUTE)
+                },
+                onAddLocation = {
+                    navHostController.navigate(NavigationEntries.ADD_LOCATION_ROUTE)
                 }
             )
         }
-        composable(Screen.Details.route) {
+        composable(NavigationEntries.DETAILS_ROUTE) {
             WeatherDetailsScreen(weather)
+        }
+        composable(HomeEntries.Settings.route) {
+            SettingsScreen()
+        }
+        composable(HomeEntries.About.route) {
+            AboutScreen()
+        }
+        composable(NavigationEntries.ADD_LOCATION_ROUTE) {
+            AddLocationScreen(navHostController)
         }
     }
 }

@@ -3,7 +3,6 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'kotlinx-serialization'
-    id 'kotlin-parcelize'
 }
 
 def localPropertiesFile = rootProject.file("local.properties")
@@ -26,6 +25,14 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
+        }
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += [
+                        "room.schemaLocation":"$projectDir/schemas".toString(),
+                        "room.incremental":"true",
+                        "room.expandProjection":"true"]
+            }
         }
     }
 
@@ -58,7 +65,7 @@ android {
 dependencies {
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation "androidx.compose.ui:ui:$compose_version"
-    implementation 'androidx.compose.material3:material3:1.0.0-alpha03'
+    implementation 'androidx.compose.material3:material3:1.0.0-alpha04'
     implementation 'androidx.compose.material:material:1.2.0-alpha01'
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.0'
@@ -76,18 +83,15 @@ dependencies {
     implementation "com.squareup.okhttp3:okhttp:4.9.3"
     implementation "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.8.0"
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.0"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.10"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0"
 
     implementation "joda-time:joda-time:2.10.13"
 
-
     implementation "androidx.room:room-runtime:2.4.1"
-//    kpat "androidx.room:room-compiler:2.4.1"
+    kapt("androidx.room:room-compiler:2.4.1")
     implementation "androidx.room:room-ktx:2.4.1"
-
-
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

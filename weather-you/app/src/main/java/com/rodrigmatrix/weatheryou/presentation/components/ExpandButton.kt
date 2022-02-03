@@ -14,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.R
@@ -21,9 +22,10 @@ import com.rodrigmatrix.weatheryou.R
 @Composable
 fun ExpandButton(
     isExpanded: Boolean,
-    contentDescription: String,
+    contentDescription: String?,
     onExpandButtonClick: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    backgroundColor: Color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.1f)
 ) {
     val angle: Float by animateFloatAsState(
         targetValue = if (isExpanded) 180F else 0F,
@@ -38,9 +40,8 @@ fun ExpandButton(
         },
         modifier = modifier
             .clip(CircleShape)
-            .background(MaterialTheme.colorScheme.onBackground.copy(alpha = 0.1f))
+            .background(backgroundColor)
             .size(34.dp)
-
     ) {
         Icon(
             painter = painterResource(R.drawable.ic_arrow_down),

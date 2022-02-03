@@ -12,15 +12,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.airbnb.lottie.compose.*
 import com.rodrigmatrix.weatheryou.R
 import com.rodrigmatrix.weatheryou.domain.model.WeatherHour
+import com.rodrigmatrix.weatheryou.presentation.components.WeatherIcon
 import com.rodrigmatrix.weatheryou.presentation.components.WeatherYouDivider
 import com.rodrigmatrix.weatheryou.presentation.extensions.getHourString
 import com.rodrigmatrix.weatheryou.presentation.extensions.temperatureString
@@ -68,11 +67,6 @@ fun HourlyForecast(
 
 @Composable
 fun HourRow(hour: WeatherHour, isCurrentHour: Boolean) {
-    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(hour.icon))
-    val progress by animateLottieCompositionAsState(
-        composition,
-        iterations = LottieConstants.IterateForever
-    )
     Column(
         Modifier.padding(
             top = 10.dp,
@@ -88,9 +82,8 @@ fun HourRow(hour: WeatherHour, isCurrentHour: Boolean) {
                 .padding(bottom = 10.dp),
             style = MaterialTheme.typography.bodySmall
         )
-        LottieAnimation(
-            composition,
-            progress,
+        WeatherIcon(
+            weatherIcon = hour.weatherIcon,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(bottom = 10.dp)

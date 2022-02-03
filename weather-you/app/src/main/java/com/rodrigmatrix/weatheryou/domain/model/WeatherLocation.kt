@@ -7,7 +7,7 @@ data class WeatherLocation(
     val maxTemperature: Double,
     val lowestTemperature: Double,
     val feelsLike: Double,
-    val currentWeatherIcon: Int,
+    val weatherIcon: WeatherIcon,
     val currentTime: String,
     val days: List<WeatherDay> = emptyList(),
     val hours: List<WeatherHour> = emptyList(),

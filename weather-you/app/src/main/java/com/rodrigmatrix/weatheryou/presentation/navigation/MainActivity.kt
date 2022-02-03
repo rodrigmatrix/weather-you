@@ -17,15 +17,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            WeatherYouTheme {
-                val navController = rememberNavController()
-                Surface(Modifier.fillMaxSize()) {
-                    Scaffold(
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        WeatherYouNavHost(navController)
-                    }
-                }
+            WeatherYouTheme(darkTheme = true) {
+                NavigationScreen()
             }
         }
     }
