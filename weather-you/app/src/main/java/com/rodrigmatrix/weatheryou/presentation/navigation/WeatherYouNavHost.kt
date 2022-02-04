@@ -10,12 +10,11 @@ import com.rodrigmatrix.weatheryou.presentation.addLocation.AddLocationScreen
 import com.rodrigmatrix.weatheryou.presentation.details.WeatherDetailsScreen
 import com.rodrigmatrix.weatheryou.presentation.home.HomeScreen
 import com.rodrigmatrix.weatheryou.presentation.settings.SettingsScreen
-import com.rodrigmatrix.weatheryou.presentation.utils.PreviewWeatherLocation
 
 @Composable
 fun WeatherYouNavHost(navHostController: NavHostController) {
-    var weather: WeatherLocation by remember {
-        mutableStateOf(PreviewWeatherLocation)
+    var weather: WeatherLocation? by remember {
+        mutableStateOf(null)
     }
     NavHost(
         navHostController,

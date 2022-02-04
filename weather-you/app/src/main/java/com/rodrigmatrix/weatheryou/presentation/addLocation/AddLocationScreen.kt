@@ -1,21 +1,30 @@
 package com.rodrigmatrix.weatheryou.presentation.addLocation
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusOrder
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.rodrigmatrix.weatheryou.R
+import com.rodrigmatrix.weatheryou.core.compose.LaunchViewEffect
 import com.rodrigmatrix.weatheryou.presentation.components.SearchBar
 import org.koin.androidx.compose.getViewModel
-import com.rodrigmatrix.weatheryou.R
 
 @Composable
 fun AddLocationScreen(
@@ -23,13 +32,14 @@ fun AddLocationScreen(
     viewModel: AddLocationViewModel = getViewModel()
 ) {
     val viewState by viewModel.viewState.collectAsState()
-    val viewEffect by viewModel.viewEffect.collectAsState(null)
-    when (viewEffect) {
-        AddLocationViewEffect.LocationAdded -> {
-            navController.navigateUp()
-        }
-        is AddLocationViewEffect.ShowError -> {
-
+    LaunchViewEffect(viewModel) { viewEffect ->
+        when (viewEffect) {
+            AddLocationViewEffect.LocationAdded -> {
+                navController.navigateUp()
+            }
+            is AddLocationViewEffect.ShowError -> {
+                viewEffect.string
+            }
         }
     }
     AddLocationScreen(
@@ -50,6 +60,7 @@ fun AddLocationScreen(
     )
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun AddLocationScreen(
     viewState: AddLocationViewState,
@@ -61,7 +72,9 @@ fun AddLocationScreen(
         SearchBar(
             query = viewState.searchText,
             onQueryChange  = onQueryChanged,
-            onSearchFocusChange = {},
+            onSearchFocusChange = {
+
+            },
             onClearQuery = onClearQuery,
             searching = viewState.isLoading,
             Modifier.padding(bottom = 40.dp)
@@ -77,7 +90,8 @@ fun AddLocationScreen(
         }
         LocationSelectList(
             viewState.locationsList,
-            onLocationClick
+            onLocationClick,
+            Modifier.focusable()
         )
     }
 }
@@ -106,6 +120,7 @@ fun LocationItem(
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 32.dp, end = 32.dp, bottom = 10.dp)
+            .focusable()
             .clickable {
                 onLocationClick(location)
             }

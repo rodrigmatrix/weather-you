@@ -23,7 +23,7 @@ import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun WeatherDetailsScreen(
-    weatherLocation: WeatherLocation,
+    weatherLocation: WeatherLocation?,
     viewModel: WeatherDetailsViewModel = getViewModel()
 ) {
     val viewState by viewModel.viewState.collectAsState()

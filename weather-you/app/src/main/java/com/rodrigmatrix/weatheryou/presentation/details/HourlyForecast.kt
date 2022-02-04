@@ -1,10 +1,8 @@
 package com.rodrigmatrix.weatheryou.presentation.details
 
 import android.content.res.Configuration
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,6 +20,7 @@ import com.rodrigmatrix.weatheryou.domain.model.WeatherHour
 import com.rodrigmatrix.weatheryou.presentation.components.WeatherIcon
 import com.rodrigmatrix.weatheryou.presentation.components.WeatherYouDivider
 import com.rodrigmatrix.weatheryou.presentation.extensions.getHourString
+import com.rodrigmatrix.weatheryou.presentation.extensions.percentageString
 import com.rodrigmatrix.weatheryou.presentation.extensions.temperatureString
 import com.rodrigmatrix.weatheryou.presentation.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.presentation.utils.PreviewHourlyForecast
@@ -68,20 +67,37 @@ fun HourlyForecast(
 @Composable
 fun HourRow(hour: WeatherHour, isCurrentHour: Boolean) {
     Column(
-        Modifier.padding(
-            top = 10.dp,
-            bottom = 10.dp,
-            start = 16.dp,
-            end = 16.dp
-        )
+        Modifier
+            .padding(
+                top = 10.dp,
+                bottom = 10.dp,
+                start = 16.dp,
+                end = 16.dp
+            )
+            .focusable()
     ) {
         Text(
             text = hour.temperature.temperatureString(),
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .padding(bottom = 10.dp),
+                .padding(bottom = 4.dp),
             style = MaterialTheme.typography.bodySmall
         )
+        if (hour.precipitationType.isNotEmpty()) {
+            Text(
+                text = hour.precipitationProbability.percentageString(),
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(bottom = 4.dp),
+                style = MaterialTheme.typography.bodySmall
+            )
+        } else {
+            Spacer(
+                Modifier
+                    .padding(bottom = 4.dp)
+                    .height(16.dp)
+            )
+        }
         WeatherIcon(
             weatherIcon = hour.weatherIcon,
             modifier = Modifier

@@ -179,8 +179,8 @@ val PreviewHourlyForecast = listOf(
         ),
         dateTime = "Now",
         weatherCondition = "wd",
-        precipitationProbability = 0.0,
-        precipitationType = ""
+        precipitationProbability = 60.0,
+        precipitationType = "snow"
     ),
     WeatherHour(
         temperature = 9.0,
