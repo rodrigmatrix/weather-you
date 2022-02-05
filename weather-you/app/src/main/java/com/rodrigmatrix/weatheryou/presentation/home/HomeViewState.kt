@@ -6,6 +6,12 @@ import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 data class HomeViewState(
     val isLoading: Boolean = false,
     val locationsList: List<WeatherLocation> = emptyList(),
+    val selectedWeatherLocation: WeatherLocation? = null,
     val error: Throwable? = null,
     val deletePackageDialogVisible: Boolean = false
-): ViewState
+): ViewState {
+
+    fun isLocationSelected(): Boolean {
+        return selectedWeatherLocation != null
+    }
+}

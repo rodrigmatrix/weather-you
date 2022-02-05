@@ -29,6 +29,7 @@ import org.koin.androidx.compose.getViewModel
 fun WeatherDetailsScreen(
     weatherLocation: WeatherLocation?,
     onCloseClick: () -> Unit,
+    expandedScreen: Boolean,
     viewModel: WeatherDetailsViewModel = getViewModel()
 ) {
     val viewState by viewModel.viewState.collectAsState()

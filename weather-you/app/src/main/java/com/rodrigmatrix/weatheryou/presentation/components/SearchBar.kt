@@ -28,7 +28,8 @@ fun SearchBar(
     onSearchFocusChange: (Boolean) -> Unit,
     onClearQuery: () -> Unit,
     searching: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
 ) {
     Surface(
         color = MaterialTheme.colorScheme.secondaryContainer,
@@ -61,6 +62,7 @@ fun SearchBar(
                     textStyle = MaterialTheme.typography.bodyMedium
                         .copy(color = MaterialTheme.colorScheme.onSurface),
                     keyboardOptions = KeyboardOptions(KeyboardCapitalization.Words),
+                    keyboardActions = keyboardActions,
                     cursorBrush = SolidColor(MaterialTheme.colorScheme.onSurface),
                     singleLine = true,
                     modifier = Modifier

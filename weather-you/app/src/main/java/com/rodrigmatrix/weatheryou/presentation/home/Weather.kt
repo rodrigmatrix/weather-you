@@ -27,7 +27,7 @@ fun WeatherLocationList(
     weatherLocationList: List<WeatherLocation>,
     onItemClick: (WeatherLocation) -> Unit,
     onLongPress: (WeatherLocation) -> Unit,
-    contentPaddingValues: PaddingValues = PaddingValues(bottom = 200.dp)
+    contentPaddingValues: PaddingValues = PaddingValues()
 ) {
     LazyColumn(
         contentPadding = contentPaddingValues,

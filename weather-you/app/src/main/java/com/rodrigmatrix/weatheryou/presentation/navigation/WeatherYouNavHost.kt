@@ -1,41 +1,34 @@
 package com.rodrigmatrix.weatheryou.presentation.navigation
 
-import androidx.compose.runtime.*
-import androidx.navigation.NavHostController
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.presentation.about.AboutScreen
 import com.rodrigmatrix.weatheryou.presentation.addLocation.AddLocationScreen
-import com.rodrigmatrix.weatheryou.presentation.details.WeatherDetailsScreen
 import com.rodrigmatrix.weatheryou.presentation.home.HomeScreen
 import com.rodrigmatrix.weatheryou.presentation.settings.SettingsScreen
+import com.rodrigmatrix.weatheryou.presentation.utils.WeatherYouAppState
 
 @Composable
 fun WeatherHomeNavHost(
-    navController: NavHostController,
-    onWeatherLocationClick: (WeatherLocation) -> Unit,
+    appState: WeatherYouAppState,
+    bottomAppState: MutableState<Boolean>,
     onAddLocationClick: () -> Unit,
-    isExpandedScreen: Boolean,
-    weatherLocation: WeatherLocation?
+    isExpandedScreen: Boolean
 ) {
     NavHost(
-        navController,
+        appState.navController,
         startDestination = HomeEntry.Home.route
     ) {
         composable(HomeEntry.Home.route) {
             HomeScreen(
-                onItemClick = { onWeatherLocationClick(it) },
-                onAddLocation = onAddLocationClick,
-                showFab = isExpandedScreen.not()
-            )
-        }
-        composable(NavigationEntries.DETAILS_ROUTE) {
-            WeatherDetailsScreen(
-                weatherLocation,
+                bottomAppState,
                 onCloseClick = {
-                    navController.navigateUp()
-                }
+                    appState.navController.navigateUp()
+                },
+                onAddLocation = onAddLocationClick,
+                expandedScreen = isExpandedScreen
             )
         }
         composable(HomeEntry.Settings.route) {
@@ -45,7 +38,7 @@ fun WeatherHomeNavHost(
             AboutScreen()
         }
         composable(NavigationEntries.ADD_LOCATION_ROUTE) {
-            AddLocationScreen(navController)
+            AddLocationScreen(appState.navController)
         }
     }
 }

@@ -68,7 +68,7 @@ fun AddLocationScreen(
     onLocationClick: (String) -> Unit,
     onClearQuery: () -> Unit
 ) {
-    Column(Modifier.fillMaxSize()) {
+    Column(Modifier.fillMaxSize().focusable()) {
         SearchBar(
             query = viewState.searchText,
             onQueryChange  = onQueryChanged,
@@ -77,7 +77,12 @@ fun AddLocationScreen(
             },
             onClearQuery = onClearQuery,
             searching = viewState.isLoading,
-            Modifier.padding(bottom = 40.dp)
+            modifier = Modifier
+                .padding(bottom = 40.dp)
+                .focusable(),
+            keyboardActions = KeyboardActions(
+                onDone = { onLocationClick(viewState.searchText) }
+            )
         )
         if (viewState.locationsList.isNotEmpty()) {
             Text(
