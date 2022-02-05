@@ -26,10 +26,11 @@ import com.rodrigmatrix.weatheryou.presentation.utils.PreviewWeatherList
 fun WeatherLocationList(
     weatherLocationList: List<WeatherLocation>,
     onItemClick: (WeatherLocation) -> Unit,
-    onLongPress: (WeatherLocation) -> Unit
+    onLongPress: (WeatherLocation) -> Unit,
+    contentPaddingValues: PaddingValues = PaddingValues(bottom = 200.dp)
 ) {
     LazyColumn(
-        contentPadding = PaddingValues(bottom = 200.dp),
+        contentPadding = contentPaddingValues,
         modifier = Modifier.fillMaxHeight()
     ) {
         items(weatherLocationList) { item ->

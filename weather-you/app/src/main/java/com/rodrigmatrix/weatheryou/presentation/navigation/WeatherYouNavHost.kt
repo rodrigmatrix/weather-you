@@ -12,36 +12,40 @@ import com.rodrigmatrix.weatheryou.presentation.home.HomeScreen
 import com.rodrigmatrix.weatheryou.presentation.settings.SettingsScreen
 
 @Composable
-fun WeatherYouNavHost(navHostController: NavHostController) {
-    var weather: WeatherLocation? by remember {
-        mutableStateOf(null)
-    }
+fun WeatherHomeNavHost(
+    navController: NavHostController,
+    onWeatherLocationClick: (WeatherLocation) -> Unit,
+    onAddLocationClick: () -> Unit,
+    isExpandedScreen: Boolean,
+    weatherLocation: WeatherLocation?
+) {
     NavHost(
-        navHostController,
-        startDestination = HomeEntries.Home.route
+        navController,
+        startDestination = HomeEntry.Home.route
     ) {
-        composable(HomeEntries.Home.route) {
+        composable(HomeEntry.Home.route) {
             HomeScreen(
-                onItemClick = {
-                    weather = it
-                    navHostController.navigate(NavigationEntries.DETAILS_ROUTE)
-                },
-                onAddLocation = {
-                    navHostController.navigate(NavigationEntries.ADD_LOCATION_ROUTE)
-                }
+                onItemClick = { onWeatherLocationClick(it) },
+                onAddLocation = onAddLocationClick,
+                showFab = isExpandedScreen.not()
             )
         }
         composable(NavigationEntries.DETAILS_ROUTE) {
-            WeatherDetailsScreen(weather)
+            WeatherDetailsScreen(
+                weatherLocation,
+                onCloseClick = {
+                    navController.navigateUp()
+                }
+            )
         }
-        composable(HomeEntries.Settings.route) {
+        composable(HomeEntry.Settings.route) {
             SettingsScreen()
         }
-        composable(HomeEntries.About.route) {
+        composable(HomeEntry.About.route) {
             AboutScreen()
         }
         composable(NavigationEntries.ADD_LOCATION_ROUTE) {
-            AddLocationScreen(navHostController)
+            AddLocationScreen(navController)
         }
     }
 }

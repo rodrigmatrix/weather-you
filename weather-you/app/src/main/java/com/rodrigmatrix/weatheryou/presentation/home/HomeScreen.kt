@@ -1,15 +1,11 @@
 package com.rodrigmatrix.weatheryou.presentation.home
 
 import android.content.res.Configuration
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.Icon
-import androidx.compose.material3.LargeFloatingActionButton
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -31,6 +27,7 @@ import org.koin.androidx.compose.getViewModel
 fun HomeScreen(
     onItemClick: (WeatherLocation) -> Unit,
     onAddLocation: () -> Unit,
+    showFab: Boolean,
     viewModel: HomeViewModel = getViewModel()
 ) {
     val viewState by viewModel.viewState.collectAsState()
@@ -39,51 +36,57 @@ fun HomeScreen(
         viewState = viewState,
         onItemClick = onItemClick,
         onSwipeRefresh = viewModel::loadLocations,
-        onAddLocation = onAddLocation
+        onAddLocation = onAddLocation,
+        showFab = showFab
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     viewState: HomeViewState,
     onItemClick: (WeatherLocation) -> Unit,
     onSwipeRefresh: () -> Unit,
-    onAddLocation: () -> Unit
+    onAddLocation: () -> Unit,
+    showFab: Boolean
 ) {
     SwipeRefresh(
         state = rememberSwipeRefreshState(viewState.isLoading),
         onRefresh = onSwipeRefresh,
         swipeEnabled = viewState.locationsList.isNotEmpty()
     ) {
-        BoxWithConstraints(
-            modifier = Modifier
-                .fillMaxSize()
+        Scaffold(
+            floatingActionButton = {
+                if (showFab) {
+                    LargeFloatingActionButton(
+                        onClick = onAddLocation,
+                        modifier = Modifier.padding(bottom = 80.dp),
+                        shape = RoundedCornerShape(100)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Add,
+                            modifier = Modifier.size(24.dp),
+                            contentDescription = stringResource(R.string.add_location)
+                        )
+                    }
+                }
+            },
+            floatingActionButtonPosition = FabPosition.Center,
         ) {
             when {
                 viewState.isLoading.not() && viewState.locationsList.isEmpty() -> {
 
                 }
-
                 else -> {
                     WeatherLocationList(
                         viewState.locationsList,
                         onItemClick,
-                        onItemClick
+                        onItemClick,
+                        contentPaddingValues = PaddingValues(
+                            bottom = if (showFab) 200.dp else 0.dp
+                        )
                     )
                 }
-            }
-            LargeFloatingActionButton(
-                onClick = onAddLocation,
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(bottom = 100.dp),
-                shape = RoundedCornerShape(100)
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Add,
-                    modifier = Modifier.size(24.dp),
-                    contentDescription = stringResource(R.string.add_location)
-                )
             }
         }
     }
@@ -100,7 +103,8 @@ fun HomeScreenPreview() {
             viewState = HomeViewState(locationsList = PreviewWeatherList),
             { },
             { },
-            { }
+            { },
+            showFab = false
         )
     }
 }

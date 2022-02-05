@@ -41,10 +41,6 @@ android {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
-        debug {
-            minifyEnabled = true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -94,6 +90,7 @@ dependencies {
     implementation "joda-time:joda-time:2.10.13"
 
     implementation "androidx.room:room-runtime:2.4.1"
+    implementation 'androidx.window:window:1.0.0'
     kapt("androidx.room:room-compiler:2.4.1")
     implementation "androidx.room:room-ktx:2.4.1"
 

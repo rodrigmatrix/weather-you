@@ -3,9 +3,8 @@ package com.rodrigmatrix.weatheryou.presentation.navigation
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.rodrigmatrix.weatheryou.R
-import kotlin.reflect.KClass
 
-enum class HomeEntries(
+enum class HomeEntry(
     val route: String,
     @DrawableRes val icon: Int,
     @StringRes val stringRes: Int
@@ -15,5 +14,5 @@ enum class HomeEntries(
     About("about", R.drawable.ic_info, R.string.about)
 }
 
-val Array<HomeEntries>.routes
+val Array<HomeEntry>.routes
     get() = this.map { it.route }
