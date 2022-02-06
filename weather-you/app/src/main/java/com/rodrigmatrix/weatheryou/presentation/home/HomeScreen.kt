@@ -251,12 +251,14 @@ fun WeatherLocationsEmptyState() {
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun RequestLocationPermission(
-    locationPermissionState: PermissionState = rememberPermissionState(ACCESS_COARSE_LOCATION),
+    permissionState: PermissionState = rememberPermissionState(ACCESS_COARSE_LOCATION),
     onLocationPermissionChanged: () -> Unit
 ) {
-    PermissionRequired(
-        permissionState = locationPermissionState,
-        permissionNotGrantedContent = {
+    when {
+        permissionState.hasPermission -> {
+            onLocationPermissionChanged()
+        }
+        else -> {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
@@ -285,16 +287,11 @@ fun RequestLocationPermission(
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(16.dp)
                 )
-                Button(onClick = { locationPermissionState.launchPermissionRequest() }) {
+                Button(onClick = { permissionState.launchPermissionRequest() }) {
                     Text(stringResource(R.string.grant_location_permission))
                 }
             }
-        },
-        permissionNotAvailableContent = {
-            onLocationPermissionChanged()
         }
-    ) {
-        onLocationPermissionChanged()
     }
 }
 
