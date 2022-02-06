@@ -1,11 +1,6 @@
 package com.rodrigmatrix.weatheryou.data.repository
 
-import android.annotation.SuppressLint
-import android.location.Geocoder
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import com.rodrigmatrix.weatheryou.data.local.WeatherLocalDataSource
-import com.rodrigmatrix.weatheryou.data.local.model.WeatherLocationEntity
 import com.rodrigmatrix.weatheryou.data.mapper.VisualCrossingLocalMapper
 import com.rodrigmatrix.weatheryou.data.mapper.VisualCrossingRemoteMapper
 import com.rodrigmatrix.weatheryou.data.model.VisualCrossingUnits
@@ -13,7 +8,10 @@ import com.rodrigmatrix.weatheryou.data.remote.VisualCrossingRemoteDataSource
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.domain.repository.WeatherRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import java.util.*
 
 class WeatherRepositoryImpl(
@@ -40,7 +38,6 @@ class WeatherRepositoryImpl(
         ).map(visualCrossingRemoteMapper::map)
     }
 
-    @SuppressLint("MissingPermission")
     override fun fetchLocationsList(): Flow<List<WeatherLocation>> {
         return weatherLocalDataSource
             .getAllLocations()

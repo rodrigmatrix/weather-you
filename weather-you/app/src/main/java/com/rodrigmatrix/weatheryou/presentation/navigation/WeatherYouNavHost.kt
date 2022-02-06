@@ -26,9 +26,6 @@ fun WeatherHomeNavHost(
         composable(HomeEntry.Home.route) {
             HomeScreen(
                 bottomAppState,
-                onCloseClick = {
-                    appState.navController.navigateUp()
-                },
                 onAddLocation = onAddLocationClick,
                 expandedScreen = isExpandedScreen
             )

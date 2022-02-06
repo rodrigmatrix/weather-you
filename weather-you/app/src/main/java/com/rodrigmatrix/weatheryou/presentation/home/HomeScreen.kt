@@ -12,7 +12,9 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.rememberScrollableState
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Place
@@ -51,19 +53,14 @@ import org.koin.androidx.compose.getViewModel
 fun HomeScreen(
     bottomAppState: MutableState<Boolean>,
     onAddLocation: () -> Unit,
-    onCloseClick: () -> Unit,
     expandedScreen: Boolean,
     viewModel: HomeViewModel = getViewModel(),
     locationPermissionState: PermissionState = rememberPermissionState(ACCESS_COARSE_LOCATION)
 ) {
     val viewState by viewModel.viewState.collectAsState()
     bottomAppState.value = viewState.isLocationSelected().not()
-    BackHandler {
-        if (viewState.isLocationSelected().not()) {
-            onCloseClick()
-        } else {
-            viewModel.selectLocation(null)
-        }
+    BackHandler(enabled = viewState.isLocationSelected()) {
+        viewModel.selectLocation(null)
     }
     when {
         viewState.showLocationPermissionRequest(locationPermissionState) -> {
@@ -265,6 +262,7 @@ fun RequestLocationPermission(
                 verticalArrangement = Arrangement.Center,
                 modifier = Modifier
                     .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
                     .padding(start = 16.dp, end = 16.dp, bottom = 200.dp)
             ) {
                 Image(
