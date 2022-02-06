@@ -5,7 +5,7 @@
     <string name="low_lowercase_x">L%s</string>
     <string name="day_x">Day %s</string>
     <string name="night_x">Night %s</string>
-    <string name="next_x_days_forecast">Next %d days forecast</string>
+    <string name="next_x_days_forecast">Next %d Days Forecast</string>
     <string name="daily_forecast">Daily Forecast</string>
     <string name="now">Now</string>
     <string name="today">Today</string>
@@ -14,7 +14,7 @@
     <string name="wind_x">Wind: %s</string>
     <string name="humidity_x">Humidity: %s</string>
     <string name="sunrise_sunset_x_y">Sunrise/sunset: %s/%s</string>
-    <string name="empty_locations">Empty locations</string>
+    <string name="empty_locations">No locations found</string>
     <string name="home">Home</string>
     <string name="details">Details</string>
     <string name="settings">Settings</string>
@@ -33,5 +33,7 @@
     <string name="location_image">Location image</string>
     <string name="grant_location_permission">Grant location permission</string>
     <string name="enable_location">Enable location permission.</string>
-    <string name="enable_location_description">We need your permission acess your current location. You can add other other locations on the plus button.</string>
+    <string name="enable_location_description">We need your permission access your current location. You can add other locations on the add button.</string>
+    <string name="tomorrow">Tomorrow</string>
+    <string name="add_location_description">You can add a new location on the add location button.</string>
 </resources>

@@ -2,7 +2,6 @@ package com.rodrigmatrix.weatheryou.presentation.home
 
 import android.content.res.Configuration
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -14,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
@@ -70,7 +70,7 @@ fun WeatherLocation(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.padding(top = 10.dp, bottom = 10.dp)
         ) {
-            Column {
+            Column(Modifier.weight(1f)) {
                 Text(
                     text = weatherLocation.currentWeather.temperatureString(),
                     style = MaterialTheme.typography.headlineLarge,
@@ -84,14 +84,16 @@ fun WeatherLocation(
                 Text(
                     text = weatherLocation.name,
                     style = MaterialTheme.typography.headlineMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.padding(start = 16.dp, end = 16.dp)
                 )
             }
             WeatherIcon(
-                weatherIcon = weatherLocation.weatherIcon,
+                weatherIcons = weatherLocation.weatherIcons,
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
-                    .padding(start = 16.dp, end = 16.dp)
+                    .padding(start = 8.dp, end = 8.dp)
                     .size(64.dp)
             )
         }

@@ -3,7 +3,7 @@ package com.rodrigmatrix.weatheryou.presentation.utils
 import com.rodrigmatrix.weatheryou.R
 import com.rodrigmatrix.weatheryou.domain.model.WeatherDay
 import com.rodrigmatrix.weatheryou.domain.model.WeatherHour
-import com.rodrigmatrix.weatheryou.domain.model.WeatherIcon
+import com.rodrigmatrix.weatheryou.domain.model.WeatherIcons
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 
 val PreviewWeatherLocation = WeatherLocation(
@@ -13,7 +13,7 @@ val PreviewWeatherLocation = WeatherLocation(
     maxTemperature = 10.0,
     lowestTemperature = 0.0,
     currentWeatherDescription = "Snow",
-    weatherIcon = WeatherIcon(
+    weatherIcons = WeatherIcons(
         animatedIcon = 0,
         staticIcon = R.drawable.ic_weather_partly_shower
     ),
@@ -31,7 +31,7 @@ val PreviewWeatherList = listOf(
         maxTemperature = 10.0,
         lowestTemperature = 0.0,
         currentWeatherDescription = "Snow",
-        weatherIcon = WeatherIcon(
+        weatherIcons = WeatherIcons(
             animatedIcon = 0,
             staticIcon = R.drawable.ic_weather_partly_shower
         ),
@@ -47,7 +47,7 @@ val PreviewWeatherList = listOf(
         maxTemperature = 10.0,
         lowestTemperature = 0.0,
         currentWeatherDescription = "Snow",
-        weatherIcon = WeatherIcon(
+        weatherIcons = WeatherIcons(
             animatedIcon = 0,
             staticIcon = R.drawable.ic_weather_snow
         ),
@@ -63,7 +63,7 @@ val PreviewWeatherList = listOf(
         maxTemperature = 10.0,
         lowestTemperature = 0.0,
         currentWeatherDescription = "Snow",
-        weatherIcon = WeatherIcon(
+        weatherIcons = WeatherIcons(
             animatedIcon = 0,
             staticIcon = R.drawable.ic_weather_storm
         ),
@@ -79,7 +79,7 @@ val PreviewWeatherList = listOf(
         maxTemperature = 10.0,
         lowestTemperature = 0.0,
         currentWeatherDescription = "Snow",
-        weatherIcon = WeatherIcon(
+        weatherIcons = WeatherIcons(
             animatedIcon = 0,
             staticIcon = R.drawable.ic_weather_rainynight
         ),
@@ -95,7 +95,7 @@ val PreviewWeatherList = listOf(
         maxTemperature = 10.0,
         lowestTemperature = 0.0,
         currentWeatherDescription = "Snow",
-        weatherIcon = WeatherIcon(
+        weatherIcons = WeatherIcons(
             animatedIcon = 0,
             staticIcon = R.drawable.ic_weather_partly_shower
         ),
@@ -111,7 +111,7 @@ val PreviewWeatherList = listOf(
         maxTemperature = 10.0,
         lowestTemperature = 0.0,
         currentWeatherDescription = "Snow",
-        weatherIcon = WeatherIcon(
+        weatherIcons = WeatherIcons(
             animatedIcon = 0,
             staticIcon = R.drawable.ic_weather_night
         ),
@@ -127,7 +127,7 @@ val PreviewWeatherList = listOf(
         maxTemperature = 10.0,
         lowestTemperature = 0.0,
         currentWeatherDescription = "Snow",
-        weatherIcon = WeatherIcon(
+        weatherIcons = WeatherIcons(
             animatedIcon = 0,
             staticIcon = R.drawable.ic_weather_stormshowersday
         ),
@@ -143,7 +143,7 @@ val PreviewWeatherList = listOf(
         maxTemperature = 10.0,
         lowestTemperature = 0.0,
         currentWeatherDescription = "Snow",
-        weatherIcon = WeatherIcon(
+        weatherIcons = WeatherIcons(
             animatedIcon = 0,
             staticIcon = R.drawable.ic_weather_snow_sunny
         ),
@@ -159,7 +159,7 @@ val PreviewWeatherList = listOf(
         maxTemperature = 10.0,
         lowestTemperature = 0.0,
         currentWeatherDescription = "Snow",
-        weatherIcon = WeatherIcon(
+        weatherIcons = WeatherIcons(
             animatedIcon = 0,
             staticIcon = R.drawable.ic_weather_snow
         ),
@@ -173,7 +173,7 @@ val PreviewWeatherList = listOf(
 val PreviewHourlyForecast = listOf(
     WeatherHour(
         temperature = 1.0,
-        weatherIcon = WeatherIcon(
+        weatherIcons = WeatherIcons(
             animatedIcon = 0,
             staticIcon = R.drawable.ic_weather_snow_sunny
         ),
@@ -184,7 +184,7 @@ val PreviewHourlyForecast = listOf(
     ),
     WeatherHour(
         temperature = 9.0,
-        weatherIcon = WeatherIcon(
+        weatherIcons = WeatherIcons(
             animatedIcon = 0,
             staticIcon = R.drawable.ic_weather_night
         ),
@@ -195,7 +195,7 @@ val PreviewHourlyForecast = listOf(
     ),
     WeatherHour(
         temperature = 9.0,
-        weatherIcon = WeatherIcon(
+        weatherIcons = WeatherIcons(
             animatedIcon = 0,
             staticIcon = R.drawable.ic_weather_snow
         ),
@@ -206,7 +206,7 @@ val PreviewHourlyForecast = listOf(
     ),
     WeatherHour(
         temperature = 8.0,
-        weatherIcon = WeatherIcon(
+        weatherIcons = WeatherIcons(
             animatedIcon = 0,
             staticIcon = R.drawable.ic_weather_partly_shower
         ),
@@ -217,7 +217,7 @@ val PreviewHourlyForecast = listOf(
     ),
     WeatherHour(
         temperature = 6.0,
-        weatherIcon = WeatherIcon(
+        weatherIcons = WeatherIcons(
             animatedIcon = 0,
             staticIcon = R.drawable.ic_weather_partly_shower
         ),
@@ -228,7 +228,7 @@ val PreviewHourlyForecast = listOf(
     ),
     WeatherHour(
         temperature = 6.0,
-        weatherIcon = WeatherIcon(
+        weatherIcons = WeatherIcons(
             animatedIcon = 0,
             staticIcon = R.drawable.ic_weather_cloudynight
         ),
@@ -239,7 +239,7 @@ val PreviewHourlyForecast = listOf(
     ),
     WeatherHour(
         temperature = 5.0,
-        weatherIcon = WeatherIcon(
+        weatherIcons = WeatherIcons(
             animatedIcon = 0,
             staticIcon = R.drawable.ic_weather_rainynight
         ),
@@ -250,7 +250,7 @@ val PreviewHourlyForecast = listOf(
     ),
     WeatherHour(
         temperature = 2.0,
-        weatherIcon = WeatherIcon(
+        weatherIcons = WeatherIcons(
             animatedIcon = 0,
             staticIcon = R.drawable.ic_weather_thunder
         ),
@@ -268,7 +268,7 @@ val PreviewFutureDaysForecast = listOf(
         temperature = 10.0,
         maxTemperature = 14.0,
         minTemperature = 1.0,
-        weatherIcon = WeatherIcon(
+        weatherIcons = WeatherIcons(
             animatedIcon = 0,
             staticIcon = R.drawable.ic_weather_storm
         ),
@@ -286,7 +286,7 @@ val PreviewFutureDaysForecast = listOf(
         temperature = 10.0,
         maxTemperature = 14.0,
         minTemperature = 1.0,
-        weatherIcon = WeatherIcon(
+        weatherIcons = WeatherIcons(
             animatedIcon = 0,
             staticIcon = R.drawable.ic_weather_mist
         ),
@@ -304,7 +304,7 @@ val PreviewFutureDaysForecast = listOf(
         temperature = 10.0,
         maxTemperature = 14.0,
         minTemperature = 1.0,
-        weatherIcon = WeatherIcon(
+        weatherIcons = WeatherIcons(
             animatedIcon = 0,
             staticIcon = R.drawable.ic_weather_snow_sunny
         ),
@@ -322,7 +322,7 @@ val PreviewFutureDaysForecast = listOf(
         temperature = 10.0,
         maxTemperature = 14.0,
         minTemperature = 1.0,
-        weatherIcon = WeatherIcon(
+        weatherIcons = WeatherIcons(
             animatedIcon = 0,
             staticIcon = R.drawable.ic_weather_windy
         ),
@@ -340,7 +340,7 @@ val PreviewFutureDaysForecast = listOf(
         temperature = 10.0,
         maxTemperature = 14.0,
         minTemperature = 1.0,
-        weatherIcon = WeatherIcon(
+        weatherIcons = WeatherIcons(
             animatedIcon = 0,
             staticIcon = R.drawable.ic_weather_snow
         ),
@@ -358,7 +358,7 @@ val PreviewFutureDaysForecast = listOf(
         temperature = 10.0,
         maxTemperature = 14.0,
         minTemperature = 1.0,
-        weatherIcon = WeatherIcon(
+        weatherIcons = WeatherIcons(
             animatedIcon = 0,
             staticIcon = R.drawable.ic_weather_snow
         ),
@@ -376,7 +376,7 @@ val PreviewFutureDaysForecast = listOf(
         temperature = 10.0,
         maxTemperature = 14.0,
         minTemperature = 1.0,
-        weatherIcon = WeatherIcon(
+        weatherIcons = WeatherIcons(
             animatedIcon = 0,
             staticIcon = R.drawable.ic_weather_snow
         ),

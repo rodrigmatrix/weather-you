@@ -2,15 +2,12 @@ package com.rodrigmatrix.weatheryou.presentation.home
 
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.content.res.Configuration
-import android.os.Bundle
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.*
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.gestures.rememberScrollableState
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -31,21 +28,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.navigation.NavigatorState
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.PermissionRequired
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.rodrigmatrix.weatheryou.R
+import com.rodrigmatrix.weatheryou.domain.model.WeatherIcons
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
+import com.rodrigmatrix.weatheryou.presentation.components.WeatherIcon
 import com.rodrigmatrix.weatheryou.presentation.details.WeatherDetailsScreen
 import com.rodrigmatrix.weatheryou.presentation.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.presentation.utils.PreviewWeatherList
-import com.rodrigmatrix.weatheryou.presentation.utils.PreviewWeatherLocation
-import com.rodrigmatrix.weatheryou.presentation.utils.WeatherYouAppState
 import org.koin.androidx.compose.getViewModel
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
@@ -55,7 +49,7 @@ fun HomeScreen(
     onAddLocation: () -> Unit,
     expandedScreen: Boolean,
     viewModel: HomeViewModel = getViewModel(),
-    locationPermissionState: PermissionState = rememberPermissionState(ACCESS_COARSE_LOCATION)
+    locationPermissionState: PermissionState
 ) {
     val viewState by viewModel.viewState.collectAsState()
     bottomAppState.value = viewState.isLocationSelected().not()
@@ -214,7 +208,7 @@ fun HomeScreenWithLocation(
     onCloseClick: () -> Unit
 ) {
     val detailsWeight: Float by animateFloatAsState(
-        targetValue = if (viewState.selectedWeatherLocation != null) 1F else 0.1F,
+        targetValue = if (viewState.isLocationSelected()) 1F else 0.1F,
         animationSpec = tween(
             durationMillis = 300,
             easing = LinearOutSlowInEasing
@@ -229,7 +223,7 @@ fun HomeScreenWithLocation(
                 onDeleteLocation
             )
         }
-        if (viewState.selectedWeatherLocation != null) {
+        if (viewState.isLocationSelected()) {
             Column(Modifier.weight(detailsWeight)) {
                 WeatherDetailsScreen(
                     weatherLocation = viewState.selectedWeatherLocation,
@@ -243,8 +237,35 @@ fun HomeScreenWithLocation(
 
 @Composable
 fun WeatherLocationsEmptyState() {
-    Column(Modifier.fillMaxSize()) {
-        Text(text = stringResource(R.string.empty_locations))
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(start = 16.dp, end = 16.dp, bottom = 200.dp)
+    ) {
+        WeatherIcon(
+            weatherIcons = WeatherIcons(
+                R.raw.weather_cloudynight,
+                R.drawable.ic_weather_cloudynight
+            ),
+            modifier = Modifier
+                .size(120.dp)
+                .padding(10.dp)
+        )
+        Text(
+            text = stringResource(R.string.empty_locations),
+            style = MaterialTheme.typography.headlineSmall,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(10.dp)
+        )
+        Text(
+            text = stringResource(R.string.add_location_description),
+            style = MaterialTheme.typography.titleSmall,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(16.dp)
+        )
     }
 }
 
@@ -319,7 +340,6 @@ fun HomeScreenWithLocationPreview() {
         HomeScreenWithLocation(
             viewState = HomeViewState(
                 locationsList = PreviewWeatherList,
-                selectedWeatherLocation = PreviewWeatherLocation,
             ),
             { },
             { },

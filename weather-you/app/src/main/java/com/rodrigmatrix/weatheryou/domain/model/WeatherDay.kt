@@ -6,7 +6,7 @@ data class WeatherDay(
     val temperature: Double,
     val maxTemperature: Double,
     val minTemperature: Double,
-    val weatherIcon: WeatherIcon,
+    val weatherIcons: WeatherIcons,
     val hours: List<WeatherHour>,
     val precipitationProbability: Double,
     val precipitationType: String,

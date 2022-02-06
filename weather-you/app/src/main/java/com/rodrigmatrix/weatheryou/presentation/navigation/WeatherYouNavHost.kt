@@ -1,10 +1,12 @@
 package com.rodrigmatrix.weatheryou.presentation.navigation
 
+import android.Manifest
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberPermissionState
 import com.rodrigmatrix.weatheryou.presentation.about.AboutScreen
 import com.rodrigmatrix.weatheryou.presentation.addLocation.AddLocationScreen
 import com.rodrigmatrix.weatheryou.presentation.home.HomeScreen
@@ -19,6 +21,7 @@ fun WeatherHomeNavHost(
     onAddLocationClick: () -> Unit,
     isExpandedScreen: Boolean
 ) {
+    val location = rememberPermissionState(Manifest.permission.ACCESS_COARSE_LOCATION)
     NavHost(
         appState.navController,
         startDestination = HomeEntry.Home.route
@@ -27,7 +30,8 @@ fun WeatherHomeNavHost(
             HomeScreen(
                 bottomAppState,
                 onAddLocation = onAddLocationClick,
-                expandedScreen = isExpandedScreen
+                expandedScreen = isExpandedScreen,
+                locationPermissionState = location
             )
         }
         composable(HomeEntry.Settings.route) {

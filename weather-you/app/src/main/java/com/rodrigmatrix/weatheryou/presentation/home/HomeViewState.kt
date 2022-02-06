@@ -19,6 +19,9 @@ data class HomeViewState(
 
     @OptIn(ExperimentalPermissionsApi::class)
     fun showLocationPermissionRequest(permissionState: PermissionState): Boolean {
-        return permissionState.hasPermission.not() && locationsList.isEmpty() && isLoading.not()
+        return permissionState.hasPermission.not()
+                && permissionState.permissionRequested.not()
+                && locationsList.isEmpty()
+                && isLoading.not()
     }
 }

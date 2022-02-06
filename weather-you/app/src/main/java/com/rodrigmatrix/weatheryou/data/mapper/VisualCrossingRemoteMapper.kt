@@ -26,7 +26,7 @@ class VisualCrossingRemoteMapper(
             maxTemperature = source.days?.firstOrNull()?.tempmax ?: 0.0,
             lowestTemperature = source.days?.firstOrNull()?.tempmin ?: 0.0,
             feelsLike = source.currentConditions?.feelslike ?: 0.0,
-            weatherIcon = weatherIconMapper.map(source.currentConditions?.icon.orEmpty()),
+            weatherIcons = weatherIconMapper.map(source.currentConditions?.icon.orEmpty()),
             currentTime = source.timezone?.getCurrentTime().orEmpty(),
             days = source.days?.mapDaysList().orEmpty(),
             hours = source.getTodayHoursList(),
@@ -48,7 +48,7 @@ class VisualCrossingRemoteMapper(
                 temperature = it.temp ?: 0.0,
                 maxTemperature = it.tempmax ?: 0.0,
                 minTemperature = it.tempmin ?: 0.0,
-                weatherIcon = weatherIconMapper.map(it.icon.orEmpty()),
+                weatherIcons = weatherIconMapper.map(it.icon.orEmpty()),
                 hours = it.hours?.mapHoursList().orEmpty(),
                 precipitationProbability = it.precipprob ?: 0.0,
                 precipitationType = it.preciptype?.firstOrNull().orEmpty(),
@@ -66,7 +66,7 @@ class VisualCrossingRemoteMapper(
                 dateTime = it.datetime.orEmpty(),
                 weatherCondition = it.conditions.orEmpty(),
                 temperature = it.temp ?: 0.0,
-                weatherIcon = weatherIconMapper.map(it.icon.orEmpty()),
+                weatherIcons = weatherIconMapper.map(it.icon.orEmpty()),
                 precipitationProbability = it.precipprob ?: 0.0,
                 precipitationType = it.preciptype?.firstOrNull().orEmpty()
             )

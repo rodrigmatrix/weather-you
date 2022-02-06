@@ -1,5 +1,6 @@
 package com.rodrigmatrix.weatheryou.presentation.extensions
 
+import androidx.compose.ui.text.capitalize
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.joda.time.LocalTime
@@ -43,7 +44,7 @@ fun String.getHourWithMinutesString(): String {
 fun String.getDateWithMonth(): String {
     return try {
         val date = DateTime(this).toDate()
-        SimpleDateFormat("EEEE, MMM d", Locale.getDefault()).format(date)
+        SimpleDateFormat("EEEE, MMM dd", Locale.getDefault()).format(date)
     } catch (e: Exception) {
         this
     }

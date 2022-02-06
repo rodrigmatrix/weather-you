@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -44,7 +45,7 @@ fun CurrentWeather(
                     bottom = 10.dp
                 )
         ) {
-            Column {
+            Column(Modifier.weight(1f)) {
                 Row {
                     Text(
                         text = stringResource(
@@ -63,7 +64,9 @@ fun CurrentWeather(
                 }
                 Text(
                     text = weatherLocation.name,
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleMedium,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
                 )
                 Text(
                     text = weatherLocation.currentTime,
@@ -97,7 +100,7 @@ fun CurrentWeather(
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
                 WeatherIcon(
-                    weatherIcon = weatherLocation.weatherIcon,
+                    weatherIcons = weatherLocation.weatherIcons,
                     modifier = Modifier
                         .padding(bottom = 10.dp)
                         .size(100.dp)

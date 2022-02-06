@@ -99,7 +99,7 @@ fun HourRow(hour: WeatherHour, isCurrentHour: Boolean) {
             )
         }
         WeatherIcon(
-            weatherIcon = hour.weatherIcon,
+            weatherIcons = hour.weatherIcons,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(bottom = 10.dp)

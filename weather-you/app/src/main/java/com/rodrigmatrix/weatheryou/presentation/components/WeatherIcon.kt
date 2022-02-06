@@ -6,18 +6,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import com.airbnb.lottie.compose.*
-import com.rodrigmatrix.weatheryou.domain.model.WeatherIcon
+import com.rodrigmatrix.weatheryou.domain.model.WeatherIcons
 
 @Composable
 fun WeatherIcon(
-    weatherIcon: WeatherIcon,
+    weatherIcons: WeatherIcons,
     modifier: Modifier = Modifier,
     alwaysStatic: Boolean = false,
     contentDescription: String? = null
 ) {
-    if ((weatherIcon.animatedIcon != 0) && alwaysStatic.not()) {
+    if ((weatherIcons.animatedIcon != 0) && alwaysStatic.not()) {
         val composition by rememberLottieComposition(
-            LottieCompositionSpec.RawRes(weatherIcon.animatedIcon)
+            LottieCompositionSpec.RawRes(weatherIcons.animatedIcon)
         )
         val progress by animateLottieCompositionAsState(
             composition,
@@ -30,7 +30,7 @@ fun WeatherIcon(
         )
     } else {
         Image(
-            painter = painterResource(weatherIcon.staticIcon),
+            painter = painterResource(weatherIcons.staticIcon),
             contentDescription = contentDescription,
             modifier = modifier
         )

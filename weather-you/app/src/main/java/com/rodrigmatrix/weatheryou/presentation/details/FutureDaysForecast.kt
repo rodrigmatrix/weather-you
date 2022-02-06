@@ -30,6 +30,9 @@ import com.rodrigmatrix.weatheryou.presentation.extensions.*
 import com.rodrigmatrix.weatheryou.presentation.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.presentation.utils.PreviewFutureDaysForecast
 
+private const val TODAY_INDEX = 0
+private const val TOMORROW_INDEX = 1
+
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun FutureDaysForecast(
@@ -70,14 +73,14 @@ fun FutureDaysForecast(
                 )
             }
             futureDaysList.forEachIndexed { index, day ->
-                DayRow(day, index == 0)
+                DayRow(day, index)
             }
         }
     }
 }
 
 @Composable
-fun DayRow(day: WeatherDay, isToday: Boolean) {
+fun DayRow(day: WeatherDay, index: Int) {
     var isExpanded by rememberSaveable {
         mutableStateOf(false)
     }
@@ -101,10 +104,10 @@ fun DayRow(day: WeatherDay, isToday: Boolean) {
                 .align(Alignment.CenterVertically)
         ) {
             Text(
-                text = if (isToday) {
-                    stringResource(R.string.today)
-                } else {
-                    day.dateTime.getDateWithMonth()
+                text = when (index) {
+                    TODAY_INDEX -> stringResource(R.string.today)
+                    TOMORROW_INDEX -> stringResource(R.string.tomorrow)
+                    else -> day.dateTime.getDateWithMonth()
                 },
                 modifier = Modifier,
                 style = MaterialTheme.typography.bodyMedium
@@ -119,7 +122,7 @@ fun DayRow(day: WeatherDay, isToday: Boolean) {
         Row {
             Column {
                 WeatherIcon(
-                    weatherIcon = day.weatherIcon,
+                    weatherIcons = day.weatherIcons,
                     modifier = Modifier
                         .size(42.dp)
                 )
@@ -205,6 +208,7 @@ fun ExpandedCardContent(
 
 @Preview
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(name = "Brazil locale", locale = "pt_BR")
 @Composable
 fun FutureDaysForecastPreview() {
     WeatherYouTheme {
