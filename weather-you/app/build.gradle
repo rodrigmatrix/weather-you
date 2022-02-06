@@ -80,9 +80,13 @@ dependencies {
     implementation "com.google.accompanist:accompanist-navigation-animation:0.16.1"
     implementation "com.google.accompanist:accompanist-flowlayout:0.24.0-alpha"
     implementation "com.google.accompanist:accompanist-swiperefresh:0.17.0"
+    implementation "com.google.accompanist:accompanist-permissions:0.24.0-alpha"
 
     implementation "io.insert-koin:koin-android:3.1.2"
     implementation "io.insert-koin:koin-androidx-compose:3.1.2"
+
+    implementation 'androidx.window:window:1.0.0'
+    implementation 'com.google.android.gms:play-services-location:19.0.1'
 
     implementation "com.squareup.retrofit2:retrofit:2.9.0"
     implementation "com.squareup.okhttp3:okhttp:4.9.3"
@@ -95,7 +99,7 @@ dependencies {
     implementation "joda-time:joda-time:2.10.13"
 
     implementation "androidx.room:room-runtime:2.4.1"
-    implementation 'androidx.window:window:1.0.0'
+
     kapt("androidx.room:room-compiler:2.4.1")
     implementation "androidx.room:room-ktx:2.4.1"
 

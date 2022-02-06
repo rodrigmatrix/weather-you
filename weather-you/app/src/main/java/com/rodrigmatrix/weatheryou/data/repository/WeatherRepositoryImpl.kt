@@ -1,5 +1,9 @@
 package com.rodrigmatrix.weatheryou.data.repository
 
+import android.content.Context.LOCATION_SERVICE
+import android.location.LocationManager
+import androidx.core.content.ContextCompat.getSystemService
+import com.google.android.gms.location.LocationServices
 import com.rodrigmatrix.weatheryou.data.local.WeatherLocalDataSource
 import com.rodrigmatrix.weatheryou.data.mapper.VisualCrossingLocalMapper
 import com.rodrigmatrix.weatheryou.data.mapper.VisualCrossingRemoteMapper

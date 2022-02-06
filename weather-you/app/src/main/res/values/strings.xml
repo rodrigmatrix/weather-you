@@ -30,4 +30,8 @@
     <string name="back">Back button</string>
     <string name="image_of_developer">Image of the developer of the app</string>
     <string name="click_to_add">Click to add</string>
+    <string name="location_image">Location image</string>
+    <string name="grant_location_permission">Grant location permission</string>
+    <string name="enable_location">Enable location permission.</string>
+    <string name="enable_location_description">We need your permission acess your current location. You can add other other locations on the plus button.</string>
 </resources>

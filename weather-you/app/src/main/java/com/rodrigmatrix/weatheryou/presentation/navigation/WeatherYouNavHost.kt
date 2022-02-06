@@ -4,12 +4,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.rodrigmatrix.weatheryou.presentation.about.AboutScreen
 import com.rodrigmatrix.weatheryou.presentation.addLocation.AddLocationScreen
 import com.rodrigmatrix.weatheryou.presentation.home.HomeScreen
 import com.rodrigmatrix.weatheryou.presentation.settings.SettingsScreen
 import com.rodrigmatrix.weatheryou.presentation.utils.WeatherYouAppState
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun WeatherHomeNavHost(
     appState: WeatherYouAppState,
