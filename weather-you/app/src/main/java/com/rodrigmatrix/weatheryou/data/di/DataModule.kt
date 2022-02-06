@@ -1,7 +1,11 @@
 package com.rodrigmatrix.weatheryou.data.di
 
+import android.location.Geocoder
+import com.google.android.gms.location.LocationServices
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.rodrigmatrix.weatheryou.BuildConfig
+import com.rodrigmatrix.weatheryou.data.local.UserLocationDataSource
+import com.rodrigmatrix.weatheryou.data.local.UserLocationDataSourceImpl
 import com.rodrigmatrix.weatheryou.data.local.WeatherLocalDataSource
 import com.rodrigmatrix.weatheryou.data.local.WeatherLocalDataSourceImpl
 import com.rodrigmatrix.weatheryou.data.local.database.WeatherDatabase
@@ -19,8 +23,10 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import org.koin.android.ext.koin.androidApplication
+import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.Module
 import org.koin.dsl.module
+import java.util.*
 
 val dataModule: List<Module>
     get() = useCaseModule + repositoryModule + dataSourceModule + otherModules
@@ -44,7 +50,8 @@ private val repositoryModule = module {
 
 private val dataSourceModule = module {
     factory<VisualCrossingRemoteDataSource> { VisualCrossingRemoteDataSourceImpl(get()) }
-    factory<WeatherLocalDataSource> { WeatherLocalDataSourceImpl(get()) }
+    factory<WeatherLocalDataSource> { WeatherLocalDataSourceImpl(get(), get()) }
+    factory<UserLocationDataSource> { UserLocationDataSourceImpl(get(), get()) }
 }
 
 @OptIn(ExperimentalSerializationApi::class)
@@ -67,4 +74,6 @@ private val otherModules = module {
     }
     single { RetrofitServiceGenerator(retrofit = get()) }
     factory { get<RetrofitServiceGenerator>().createService(VisualCrossingService::class.java) }
+    single { LocationServices.getFusedLocationProviderClient(androidContext()) }
+    factory { Geocoder(androidContext(), Locale.getDefault()) }
 }

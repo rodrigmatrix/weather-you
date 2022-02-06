@@ -74,7 +74,7 @@ fun HomeScreen(
                 RequestLocationPermission(
                     locationPermissionState,
                     onLocationPermissionChanged = {
-
+                        viewModel.loadLocations()
                     }
                 )
             }
