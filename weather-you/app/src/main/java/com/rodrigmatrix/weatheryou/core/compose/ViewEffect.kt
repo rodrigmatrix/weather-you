@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.onEach
 @Composable
 fun<S: ViewState, E: ViewEffect> LaunchViewEffect(
     viewModel: ViewModel<S, E>,
-    onEffect: (viewEffect: E) -> Unit
+    onEffect: suspend (viewEffect: E) -> Unit
 ) {
     LaunchedEffect(viewModel) {
         viewModel.viewEffect.onEach { viewEffect ->

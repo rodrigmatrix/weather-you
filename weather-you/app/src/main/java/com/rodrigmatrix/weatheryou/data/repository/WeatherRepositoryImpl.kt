@@ -8,10 +8,7 @@ import com.rodrigmatrix.weatheryou.data.remote.VisualCrossingRemoteDataSource
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.domain.repository.WeatherRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.*
 import java.util.*
 
 class WeatherRepositoryImpl(
@@ -27,7 +24,8 @@ class WeatherRepositoryImpl(
                 locationName,
                 getMetricUnit()
             ).flatMapLatest { locationResponse ->
-                weatherLocalDataSource.addLocation(visualCrossingLocalMapper.map(locationResponse))
+                val location = visualCrossingRemoteMapper.map(locationResponse)
+                weatherLocalDataSource.addLocation(visualCrossingLocalMapper.map(location))
             }
     }
 
@@ -42,8 +40,10 @@ class WeatherRepositoryImpl(
         return weatherLocalDataSource
             .getAllLocations()
             .map { weatherLocations ->
-                weatherLocations.map {
-                    fetchLocation(it.name).first()
+                weatherLocations.mapNotNull {
+                    fetchLocation(it.name)
+                        .catch { emitAll(flowOf()) }
+                        .firstOrNull()
                 }
             }
     }

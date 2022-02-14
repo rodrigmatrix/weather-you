@@ -1,10 +1,7 @@
 package com.rodrigmatrix.weatheryou.presentation.utils
 
 import com.rodrigmatrix.weatheryou.R
-import com.rodrigmatrix.weatheryou.domain.model.WeatherDay
-import com.rodrigmatrix.weatheryou.domain.model.WeatherHour
-import com.rodrigmatrix.weatheryou.domain.model.WeatherIcons
-import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
+import com.rodrigmatrix.weatheryou.domain.model.*
 
 val PreviewWeatherLocation = WeatherLocation(
     name = "Toronto",
@@ -388,4 +385,13 @@ val PreviewFutureDaysForecast = listOf(
         sunrise = "7:00AM",
         sunset = "7:00AM",
     )
+)
+
+val PreviewFamousCities = listOf(
+    City(R.string.new_york, "New York", ""),
+    City(R.string.los_angeles, "Los Angeles CA", ""),
+    City(R.string.toronto, "Toronto", ""),
+    City(R.string.vancouver, "Vancouver", ""),
+    City(R.string.rio_de_janeiro, "Rio de Janeiro", ""),
+    City(R.string.sao_paulo, "São Paulo", "")
 )

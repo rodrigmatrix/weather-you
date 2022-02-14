@@ -41,7 +41,7 @@ fun WeatherHomeNavHost(
             AboutScreen()
         }
         composable(NavigationEntries.ADD_LOCATION_ROUTE) {
-            AddLocationScreen(appState.navController)
+            AddLocationScreen(appState)
         }
     }
 }

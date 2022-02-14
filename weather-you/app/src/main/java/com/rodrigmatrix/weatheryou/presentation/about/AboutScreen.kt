@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -42,12 +43,12 @@ fun AboutScreen() {
         Image(
             painter = painterResource(R.drawable.image_about),
             contentDescription = stringResource(R.string.image_of_developer),
+            contentScale = ContentScale.FillBounds,
             modifier = Modifier
+                .padding(top = 16.dp)
                 .size(130.dp)
                 .clip(CircleShape)
                 .align(Alignment.CenterHorizontally)
-                .padding(top = 16.dp)
-
         )
         SocialCard(
             modifier = Modifier

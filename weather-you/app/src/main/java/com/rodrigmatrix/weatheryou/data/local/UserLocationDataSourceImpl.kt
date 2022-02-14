@@ -5,6 +5,7 @@ import android.location.Address
 import android.location.Geocoder
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.CancellationToken
 import com.google.android.gms.tasks.OnTokenCanceledListener
 import com.google.android.gms.tasks.Tasks
@@ -22,21 +23,8 @@ class UserLocationDataSourceImpl(
     override fun getCurrentLocation(): Flow<String> {
         return flow {
             val location = Tasks.await(
-                locationServices.getCurrentLocation(
-                    LocationRequest.PRIORITY_HIGH_ACCURACY,
-                    object : CancellationToken() {
-                        override fun onCanceledRequested(
-                            p0: OnTokenCanceledListener
-                        ): CancellationToken {
-                            return this
-                        }
-
-                        override fun isCancellationRequested(): Boolean {
-                            return false
-                        }
-                    }
-                ),
-                5000L,
+                locationServices.lastLocation,
+                3000L,
                 TimeUnit.MILLISECONDS
             )
             val address = geoCoder

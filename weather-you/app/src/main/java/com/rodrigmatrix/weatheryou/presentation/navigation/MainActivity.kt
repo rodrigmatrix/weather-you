@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.ExperimentalMaterial3Api
 import com.rodrigmatrix.weatheryou.presentation.theme.WeatherYouTheme
+import com.rodrigmatrix.weatheryou.presentation.utils.rememberWeatherYouAppState
 import com.rodrigmatrix.weatheryou.presentation.utils.rememberWindowSizeClass
 
 class MainActivity : ComponentActivity() {
@@ -15,6 +16,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             WeatherYouTheme {
                 NavigationScreen(
+                    appState = rememberWeatherYouAppState(),
                     windowSize = rememberWindowSizeClass()
                 )
             }

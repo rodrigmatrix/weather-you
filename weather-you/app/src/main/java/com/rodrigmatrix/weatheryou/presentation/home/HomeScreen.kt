@@ -23,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
@@ -34,6 +35,8 @@ import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.rodrigmatrix.weatheryou.R
+import com.rodrigmatrix.weatheryou.core.compose.LaunchViewEffect
+import com.rodrigmatrix.weatheryou.core.extensions.toast
 import com.rodrigmatrix.weatheryou.domain.model.WeatherIcons
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.presentation.components.WeatherIcon
@@ -52,9 +55,15 @@ fun HomeScreen(
     locationPermissionState: PermissionState
 ) {
     val viewState by viewModel.viewState.collectAsState()
+    val context = LocalContext.current
     bottomAppState.value = viewState.isLocationSelected().not()
     BackHandler(enabled = viewState.isLocationSelected()) {
         viewModel.selectLocation(null)
+    }
+    LaunchViewEffect(viewModel) { viewEffect ->
+        when (viewEffect) {
+            is HomeViewEffect.Error -> context.toast(viewEffect.message)
+        }
     }
     when {
         viewState.showLocationPermissionRequest(locationPermissionState) -> {

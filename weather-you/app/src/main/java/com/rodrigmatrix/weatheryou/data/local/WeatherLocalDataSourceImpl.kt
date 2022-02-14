@@ -7,6 +7,8 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 
+private const val FIRST_INDEX = 0
+
 class WeatherLocalDataSourceImpl(
     private val weatherDAO: WeatherDAO,
     private val userLocationDataSource: UserLocationDataSource
@@ -17,7 +19,7 @@ class WeatherLocalDataSourceImpl(
             val currentLocation = userLocationDataSource.getCurrentLocation().first()
             val mutableLocationsList = locationsList.toMutableList()
             if (currentLocation.isNotEmpty()) {
-                mutableLocationsList.add(0, WeatherLocationEntity(currentLocation))
+                mutableLocationsList.add(FIRST_INDEX, WeatherLocationEntity(currentLocation))
             }
             mutableLocationsList
         }

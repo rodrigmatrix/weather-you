@@ -9,7 +9,6 @@ data class HomeViewState(
     val isLoading: Boolean = false,
     val locationsList: List<WeatherLocation> = emptyList(),
     val selectedWeatherLocation: WeatherLocation? = null,
-    val error: Throwable? = null,
     val deletePackageDialogVisible: Boolean = false
 ): ViewState {
 

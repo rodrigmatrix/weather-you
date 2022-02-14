@@ -2,43 +2,43 @@ package com.rodrigmatrix.weatheryou.presentation.addLocation
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusOrder
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import com.rodrigmatrix.weatheryou.R
 import com.rodrigmatrix.weatheryou.core.compose.LaunchViewEffect
+import com.rodrigmatrix.weatheryou.core.extensions.toast
 import com.rodrigmatrix.weatheryou.presentation.components.SearchBar
+import com.rodrigmatrix.weatheryou.presentation.utils.WeatherYouAppState
 import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun AddLocationScreen(
-    navController: NavController,
+    appState: WeatherYouAppState,
     viewModel: AddLocationViewModel = getViewModel()
 ) {
     val viewState by viewModel.viewState.collectAsState()
+    val context = LocalContext.current
     LaunchViewEffect(viewModel) { viewEffect ->
         when (viewEffect) {
             AddLocationViewEffect.LocationAdded -> {
-                navController.navigateUp()
+                appState.navController.navigateUp()
             }
             is AddLocationViewEffect.ShowError -> {
-                viewEffect.string
+                context.toast(viewEffect.string)
             }
         }
     }
@@ -54,13 +54,13 @@ fun AddLocationScreen(
             if (viewState.searchText.isNotEmpty()) {
                 viewModel.onSearch("")
             } else {
-                navController.navigateUp()
+                appState.navController.navigateUp()
             }
         }
     )
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun AddLocationScreen(
     viewState: AddLocationViewState,
@@ -68,36 +68,38 @@ fun AddLocationScreen(
     onLocationClick: (String) -> Unit,
     onClearQuery: () -> Unit
 ) {
-    Column(Modifier.fillMaxSize().focusable()) {
-        SearchBar(
-            query = viewState.searchText,
-            onQueryChange  = onQueryChanged,
-            onSearchFocusChange = {
+    Scaffold(
+        topBar = {
+            SearchBar(
+                query = viewState.searchText,
+                onQueryChange  = onQueryChanged,
+                onSearchFocusChange = {
 
-            },
-            onClearQuery = onClearQuery,
-            searching = viewState.isLoading,
-            modifier = Modifier
-                .padding(bottom = 40.dp)
-                .focusable(),
-            keyboardActions = KeyboardActions(
-                onDone = { onLocationClick(viewState.searchText) }
-            )
-        )
-        if (viewState.locationsList.isNotEmpty()) {
-            Text(
-                text = stringResource(R.string.click_to_add),
-                style = MaterialTheme.typography.headlineMedium,
+                },
+                onClearQuery = onClearQuery,
+                searching = viewState.isLoading,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 24.dp, end = 24.dp, bottom = 10.dp)
+                    .padding(bottom = 40.dp)
+                    .focusable(),
+                keyboardActions = KeyboardActions(
+                    onDone = { onLocationClick(viewState.searchText) }
+                )
             )
         }
-        LocationSelectList(
-            viewState.locationsList,
-            onLocationClick,
-            Modifier.focusable()
-        )
+    ) {
+        Column {
+            LocationSelectList(
+                viewState.locationsList,
+                onLocationClick,
+                Modifier.focusable()
+            )
+            LocationSuggestions(
+                viewState.famousLocationsList,
+                onLocationClick = {
+                    onLocationClick(it.fullName)
+                }
+            )
+        }
     }
 }
 
@@ -119,15 +121,27 @@ fun LocationItem(
     location: String,
     onLocationClick: (String) -> Unit
 ) {
-    Text(
-        text = location,
-        style = MaterialTheme.typography.headlineSmall,
-        modifier = Modifier
-            .fillMaxWidth()
+    Row(
+        Modifier
             .padding(start = 32.dp, end = 32.dp, bottom = 10.dp)
+            .fillMaxWidth()
             .focusable()
             .clickable {
                 onLocationClick(location)
-            }
-    )
+            },
+        horizontalArrangement = Arrangement.SpaceAround,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(Modifier.weight(1f)) {
+            Text(
+                text = location,
+                style = MaterialTheme.typography.headlineSmall
+            )
+        }
+        Icon(
+            imageVector = Icons.Default.Add,
+            contentDescription = stringResource(R.string.add_x_location, location),
+            modifier = Modifier.size(34.dp)
+        )
+    }
 }

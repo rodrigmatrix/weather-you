@@ -16,7 +16,7 @@ import com.rodrigmatrix.weatheryou.presentation.utils.rememberWeatherYouAppState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NavigationScreen(
-    appState: WeatherYouAppState = rememberWeatherYouAppState(),
+    appState: WeatherYouAppState,
     windowSize: WindowSize
 ) {
     val bottomBarState = rememberSaveable { (mutableStateOf(true)) }

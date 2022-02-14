@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.rodrigmatrix.weatheryou.core.viewmodel.ViewModel
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.domain.repository.WeatherRepository
+import com.rodrigmatrix.weatheryou.presentation.home.HomeViewEffect.Error
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
@@ -27,13 +28,14 @@ class HomeViewModel(
                 .flowOn(coroutineDispatcher)
                 .onStart { setState { it.copy(isLoading = true) } }
                 .onCompletion { setState { it.copy(isLoading = false) } }
-                .catch { exception -> setState { it.copy(error = exception) } }
+                .catch { exception ->
+                    setEffect { Error(exception.message.orEmpty()) }
+                }
                 .collect { weatherLocationsList ->
                     setState {
                         it.copy(
                             locationsList = weatherLocationsList,
                             selectedWeatherLocation = getSelectedWeatherLocation(weatherLocationsList),
-                            error = null,
                             isLoading = false
                         )
                     }
@@ -55,13 +57,12 @@ class HomeViewModel(
                 .flowOn(coroutineDispatcher)
                 .onStart { setState { it.copy(isLoading = true) } }
                 .onCompletion { setState { it.copy(isLoading = false) } }
-                .catch { exception -> setState { it.copy(error = exception) } }
+                .catch { exception ->
+                    setEffect { Error(exception.message.orEmpty()) }
+                }
                 .collect {
                     setState {
-                        it.copy(
-                            error = null,
-                            isLoading = false
-                        )
+                        it.copy(isLoading = false)
                     }
                 }
         }
