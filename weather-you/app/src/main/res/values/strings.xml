@@ -46,4 +46,5 @@
     <string name="toronto">Toronto</string>
     <string name="rio_de_janeiro">Rio de Janeiro</string>
     <string name="sao_paulo">Sao Paulo</string>
+    <string name="delete_location">Delete location</string>
 </resources>

@@ -79,7 +79,7 @@ class VisualCrossingRemoteMapper(
 
         val todayList = days?.first()?.hours.orEmpty().filter {
             val hourTime = DateTime(dateZone).withTime(LocalTime(it.datetime))
-            currentTime.isBefore(hourTime)
+            currentTime.hourOfDay < hourTime.hourOfDay
         }.toMutableList()
         val tomorrowList = days
             ?.get(SECOND_ELEMENT)

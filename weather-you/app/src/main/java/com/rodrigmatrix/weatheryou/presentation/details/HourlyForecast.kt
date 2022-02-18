@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -24,8 +25,6 @@ import com.rodrigmatrix.weatheryou.presentation.extensions.percentageString
 import com.rodrigmatrix.weatheryou.presentation.extensions.temperatureString
 import com.rodrigmatrix.weatheryou.presentation.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.presentation.utils.PreviewHourlyForecast
-
-private const val FIRST_INDEX = 0
 
 @Composable
 fun HourlyForecast(
@@ -55,8 +54,8 @@ fun HourlyForecast(
                     .height(1.dp)
             )
             LazyRow(Modifier.padding(start = 16.dp, end = 16.dp)) {
-                itemsIndexed(hoursList) { index, item  ->
-                    HourRow(item, index == FIRST_INDEX)
+                items(hoursList) { item  ->
+                    HourRow(item)
                 }
             }
         }
@@ -65,7 +64,7 @@ fun HourlyForecast(
 }
 
 @Composable
-fun HourRow(hour: WeatherHour, isCurrentHour: Boolean) {
+fun HourRow(hour: WeatherHour) {
     Column(
         Modifier
             .padding(
@@ -106,11 +105,7 @@ fun HourRow(hour: WeatherHour, isCurrentHour: Boolean) {
                 .size(34.dp)
         )
         Text(
-            text = if (isCurrentHour) {
-                stringResource(R.string.now)
-            } else {
-                hour.dateTime.getHourString()
-            },
+            text = hour.dateTime.getHourString(),
             modifier = Modifier.align(Alignment.CenterHorizontally),
             style = MaterialTheme.typography.bodySmall
         )

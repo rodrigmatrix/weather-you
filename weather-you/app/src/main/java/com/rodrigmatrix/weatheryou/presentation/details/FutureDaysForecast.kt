@@ -169,7 +169,7 @@ fun ExpandedCardContent(
         ) {
             LazyRow(Modifier.padding(start = 16.dp, end = 16.dp)) {
                 items(day.hours) { item  ->
-                    HourRow(item, false)
+                    HourRow(item)
                 }
             }
             if (day.precipitationType.isNotEmpty()) {

@@ -44,10 +44,8 @@ class HomeViewModel(
     }
 
     private fun getSelectedWeatherLocation(locationsList: List<WeatherLocation>): WeatherLocation? {
-        return if (locationsList.contains(viewState.value.selectedWeatherLocation)) {
-            viewState.value.selectedWeatherLocation
-        } else {
-            null
+        return locationsList.find { location ->
+            location.name == viewState.value.selectedWeatherLocation?.name
         }
     }
 
@@ -62,7 +60,7 @@ class HomeViewModel(
                 }
                 .collect {
                     setState {
-                        it.copy(isLoading = false)
+                        it.copy(isLoading = false, selectedWeatherLocation = null)
                     }
                 }
         }

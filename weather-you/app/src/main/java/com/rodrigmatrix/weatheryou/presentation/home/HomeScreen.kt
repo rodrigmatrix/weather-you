@@ -82,6 +82,7 @@ fun HomeScreen(
         expandedScreen -> {
             HomeScreenWithLocation(
                 viewState = viewState,
+                expandedScreen = expandedScreen,
                 onItemClick = { weatherLocation ->
                     viewModel.selectLocation(weatherLocation)
                 },
@@ -103,7 +104,10 @@ fun HomeScreen(
                     onCloseClick = {
                         viewModel.selectLocation(null)
                     },
-                    expandedScreen = expandedScreen
+                    expandedScreen = expandedScreen,
+                    onDeleteLocation = {
+                        viewState.selectedWeatherLocation?.let { viewModel.deleteLocation(it) }
+                    }
                 )
             }
             AnimatedVisibility(
@@ -117,6 +121,7 @@ fun HomeScreen(
                 ) {
                     HomeScreen(
                         viewState = viewState,
+                        expandedScreen = expandedScreen,
                         onItemClick = { weatherLocation ->
                             viewModel.selectLocation(weatherLocation)
                         },
@@ -164,12 +169,14 @@ fun HomeFabContent(
 @Composable
 fun HomeScreen(
     viewState: HomeViewState,
+    expandedScreen: Boolean,
     onItemClick: (WeatherLocation) -> Unit,
     onSwipeRefresh: () -> Unit,
     onDeleteLocation: (WeatherLocation) -> Unit
 ) {
     HomeScreenContent(
         viewState,
+        expandedScreen,
         onItemClick,
         onSwipeRefresh,
         onDeleteLocation
@@ -180,6 +187,7 @@ fun HomeScreen(
 @Composable
 fun HomeScreenContent(
     viewState: HomeViewState,
+    expandedScreen: Boolean,
     onItemClick: (WeatherLocation) -> Unit,
     onSwipeRefresh: () -> Unit,
     onDeleteLocation: (WeatherLocation) -> Unit
@@ -199,7 +207,9 @@ fun HomeScreenContent(
                         viewState.locationsList,
                         onItemClick = onItemClick,
                         onLongPress = onDeleteLocation,
-                        contentPaddingValues = PaddingValues(bottom = 200.dp)
+                        contentPaddingValues = PaddingValues(
+                            bottom = if (expandedScreen) 0.dp else 200.dp
+                        )
                     )
                 }
             }
@@ -211,6 +221,7 @@ fun HomeScreenContent(
 @Composable
 fun HomeScreenWithLocation(
     viewState: HomeViewState,
+    expandedScreen: Boolean,
     onItemClick: (WeatherLocation) -> Unit,
     onDeleteLocation: (WeatherLocation) -> Unit,
     onSwipeRefresh: () -> Unit,
@@ -227,6 +238,7 @@ fun HomeScreenWithLocation(
         Column(Modifier.weight(1f)) {
             HomeScreenContent(
                 viewState,
+                expandedScreen,
                 onItemClick,
                 onSwipeRefresh,
                 onDeleteLocation
@@ -237,7 +249,10 @@ fun HomeScreenWithLocation(
                 WeatherDetailsScreen(
                     weatherLocation = viewState.selectedWeatherLocation,
                     onCloseClick = onCloseClick,
-                    expandedScreen = true
+                    expandedScreen = true,
+                    onDeleteLocation = {
+                        viewState.selectedWeatherLocation?.let { onDeleteLocation(it) }
+                    }
                 )
             }
         }
@@ -333,6 +348,7 @@ fun HomeScreenPreview() {
     WeatherYouTheme {
         HomeScreen(
             viewState = HomeViewState(locationsList = PreviewWeatherList),
+            expandedScreen = false,
             { },
             { },
             { }
@@ -348,8 +364,9 @@ fun HomeScreenWithLocationPreview() {
     WeatherYouTheme {
         HomeScreenWithLocation(
             viewState = HomeViewState(
-                locationsList = PreviewWeatherList,
+                locationsList = PreviewWeatherList
             ),
+            expandedScreen = false,
             { },
             { },
             { },
