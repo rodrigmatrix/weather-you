@@ -1,3 +1,5 @@
+
+
 package com.rodrigmatrix.weatheryou.presentation.home
 
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
@@ -45,6 +47,7 @@ import com.rodrigmatrix.weatheryou.presentation.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.presentation.utils.PreviewWeatherList
 import org.koin.androidx.compose.getViewModel
 
+@Suppress("KotlinConstantConditions")
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
