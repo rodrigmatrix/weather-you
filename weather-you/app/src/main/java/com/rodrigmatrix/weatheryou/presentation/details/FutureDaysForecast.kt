@@ -25,6 +25,7 @@ import com.rodrigmatrix.weatheryou.R
 import com.rodrigmatrix.weatheryou.domain.model.WeatherDay
 import com.rodrigmatrix.weatheryou.presentation.components.ExpandButton
 import com.rodrigmatrix.weatheryou.presentation.components.WeatherIcon
+import com.rodrigmatrix.weatheryou.presentation.components.WeatherYouCard
 import com.rodrigmatrix.weatheryou.presentation.components.WeatherYouDivider
 import com.rodrigmatrix.weatheryou.presentation.extensions.*
 import com.rodrigmatrix.weatheryou.presentation.theme.WeatherYouTheme
@@ -41,10 +42,9 @@ fun FutureDaysForecast(
     onExpandedButtonClick: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Surface(
-        color = MaterialTheme.colorScheme.secondaryContainer,
-        shape = RoundedCornerShape(16.dp),
-        modifier = modifier
+    WeatherYouCard(
+        modifier = modifier,
+        color = MaterialTheme.colorScheme.tertiaryContainer
     ) {
         Column(Modifier.fillMaxWidth()) {
             Row(
@@ -208,7 +208,6 @@ fun ExpandedCardContent(
 
 @Preview
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(name = "Brazil locale", locale = "pt_BR")
 @Composable
 fun FutureDaysForecastPreview() {
     WeatherYouTheme {

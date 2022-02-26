@@ -4,8 +4,7 @@ import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.focusable
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -78,18 +77,13 @@ fun WeatherDetailsScreen(
             }
         }
     ) {
-        LazyColumn {
+        LazyColumn(verticalArrangement = Arrangement.spacedBy(20.dp)) {
             item {
                 viewState.weatherLocation?.let {
                     CurrentWeather(
                         it,
                         modifier = Modifier
-                            .padding(
-                                start = 16.dp,
-                                end = 16.dp,
-                                top = 10.dp,
-                                bottom = 10.dp
-                            )
+                            .padding(start = 16.dp, end = 16.dp)
                             .focusable()
                     )
                 }
@@ -98,12 +92,7 @@ fun WeatherDetailsScreen(
                 HourlyForecast(
                     hoursList = viewState.todayWeatherHoursList,
                     modifier = Modifier
-                        .padding(
-                            start = 16.dp,
-                            end = 16.dp,
-                            top = 10.dp,
-                            bottom = 10.dp
-                        )
+                        .padding(start = 16.dp, end = 16.dp)
                         .focusable()
                 )
             }
@@ -113,13 +102,22 @@ fun WeatherDetailsScreen(
                     isExpanded = viewState.isFutureWeatherExpanded,
                     onExpandedButtonClick = onExpandedButtonClick,
                     modifier = Modifier
-                        .padding(
-                            start = 16.dp,
-                            end = 16.dp,
-                            top = 10.dp,
-                            bottom = 10.dp
-                        )
+                        .padding(start = 16.dp, end = 16.dp)
                 )
+            }
+            item {
+                Row {
+                    Column(Modifier.weight(1f)) {
+                        HumidityCard(
+                            modifier = Modifier.padding(start = 16.dp, end = 8.dp)
+                        )
+                    }
+                    Column(Modifier.weight(1f)) {
+                        HumidityCard(
+                            modifier = Modifier.padding(start = 8.dp, end = 16.dp)
+                        )
+                    }
+                }
             }
         }
     }

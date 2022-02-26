@@ -1,10 +1,9 @@
 package com.rodrigmatrix.weatheryou.data.repository
 
 import com.rodrigmatrix.weatheryou.data.local.WeatherLocalDataSource
-import com.rodrigmatrix.weatheryou.data.mapper.VisualCrossingLocalMapper
-import com.rodrigmatrix.weatheryou.data.mapper.VisualCrossingRemoteMapper
+import com.rodrigmatrix.weatheryou.data.mapper.WeatherLocationDomainToEntityMapper
 import com.rodrigmatrix.weatheryou.data.model.VisualCrossingUnits
-import com.rodrigmatrix.weatheryou.data.remote.VisualCrossingRemoteDataSource
+import com.rodrigmatrix.weatheryou.data.remote.WeatherYouRemoteDataSource
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.domain.repository.WeatherRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -12,28 +11,26 @@ import kotlinx.coroutines.flow.*
 import java.util.*
 
 class WeatherRepositoryImpl(
-    private val visualCrossingRemoteDataSource: VisualCrossingRemoteDataSource,
+    private val weatherYouRemoteDataSource: WeatherYouRemoteDataSource,
     private val weatherLocalDataSource: WeatherLocalDataSource,
-    private val visualCrossingRemoteMapper: VisualCrossingRemoteMapper,
-    private val visualCrossingLocalMapper: VisualCrossingLocalMapper
+    private val weatherLocationDomainToEntityMapper: WeatherLocationDomainToEntityMapper
 ) : WeatherRepository {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun addLocation(locationName: String): Flow<Unit> {
-        return visualCrossingRemoteDataSource.getWeather(
+        return weatherYouRemoteDataSource.getWeather(
                 locationName,
                 getMetricUnit()
-            ).flatMapLatest { locationResponse ->
-                val location = visualCrossingRemoteMapper.map(locationResponse)
-                weatherLocalDataSource.addLocation(visualCrossingLocalMapper.map(location))
+            ).flatMapLatest { location ->
+                weatherLocalDataSource.addLocation(weatherLocationDomainToEntityMapper.map(location))
             }
     }
 
     override fun fetchLocation(resolvedAddress: String): Flow<WeatherLocation> {
-        return visualCrossingRemoteDataSource.getWeather(
+        return weatherYouRemoteDataSource.getWeather(
             resolvedAddress,
             getMetricUnit()
-        ).map(visualCrossingRemoteMapper::map)
+        )
     }
 
     override fun fetchLocationsList(): Flow<List<WeatherLocation>> {

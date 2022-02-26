@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.R
 import com.rodrigmatrix.weatheryou.domain.model.WeatherHour
 import com.rodrigmatrix.weatheryou.presentation.components.WeatherIcon
+import com.rodrigmatrix.weatheryou.presentation.components.WeatherYouCard
 import com.rodrigmatrix.weatheryou.presentation.components.WeatherYouDivider
 import com.rodrigmatrix.weatheryou.presentation.extensions.getHourString
 import com.rodrigmatrix.weatheryou.presentation.extensions.percentageString
@@ -31,11 +32,7 @@ fun HourlyForecast(
     hoursList: List<WeatherHour>,
     modifier: Modifier = Modifier
 ) {
-    Surface(
-        color = MaterialTheme.colorScheme.secondaryContainer,
-        shape = RoundedCornerShape(16.dp),
-        modifier = modifier
-    ) {
+    WeatherYouCard(modifier) {
         Column {
             Text(
                 text = stringResource(R.string.daily_forecast),

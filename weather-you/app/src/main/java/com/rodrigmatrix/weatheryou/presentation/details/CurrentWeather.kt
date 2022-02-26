@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.sp
 import com.rodrigmatrix.weatheryou.R
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.presentation.components.WeatherIcon
+import com.rodrigmatrix.weatheryou.presentation.components.WeatherYouCard
 import com.rodrigmatrix.weatheryou.presentation.extensions.percentageString
 import com.rodrigmatrix.weatheryou.presentation.extensions.temperatureString
 import com.rodrigmatrix.weatheryou.presentation.theme.WeatherYouTheme
@@ -27,12 +28,7 @@ fun CurrentWeather(
     weatherLocation: WeatherLocation,
     modifier: Modifier = Modifier
 ) {
-    Surface(
-        color = MaterialTheme.colorScheme.secondaryContainer,
-        shape = RoundedCornerShape(24.dp),
-        modifier = modifier
-            .fillMaxWidth()
-    ) {
+    WeatherYouCard(modifier.fillMaxWidth()) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,

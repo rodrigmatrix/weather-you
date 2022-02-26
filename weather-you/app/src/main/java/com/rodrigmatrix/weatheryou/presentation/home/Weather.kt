@@ -18,6 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.presentation.components.WeatherIcon
+import com.rodrigmatrix.weatheryou.presentation.components.WeatherYouCard
 import com.rodrigmatrix.weatheryou.presentation.extensions.temperatureString
 import com.rodrigmatrix.weatheryou.presentation.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.presentation.utils.PreviewWeatherList
@@ -46,9 +47,7 @@ fun WeatherLocation(
     onItemClick: (WeatherLocation) -> Unit,
     onLongPress: (WeatherLocation) -> Unit
 ) {
-    Surface(
-        color = MaterialTheme.colorScheme.secondaryContainer,
-        shape = RoundedCornerShape(24.dp),
+    WeatherYouCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(
