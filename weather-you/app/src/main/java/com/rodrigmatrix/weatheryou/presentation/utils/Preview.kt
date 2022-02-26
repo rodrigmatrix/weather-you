@@ -17,7 +17,9 @@ val PreviewWeatherLocation = WeatherLocation(
     currentTime = "11:00 PM",
     timeZone = "",
     precipitationProbability = 60.0,
-    precipitationType = "snow"
+    precipitationType = "snow",
+    humidity = 87.0,
+    dewPoint = 22.0
 )
 
 val PreviewWeatherList = listOf(
@@ -35,7 +37,9 @@ val PreviewWeatherList = listOf(
         currentTime = "11:00 PM",
         timeZone = "",
         precipitationProbability = 0.0,
-        precipitationType = ""
+        precipitationType = "",
+        humidity = 87.0,
+        dewPoint = 22.0
     ),
     WeatherLocation(
         name = "Montreal",
@@ -51,7 +55,9 @@ val PreviewWeatherList = listOf(
         currentTime = "10:00 PM",
         timeZone = "",
         precipitationProbability = 0.0,
-        precipitationType = ""
+        precipitationType = "",
+        humidity = 87.0,
+        dewPoint = 22.0
     ),
     WeatherLocation(
         name = "Montreal",
@@ -67,7 +73,9 @@ val PreviewWeatherList = listOf(
         currentTime = "10:00 PM",
         timeZone = "",
         precipitationProbability = 0.0,
-        precipitationType = ""
+        precipitationType = "",
+        humidity = 87.0,
+        dewPoint = 22.0
     ),
     WeatherLocation(
         name = "Montreal",
@@ -83,7 +91,9 @@ val PreviewWeatherList = listOf(
         currentTime = "10:00 PM",
         timeZone = "",
         precipitationProbability = 0.0,
-        precipitationType = ""
+        precipitationType = "",
+        humidity = 87.0,
+        dewPoint = 22.0
     ),
     WeatherLocation(
         name = "Montreal",
@@ -99,7 +109,9 @@ val PreviewWeatherList = listOf(
         currentTime = "10:00 PM",
         timeZone = "",
         precipitationProbability = 0.0,
-        precipitationType = ""
+        precipitationType = "",
+        humidity = 87.0,
+        dewPoint = 22.0
     ),
     WeatherLocation(
         name = "Montreal",
@@ -115,7 +127,9 @@ val PreviewWeatherList = listOf(
         currentTime = "10:00 PM",
         timeZone = "",
         precipitationProbability = 0.0,
-        precipitationType = ""
+        precipitationType = "",
+        humidity = 87.0,
+        dewPoint = 22.0
     ),
     WeatherLocation(
         name = "Montreal",
@@ -131,7 +145,9 @@ val PreviewWeatherList = listOf(
         currentTime = "10:00 PM",
         timeZone = "",
         precipitationProbability = 0.0,
-        precipitationType = ""
+        precipitationType = "",
+        humidity = 87.0,
+        dewPoint = 22.0
     ),
     WeatherLocation(
         name = "Montreal",
@@ -147,7 +163,9 @@ val PreviewWeatherList = listOf(
         currentTime = "10:00 PM",
         timeZone = "",
         precipitationProbability = 0.0,
-        precipitationType = ""
+        precipitationType = "",
+        humidity = 87.0,
+        dewPoint = 22.0
     ),
     WeatherLocation(
         name = "Montreal",
@@ -163,7 +181,9 @@ val PreviewWeatherList = listOf(
         currentTime = "10:00 PM",
         timeZone = "",
         precipitationProbability = 0.0,
-        precipitationType = ""
+        precipitationType = "",
+        humidity = 87.0,
+        dewPoint = 22.0
     )
 )
 

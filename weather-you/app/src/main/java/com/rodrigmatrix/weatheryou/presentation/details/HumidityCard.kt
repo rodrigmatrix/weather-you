@@ -14,10 +14,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.R
 import com.rodrigmatrix.weatheryou.presentation.components.WeatherYouCard
+import com.rodrigmatrix.weatheryou.presentation.extensions.percentageString
+import com.rodrigmatrix.weatheryou.presentation.extensions.temperatureString
 import com.rodrigmatrix.weatheryou.presentation.theme.WeatherYouTheme
 
 @Composable
 fun HumidityCard(
+    humidity: Double,
+    dewPoint: Double,
     modifier: Modifier = Modifier
 ) {
     WeatherYouCard(modifier.height(200.dp)) {
@@ -43,12 +47,12 @@ fun HumidityCard(
                     )
                 }
                 Text(
-                    text = "87%",
+                    text = humidity.percentageString(),
                     style = MaterialTheme.typography.headlineMedium
                 )
             }
             Text(
-                text = "The dew point is 22 right now.",
+                text = stringResource(R.string.the_dew_point_is_x, dewPoint.temperatureString()),
                 style = MaterialTheme.typography.bodyLarge
             )
         }
@@ -60,6 +64,9 @@ fun HumidityCard(
 @Composable
 fun HumidityCardPreview() {
     WeatherYouTheme {
-        HumidityCard()
+        HumidityCard(
+            humidity = 80.0,
+            dewPoint = 22.0
+        )
     }
 }

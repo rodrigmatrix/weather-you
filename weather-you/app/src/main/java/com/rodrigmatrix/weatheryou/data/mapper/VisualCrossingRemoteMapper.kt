@@ -28,11 +28,13 @@ class VisualCrossingRemoteMapper(
             feelsLike = source.currentConditions?.feelslike ?: 0.0,
             weatherIcons = weatherIconMapper.map(source.currentConditions?.icon.orEmpty()),
             currentTime = source.timezone?.getCurrentTime().orEmpty(),
-            days = source.days?.mapDaysList().orEmpty(),
-            hours = source.getTodayHoursList(),
             timeZone = source.timezone.orEmpty(),
             precipitationProbability = source.currentConditions?.precipprob ?: 0.0,
-            precipitationType = source.currentConditions?.preciptype?.firstOrNull().orEmpty()
+            precipitationType = source.currentConditions?.preciptype?.firstOrNull().orEmpty(),
+            humidity = source.currentConditions?.humidity ?: 0.0,
+            dewPoint = source.currentConditions?.dew ?: 0.0,
+            days = source.days?.mapDaysList().orEmpty(),
+            hours = source.getTodayHoursList()
         )
     }
 

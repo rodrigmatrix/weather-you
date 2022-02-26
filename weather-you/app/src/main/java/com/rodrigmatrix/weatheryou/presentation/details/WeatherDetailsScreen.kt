@@ -109,11 +109,15 @@ fun WeatherDetailsScreen(
                 Row {
                     Column(Modifier.weight(1f)) {
                         HumidityCard(
+                            viewState.weatherLocation?.humidity ?: 0.0,
+                            viewState.weatherLocation?.dewPoint ?: 0.0,
                             modifier = Modifier.padding(start = 16.dp, end = 8.dp)
                         )
                     }
                     Column(Modifier.weight(1f)) {
                         HumidityCard(
+                            viewState.weatherLocation?.humidity ?: 0.0,
+                            viewState.weatherLocation?.dewPoint ?: 0.0,
                             modifier = Modifier.padding(start = 8.dp, end = 16.dp)
                         )
                     }
