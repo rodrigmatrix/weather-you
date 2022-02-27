@@ -108,9 +108,9 @@ fun WeatherDetailsScreen(
             item {
                 Row {
                     Column(Modifier.weight(1f)) {
-                        HumidityCard(
-                            viewState.weatherLocation?.humidity ?: 0.0,
-                            viewState.weatherLocation?.dewPoint ?: 0.0,
+                        WindCard(
+                            viewState.weatherLocation?.windSpeed ?: 0.0,
+                            viewState.weatherLocation?.windDirection ?: 0.0,
                             modifier = Modifier.padding(start = 16.dp, end = 8.dp)
                         )
                     }
@@ -122,6 +122,23 @@ fun WeatherDetailsScreen(
                         )
                     }
                 }
+            }
+            item {
+                Row {
+                    Column(Modifier.weight(1f)) {
+                        VisibilityCard(
+                            viewState.weatherLocation?.visibility ?: 0.0,
+                            modifier = Modifier.padding(start = 16.dp, end = 8.dp)
+                        )
+                    }
+                    Column(Modifier.weight(1f)) {
+                        UvIndexCard(
+                            viewState.weatherLocation?.uvIndex ?: 0.0,
+                            modifier = Modifier.padding(start = 8.dp, end = 16.dp)
+                        )
+                    }
+                }
+                Spacer(Modifier.height(10.dp))
             }
         }
     }

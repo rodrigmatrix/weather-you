@@ -34,6 +34,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.Module
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import java.util.*
 
@@ -56,7 +57,7 @@ private val repositoryModule = module {
 }
 
 private val dataSourceModule = module {
-    factory<WeatherYouRemoteDataSource> {
+    factory<WeatherYouRemoteDataSource>(named("")) {
         VisualCrossingRemoteDataSourceImpl(
             visualCrossingService = get(),
             VisualCrossingRemoteMapper(WeatherIconMapper())

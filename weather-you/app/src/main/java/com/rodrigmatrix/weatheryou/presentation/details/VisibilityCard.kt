@@ -8,20 +8,20 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.R
 import com.rodrigmatrix.weatheryou.presentation.components.WeatherYouCard
+import com.rodrigmatrix.weatheryou.presentation.extensions.temperatureString
 import com.rodrigmatrix.weatheryou.presentation.extensions.speedString
+import com.rodrigmatrix.weatheryou.presentation.extensions.visibilityConditionsStringRes
 import com.rodrigmatrix.weatheryou.presentation.theme.WeatherYouTheme
 
 @Composable
-fun WindCard(
-    windSpeed: Double,
-    windDirection: Double,
+fun VisibilityCard(
+    visibility: Double,
     modifier: Modifier = Modifier
 ) {
     WeatherYouCard(modifier.height(200.dp)) {
@@ -37,28 +37,23 @@ fun WindCard(
             Column {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
-                        painter = painterResource(R.drawable.ic_air),
-                        contentDescription = stringResource(R.string.wind),
+                        painter = painterResource(R.drawable.ic_visibility),
+                        contentDescription = stringResource(R.string.visibility),
                         modifier = Modifier.padding(end = 4.dp)
                     )
                     Text(
-                        text = stringResource(R.string.wind),
+                        text = stringResource(R.string.visibility),
                         style = MaterialTheme.typography.titleMedium,
                     )
                 }
+                Text(
+                    text = visibility.speedString(),
+                    style = MaterialTheme.typography.headlineMedium
+                )
             }
-            Icon(
-                painter = painterResource(R.drawable.ic_round_navigation),
-                contentDescription = stringResource(R.string.wind_direction),
-                modifier = Modifier
-                    .size(70.dp)
-                    .rotate(windDirection.toFloat())
-                    .align(Alignment.CenterHorizontally)
-            )
             Text(
-                text = windSpeed.speedString(),
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
+                text = stringResource(visibility.visibilityConditionsStringRes()),
+                style = MaterialTheme.typography.bodyLarge
             )
         }
     }
@@ -67,11 +62,10 @@ fun WindCard(
 @Preview
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-fun WindCardPreview() {
+fun VisibilityCardPreview() {
     WeatherYouTheme {
-        WindCard(
-            windSpeed = 10.0,
-            windDirection = 251.0
+        VisibilityCard(
+            visibility = 80.0,
         )
     }
 }

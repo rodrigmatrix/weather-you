@@ -7,9 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -193,7 +191,7 @@ fun ExpandedCardContent(
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp)
             )
             Text(
-                text = stringResource(R.string.wind_x, day.windSpeed.windSpeed()),
+                text = stringResource(R.string.wind_x, day.windSpeed.speedString()),
                 style = MaterialTheme.typography.titleSmall,
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp)
             )

@@ -19,7 +19,14 @@ val PreviewWeatherLocation = WeatherLocation(
     precipitationProbability = 60.0,
     precipitationType = "snow",
     humidity = 87.0,
-    dewPoint = 22.0
+    dewPoint = 22.0,
+    windSpeed = 0.0,
+    windDirection = 0.0,
+    uvIndex = 0.0,
+    sunrise = "",
+    sunset = "",
+    visibility = 0.0,
+    pressure = 0.0,
 )
 
 val PreviewWeatherList = listOf(
@@ -39,7 +46,14 @@ val PreviewWeatherList = listOf(
         precipitationProbability = 0.0,
         precipitationType = "",
         humidity = 87.0,
-        dewPoint = 22.0
+        dewPoint = 22.0,
+        windSpeed = 0.0,
+        windDirection = 0.0,
+        uvIndex = 0.0,
+        sunrise = "",
+        sunset = "",
+        visibility = 0.0,
+        pressure = 0.0,
     ),
     WeatherLocation(
         name = "Montreal",
@@ -57,7 +71,14 @@ val PreviewWeatherList = listOf(
         precipitationProbability = 0.0,
         precipitationType = "",
         humidity = 87.0,
-        dewPoint = 22.0
+        dewPoint = 22.0,
+        windSpeed = 0.0,
+        windDirection = 0.0,
+        uvIndex = 0.0,
+        sunrise = "",
+        sunset = "",
+        visibility = 0.0,
+        pressure = 0.0
     ),
     WeatherLocation(
         name = "Montreal",
@@ -75,7 +96,14 @@ val PreviewWeatherList = listOf(
         precipitationProbability = 0.0,
         precipitationType = "",
         humidity = 87.0,
-        dewPoint = 22.0
+        dewPoint = 22.0,
+        windSpeed = 0.0,
+        windDirection = 0.0,
+        uvIndex = 0.0,
+        sunrise = "",
+        sunset = "",
+        visibility = 0.0,
+        pressure = 0.0
     ),
     WeatherLocation(
         name = "Montreal",
@@ -93,7 +121,14 @@ val PreviewWeatherList = listOf(
         precipitationProbability = 0.0,
         precipitationType = "",
         humidity = 87.0,
-        dewPoint = 22.0
+        dewPoint = 22.0,
+        windSpeed = 0.0,
+        windDirection = 0.0,
+        uvIndex = 0.0,
+        sunrise = "",
+        sunset = "",
+        visibility = 0.0,
+        pressure = 0.0
     ),
     WeatherLocation(
         name = "Montreal",
@@ -111,7 +146,14 @@ val PreviewWeatherList = listOf(
         precipitationProbability = 0.0,
         precipitationType = "",
         humidity = 87.0,
-        dewPoint = 22.0
+        dewPoint = 22.0,
+        windSpeed = 0.0,
+        windDirection = 0.0,
+        uvIndex = 0.0,
+        sunrise = "",
+        sunset = "",
+        visibility = 0.0,
+        pressure = 0.0
     ),
     WeatherLocation(
         name = "Montreal",
@@ -129,7 +171,14 @@ val PreviewWeatherList = listOf(
         precipitationProbability = 0.0,
         precipitationType = "",
         humidity = 87.0,
-        dewPoint = 22.0
+        dewPoint = 22.0,
+        windSpeed = 0.0,
+        windDirection = 0.0,
+        uvIndex = 0.0,
+        sunrise = "",
+        sunset = "",
+        visibility = 0.0,
+        pressure = 0.0
     ),
     WeatherLocation(
         name = "Montreal",
@@ -147,7 +196,14 @@ val PreviewWeatherList = listOf(
         precipitationProbability = 0.0,
         precipitationType = "",
         humidity = 87.0,
-        dewPoint = 22.0
+        dewPoint = 22.0,
+        windSpeed = 0.0,
+        windDirection = 0.0,
+        uvIndex = 0.0,
+        sunrise = "",
+        sunset = "",
+        visibility = 0.0,
+        pressure = 0.0
     ),
     WeatherLocation(
         name = "Montreal",
@@ -165,7 +221,14 @@ val PreviewWeatherList = listOf(
         precipitationProbability = 0.0,
         precipitationType = "",
         humidity = 87.0,
-        dewPoint = 22.0
+        dewPoint = 22.0,
+        windSpeed = 0.0,
+        windDirection = 0.0,
+        uvIndex = 0.0,
+        sunrise = "",
+        sunset = "",
+        visibility = 0.0,
+        pressure = 0.0
     ),
     WeatherLocation(
         name = "Montreal",
@@ -183,7 +246,14 @@ val PreviewWeatherList = listOf(
         precipitationProbability = 0.0,
         precipitationType = "",
         humidity = 87.0,
-        dewPoint = 22.0
+        dewPoint = 22.0,
+        windSpeed = 0.0,
+        windDirection = 0.0,
+        uvIndex = 0.0,
+        sunrise = "",
+        sunset = "",
+        visibility = 0.0,
+        pressure = 0.0
     )
 )
 

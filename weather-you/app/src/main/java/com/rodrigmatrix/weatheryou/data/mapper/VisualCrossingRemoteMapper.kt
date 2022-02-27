@@ -33,6 +33,13 @@ class VisualCrossingRemoteMapper(
             precipitationType = source.currentConditions?.preciptype?.firstOrNull().orEmpty(),
             humidity = source.currentConditions?.humidity ?: 0.0,
             dewPoint = source.currentConditions?.dew ?: 0.0,
+            windDirection = source.currentConditions?.winddir ?: 0.0,
+            windSpeed = source.currentConditions?.windspeed ?: 0.0,
+            uvIndex = source.currentConditions?.uvindex ?: 0.0,
+            sunrise = source.currentConditions?.sunrise.orEmpty(),
+            sunset = source.currentConditions?.sunset.orEmpty(),
+            visibility = source.currentConditions?.visibility ?: 0.0,
+            pressure = source.currentConditions?.pressure ?: 0.0,
             days = source.days?.mapDaysList().orEmpty(),
             hours = source.getTodayHoursList()
         )

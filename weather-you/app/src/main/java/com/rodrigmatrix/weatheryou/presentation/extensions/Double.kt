@@ -8,6 +8,6 @@ fun Double.percentageString(): String {
     return this.toInt().toString() + "%"
 }
 
-fun Double.windSpeed(): String {
+fun Double.speedString(): String {
     return this.toInt().toString() + "km/h"
 }

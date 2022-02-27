@@ -14,6 +14,13 @@ data class WeatherLocation(
     val precipitationType: String,
     val humidity: Double,
     val dewPoint: Double,
+    val windSpeed: Double,
+    val windDirection: Double,
+    val uvIndex: Double,
+    val sunrise: String,
+    val sunset: String,
+    val visibility: Double,
+    val pressure: Double,
     val days: List<WeatherDay> = emptyList(),
     val hours: List<WeatherHour> = emptyList()
 )
