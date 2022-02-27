@@ -14,7 +14,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.R
 import com.rodrigmatrix.weatheryou.presentation.components.WeatherYouCard
-import com.rodrigmatrix.weatheryou.presentation.extensions.temperatureString
 import com.rodrigmatrix.weatheryou.presentation.extensions.speedString
 import com.rodrigmatrix.weatheryou.presentation.extensions.visibilityConditionsStringRes
 import com.rodrigmatrix.weatheryou.presentation.theme.WeatherYouTheme
@@ -48,7 +47,7 @@ fun VisibilityCard(
                 }
                 Text(
                     text = visibility.speedString(),
-                    style = MaterialTheme.typography.headlineMedium
+                    style = MaterialTheme.typography.titleLarge
                 )
             }
             Text(

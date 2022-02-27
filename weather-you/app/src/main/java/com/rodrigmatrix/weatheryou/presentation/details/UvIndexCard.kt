@@ -53,11 +53,11 @@ fun UvIndexCard(
                 }
                 Text(
                     text = uvIndex.toInt().toString(),
-                    style = MaterialTheme.typography.headlineSmall
+                    style = MaterialTheme.typography.titleMedium
                 )
                 Text(
                     text = stringResource(uvIndex.toInt().uvIndexStringRes()),
-                    style = MaterialTheme.typography.headlineSmall
+                    style = MaterialTheme.typography.titleMedium
                 )
             }
             UvIndexBar(uvIndex)

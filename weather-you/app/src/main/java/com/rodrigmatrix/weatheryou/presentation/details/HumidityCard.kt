@@ -48,7 +48,7 @@ fun HumidityCard(
                 }
                 Text(
                     text = humidity.percentageString(),
-                    style = MaterialTheme.typography.headlineMedium
+                    style = MaterialTheme.typography.titleLarge
                 )
             }
             Text(

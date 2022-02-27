@@ -138,6 +138,13 @@ fun WeatherDetailsScreen(
                         )
                     }
                 }
+            }
+            item {
+                SunriseSunsetCard(
+                    sunrise = viewState.weatherLocation?.sunrise.orEmpty(),
+                    sunset = viewState.weatherLocation?.sunset.orEmpty(),
+                    modifier = Modifier.padding(start = 16.dp, end = 16.dp)
+                )
                 Spacer(Modifier.height(10.dp))
             }
         }

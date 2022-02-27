@@ -69,4 +69,9 @@
     <string name="clear_visibility">The visibility is clear.</string>
     <string name="dense_fog">Dense fog is affecting visibility.</string>
     <string name="thick_fog">Think fog is affecting visibility.</string>
+    <string name="sunrise_sunset"><![CDATA[Sunrise & Sunset]]></string>
+    <string name="north_char">N</string>
+    <string name="south_char">S</string>
+    <string name="east_char">E</string>
+    <string name="west_char">W</string>
 </resources>
