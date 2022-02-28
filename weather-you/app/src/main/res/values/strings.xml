@@ -74,4 +74,8 @@
     <string name="south_char">S</string>
     <string name="east_char">E</string>
     <string name="west_char">W</string>
+    <string name="sunrise">Sunrise</string>
+    <string name="sunset">Sunset</string>
+    <string name="lenght_of_day_x">Length of day: %s</string>
+    <string name="remaning_daylight_x">Remaning daylight: %s</string>
 </resources>

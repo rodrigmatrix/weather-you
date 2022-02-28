@@ -2,9 +2,7 @@ package com.rodrigmatrix.weatheryou.presentation.details
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -18,6 +16,7 @@ import com.rodrigmatrix.weatheryou.R
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.presentation.components.WeatherIcon
 import com.rodrigmatrix.weatheryou.presentation.components.WeatherYouCard
+import com.rodrigmatrix.weatheryou.presentation.extensions.getTimeZoneCurrentTime
 import com.rodrigmatrix.weatheryou.presentation.extensions.percentageString
 import com.rodrigmatrix.weatheryou.presentation.extensions.temperatureString
 import com.rodrigmatrix.weatheryou.presentation.theme.WeatherYouTheme
@@ -65,7 +64,7 @@ fun CurrentWeather(
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = weatherLocation.currentTime,
+                    text = weatherLocation.timeZone.getTimeZoneCurrentTime().toString("hh:mm aa"),
                     style = MaterialTheme.typography.titleSmall
                 )
                 Text(

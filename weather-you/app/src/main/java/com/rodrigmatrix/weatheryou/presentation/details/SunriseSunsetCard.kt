@@ -19,17 +19,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.R
 import com.rodrigmatrix.weatheryou.presentation.components.WeatherYouCard
+import com.rodrigmatrix.weatheryou.presentation.extensions.getDayLengthHours
+import com.rodrigmatrix.weatheryou.presentation.extensions.getRemainingDaylightHours
 import com.rodrigmatrix.weatheryou.presentation.theme.WeatherYouTheme
-import com.rodrigmatrix.weatheryou.presentation.theme.day_color
-import com.rodrigmatrix.weatheryou.presentation.theme.future_color
-import com.rodrigmatrix.weatheryou.presentation.theme.night_color
-
+import org.joda.time.LocalTime
 
 @Composable
 fun SunriseSunsetCard(
-    sunriseHour: Int,
-    sunsetHour: Int,
-    currentHour: Int,
+    sunriseHour: LocalTime,
+    sunsetHour: LocalTime,
+    currentTime: LocalTime,
     modifier: Modifier = Modifier
 ) {
     WeatherYouCard(modifier) {
@@ -42,7 +41,7 @@ fun SunriseSunsetCard(
                 bottom = 10.dp
             )
         ) {
-            Column {
+            Column(modifier = Modifier.padding(bottom = 20.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         painter = painterResource(R.drawable.ic_sunny),
@@ -55,12 +54,58 @@ fun SunriseSunsetCard(
                     )
                 }
             }
-            SunriseSunsetVisualizer(
-                sunriseHour = sunriseHour,
-                sunsetHour = sunsetHour,
-                currentHour = currentHour,
-                modifier = Modifier.height(140.dp)
-            )
+            Box {
+                SunriseSunsetVisualizer(
+                    sunriseHour = sunriseHour.hourOfDay,
+                    sunsetHour = sunsetHour.hourOfDay,
+                    currentHour = currentTime.hourOfDay,
+                    modifier = Modifier.height(140.dp)
+                )
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
+                        .padding(10.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.sunrise),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                    Text(
+                        text = sunriseHour.toString("hh:mm aa"),
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(10.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.sunset),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                    Text(
+                        text = sunsetHour.toString("hh:mm aa"),
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
+            }
+            val dayLength = sunriseHour.getDayLengthHours(sunsetHour)
+            if (dayLength.isNotEmpty()) {
+                Text(
+                    text = stringResource(R.string.lenght_of_day_x, dayLength),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+            val remainingDaylight = currentTime.getRemainingDaylightHours(sunsetHour)
+            if (remainingDaylight.isNotEmpty()) {
+                Text(
+                    text = stringResource(R.string.remaning_daylight_x, remainingDaylight),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
         }
     }
 }
@@ -73,6 +118,7 @@ private fun SunriseSunsetVisualizer(
     modifier: Modifier = Modifier
 ) {
     val colorPrimary = MaterialTheme.colorScheme.primary
+    val secondaryColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.7f)
     val tertiaryPrimary = MaterialTheme.colorScheme.tertiary
     Canvas(
         modifier = modifier
@@ -105,17 +151,10 @@ private fun SunriseSunsetVisualizer(
                 radius = 16f,
                 center = Offset(
                     x = scaleX * currentHour,
-                    y = (scaleY * ((interval / interval2 + 1f) / 2f))
+                    y = ((canvasHeight / 2) / ((sunsetHour - sunriseHour) * currentHour))
                 )
             )
         }
-//        // sunrise line
-//        drawLine(
-//            color = colorPrimary,
-//            start = Offset(interval2, canvasHeight / 2),
-//            end = Offset(interval2, (canvasHeight * 25) / 100),
-//            strokeWidth = 1f
-//        )
         drawIntoCanvas {
             val canvas = it.nativeCanvas
             val sunrisePaint = Paint().apply {
@@ -131,7 +170,7 @@ private fun SunriseSunsetVisualizer(
             val futurePaint = Paint().apply {
                 isAntiAlias = true
                 style = Paint.Style.FILL
-                color = Color.Transparent.toArgb()
+                color = secondaryColor.toArgb()
             }
             val path = android.graphics.Path().apply {
                 moveTo(start, scaleY)
@@ -155,14 +194,14 @@ fun SunriseSunsetCardPreview() {
     WeatherYouTheme {
         Column {
             SunriseSunsetCard(
-                sunriseHour = 6,
-                sunsetHour = 17,
-                currentHour = 7
+                sunriseHour = LocalTime(5, 0),
+                sunsetHour = LocalTime(17, 0),
+                currentTime = LocalTime(6, 0)
             )
             SunriseSunsetCard(
-                sunriseHour = 6,
-                sunsetHour = 18,
-                currentHour = 6
+                sunriseHour = LocalTime(6, 0),
+                sunsetHour = LocalTime(17, 0),
+                currentTime = LocalTime(6, 0)
             )
         }
     }

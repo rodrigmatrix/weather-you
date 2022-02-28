@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.presentation.components.WeatherIcon
 import com.rodrigmatrix.weatheryou.presentation.components.WeatherYouCard
+import com.rodrigmatrix.weatheryou.presentation.extensions.getTimeZoneCurrentTime
 import com.rodrigmatrix.weatheryou.presentation.extensions.temperatureString
 import com.rodrigmatrix.weatheryou.presentation.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.presentation.utils.PreviewWeatherList
@@ -76,7 +77,7 @@ fun WeatherLocation(
                     modifier = Modifier.padding(start = 16.dp, end = 16.dp)
                 )
                 Text(
-                    text = weatherLocation.currentTime,
+                    text = weatherLocation.timeZone.getTimeZoneCurrentTime().toString("hh:mm aa"),
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(start = 16.dp, end = 16.dp)
                 )
