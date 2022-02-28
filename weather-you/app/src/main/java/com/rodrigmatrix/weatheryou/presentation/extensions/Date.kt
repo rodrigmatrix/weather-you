@@ -11,16 +11,15 @@ fun String.getCurrentTime(): String {
         val zone = DateTimeZone.forID(this)
         val dateTime = DateTime(zone)
         val output = dateTime.toLocalTime().toDateTimeToday().toDate()
-        SimpleDateFormat("hh:mm aa", Locale.getDefault()).format(output)
+        SimpleDateFormat("hh:mm", Locale.getDefault()).format(output)
     } catch (e: Exception) {
         this
     }
 }
 
-fun String.getCurrentHour(timeZone: String): Int {
+fun String.getCurrentHour(): Int {
     return try {
-        val zone = DateTimeZone.forID(timeZone)
-        DateTime(this, zone).hourOfDay
+        return LocalTime.parse(this).hourOfDay
     } catch (e: Exception) {
         0
     }

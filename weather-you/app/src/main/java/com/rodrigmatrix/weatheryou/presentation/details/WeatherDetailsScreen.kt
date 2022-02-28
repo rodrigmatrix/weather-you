@@ -144,9 +144,9 @@ fun WeatherDetailsScreen(
             item {
                 viewState.weatherLocation?.let { weatherLocation ->
                     SunriseSunsetCard(
-                        sunriseHour = weatherLocation.sunrise.getCurrentHour(weatherLocation.timeZone),
-                        sunsetHour = weatherLocation.sunset.getCurrentHour(weatherLocation.timeZone),
-                        currentHour = weatherLocation.currentTime.getCurrentHour(weatherLocation.timeZone),
+                        sunriseHour = weatherLocation.sunrise.getCurrentHour(),
+                        sunsetHour = weatherLocation.sunset.getCurrentHour(),
+                        currentHour = weatherLocation.currentTime.getCurrentHour(),
                         modifier = Modifier.padding(start = 16.dp, end = 16.dp)
                     )
                 }

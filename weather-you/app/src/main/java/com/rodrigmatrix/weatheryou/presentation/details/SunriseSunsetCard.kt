@@ -83,15 +83,14 @@ private fun SunriseSunsetVisualizer(
 
         val dayStart = ((sunriseHour / 24f))
         val dayEnd = ((sunsetHour / 24f))
-        val scaleX = canvasWidth / 23f
+        val scaleX = canvasWidth / 24f
         val scaleY = canvasHeight / 2f
-        var interval = (dayEnd - dayStart) / 2
-        var interval2 = (1 - dayEnd + dayStart) / 2
-        var start = dayStart - (1 - dayEnd + dayStart)
-        interval *= 24 * scaleX
-        interval2 *= 24 * scaleX
-        start *= 24 * scaleX
-
+        var interval = (dayEnd - dayStart) / 2f
+        var interval2 = (1f - dayEnd + dayStart) / 2f
+        var start = dayStart - (1f - dayEnd + dayStart)
+        interval *= 24f * scaleX
+        interval2 *= 24f * scaleX
+        start *= 24f * scaleX
         // horizon line
         drawLine(
             color = colorPrimary,
@@ -103,20 +102,20 @@ private fun SunriseSunsetVisualizer(
         if (currentHour in sunriseHour..sunsetHour) {
             drawCircle(
                 color = Color.Yellow,
-                radius = 20f,
+                radius = 16f,
                 center = Offset(
                     x = scaleX * currentHour,
-                    y = scaleY * ((interval2 / interval + 1))
+                    y = (scaleY * ((interval / interval2 + 1f) / 2f))
                 )
             )
         }
-        // sunrise line
-        drawLine(
-            color = colorPrimary,
-            start = Offset(interval2, canvasHeight / 2),
-            end = Offset(interval2, (canvasHeight * 25) / 100),
-            strokeWidth = 1f
-        )
+//        // sunrise line
+//        drawLine(
+//            color = colorPrimary,
+//            start = Offset(interval2, canvasHeight / 2),
+//            end = Offset(interval2, (canvasHeight * 25) / 100),
+//            strokeWidth = 1f
+//        )
         drawIntoCanvas {
             val canvas = it.nativeCanvas
             val sunrisePaint = Paint().apply {
@@ -136,10 +135,10 @@ private fun SunriseSunsetVisualizer(
             }
             val path = android.graphics.Path().apply {
                 moveTo(start, scaleY)
-                rQuadTo(interval2, scaleY * ((interval2 / interval + 1) / 2), interval2 * 2, 0f)
-                rQuadTo(interval, -scaleY * ((interval / interval2 + 1) / 2), interval * 2, 0f)
-                rQuadTo(interval2, scaleY * ((interval2 / interval + 1) / 2), interval2 * 2, 0f)
-                rQuadTo(interval, -scaleY * ((interval / interval2 + 1) / 2), interval * 2, 0f)
+                rQuadTo(interval2, scaleY * ((interval2 / interval + 1f) / 2f), interval2 * 2f, 0f)
+                rQuadTo(interval, -scaleY * ((interval / interval2 + 1f) / 2f), interval * 2f, 0f)
+                rQuadTo(interval2, scaleY * ((interval2 / interval + 1f) / 2f), interval2 * 2f, 0f)
+                rQuadTo(interval, -scaleY * ((interval / interval2 + 1f) / 2f), interval * 2f, 0f)
             }
             canvas.clipPath(path)
             canvas.drawRect(0f, 0f, scaleX * currentHour, scaleY, sunrisePaint)

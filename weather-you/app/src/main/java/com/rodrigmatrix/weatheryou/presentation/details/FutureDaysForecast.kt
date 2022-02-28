@@ -41,8 +41,7 @@ fun FutureDaysForecast(
     modifier: Modifier = Modifier
 ) {
     WeatherYouCard(
-        modifier = modifier,
-        color = MaterialTheme.colorScheme.tertiaryContainer
+        modifier = modifier
     ) {
         Column(Modifier.fillMaxWidth()) {
             Row(

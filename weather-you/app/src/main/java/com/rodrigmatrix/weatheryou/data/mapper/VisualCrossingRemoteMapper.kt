@@ -27,7 +27,7 @@ class VisualCrossingRemoteMapper(
             lowestTemperature = source.days?.firstOrNull()?.tempmin ?: 0.0,
             feelsLike = source.currentConditions?.feelslike ?: 0.0,
             weatherIcons = weatherIconMapper.map(source.currentConditions?.icon.orEmpty()),
-            currentTime = source.timezone?.getCurrentTime().orEmpty(),
+            currentTime = source.currentConditions?.datetime.orEmpty(),
             timeZone = source.timezone.orEmpty(),
             precipitationProbability = source.currentConditions?.precipprob ?: 0.0,
             precipitationType = source.currentConditions?.preciptype?.firstOrNull().orEmpty(),
