@@ -1,8 +1,7 @@
 package com.rodrigmatrix.weatheryou.presentation.details
 
 import android.content.res.Configuration
-import android.opengl.ETC1.getHeight
-import android.opengl.ETC1.getWidth
+import android.graphics.Paint
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Icon
@@ -12,11 +11,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.PathEffect
-import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -24,12 +20,16 @@ import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.R
 import com.rodrigmatrix.weatheryou.presentation.components.WeatherYouCard
 import com.rodrigmatrix.weatheryou.presentation.theme.WeatherYouTheme
+import com.rodrigmatrix.weatheryou.presentation.theme.day_color
+import com.rodrigmatrix.weatheryou.presentation.theme.future_color
+import com.rodrigmatrix.weatheryou.presentation.theme.night_color
 
 
 @Composable
 fun SunriseSunsetCard(
-    sunrise: String,
-    sunset: String,
+    sunriseHour: Int,
+    sunsetHour: Int,
+    currentHour: Int,
     modifier: Modifier = Modifier
 ) {
     WeatherYouCard(modifier) {
@@ -56,9 +56,10 @@ fun SunriseSunsetCard(
                 }
             }
             SunriseSunsetVisualizer(
-                sunrise = sunrise,
-                sunset = sunset,
-                modifier = Modifier.height(160.dp)
+                sunriseHour = sunriseHour,
+                sunsetHour = sunsetHour,
+                currentHour = currentHour,
+                modifier = Modifier.height(140.dp)
             )
         }
     }
@@ -66,90 +67,85 @@ fun SunriseSunsetCard(
 
 @Composable
 private fun SunriseSunsetVisualizer(
-    sunrise: String,
-    sunset: String,
+    sunriseHour: Int,
+    sunsetHour: Int,
+    currentHour: Int,
     modifier: Modifier = Modifier
 ) {
-    val hour = 7
-    val primaryColor = MaterialTheme.colorScheme.primary
-    Canvas(modifier = modifier.fillMaxWidth()) {
+    val colorPrimary = MaterialTheme.colorScheme.primary
+    val tertiaryPrimary = MaterialTheme.colorScheme.tertiary
+    Canvas(
+        modifier = modifier
+            .fillMaxWidth()
+    ) {
         val canvasWidth = size.width
         val canvasHeight = size.height
-        val sunriseX = 200f
-        val sunsetX = 400f
 
-        val dayStart = 0.25f
-        val dayEnd = 0.75f
-
+        val dayStart = ((sunriseHour / 24f))
+        val dayEnd = ((sunsetHour / 24f))
         val scaleX = canvasWidth / 23f
         val scaleY = canvasHeight / 2f
-        var interval: Float = (dayEnd - dayStart) / 2
-        var interval2: Float = (1 - dayEnd + dayStart) / 2
-        var start: Float = dayStart - (1 - dayEnd + dayStart)
+        var interval = (dayEnd - dayStart) / 2
+        var interval2 = (1 - dayEnd + dayStart) / 2
+        var start = dayStart - (1 - dayEnd + dayStart)
         interval *= 24 * scaleX
         interval2 *= 24 * scaleX
         start *= 24 * scaleX
+
         // horizon line
         drawLine(
-            color = primaryColor,
+            color = colorPrimary,
             start = Offset(0f, canvasHeight / 2),
             end = Offset(canvasWidth, canvasHeight / 2),
-            strokeWidth = 4f,
-            pathEffect = PathEffect.cornerPathEffect(1f)
+            strokeWidth = 1f
         )
-        // sunrise line
-        drawPath(
-            color = primaryColor,
-            path = Path().apply {
-                moveTo(0f, canvasHeight / 2)
-                lineTo(0f, ((canvasHeight * 75) / 100))
-//                quadraticBezierTo(interval2, scaleY * ((interval2 / interval + 1) / 2), interval2 * 2, 0f)
-//                quadraticBezierTo(interval, -scaleY * ((interval / interval2 + 1) / 2), interval * 2, 0f)
-//                quadraticBezierTo(interval2, scaleY * ((interval2 / interval + 1) / 2), interval2 * 2, 0f)
-//                quadraticBezierTo(interval, -scaleY * ((interval / interval2 + 1) / 2), interval * 2, 0f)
-
-//                quadraticBezierTo(
-//                    x1 = 0f,
-//                    y1 = ((canvasHeight * 75) / 100),
-//                    x2  = sunriseX,
-//                    y2 = canvasHeight / 2
-//                )
-                close()
-            },
-            style = Stroke(width = 4f)
-        )
-        drawPath(
-            color = primaryColor,
-            path = Path().apply {
-                moveTo(0f, ((canvasHeight * 75) / 100))
-                drawArc(
-                    startAngle = 180f,
-                    sweepAngle = 90f,
-                    color = primaryColor,
-                    useCenter = false,
-                    topLeft = Offset(0f, canvasHeight / 2),
-                    style = Stroke(3f)
-                )
-                close()
-            },
-            style = Stroke(width = 4f)
-        )
-//        // sun arc
-//        drawArc(
-//            startAngle = -180f,
-//            sweepAngle = 180f,
-//            color = primaryColor,
-//            useCenter = false,
-//            topLeft = Offset(sunriseX, canvasHeight / 2),
-//            size = Size(canvasWidth, canvasHeight),
-//            style = Stroke(3f)
-//        )
         // sun
-        drawCircle(
-            color = Color.Yellow,
-            radius = 40f,
-            center = Offset(0f, (canvasWidth / 24) / hour)
+        if (currentHour in sunriseHour..sunsetHour) {
+            drawCircle(
+                color = Color.Yellow,
+                radius = 20f,
+                center = Offset(
+                    x = scaleX * currentHour,
+                    y = scaleY * ((interval2 / interval + 1))
+                )
+            )
+        }
+        // sunrise line
+        drawLine(
+            color = colorPrimary,
+            start = Offset(interval2, canvasHeight / 2),
+            end = Offset(interval2, (canvasHeight * 25) / 100),
+            strokeWidth = 1f
         )
+        drawIntoCanvas {
+            val canvas = it.nativeCanvas
+            val sunrisePaint = Paint().apply {
+                isAntiAlias = true
+                style = Paint.Style.FILL
+                color = colorPrimary.toArgb()
+            }
+            val sunsetPaint = Paint().apply {
+                isAntiAlias = true
+                style = Paint.Style.FILL
+                color = tertiaryPrimary.toArgb()
+            }
+            val futurePaint = Paint().apply {
+                isAntiAlias = true
+                style = Paint.Style.FILL
+                color = Color.Transparent.toArgb()
+            }
+            val path = android.graphics.Path().apply {
+                moveTo(start, scaleY)
+                rQuadTo(interval2, scaleY * ((interval2 / interval + 1) / 2), interval2 * 2, 0f)
+                rQuadTo(interval, -scaleY * ((interval / interval2 + 1) / 2), interval * 2, 0f)
+                rQuadTo(interval2, scaleY * ((interval2 / interval + 1) / 2), interval2 * 2, 0f)
+                rQuadTo(interval, -scaleY * ((interval / interval2 + 1) / 2), interval * 2, 0f)
+            }
+            canvas.clipPath(path)
+            canvas.drawRect(0f, 0f, scaleX * currentHour, scaleY, sunrisePaint)
+            canvas.drawRect(0f, scaleY, scaleX * currentHour, canvasHeight, sunsetPaint)
+            canvas.drawRect(scaleX * currentHour, 0f, canvasWidth, canvasHeight, futurePaint)
+        }
     }
 }
 
@@ -158,9 +154,17 @@ private fun SunriseSunsetVisualizer(
 @Composable
 fun SunriseSunsetCardPreview() {
     WeatherYouTheme {
-        SunriseSunsetCard(
-            sunrise = "",
-            sunset = ""
-        )
+        Column {
+            SunriseSunsetCard(
+                sunriseHour = 6,
+                sunsetHour = 17,
+                currentHour = 7
+            )
+            SunriseSunsetCard(
+                sunriseHour = 6,
+                sunsetHour = 18,
+                currentHour = 6
+            )
+        }
     }
 }

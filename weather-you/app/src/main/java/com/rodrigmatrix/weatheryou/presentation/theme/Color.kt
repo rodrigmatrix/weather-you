@@ -65,3 +65,7 @@ val level_7_uv_index_color = Color(0xffc90d1f)
 val level_8_uv_index_color = Color(0xffbd0c1e)
 val level_9_uv_index_color = Color(0xffcd1365)
 val level_10_uv_index_color = Color(0xffcd188d)
+
+val night_color = Color(0xFF004F94)
+val day_color = Color(0xFF74FFDE)
+val future_color = Color(0xFF6B6B6B)

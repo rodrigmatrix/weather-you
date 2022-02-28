@@ -1,13 +1,9 @@
 package com.rodrigmatrix.weatheryou.presentation.extensions
 
-import androidx.compose.ui.text.capitalize
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.joda.time.LocalTime
-import java.text.DateFormat
-import java.text.DateFormatSymbols
 import java.text.SimpleDateFormat
-import java.time.format.DateTimeFormatter
 import java.util.*
 
 fun String.getCurrentTime(): String {
@@ -21,11 +17,20 @@ fun String.getCurrentTime(): String {
     }
 }
 
+fun String.getCurrentHour(timeZone: String): Int {
+    return try {
+        val zone = DateTimeZone.forID(timeZone)
+        DateTime(this, zone).hourOfDay
+    } catch (e: Exception) {
+        0
+    }
+}
+
 fun String.getHourString(): String {
     return try {
         val localTime = LocalTime(this)
         val output = localTime.toDateTimeToday().toDate()
-        SimpleDateFormat("hhaa", Locale.getDefault()).format(output)
+        SimpleDateFormat("hh:mm", Locale.getDefault()).format(output)
     } catch (e: Exception) {
         this
     }

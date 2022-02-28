@@ -23,6 +23,8 @@ import com.rodrigmatrix.weatheryou.R
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.presentation.components.WeatherYouLargeAppBar
 import com.rodrigmatrix.weatheryou.presentation.components.WeatherYouSmallAppBar
+import com.rodrigmatrix.weatheryou.presentation.extensions.getCurrentHour
+import com.rodrigmatrix.weatheryou.presentation.extensions.getCurrentTime
 import com.rodrigmatrix.weatheryou.presentation.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.presentation.utils.PreviewFutureDaysForecast
 import com.rodrigmatrix.weatheryou.presentation.utils.PreviewHourlyForecast
@@ -140,11 +142,14 @@ fun WeatherDetailsScreen(
                 }
             }
             item {
-                SunriseSunsetCard(
-                    sunrise = viewState.weatherLocation?.sunrise.orEmpty(),
-                    sunset = viewState.weatherLocation?.sunset.orEmpty(),
-                    modifier = Modifier.padding(start = 16.dp, end = 16.dp)
-                )
+                viewState.weatherLocation?.let { weatherLocation ->
+                    SunriseSunsetCard(
+                        sunriseHour = weatherLocation.sunrise.getCurrentHour(weatherLocation.timeZone),
+                        sunsetHour = weatherLocation.sunset.getCurrentHour(weatherLocation.timeZone),
+                        currentHour = weatherLocation.currentTime.getCurrentHour(weatherLocation.timeZone),
+                        modifier = Modifier.padding(start = 16.dp, end = 16.dp)
+                    )
+                }
                 Spacer(Modifier.height(10.dp))
             }
         }
