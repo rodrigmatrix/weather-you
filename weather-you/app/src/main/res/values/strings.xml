@@ -76,6 +76,8 @@
     <string name="west_char">W</string>
     <string name="sunrise">Sunrise</string>
     <string name="sunset">Sunset</string>
-    <string name="lenght_of_day_x">Length of day: %s</string>
-    <string name="remaning_daylight_x">Remaning daylight: %s</string>
+    <string name="length_of_day">Length of day:</string>
+    <string name="remaining_daylight_x">Remaining daylight:</string>
+    <string name="hours_minutes_x_y">%dh %dm</string>
+    <string name="minutes_x">%dm</string>
 </resources>

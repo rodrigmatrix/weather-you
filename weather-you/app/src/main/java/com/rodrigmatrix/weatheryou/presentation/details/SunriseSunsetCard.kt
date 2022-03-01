@@ -2,6 +2,7 @@ package com.rodrigmatrix.weatheryou.presentation.details
 
 import android.content.res.Configuration
 import android.graphics.Paint
+import android.graphics.Path
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Icon
@@ -19,8 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.R
 import com.rodrigmatrix.weatheryou.presentation.components.WeatherYouCard
-import com.rodrigmatrix.weatheryou.presentation.extensions.getDayLengthHours
-import com.rodrigmatrix.weatheryou.presentation.extensions.getRemainingDaylightHours
+import com.rodrigmatrix.weatheryou.presentation.extensions.getHoursAndMinutesDiff
 import com.rodrigmatrix.weatheryou.presentation.theme.WeatherYouTheme
 import org.joda.time.LocalTime
 
@@ -92,17 +92,37 @@ fun SunriseSunsetCard(
                     )
                 }
             }
-            val dayLength = sunriseHour.getDayLengthHours(sunsetHour)
-            if (dayLength.isNotEmpty()) {
+            val (
+                dayLengthHours,
+                dayLengthMinutes
+            ) = sunriseHour.getHoursAndMinutesDiff(sunsetHour)
+            if (dayLengthHours > 0 || dayLengthMinutes > 0) {
+                val dayLengthString = if (dayLengthHours > 0) {
+                    stringResource(
+                        R.string.hours_minutes_x_y,
+                        dayLengthHours,
+                        dayLengthMinutes
+                    )
+                } else {
+                    stringResource(R.string.minutes_x, dayLengthMinutes)
+                }
                 Text(
-                    text = stringResource(R.string.lenght_of_day_x, dayLength),
+                    text = stringResource(R.string.length_of_day) + dayLengthString,
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
-            val remainingDaylight = currentTime.getRemainingDaylightHours(sunsetHour)
-            if (remainingDaylight.isNotEmpty()) {
+            val (
+                remainingHours,
+                remainingMinutes
+            ) = currentTime.getHoursAndMinutesDiff(sunsetHour)
+            if (remainingHours > 0 || remainingMinutes > 0) {
+                val remainingDaylightString = if (remainingHours > 0) {
+                    stringResource(R.string.hours_minutes_x_y, remainingHours, remainingMinutes)
+                } else {
+                     stringResource(R.string.minutes_x, dayLengthMinutes)
+                }
                 Text(
-                    text = stringResource(R.string.remaning_daylight_x, remainingDaylight),
+                    text = stringResource(R.string.remaining_daylight_x) + remainingDaylightString,
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
@@ -146,12 +166,18 @@ private fun SunriseSunsetVisualizer(
         )
         // sun
         if (currentHour in sunriseHour..sunsetHour) {
+            val daylightHalf = (sunsetHour - sunriseHour)
+            val sunScaleY = if (currentHour >= daylightHalf) {
+                scaleY - (currentHour - sunsetHour)
+            } else {
+                scaleY + (currentHour / 24) * 2
+            }
             drawCircle(
                 color = Color.Yellow,
                 radius = 16f,
                 center = Offset(
                     x = scaleX * currentHour,
-                    y = ((canvasHeight / 2) / ((sunsetHour - sunriseHour) * currentHour))
+                    y = sunScaleY
                 )
             )
         }
@@ -172,7 +198,7 @@ private fun SunriseSunsetVisualizer(
                 style = Paint.Style.FILL
                 color = secondaryColor.toArgb()
             }
-            val path = android.graphics.Path().apply {
+            val path = Path().apply {
                 moveTo(start, scaleY)
                 rQuadTo(interval2, scaleY * ((interval2 / interval + 1f) / 2f), interval2 * 2f, 0f)
                 rQuadTo(interval, -scaleY * ((interval / interval2 + 1f) / 2f), interval * 2f, 0f)
@@ -196,12 +222,17 @@ fun SunriseSunsetCardPreview() {
             SunriseSunsetCard(
                 sunriseHour = LocalTime(5, 0),
                 sunsetHour = LocalTime(17, 0),
-                currentTime = LocalTime(6, 0)
+                currentTime = LocalTime(13, 0)
             )
             SunriseSunsetCard(
                 sunriseHour = LocalTime(6, 0),
                 sunsetHour = LocalTime(17, 0),
-                currentTime = LocalTime(6, 0)
+                currentTime = LocalTime(8, 0)
+            )
+            SunriseSunsetCard(
+                sunriseHour = LocalTime(6, 0),
+                sunsetHour = LocalTime(17, 0),
+                currentTime = LocalTime(18, 0)
             )
         }
     }

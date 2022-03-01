@@ -4,7 +4,9 @@ import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.joda.time.LocalTime
 import org.joda.time.Period
+import org.joda.time.format.DateTimeFormat
 import org.joda.time.format.PeriodFormatter
+import org.joda.time.format.PeriodFormatterBuilder
 import java.text.SimpleDateFormat
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatter.ofPattern
@@ -35,26 +37,9 @@ fun String.getLocalTime(): LocalTime {
     }
 }
 
-fun LocalTime.getDayLengthHours(sunset: LocalTime): String {
-    return try {
-        val timeLeft = this.minusMillis(sunset.millisOfDay)
-
-        return if (timeLeft.millisOfDay != 0) {
-            timeLeft.toString("hh:mm")
-        } else {
-            ""
-        }
-    } catch (e: Exception) {
-        ""
-    }
-}
-
-fun LocalTime.getRemainingDaylightHours(sunset: LocalTime): String {
-    return try {
-        return this.minusMillis(sunset.millisOfDay).toString("hh:mm")
-    } catch (e: Exception) {
-        ""
-    }
+fun LocalTime.getHoursAndMinutesDiff(second: LocalTime): Pair<Int, Int> {
+    val timeLeft = Period(this, second)
+    return Pair(timeLeft.hours, timeLeft.minutes)
 }
 
 fun DateTime.getTimeString(): String {
