@@ -25,6 +25,9 @@ android {
         buildConfigField "String", "VISUAL_CODING_URL", "\"https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/\""
         buildConfigField "String", "VISUAL_CODING_TOKEN", localProperties['visualcoding.token']
 
+        buildConfigField "String", "OPEN_WEATHER_URL", "\"https://api.openweathermap.org/data/2.5/\""
+        buildConfigField "String", "OPEN_WEATHER_TOKEN", localProperties['openweather.token']
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true

@@ -2,7 +2,7 @@ package com.rodrigmatrix.weatheryou.data.repository
 
 import com.rodrigmatrix.weatheryou.data.local.WeatherLocalDataSource
 import com.rodrigmatrix.weatheryou.data.mapper.WeatherLocationDomainToEntityMapper
-import com.rodrigmatrix.weatheryou.data.model.VisualCrossingUnits
+import com.rodrigmatrix.weatheryou.data.model.visualcrossing.VisualCrossingUnits
 import com.rodrigmatrix.weatheryou.data.remote.WeatherYouRemoteDataSource
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.domain.repository.WeatherRepository

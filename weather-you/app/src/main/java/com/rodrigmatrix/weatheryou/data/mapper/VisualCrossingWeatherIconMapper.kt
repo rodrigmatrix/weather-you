@@ -3,7 +3,7 @@ package com.rodrigmatrix.weatheryou.data.mapper
 import com.rodrigmatrix.weatheryou.R
 import com.rodrigmatrix.weatheryou.domain.model.WeatherIcons
 
-class WeatherIconMapper {
+class VisualCrossingWeatherIconMapper {
 
     fun map(source: String): WeatherIcons {
         return when(source) {

@@ -21,11 +21,11 @@ fun String.getTimeZoneCurrentTime(): LocalTime {
     }
 }
 
-fun String.getDateTime(): DateTime {
+fun Long.getLocalTime(): LocalTime {
     return try {
-        return DateTime(this)
+        return LocalTime(this)
     } catch (e: Exception) {
-        DateTime()
+        LocalTime()
     }
 }
 

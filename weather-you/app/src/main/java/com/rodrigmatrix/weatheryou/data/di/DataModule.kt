@@ -15,11 +15,11 @@ import com.rodrigmatrix.weatheryou.data.local.database.WeatherDatabase
 import com.rodrigmatrix.weatheryou.data.mapper.FamousCitiesMapper
 import com.rodrigmatrix.weatheryou.data.mapper.WeatherLocationDomainToEntityMapper
 import com.rodrigmatrix.weatheryou.data.mapper.VisualCrossingRemoteMapper
-import com.rodrigmatrix.weatheryou.data.mapper.WeatherIconMapper
+import com.rodrigmatrix.weatheryou.data.mapper.VisualCrossingWeatherIconMapper
 import com.rodrigmatrix.weatheryou.data.remote.RemoteConfigDataSource
 import com.rodrigmatrix.weatheryou.data.remote.RemoteConfigDataSourceImpl
 import com.rodrigmatrix.weatheryou.data.remote.WeatherYouRemoteDataSource
-import com.rodrigmatrix.weatheryou.data.remote.VisualCrossingRemoteDataSourceImpl
+import com.rodrigmatrix.weatheryou.data.remote.visualcrossing.VisualCrossingRemoteDataSourceImpl
 import com.rodrigmatrix.weatheryou.data.remote.builder.RetrofitClientGenerator
 import com.rodrigmatrix.weatheryou.data.remote.builder.RetrofitServiceGenerator
 import com.rodrigmatrix.weatheryou.data.repository.SearchRepositoryImpl
@@ -60,7 +60,7 @@ private val dataSourceModule = module {
     factory<WeatherYouRemoteDataSource>(named("")) {
         VisualCrossingRemoteDataSourceImpl(
             visualCrossingService = get(),
-            VisualCrossingRemoteMapper(WeatherIconMapper())
+            VisualCrossingRemoteMapper(VisualCrossingWeatherIconMapper())
         )
     }
     factory<WeatherLocalDataSource> { WeatherLocalDataSourceImpl(get(), get()) }

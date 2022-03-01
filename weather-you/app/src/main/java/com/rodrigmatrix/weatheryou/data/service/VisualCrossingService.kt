@@ -1,7 +1,7 @@
 package com.rodrigmatrix.weatheryou.data.service
 
 import com.rodrigmatrix.weatheryou.BuildConfig
-import com.rodrigmatrix.weatheryou.data.model.VisualCrossingWeatherResponse
+import com.rodrigmatrix.weatheryou.data.model.visualcrossing.VisualCrossingWeatherResponse
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query

@@ -1,7 +1,7 @@
 package com.rodrigmatrix.weatheryou.data.repository
 
 import com.rodrigmatrix.weatheryou.data.mapper.FamousCitiesMapper
-import com.rodrigmatrix.weatheryou.data.model.Cities
+import com.rodrigmatrix.weatheryou.data.model.visualcrossing.Cities
 import com.rodrigmatrix.weatheryou.data.remote.RemoteConfigDataSource
 import com.rodrigmatrix.weatheryou.domain.model.City
 import com.rodrigmatrix.weatheryou.domain.repository.SearchRepository

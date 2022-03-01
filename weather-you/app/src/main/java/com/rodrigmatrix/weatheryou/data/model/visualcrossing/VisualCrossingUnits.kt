@@ -1,4 +1,4 @@
-package com.rodrigmatrix.weatheryou.data.model
+package com.rodrigmatrix.weatheryou.data.model.visualcrossing
 
 sealed class VisualCrossingUnits(val unit: String) {
 

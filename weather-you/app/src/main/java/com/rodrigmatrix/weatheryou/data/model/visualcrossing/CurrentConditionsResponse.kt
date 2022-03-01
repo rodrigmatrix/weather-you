@@ -1,11 +1,11 @@
-package com.rodrigmatrix.weatheryou.data.model
+package com.rodrigmatrix.weatheryou.data.model.visualcrossing
 
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class DayResponse(
+data class CurrentConditionsResponse(
     @SerialName("cloudcover")
     val cloudcover: Double? = null,
     @SerialName("conditions")
@@ -14,18 +14,10 @@ data class DayResponse(
     val datetime: String? = null,
     @SerialName("datetimeEpoch")
     val datetimeEpoch: Int? = null,
-    @SerialName("description")
-    val description: String? = null,
     @SerialName("dew")
     val dew: Double? = null,
     @SerialName("feelslike")
     val feelslike: Double? = null,
-    @SerialName("feelslikemax")
-    val feelslikemax: Double? = null,
-    @SerialName("feelslikemin")
-    val feelslikemin: Double? = null,
-    @SerialName("hours")
-    val hours: List<HourResponse>? = null,
     @SerialName("humidity")
     val humidity: Double? = null,
     @SerialName("icon")
@@ -40,8 +32,6 @@ data class DayResponse(
     val preciptype: List<String>? = null,
     @SerialName("pressure")
     val pressure: Double? = null,
-    @SerialName("severerisk")
-    val severerisk: Double? = null,
     @SerialName("snow")
     val snow: Double? = null,
     @SerialName("snowdepth")
@@ -50,8 +40,6 @@ data class DayResponse(
     val solarenergy: Double? = null,
     @SerialName("solarradiation")
     val solarradiation: Double? = null,
-    @SerialName("source")
-    val source: String? = null,
     @SerialName("stations")
     val stations: List<String>? = null,
     @SerialName("sunrise")
@@ -64,10 +52,6 @@ data class DayResponse(
     val sunsetEpoch: Int? = null,
     @SerialName("temp")
     val temp: Double? = null,
-    @SerialName("tempmax")
-    val tempmax: Double? = null,
-    @SerialName("tempmin")
-    val tempmin: Double? = null,
     @SerialName("uvindex")
     val uvindex: Double? = null,
     @SerialName("visibility")

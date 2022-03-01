@@ -1,7 +1,7 @@
-package com.rodrigmatrix.weatheryou.data.remote
+package com.rodrigmatrix.weatheryou.data.remote.visualcrossing
 
 import com.rodrigmatrix.weatheryou.data.mapper.VisualCrossingRemoteMapper
-import com.rodrigmatrix.weatheryou.data.model.VisualCrossingWeatherResponse
+import com.rodrigmatrix.weatheryou.data.remote.WeatherYouRemoteDataSource
 import com.rodrigmatrix.weatheryou.data.service.VisualCrossingService
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import kotlinx.coroutines.flow.Flow

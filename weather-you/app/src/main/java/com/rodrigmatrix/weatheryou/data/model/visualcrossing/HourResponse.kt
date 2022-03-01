@@ -1,11 +1,11 @@
-package com.rodrigmatrix.weatheryou.data.model
+package com.rodrigmatrix.weatheryou.data.model.visualcrossing
 
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class CurrentConditionsResponse(
+data class HourResponse(
     @SerialName("cloudcover")
     val cloudcover: Double? = null,
     @SerialName("conditions")
@@ -22,8 +22,6 @@ data class CurrentConditionsResponse(
     val humidity: Double? = null,
     @SerialName("icon")
     val icon: String? = null,
-    @SerialName("moonphase")
-    val moonphase: Double? = null,
     @SerialName("precip")
     val precip: Double? = null,
     @SerialName("precipprob")
@@ -32,6 +30,8 @@ data class CurrentConditionsResponse(
     val preciptype: List<String>? = null,
     @SerialName("pressure")
     val pressure: Double? = null,
+    @SerialName("severerisk")
+    val severerisk: Double? = null,
     @SerialName("snow")
     val snow: Double? = null,
     @SerialName("snowdepth")
@@ -40,16 +40,10 @@ data class CurrentConditionsResponse(
     val solarenergy: Double? = null,
     @SerialName("solarradiation")
     val solarradiation: Double? = null,
+    @SerialName("source")
+    val source: String? = null,
     @SerialName("stations")
     val stations: List<String>? = null,
-    @SerialName("sunrise")
-    val sunrise: String? = null,
-    @SerialName("sunriseEpoch")
-    val sunriseEpoch: Int? = null,
-    @SerialName("sunset")
-    val sunset: String? = null,
-    @SerialName("sunsetEpoch")
-    val sunsetEpoch: Int? = null,
     @SerialName("temp")
     val temp: Double? = null,
     @SerialName("uvindex")

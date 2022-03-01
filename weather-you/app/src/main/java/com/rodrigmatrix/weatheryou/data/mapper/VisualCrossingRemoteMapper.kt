@@ -1,8 +1,8 @@
 package com.rodrigmatrix.weatheryou.data.mapper
 
-import com.rodrigmatrix.weatheryou.data.model.DayResponse
-import com.rodrigmatrix.weatheryou.data.model.HourResponse
-import com.rodrigmatrix.weatheryou.data.model.VisualCrossingWeatherResponse
+import com.rodrigmatrix.weatheryou.data.model.visualcrossing.DayResponse
+import com.rodrigmatrix.weatheryou.data.model.visualcrossing.HourResponse
+import com.rodrigmatrix.weatheryou.data.model.visualcrossing.VisualCrossingWeatherResponse
 import com.rodrigmatrix.weatheryou.domain.model.WeatherDay
 import com.rodrigmatrix.weatheryou.domain.model.WeatherHour
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
@@ -14,7 +14,7 @@ private const val DAY_HOURS = 24
 private const val SECOND_ELEMENT = 1
 
 class VisualCrossingRemoteMapper(
-    private val weatherIconMapper: WeatherIconMapper
+    private val weatherIconMapper: VisualCrossingWeatherIconMapper
 ) {
 
     fun map(source: VisualCrossingWeatherResponse): WeatherLocation {
