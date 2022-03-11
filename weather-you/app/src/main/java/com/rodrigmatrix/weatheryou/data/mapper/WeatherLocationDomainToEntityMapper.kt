@@ -7,7 +7,9 @@ class WeatherLocationDomainToEntityMapper {
 
     fun map(source: WeatherLocation): WeatherLocationEntity {
         return WeatherLocationEntity(
-            source.name
+            latitude = source.latitude,
+            longitude = source.longitude,
+            name = source.name
         )
     }
 }

@@ -4,8 +4,9 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.Relation
 
-@Entity(tableName = "locations")
+@Entity(tableName = "locations", primaryKeys = ["latitude","longitude"])
 data class WeatherLocationEntity(
-    @PrimaryKey(autoGenerate = false)
+    val latitude: Double,
+    val longitude: Double,
     val name: String
 )

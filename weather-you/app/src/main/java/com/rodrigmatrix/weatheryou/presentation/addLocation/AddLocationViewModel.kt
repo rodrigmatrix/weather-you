@@ -2,13 +2,17 @@ package com.rodrigmatrix.weatheryou.presentation.addLocation
 
 import androidx.lifecycle.viewModelScope
 import com.rodrigmatrix.weatheryou.core.viewmodel.ViewModel
+import com.rodrigmatrix.weatheryou.domain.model.SearchAutocompleteLocation
 import com.rodrigmatrix.weatheryou.domain.repository.WeatherRepository
 import com.rodrigmatrix.weatheryou.domain.usecase.GetFamousLocationsUseCase
+import com.rodrigmatrix.weatheryou.domain.usecase.GetLocationUseCase
+import com.rodrigmatrix.weatheryou.domain.usecase.SearchLocationUseCase
 import com.rodrigmatrix.weatheryou.presentation.addLocation.AddLocationViewEffect.LocationAdded
 import com.rodrigmatrix.weatheryou.presentation.addLocation.AddLocationViewEffect.ShowError
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
@@ -16,6 +20,8 @@ import kotlinx.coroutines.launch
 class AddLocationViewModel(
     private val weatherRepository: WeatherRepository,
     private val getFamousLocationsUseCase: GetFamousLocationsUseCase,
+    private val searchLocationUseCase: SearchLocationUseCase,
+    private val getLocationUseCase: GetLocationUseCase,
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
 ): ViewModel<AddLocationViewState, AddLocationViewEffect>(AddLocationViewState()) {
 
@@ -23,17 +29,25 @@ class AddLocationViewModel(
         getFamousLocations()
     }
 
-    fun addLocation(location: String) {
+    fun addLocation(placeId: String) {
         viewModelScope.launch {
-            weatherRepository.addLocation(location)
+            getLocationUseCase(placeId)
                 .flowOn(coroutineDispatcher)
                 .onStart { setState { it.copy(isLoading = true) } }
                 .catch { exception ->
-                    setEffect { ShowError(exception.message.orEmpty()) }
-                    setState { it.copy(isLoading = false) }
+                    exception.handleError()
                 }
-                .collect {
-                    setEffect { LocationAdded }
+                .collect { searchLocation ->
+                    weatherRepository.addLocation(
+                        searchLocation.name,
+                        searchLocation.latitude,
+                        searchLocation.longitude
+                    ).flowOn(coroutineDispatcher)
+                        .onStart { setState { it.copy(isLoading = true) } }
+                        .catch { exception ->
+                            exception.handleError()
+                        }
+                        .collect { setEffect { LocationAdded } }
                 }
         }
     }
@@ -43,9 +57,7 @@ class AddLocationViewModel(
             getFamousLocationsUseCase()
                 .flowOn(coroutineDispatcher)
                 .catch { exception ->
-                    setEffect { ShowError(exception.message.orEmpty()) }
-                    setState { it.copy(famousLocationsList = emptyList()) }
-
+                    exception.handleError()
                 }
                 .collect { famousLocationsList ->
                     setState { it.copy(famousLocationsList = famousLocationsList) }
@@ -54,11 +66,24 @@ class AddLocationViewModel(
     }
 
     fun onSearch(searchText: String) {
-        setState {
-            it.copy(
-                searchText = searchText,
-                locationsList = listOf(searchText).filter { name -> name.isNotEmpty() }
-            )
+        viewModelScope.launch {
+            searchLocationUseCase(searchText)
+                .flowOn(coroutineDispatcher)
+                .onStart {
+                    setState { it.copy(searchText = searchText, isLoading = true) }
+                }
+                .catch { exception ->
+                    exception.handleError()
+                }
+                .collect { locations ->
+                    setState { it.copy(locationsList = locations, isLoading = false) }
+                }
         }
+    }
+
+    private fun Throwable.handleError() {
+        val exception = this
+        setEffect { ShowError(exception.message.orEmpty()) }
+        setState { it.copy(isLoading = false) }
     }
 }

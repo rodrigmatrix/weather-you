@@ -80,4 +80,5 @@
     <string name="remaining_daylight_x">Remaining daylight:</string>
     <string name="hours_minutes_x_y">%dh %dm</string>
     <string name="minutes_x">%dm</string>
+    <string name="powered_by_google">Powered by Google</string>
 </resources>

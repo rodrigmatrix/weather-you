@@ -14,6 +14,6 @@ interface WeatherDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun addLocation(weatherLocation: WeatherLocationEntity)
 
-    @Query("DELETE FROM locations WHERE name LIKE :locationName")
-    fun deleteLocation(locationName: String)
+    @Query("DELETE FROM locations WHERE latitude LIKE :latitude AND longitude LIKE :longitude")
+    fun deleteLocation(latitude: Double, longitude: Double)
 }

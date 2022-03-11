@@ -9,8 +9,10 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.CancellationToken
 import com.google.android.gms.tasks.OnTokenCanceledListener
 import com.google.android.gms.tasks.Tasks
+import com.rodrigmatrix.weatheryou.domain.model.CurrentLocation
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flow
 import java.util.concurrent.TimeUnit
 
@@ -20,7 +22,7 @@ class UserLocationDataSourceImpl(
 ) : UserLocationDataSource {
 
     @SuppressLint("MissingPermission")
-    override fun getCurrentLocation(): Flow<String> {
+    override fun getCurrentLocation(): Flow<CurrentLocation> {
         return flow {
             val location = Tasks.await(
                 locationServices.lastLocation,
@@ -29,12 +31,16 @@ class UserLocationDataSourceImpl(
             )
             val address = geoCoder
                 .getFromLocation(location.latitude, location.longitude, 1)
-                .firstOrNull()
-            emit(address?.formatLocationName().orEmpty())
-        }.catch { emit("") }
+                .first()
+            emit(address.toCurrentLocation())
+        }.catch {  }
     }
 
-    private fun Address.formatLocationName(): String {
-        return "$subAdminArea,$adminArea,$countryName"
+    private fun Address.toCurrentLocation(): CurrentLocation {
+        return CurrentLocation(
+            name = "$subAdminArea,$adminArea,$countryName",
+            latitude = this.latitude,
+            longitude = this.longitude
+        )
     }
 }

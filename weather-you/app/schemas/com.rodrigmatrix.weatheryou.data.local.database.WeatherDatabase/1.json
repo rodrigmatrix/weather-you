@@ -2,12 +2,24 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "5508f0660df1ec3ae9f08fcbfb5d2f8c",
+    "identityHash": "06fc094a38be48a18f48644253b8c408",
     "entities": [
       {
         "tableName": "locations",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, PRIMARY KEY(`name`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`latitude` REAL NOT NULL, `longitude` REAL NOT NULL, `name` TEXT NOT NULL, PRIMARY KEY(`latitude`, `longitude`))",
         "fields": [
+          {
+            "fieldPath": "latitude",
+            "columnName": "latitude",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "longitude",
+            "columnName": "longitude",
+            "affinity": "REAL",
+            "notNull": true
+          },
           {
             "fieldPath": "name",
             "columnName": "name",
@@ -17,7 +29,8 @@
         ],
         "primaryKey": {
           "columnNames": [
-            "name"
+            "latitude",
+            "longitude"
           ],
           "autoGenerate": false
         },
@@ -28,7 +41,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5508f0660df1ec3ae9f08fcbfb5d2f8c')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '06fc094a38be48a18f48644253b8c408')"
     ]
   }
 }

@@ -8,8 +8,8 @@ class FamousCitiesMapper {
     fun map(source: List<Cities>): List<City> {
         return source.map { city ->
             City(
-                displayName = city.displayName,
-                fullName = city.fullName,
+                name = city.displayName,
+                placeId = city.placeId,
                 image = city.image
             )
         }

@@ -19,14 +19,20 @@ import com.rodrigmatrix.weatheryou.data.remote.WeatherYouRemoteDataSource
 import com.rodrigmatrix.weatheryou.data.remote.visualcrossing.VisualCrossingRemoteDataSourceImpl
 import com.rodrigmatrix.weatheryou.data.remote.builder.RetrofitClientGenerator
 import com.rodrigmatrix.weatheryou.data.remote.builder.RetrofitServiceGenerator
+import com.rodrigmatrix.weatheryou.data.remote.interceptor.GoogleMapsInterceptor
 import com.rodrigmatrix.weatheryou.data.remote.openweather.OpenWeatherRemoteDataSourceImpl
+import com.rodrigmatrix.weatheryou.data.remote.search.SearchRemoteDataSource
+import com.rodrigmatrix.weatheryou.data.remote.search.SearchRemoteDataSourceImpl
 import com.rodrigmatrix.weatheryou.data.repository.SearchRepositoryImpl
 import com.rodrigmatrix.weatheryou.data.service.VisualCrossingService
 import com.rodrigmatrix.weatheryou.domain.repository.WeatherRepository
 import com.rodrigmatrix.weatheryou.data.repository.WeatherRepositoryImpl
 import com.rodrigmatrix.weatheryou.data.service.OpenWeatherService
+import com.rodrigmatrix.weatheryou.data.service.SearchLocationService
 import com.rodrigmatrix.weatheryou.domain.repository.SearchRepository
 import com.rodrigmatrix.weatheryou.domain.usecase.GetFamousLocationsUseCase
+import com.rodrigmatrix.weatheryou.domain.usecase.GetLocationUseCase
+import com.rodrigmatrix.weatheryou.domain.usecase.SearchLocationUseCase
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -39,11 +45,15 @@ import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import java.util.*
 
+private const val GOOGLE_MAPS_SERVICE = "GOOGLE_MAPS_SERVICE"
+
 val dataModule: List<Module>
     get() = useCaseModule + repositoryModule + dataSourceModule + otherModules
 
 private val useCaseModule = module {
     factory { GetFamousLocationsUseCase(get()) }
+    factory { SearchLocationUseCase(get()) }
+    factory { GetLocationUseCase(get()) }
 }
 
 private val repositoryModule = module {
@@ -54,7 +64,12 @@ private val repositoryModule = module {
             weatherLocationDomainToEntityMapper = WeatherLocationDomainToEntityMapper()
         )
     }
-    factory<SearchRepository> { SearchRepositoryImpl(get(), FamousCitiesMapper()) }
+    factory<SearchRepository> {
+        SearchRepositoryImpl(
+            searchRemoteDataSource = get(),
+            famousCitiesMapper = FamousCitiesMapper()
+        )
+    }
 }
 
 private val dataSourceModule = module {
@@ -70,9 +85,22 @@ private val dataSourceModule = module {
 //            OpenWeatherRemoteMapper(OpenWeatherIconMapper())
 //        )
 //    }
-    factory<WeatherLocalDataSource> { WeatherLocalDataSourceImpl(get(), get()) }
+    factory<WeatherLocalDataSource> {
+        WeatherLocalDataSourceImpl(
+            weatherDAO = get(),
+            userLocationDataSource = get(),
+            currentLocationToEntityMapper = CurrentLocationToEntityMapper()
+        )
+    }
     factory<UserLocationDataSource> { UserLocationDataSourceImpl(get(), get()) }
     factory<RemoteConfigDataSource> { RemoteConfigDataSourceImpl(get()) }
+    factory<SearchRemoteDataSource> {
+        SearchRemoteDataSourceImpl(
+            searchLocationService = get(named(GOOGLE_MAPS_SERVICE)),
+            searchAutocompleteRemoteMapper = SearchAutocompleteRemoteMapper(),
+            searchLocationRemoteMapper = SearchLocationRemoteMapper()
+        )
+    }
 }
 
 @OptIn(ExperimentalSerializationApi::class)
@@ -115,6 +143,23 @@ private val otherModules = module {
             httpClient = get()
         )
         visualCrossingRetrofit.create(VisualCrossingService::class.java)
+    }
+    single(named(GOOGLE_MAPS_SERVICE)) {
+        val interceptor = OkHttpClient.Builder().apply {
+            if (BuildConfig.DEBUG) {
+                val logging = HttpLoggingInterceptor()
+                logging.setLevel(HttpLoggingInterceptor.Level.BASIC)
+                addNetworkInterceptor(logging)
+            }
+            addNetworkInterceptor(GoogleMapsInterceptor(BuildConfig.GOOGLE_MAPS_TOKEN))
+        }.build()
+        val searchRetrofit = RetrofitClientGenerator().create(
+            baseUrl =
+            BuildConfig.GOOGLE_MAPS_URL,
+            converterFactory = get<Json>().asConverterFactory("application/json".toMediaType()),
+            httpClient = interceptor
+        )
+        searchRetrofit.create(SearchLocationService::class.java)
     }
     single { LocationServices.getFusedLocationProviderClient(androidContext()) }
     factory { Geocoder(androidContext(), Locale.getDefault()) }

@@ -15,4 +15,12 @@ interface VisualCrossingService {
         @Query("include") days: String = "days,hours,current",
         @Query("key") key: String = BuildConfig.VISUAL_CODING_TOKEN,
     ): VisualCrossingWeatherResponse
+
+    @GET("timeline/{coordinates}")
+    suspend fun getWeatherWithCoordinates(
+        @Path("coordinates") coordinates: String,
+        @Query("unitGroup") unitGroup: String,
+        @Query("include") days: String = "days,hours,current",
+        @Query("key") key: String = BuildConfig.VISUAL_CODING_TOKEN,
+    ): VisualCrossingWeatherResponse
 }

@@ -5,6 +5,9 @@ import com.rodrigmatrix.weatheryou.domain.model.*
 
 val PreviewWeatherLocation = WeatherLocation(
     name = "Toronto",
+    latitude = 0.0,
+    longitude = 0.0,
+    isCurrentLocation = false,
     currentWeather = 10.0,
     feelsLike = -2.0,
     maxTemperature = 10.0,
@@ -32,6 +35,9 @@ val PreviewWeatherLocation = WeatherLocation(
 val PreviewWeatherList = listOf(
     WeatherLocation(
         name = "Toronto",
+        latitude = 0.0,
+        longitude = 0.0,
+        isCurrentLocation = false,
         currentWeather = 1.0,
         feelsLike = -2.0,
         maxTemperature = 10.0,
@@ -57,6 +63,9 @@ val PreviewWeatherList = listOf(
     ),
     WeatherLocation(
         name = "Montreal",
+        latitude = 0.0,
+        longitude = 0.0,
+        isCurrentLocation = false,
         currentWeather = -10.0,
         feelsLike = -2.0,
         maxTemperature = 10.0,
@@ -82,6 +91,9 @@ val PreviewWeatherList = listOf(
     ),
     WeatherLocation(
         name = "Montreal",
+        latitude = 0.0,
+        longitude = 0.0,
+        isCurrentLocation = false,
         currentWeather = -10.0,
         feelsLike = -2.0,
         maxTemperature = 10.0,
@@ -107,6 +119,9 @@ val PreviewWeatherList = listOf(
     ),
     WeatherLocation(
         name = "Montreal",
+        latitude = 0.0,
+        longitude = 0.0,
+        isCurrentLocation = false,
         currentWeather = -10.0,
         feelsLike = -2.0,
         maxTemperature = 10.0,
@@ -132,6 +147,9 @@ val PreviewWeatherList = listOf(
     ),
     WeatherLocation(
         name = "Montreal",
+        latitude = 0.0,
+        longitude = 0.0,
+        isCurrentLocation = false,
         currentWeather = -10.0,
         feelsLike = -2.0,
         maxTemperature = 10.0,
@@ -157,6 +175,9 @@ val PreviewWeatherList = listOf(
     ),
     WeatherLocation(
         name = "Montreal",
+        latitude = 0.0,
+        longitude = 0.0,
+        isCurrentLocation = false,
         currentWeather = -10.0,
         feelsLike = -2.0,
         maxTemperature = 10.0,
@@ -182,6 +203,9 @@ val PreviewWeatherList = listOf(
     ),
     WeatherLocation(
         name = "Montreal",
+        latitude = 0.0,
+        longitude = 0.0,
+        isCurrentLocation = false,
         currentWeather = -10.0,
         feelsLike = -2.0,
         maxTemperature = 10.0,
@@ -207,6 +231,9 @@ val PreviewWeatherList = listOf(
     ),
     WeatherLocation(
         name = "Montreal",
+        latitude = 0.0,
+        longitude = 0.0,
+        isCurrentLocation = false,
         currentWeather = -10.0,
         feelsLike = -2.0,
         maxTemperature = 10.0,
@@ -232,6 +259,9 @@ val PreviewWeatherList = listOf(
     ),
     WeatherLocation(
         name = "Montreal",
+        latitude = 0.0,
+        longitude = 0.0,
+        isCurrentLocation = false,
         currentWeather = -10.0,
         feelsLike = -2.0,
         maxTemperature = 10.0,

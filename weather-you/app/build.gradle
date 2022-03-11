@@ -28,6 +28,9 @@ android {
         buildConfigField "String", "OPEN_WEATHER_URL", "\"https://api.openweathermap.org/data/2.5/\""
         buildConfigField "String", "OPEN_WEATHER_TOKEN", localProperties['openweather.token']
 
+        buildConfigField "String", "GOOGLE_MAPS_URL", "\"https://maps.googleapis.com/maps/api/\""
+        buildConfigField "String", "GOOGLE_MAPS_TOKEN", localProperties['googlemaps.token']
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true

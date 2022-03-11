@@ -51,7 +51,7 @@ class HomeViewModel(
 
     fun deleteLocation(weatherLocation: WeatherLocation) {
         viewModelScope.launch {
-            weatherRepository.deleteLocation(weatherLocation.name)
+            weatherRepository.deleteLocation(weatherLocation)
                 .flowOn(coroutineDispatcher)
                 .onStart { setState { it.copy(isLoading = true) } }
                 .onCompletion { setState { it.copy(isLoading = false) } }

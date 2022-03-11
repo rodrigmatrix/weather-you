@@ -10,26 +10,27 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import java.util.*
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class WeatherRepositoryImpl(
     private val weatherYouRemoteDataSource: WeatherYouRemoteDataSource,
     private val weatherLocalDataSource: WeatherLocalDataSource,
     private val weatherLocationDomainToEntityMapper: WeatherLocationDomainToEntityMapper
 ) : WeatherRepository {
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    override fun addLocation(locationName: String): Flow<Unit> {
+    override fun addLocation(name: String, latitude: Double, longitude: Double): Flow<Unit> {
         return weatherYouRemoteDataSource.getWeather(
-                locationName,
-                getMetricUnit()
-            ).flatMapLatest { location ->
-                weatherLocalDataSource.addLocation(weatherLocationDomainToEntityMapper.map(location))
-            }
+            latitude,
+            longitude
+        ).flatMapLatest { location ->
+            val entity = weatherLocationDomainToEntityMapper.map(location.copy(name = name))
+            weatherLocalDataSource.addLocation(entity)
+        }
     }
 
-    override fun fetchLocation(resolvedAddress: String): Flow<WeatherLocation> {
+    private fun fetchLocation(latitude: Double, longitude: Double): Flow<WeatherLocation> {
         return weatherYouRemoteDataSource.getWeather(
-            resolvedAddress,
-            getMetricUnit()
+            latitude,
+            longitude
         )
     }
 
@@ -38,22 +39,14 @@ class WeatherRepositoryImpl(
             .getAllLocations()
             .map { weatherLocations ->
                 weatherLocations.mapNotNull {
-                    fetchLocation(it.name)
+                    fetchLocation(it.latitude, it.longitude)
                         .catch { emitAll(flowOf()) }
-                        .firstOrNull()
+                        .firstOrNull()?.copy(name = it.name)
                 }
             }
     }
 
-    override fun deleteLocation(locationName: String): Flow<Unit> {
-        return weatherLocalDataSource.deleteLocation(locationName)
-    }
-
-    private fun getMetricUnit(): String {
-        return when (Locale.getDefault().language) {
-            Locale.UK.language -> VisualCrossingUnits.UK.unit
-            Locale.US.language -> VisualCrossingUnits.US.unit
-            else -> VisualCrossingUnits.Metric.unit
-        }
+    override fun deleteLocation(weatherLocation: WeatherLocation): Flow<Unit> {
+        return weatherLocalDataSource.deleteLocation(weatherLocation.latitude, weatherLocation.longitude)
     }
 }

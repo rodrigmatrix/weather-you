@@ -2,6 +2,9 @@ package com.rodrigmatrix.weatheryou.domain.model
 
 data class WeatherLocation(
     val name: String,
+    val latitude: Double,
+    val longitude: Double,
+    val isCurrentLocation: Boolean,
     val currentWeather: Double,
     val currentWeatherDescription: String,
     val maxTemperature: Double,

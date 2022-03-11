@@ -9,5 +9,12 @@ import org.koin.dsl.module
 val presentationModule = module {
     viewModel { HomeViewModel(weatherRepository = get()) }
     viewModel { WeatherDetailsViewModel() }
-    viewModel { AddLocationViewModel(weatherRepository = get(), getFamousLocationsUseCase = get()) }
+    viewModel {
+        AddLocationViewModel(
+            weatherRepository = get(),
+            getFamousLocationsUseCase = get(),
+            searchLocationUseCase = get(),
+            getLocationUseCase = get()
+        )
+    }
 }

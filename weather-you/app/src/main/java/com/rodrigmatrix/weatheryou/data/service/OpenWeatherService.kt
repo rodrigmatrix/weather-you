@@ -11,10 +11,10 @@ interface OpenWeatherService {
 
     @GET("onecall")
     suspend fun getWeather(
-        @Query("lat") latitude: String = "33.44",
-        @Query("lon") longitude: String = "-94.04",
-        @Query("units") unit: String = "metric",
-        @Query("appid") key: String = BuildConfig.OPEN_WEATHER_TOKEN,
-        @Query("lang") language: String = "en_US",
+        @Query("lat") latitude: String,
+        @Query("lon") longitude: String,
+        @Query("units") unit: String,
+        @Query("lang") language: String,
+        @Query("appid") key: String = BuildConfig.OPEN_WEATHER_TOKEN
     ): OpenWeatherLocationResponse
 }

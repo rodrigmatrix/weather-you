@@ -84,7 +84,7 @@ fun LocationRow(
             .clickable { onLocationClick(location) },
         content = {
             Text(
-                text = stringResource(location.displayName),
+                text = stringResource(location.name),
                 style = MaterialTheme.typography.titleSmall,
                 overflow = TextOverflow.Ellipsis,
                 color = MaterialTheme.colorScheme.secondaryContainer,
@@ -101,7 +101,7 @@ fun LocationRow(
                     }
                 ),
                 contentScale = ContentScale.FillBounds,
-                contentDescription = stringResource(R.string.image_of_city, location.displayName),
+                contentDescription = stringResource(R.string.image_of_city, location.name),
                 modifier = Modifier
                     .fillMaxSize()
                     .clip(

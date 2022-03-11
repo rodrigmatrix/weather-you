@@ -20,6 +20,9 @@ class VisualCrossingRemoteMapper(
     fun map(source: VisualCrossingWeatherResponse): WeatherLocation {
         return WeatherLocation(
             name = source.resolvedAddress.orEmpty().split(",").dropLast(1).joinToString(),
+            latitude = source.latitude ?: 0.0,
+            longitude = source.longitude ?: 0.0,
+            isCurrentLocation = false,
             currentWeather = source.currentConditions?.temp ?: 0.0,
             currentWeatherDescription = source.currentConditions?.conditions.orEmpty(),
             maxTemperature = source.days?.firstOrNull()?.tempmax ?: 0.0,

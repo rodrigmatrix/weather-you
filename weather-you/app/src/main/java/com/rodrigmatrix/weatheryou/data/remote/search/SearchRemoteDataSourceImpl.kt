@@ -18,13 +18,13 @@ class SearchRemoteDataSourceImpl(
 
     override fun searchLocation(locationName: String): Flow<List<SearchAutocompleteLocation>> {
         return flow {
-            emit(searchLocationService.search(locationName, Locale.getDefault().toLanguageTag()))
+            emit(searchLocationService.search(locationName, Locale.getDefault().toString()))
         }.map(searchAutocompleteRemoteMapper::map)
     }
 
     override fun getLocation(placeId: String): Flow<SearchLocation> {
         return flow {
-            emit(searchLocationService.getLocationDetails(placeId, Locale.getDefault().toLanguageTag()))
+            emit(searchLocationService.getLocationDetails(placeId, Locale.getDefault().toString()))
         }.map(searchLocationRemoteMapper::map)
     }
 }
