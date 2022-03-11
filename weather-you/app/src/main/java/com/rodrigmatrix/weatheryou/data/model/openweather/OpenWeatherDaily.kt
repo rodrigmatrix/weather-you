@@ -15,7 +15,7 @@ data class OpenWeatherDaily(
     @SerialName("feels_like")
     val feelsLike: OpenWeatherFeelsLike? = null,
     @SerialName("humidity")
-    val humidity: Int? = null,
+    val humidity: Double? = null,
     @SerialName("moon_phase")
     val moonPhase: Double? = null,
     @SerialName("moonrise")

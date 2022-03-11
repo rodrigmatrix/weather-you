@@ -164,23 +164,23 @@ private fun SunriseSunsetVisualizer(
             end = Offset(canvasWidth, canvasHeight / 2),
             strokeWidth = 1f
         )
-        // sun
-        if (currentHour in sunriseHour..sunsetHour) {
-            val daylightHalf = (sunsetHour - sunriseHour)
-            val sunScaleY = if (currentHour >= daylightHalf) {
-                scaleY - (currentHour - sunsetHour)
-            } else {
-                scaleY + (currentHour / 24) * 2
-            }
-            drawCircle(
-                color = Color.Yellow,
-                radius = 16f,
-                center = Offset(
-                    x = scaleX * currentHour,
-                    y = sunScaleY
-                )
-            )
-        }
+//        // sun
+//        if (currentHour in sunriseHour..sunsetHour) {
+//            val daylightHalf = (sunsetHour - sunriseHour)
+//            val sunScaleY = if (currentHour >= daylightHalf) {
+//                scaleY - (currentHour - sunsetHour)
+//            } else {
+//                scaleY + (currentHour / 24) * 2
+//            }
+//            drawCircle(
+//                color = Color.Yellow,
+//                radius = 16f,
+//                center = Offset(
+//                    x = scaleX * currentHour,
+//                    y = sunScaleY
+//                )
+//            )
+//        }
         drawIntoCanvas {
             val canvas = it.nativeCanvas
             val sunrisePaint = Paint().apply {

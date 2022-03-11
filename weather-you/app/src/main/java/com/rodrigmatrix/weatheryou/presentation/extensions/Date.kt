@@ -4,12 +4,7 @@ import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.joda.time.LocalTime
 import org.joda.time.Period
-import org.joda.time.format.DateTimeFormat
-import org.joda.time.format.PeriodFormatter
-import org.joda.time.format.PeriodFormatterBuilder
 import java.text.SimpleDateFormat
-import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeFormatter.ofPattern
 import java.util.*
 
 fun String.getTimeZoneCurrentTime(): LocalTime {
@@ -23,7 +18,7 @@ fun String.getTimeZoneCurrentTime(): LocalTime {
 
 fun Long.getLocalTime(): LocalTime {
     return try {
-        return LocalTime(this)
+        return DateTime(this).toLocalTime()
     } catch (e: Exception) {
         LocalTime()
     }

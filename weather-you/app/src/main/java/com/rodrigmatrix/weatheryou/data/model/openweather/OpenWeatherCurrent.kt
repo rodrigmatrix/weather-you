@@ -15,7 +15,7 @@ data class OpenWeatherCurrent(
     @SerialName("feels_like")
     val feelsLike: Double? = null,
     @SerialName("humidity")
-    val humidity: Int? = null,
+    val humidity: Double? = null,
     @SerialName("pressure")
     val pressure: Int? = null,
     @SerialName("sunrise")
@@ -25,9 +25,9 @@ data class OpenWeatherCurrent(
     @SerialName("temp")
     val temp: Double? = null,
     @SerialName("uvi")
-    val uvi: Int? = null,
+    val uvi: Double? = null,
     @SerialName("visibility")
-    val visibility: Int? = null,
+    val visibility: Double? = null,
     @SerialName("weather")
     val weather: List<OpenWeatherWeather>? = null,
     @SerialName("wind_deg")

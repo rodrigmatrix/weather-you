@@ -15,7 +15,7 @@ class OpenWeatherRemoteDataSourceImpl(
 
     override fun getWeather(location: String, unit: String): Flow<WeatherLocation> {
         return flow {
-            emit(openWeatherService.getWeather(location = location))
+            emit(openWeatherService.getWeather())
         }.map(openWeatherRemoteMapper::map)
     }
 }
