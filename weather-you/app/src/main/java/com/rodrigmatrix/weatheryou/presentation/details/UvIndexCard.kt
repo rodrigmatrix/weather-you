@@ -1,6 +1,9 @@
 package com.rodrigmatrix.weatheryou.presentation.details
 
 import android.content.res.Configuration
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -8,6 +11,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -76,6 +80,13 @@ private fun UvIndexBar(
 ) {
     ConstraintLayout(Modifier.fillMaxWidth()) {
         val (uvDot, uvBar) = createRefs()
+        val biasFloat: Float by animateFloatAsState(
+            targetValue = ((uvIndex / 10f).toFloat()),
+            animationSpec = tween(
+                durationMillis = 3000,
+                easing = FastOutSlowInEasing
+            )
+        )
         Box(
             modifier
                 .padding(start = 4.dp, end = 4.dp)
@@ -115,7 +126,7 @@ private fun UvIndexBar(
                     linkTo(
                         start = parent.start,
                         end = parent.end,
-                        bias = (uvIndex / 10.0).toFloat()
+                        bias = biasFloat
                     )
                     linkTo(
                         top = parent.top,

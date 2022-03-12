@@ -1,12 +1,15 @@
 package com.rodrigmatrix.weatheryou.presentation.details
 
 import android.content.res.Configuration
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -75,6 +78,14 @@ fun WindDirectionsVisualizer(
     windDirection: Double,
     modifier: Modifier = Modifier
 ) {
+    var animate by remember { mutableStateOf(false) }
+    val arrowAngle: Float by animateFloatAsState(
+        targetValue = windDirection.toFloat(),
+        animationSpec = tween(
+            durationMillis = if (animate) 1000 else 0,
+            easing = FastOutSlowInEasing
+        )
+    )
     val primaryColor = MaterialTheme.colorScheme.primary
     val ternaryColor = MaterialTheme.colorScheme.tertiary
     val northString = stringResource(R.string.north_char)
@@ -91,7 +102,7 @@ fun WindDirectionsVisualizer(
             tint = primaryColor,
             modifier = Modifier
                 .size(40.dp)
-                .rotate(windDirection.toFloat())
+                .rotate(arrowAngle)
                 .align(Alignment.Center)
         )
         val markersCount = 90
@@ -124,6 +135,9 @@ fun WindDirectionsVisualizer(
             }
 
         }
+    }
+    LaunchedEffect(true) {
+        animate = true
     }
 }
 

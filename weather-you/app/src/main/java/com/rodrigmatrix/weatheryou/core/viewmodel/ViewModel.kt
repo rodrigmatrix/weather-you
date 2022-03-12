@@ -7,19 +7,21 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import androidx.lifecycle.ViewModel as AndroidxViewModel
 
-abstract class ViewModel<S: ViewState, E: ViewEffect>(initialState: S): AndroidxViewModel() {
+abstract class ViewModel<State: ViewState, Effect: ViewEffect>(
+    initialState: State
+): AndroidxViewModel() {
 
     private val _viewState = MutableStateFlow(initialState)
-    val viewState: StateFlow<S> = _viewState
+    val viewState: StateFlow<State> = _viewState
 
-    private val _viewEffect = Channel<E>()
-    val viewEffect: Flow<E> = _viewEffect.receiveAsFlow()
+    private val _viewEffect = Channel<Effect>()
+    val viewEffect: Flow<Effect> = _viewEffect.receiveAsFlow()
 
-    protected fun setState(newState: (S) -> S) {
+    protected fun setState(newState: (State) -> State) {
         _viewState.value = newState(viewState.value)
     }
 
-     protected fun setEffect(newEffect: () -> E) {
+     protected fun setEffect(newEffect: () -> Effect) {
         _viewEffect.trySend(newEffect())
     }
 }

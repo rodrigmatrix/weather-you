@@ -81,4 +81,5 @@
     <string name="hours_minutes_x_y">%dh %dm</string>
     <string name="minutes_x">%dm</string>
     <string name="powered_by_google">Powered by Google</string>
+    <string name="units">Units</string>
 </resources>
