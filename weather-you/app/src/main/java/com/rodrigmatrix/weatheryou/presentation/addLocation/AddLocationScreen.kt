@@ -96,7 +96,9 @@ fun AddLocationScreen(
                     .padding(bottom = 40.dp)
                     .focusable(),
                 keyboardActions = KeyboardActions(
-                    //onDone = { onLocationClick(viewState) }
+                    onDone = {
+                        onLocationClick(viewState.locationsList.firstOrNull()?.placeId.orEmpty())
+                    }
                 )
             )
         }
@@ -110,7 +112,7 @@ fun AddLocationScreen(
                 )
             } else {
                 Text(
-                    text = "No results found",
+                    text = stringResource(R.string.no_results_found),
                     style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)

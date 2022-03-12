@@ -20,12 +20,17 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
+import coil.request.CachePolicy
+import coil.request.ImageRequest
 import coil.size.Scale
 import com.rodrigmatrix.weatheryou.R
 import com.rodrigmatrix.weatheryou.domain.model.City
@@ -92,14 +97,8 @@ fun LocationRow(
                     .padding(4.dp)
                     .padding(start = 8.dp)
             )
-            Image(
-                painter = rememberImagePainter(
-                    data = location.image,
-                    builder = {
-                        crossfade(true)
-                        scale(Scale.FILL)
-                    }
-                ),
+            AsyncImage(
+                model = location.image,
                 contentScale = ContentScale.FillBounds,
                 contentDescription = stringResource(R.string.image_of_city, location.name),
                 modifier = Modifier

@@ -82,4 +82,6 @@
     <string name="minutes_x">%dm</string>
     <string name="powered_by_google">Powered by Google</string>
     <string name="units">Units</string>
+    <string name="current_weather_small_widget_description">Displays the current weather</string>
+    <string name="no_results_found">No results found</string>
 </resources>

@@ -35,16 +35,14 @@
             </intent-filter>
         </activity>
 
-<!--        <activity-->
-<!--            android:name=".presentation.tv.home.HomeTvActivity"-->
-<!--            android:exported="true"-->
-<!--            android:theme="@style/Theme.WeatherYou">-->
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
-<!--                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />-->
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
-<!--        </activity>-->
+        <receiver android:name=".widgets.weather.small.CurrentWeatherSmallWidgetReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider"
+                android:resource="@xml/current_weather_small_widget" />
+        </receiver>
     </application>
 
 </manifest>
