@@ -15,11 +15,16 @@ object WeatherYouPresentationModules {
     }
 
     private val presentationModule = module {
-        viewModel { HomeViewModel(weatherRepository = get()) }
+        viewModel {
+            HomeViewModel(
+                fetchLocationsUseCase = get(),
+                deleteLocationUseCase = get()
+            )
+        }
         viewModel { WeatherDetailsViewModel() }
         viewModel {
             AddLocationViewModel(
-                weatherRepository = get(),
+                addLocationUseCase = get(),
                 getFamousLocationsUseCase = get(),
                 searchLocationUseCase = get(),
                 getLocationUseCase = get()
