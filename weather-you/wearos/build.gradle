@@ -1,0 +1,64 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    namespace 'com.rodrigmatrix.weatheryou.wearos'
+    compileSdk 32
+
+    defaultConfig {
+        applicationId "com.rodrigmatrix.weatheryou.wearos"
+        minSdk 25
+        targetSdk 32
+        versionCode 1
+        versionName "1.0"
+        vectorDrawables {
+            useSupportLibrary true
+        }
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion '1.1.0-rc02'
+    }
+    packagingOptions {
+        resources {
+            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        }
+    }
+}
+
+dependencies {
+    implementation(Dependencies.androidxCore)
+    implementation(Dependencies.lifecycle)
+    
+    implementation(Dependencies.composeUi)
+    implementation(WearOsDependencies.composeMaterial)
+    implementation(WearOsDependencies.composeFoundation)
+    implementation(Dependencies.composePreview)
+    implementation(Dependencies.composeActivity)
+
+    implementation(WearOsDependencies.playServicesWearable)
+
+    debugImplementation(Dependencies.composeUiTooling)
+    debugImplementation(Dependencies.composeTestManifest)
+
+    androidTestImplementation(Dependencies.composeUiTestJunit)
+}
