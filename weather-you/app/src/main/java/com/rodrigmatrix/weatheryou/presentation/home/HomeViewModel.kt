@@ -4,6 +4,8 @@ import androidx.lifecycle.viewModelScope
 import com.rodrigmatrix.weatheryou.core.viewmodel.ViewModel
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.domain.repository.WeatherRepository
+import com.rodrigmatrix.weatheryou.domain.usecase.DeleteLocationUseCase
+import com.rodrigmatrix.weatheryou.domain.usecase.FetchLocationsUseCase
 import com.rodrigmatrix.weatheryou.presentation.home.HomeViewEffect.Error
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -14,9 +16,10 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
-    private val weatherRepository: com.rodrigmatrix.weatheryou.domain.repository.WeatherRepository,
+    private val fetchLocationsUseCase: FetchLocationsUseCase,
+    private val deleteLocationUseCase: DeleteLocationUseCase,
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
-): com.rodrigmatrix.weatheryou.core.viewmodel.ViewModel<HomeViewState, HomeViewEffect>(HomeViewState()) {
+): ViewModel<HomeViewState, HomeViewEffect>(HomeViewState()) {
 
     init {
         loadLocations()
@@ -24,7 +27,7 @@ class HomeViewModel(
 
     fun loadLocations() {
         viewModelScope.launch {
-            weatherRepository.fetchLocationsList()
+            fetchLocationsUseCase()
                 .flowOn(coroutineDispatcher)
                 .onStart { setState { it.copy(isLoading = true) } }
                 .onCompletion { setState { it.copy(isLoading = false) } }
@@ -43,15 +46,15 @@ class HomeViewModel(
         }
     }
 
-    private fun getSelectedWeatherLocation(locationsList: List<com.rodrigmatrix.weatheryou.domain.model.WeatherLocation>): com.rodrigmatrix.weatheryou.domain.model.WeatherLocation? {
+    private fun getSelectedWeatherLocation(locationsList: List<WeatherLocation>): WeatherLocation? {
         return locationsList.find { location ->
             location.name == viewState.value.selectedWeatherLocation?.name
         }
     }
 
-    fun deleteLocation(weatherLocation: com.rodrigmatrix.weatheryou.domain.model.WeatherLocation) {
+    fun deleteLocation(weatherLocation: WeatherLocation) {
         viewModelScope.launch {
-            weatherRepository.deleteLocation(weatherLocation)
+            deleteLocationUseCase(weatherLocation)
                 .flowOn(coroutineDispatcher)
                 .onStart { setState { it.copy(isLoading = true) } }
                 .onCompletion { setState { it.copy(isLoading = false) } }
@@ -66,13 +69,13 @@ class HomeViewModel(
         }
     }
 
-    fun selectLocation(weatherLocation: com.rodrigmatrix.weatheryou.domain.model.WeatherLocation? = null) {
+    fun selectLocation(weatherLocation: WeatherLocation? = null) {
         setState {
             it.copy(selectedWeatherLocation = getSelectedLocation(weatherLocation))
         }
     }
 
-    private fun getSelectedLocation(weatherLocation: com.rodrigmatrix.weatheryou.domain.model.WeatherLocation?): com.rodrigmatrix.weatheryou.domain.model.WeatherLocation? {
+    private fun getSelectedLocation(weatherLocation: WeatherLocation?): WeatherLocation? {
         return if (weatherLocation == viewState.value.selectedWeatherLocation) {
             null
         } else {

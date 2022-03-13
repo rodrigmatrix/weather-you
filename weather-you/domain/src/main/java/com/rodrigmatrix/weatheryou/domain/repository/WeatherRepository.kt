@@ -9,5 +9,9 @@ interface WeatherRepository {
 
     fun fetchLocationsList(): Flow<List<WeatherLocation>>
 
+    fun fetchLocation(latitude: Double, longitude: Double): Flow<WeatherLocation>
+
     fun deleteLocation(weatherLocation: WeatherLocation): Flow<Unit>
+
+    fun getLocalWeather(): Flow<WeatherLocation>
 }

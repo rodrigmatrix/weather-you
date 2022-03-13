@@ -6,6 +6,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface WeatherLocalDataSource {
 
+    fun getLocalWeather(): Flow<WeatherLocationEntity>
+
     fun getAllLocations(): Flow<List<WeatherLocationEntity>>
 
     fun addLocation(location: WeatherLocationEntity): Flow<Unit>

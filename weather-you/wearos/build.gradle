@@ -16,7 +16,6 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
-
     }
 
     buildTypes {
@@ -46,14 +45,20 @@ android {
 }
 
 dependencies {
+    implementation project(LocalModules.domain)
+    implementation project(LocalModules.data)
+
     implementation(Dependencies.androidxCore)
     implementation(Dependencies.lifecycle)
-    
+
     implementation(Dependencies.composeUi)
     implementation(WearOsDependencies.composeMaterial)
     implementation(WearOsDependencies.composeFoundation)
     implementation(Dependencies.composePreview)
     implementation(Dependencies.composeActivity)
+
+    implementation(Dependencies.koinAndroid)
+    implementation(Dependencies.koinCompose)
 
     implementation(WearOsDependencies.playServicesWearable)
 

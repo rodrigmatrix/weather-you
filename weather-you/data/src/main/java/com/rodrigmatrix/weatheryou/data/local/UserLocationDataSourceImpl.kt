@@ -19,14 +19,14 @@ import java.util.concurrent.TimeUnit
 class UserLocationDataSourceImpl(
     private val locationServices: FusedLocationProviderClient,
     private val geoCoder: Geocoder
-) : com.rodrigmatrix.weatheryou.data.local.UserLocationDataSource {
+) : UserLocationDataSource {
 
     @SuppressLint("MissingPermission")
     override fun getCurrentLocation(): Flow<CurrentLocation> {
         return flow {
             val location = Tasks.await(
                 locationServices.lastLocation,
-                3000L,
+                4000L,
                 TimeUnit.MILLISECONDS
             )
             val address = geoCoder

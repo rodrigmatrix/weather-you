@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.rodrigmatrix.weatheryou.core.viewmodel.ViewModel
 import com.rodrigmatrix.weatheryou.domain.model.SearchAutocompleteLocation
 import com.rodrigmatrix.weatheryou.domain.repository.WeatherRepository
+import com.rodrigmatrix.weatheryou.domain.usecase.AddLocationUseCase
 import com.rodrigmatrix.weatheryou.domain.usecase.GetFamousLocationsUseCase
 import com.rodrigmatrix.weatheryou.domain.usecase.GetLocationUseCase
 import com.rodrigmatrix.weatheryou.domain.usecase.SearchLocationUseCase
@@ -18,12 +19,12 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
 class AddLocationViewModel(
-    private val weatherRepository: com.rodrigmatrix.weatheryou.domain.repository.WeatherRepository,
-    private val getFamousLocationsUseCase: com.rodrigmatrix.weatheryou.domain.usecase.GetFamousLocationsUseCase,
-    private val searchLocationUseCase: com.rodrigmatrix.weatheryou.domain.usecase.SearchLocationUseCase,
-    private val getLocationUseCase: com.rodrigmatrix.weatheryou.domain.usecase.GetLocationUseCase,
+    private val addLocationUseCase: AddLocationUseCase,
+    private val getFamousLocationsUseCase: GetFamousLocationsUseCase,
+    private val searchLocationUseCase: SearchLocationUseCase,
+    private val getLocationUseCase: GetLocationUseCase,
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
-): com.rodrigmatrix.weatheryou.core.viewmodel.ViewModel<AddLocationViewState, AddLocationViewEffect>(AddLocationViewState()) {
+): ViewModel<AddLocationViewState, AddLocationViewEffect>(AddLocationViewState()) {
 
     init {
         getFamousLocations()
@@ -38,7 +39,7 @@ class AddLocationViewModel(
                     exception.handleError()
                 }
                 .collect { searchLocation ->
-                    weatherRepository.addLocation(
+                    addLocationUseCase(
                         searchLocation.name,
                         searchLocation.latitude,
                         searchLocation.longitude

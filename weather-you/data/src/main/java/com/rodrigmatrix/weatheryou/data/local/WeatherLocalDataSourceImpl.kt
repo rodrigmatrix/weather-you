@@ -9,7 +9,7 @@ private const val FIRST_INDEX = 0
 
 class WeatherLocalDataSourceImpl(
     private val weatherDAO: WeatherDAO,
-    private val userLocationDataSource: com.rodrigmatrix.weatheryou.data.local.UserLocationDataSource,
+    private val userLocationDataSource: UserLocationDataSource,
     private val currentLocationToEntityMapper: CurrentLocationToEntityMapper
 ) : WeatherLocalDataSource {
 
@@ -37,5 +37,9 @@ class WeatherLocalDataSourceImpl(
         return flow {
             emit(weatherDAO.deleteLocation(latitude, longitude))
         }
+    }
+
+    override fun getLocalWeather(): Flow<WeatherLocationEntity> {
+        return userLocationDataSource.getCurrentLocation().map(currentLocationToEntityMapper::map)
     }
 }

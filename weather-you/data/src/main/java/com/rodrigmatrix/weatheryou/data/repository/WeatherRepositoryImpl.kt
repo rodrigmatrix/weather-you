@@ -27,7 +27,7 @@ class WeatherRepositoryImpl(
         }
     }
 
-    private fun fetchLocation(latitude: Double, longitude: Double): Flow<WeatherLocation> {
+    override fun fetchLocation(latitude: Double, longitude: Double): Flow<WeatherLocation> {
         return weatherYouRemoteDataSource.getWeather(
             latitude,
             longitude
@@ -48,5 +48,11 @@ class WeatherRepositoryImpl(
 
     override fun deleteLocation(weatherLocation: WeatherLocation): Flow<Unit> {
         return weatherLocalDataSource.deleteLocation(weatherLocation.latitude, weatherLocation.longitude)
+    }
+
+    override fun getLocalWeather(): Flow<WeatherLocation> {
+        return weatherLocalDataSource.getLocalWeather().flatMapLatest {
+            fetchLocation(it.latitude, it.longitude)
+        }
     }
 }

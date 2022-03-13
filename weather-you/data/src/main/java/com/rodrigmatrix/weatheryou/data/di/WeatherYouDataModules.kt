@@ -27,9 +27,7 @@ import com.rodrigmatrix.weatheryou.data.service.SearchLocationService
 import com.rodrigmatrix.weatheryou.data.service.VisualCrossingService
 import com.rodrigmatrix.weatheryou.domain.repository.SearchRepository
 import com.rodrigmatrix.weatheryou.domain.repository.WeatherRepository
-import com.rodrigmatrix.weatheryou.domain.usecase.GetFamousLocationsUseCase
-import com.rodrigmatrix.weatheryou.domain.usecase.GetLocationUseCase
-import com.rodrigmatrix.weatheryou.domain.usecase.SearchLocationUseCase
+import com.rodrigmatrix.weatheryou.domain.usecase.*
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -59,9 +57,13 @@ object WeatherYouDataModules {
     }
 
     private val useCaseModule = module {
-        factory { GetFamousLocationsUseCase(get()) }
-        factory { SearchLocationUseCase(get()) }
-        factory { GetLocationUseCase(get()) }
+        factory { GetFamousLocationsUseCase(searchRepository = get()) }
+        factory { SearchLocationUseCase(searchRepository = get()) }
+        factory { GetLocationUseCase(searchRepository = get()) }
+        factory { AddLocationUseCase(weatherRepository = get()) }
+        factory { DeleteLocationUseCase(weatherRepository = get()) }
+        factory { FetchLocationsUseCase(weatherRepository = get()) }
+        factory { FetchLocationUseCase(weatherRepository = get()) }
     }
 
     private val repositoryModule = module {
