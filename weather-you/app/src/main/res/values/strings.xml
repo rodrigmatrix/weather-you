@@ -40,12 +40,6 @@
     <string name="add_x_location">Add %s location</string>
     <string name="image_of_x">Image of %s</string>
     <string name="image_of_city">Image of %s</string>
-    <string name="new_york">New York</string>
-    <string name="vancouver">Vancouver</string>
-    <string name="los_angeles">Los Angeles</string>
-    <string name="toronto">Toronto</string>
-    <string name="rio_de_janeiro">Rio de Janeiro</string>
-    <string name="sao_paulo">Sao Paulo</string>
     <string name="delete_location">Delete location</string>
     <string name="humidity">Humidity</string>
     <string name="the_dew_point_is_x">The dew point is %s right now.</string>

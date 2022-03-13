@@ -4,7 +4,8 @@ import android.app.Application
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
-import com.rodrigmatrix.weatheryou.di.WeatherYouModules
+import com.rodrigmatrix.weatheryou.data.di.WeatherYouDataModules
+import com.rodrigmatrix.weatheryou.di.WeatherYouPresentationModules
 import com.rodrigmatrix.weatheryou.widgets.weather.small.CurrentWeatherSmallWidget
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
@@ -16,7 +17,8 @@ class WeatherYouApp: Application() {
         initRemoteConfig()
         startKoin {
             androidContext(this@WeatherYouApp)
-            WeatherYouModules.loadModules()
+            WeatherYouDataModules.loadModules()
+            WeatherYouPresentationModules.loadModules()
         }
         CurrentWeatherSmallWidget().updateWidget()
     }

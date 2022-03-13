@@ -13,10 +13,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rodrigmatrix.weatheryou.R
-import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
+import com.rodrigmatrix.weatheryou.core.extensions.getTimeZoneCurrentTime
 import com.rodrigmatrix.weatheryou.presentation.components.WeatherIcon
 import com.rodrigmatrix.weatheryou.presentation.components.WeatherYouCard
-import com.rodrigmatrix.weatheryou.presentation.extensions.getTimeZoneCurrentTime
 import com.rodrigmatrix.weatheryou.presentation.extensions.percentageString
 import com.rodrigmatrix.weatheryou.presentation.extensions.temperatureString
 import com.rodrigmatrix.weatheryou.presentation.theme.WeatherYouTheme
@@ -24,7 +23,7 @@ import com.rodrigmatrix.weatheryou.presentation.utils.PreviewWeatherLocation
 
 @Composable
 fun CurrentWeather(
-    weatherLocation: WeatherLocation,
+    weatherLocation: com.rodrigmatrix.weatheryou.domain.model.WeatherLocation,
     modifier: Modifier = Modifier
 ) {
     WeatherYouCard(modifier.fillMaxWidth()) {

@@ -8,10 +8,6 @@ plugins {
     id 'com.google.firebase.crashlytics'
 }
 
-def localPropertiesFile = rootProject.file("local.properties")
-def localProperties = new Properties()
-localProperties.load(new FileInputStream(localPropertiesFile))
-
 android {
     compileSdk 32
 
@@ -21,15 +17,6 @@ android {
         targetSdk 32
         versionCode 2
         versionName "1.0"
-
-        buildConfigField "String", "VISUAL_CODING_URL", "\"https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/\""
-        buildConfigField "String", "VISUAL_CODING_TOKEN", localProperties['visualcoding.token']
-
-        buildConfigField "String", "OPEN_WEATHER_URL", "\"https://api.openweathermap.org/data/2.5/\""
-        buildConfigField "String", "OPEN_WEATHER_TOKEN", localProperties['openweather.token']
-
-        buildConfigField "String", "GOOGLE_MAPS_URL", "\"https://maps.googleapis.com/maps/api/\""
-        buildConfigField "String", "GOOGLE_MAPS_TOKEN", localProperties['googlemaps.token']
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -70,7 +57,7 @@ android {
         compose true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion compose_version
+        kotlinCompilerExtensionVersion Versions.composeVersion
     }
     packagingOptions {
         resources {
@@ -80,60 +67,58 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.core:core-ktx:1.7.0'
-    implementation "androidx.compose.ui:ui:$compose_version"
-    implementation 'androidx.compose.material3:material3:1.0.0-alpha07'
-    implementation 'androidx.compose.material:material:1.2.0-alpha04'
-    implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.1'
-    implementation 'androidx.activity:activity-compose:1.4.0'
-    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.1"
-    implementation "androidx.navigation:navigation-compose:2.5.0-alpha03"
-    implementation "com.google.accompanist:accompanist-navigation-animation:0.16.1"
-    implementation "com.google.accompanist:accompanist-flowlayout:0.24.0-alpha"
-    implementation "com.google.accompanist:accompanist-swiperefresh:0.17.0"
-    implementation "com.google.accompanist:accompanist-permissions:0.24.0-alpha"
-    implementation "androidx.glance:glance-appwidget:1.0.0-alpha03"
-    implementation "androidx.constraintlayout:constraintlayout-compose:1.0.0"
+    implementation project(LocalModules.domain)
+    implementation project(LocalModules.data)
+    implementation project(LocalModules.core)
 
-    implementation "io.insert-koin:koin-android:3.1.5"
-    implementation "io.insert-koin:koin-androidx-compose:3.1.5"
+    implementation(Dependencies.androidxCore)
+    implementation(Dependencies.lifecycle)
+    implementation(Dependencies.androidxWindow)
 
-    implementation platform("com.google.firebase:firebase-bom:29.1.0")
-    implementation "com.google.firebase:firebase-config-ktx"
-    implementation "com.google.firebase:firebase-messaging-ktx"
-    implementation "com.google.firebase:firebase-inappmessaging-display"
-    implementation "com.google.firebase:firebase-crashlytics-ktx"
-    implementation "com.google.firebase:firebase-analytics-ktx"
+    implementation(Dependencies.kotlinStdlib)
+    implementation(Dependencies.kotlinCoroutinesCore)
+    implementation(Dependencies.kotlinCoroutinesAndroid)
+    implementation(Dependencies.kotlinSerialization)
 
-    implementation 'androidx.window:window:1.0.0'
-    implementation 'com.google.android.gms:play-services-location:19.0.1'
+    implementation(Dependencies.composeUi)
+    implementation(Dependencies.composeMaterial3)
+    implementation(Dependencies.composeMaterial2)
+    implementation(Dependencies.composePreview)
+    implementation(Dependencies.composeActivity)
+    implementation(Dependencies.composeNavigation)
+    implementation(Dependencies.composeConstraintLayout)
+    implementation(Dependencies.accompanistNavigation)
+    implementation(Dependencies.accompanistFlowLayout)
+    implementation(Dependencies.accompanistSwipeRefresh)
+    implementation(Dependencies.accompanistPermissions)
 
-    implementation "com.squareup.retrofit2:retrofit:2.9.0"
-    implementation "com.squareup.okhttp3:okhttp:4.9.3"
-    implementation "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.8.0"
-    implementation "com.squareup.okhttp3:logging-interceptor:4.9.3"
+    implementation(Dependencies.glanceAppWidget)
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.10"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0"
+    implementation(Dependencies.koinAndroid)
+    implementation(Dependencies.koinCompose)
 
-    implementation "joda-time:joda-time:2.10.13"
+    implementation platform(Dependencies.firebaseBom)
+    implementation(Dependencies.firebaseRemoteConfig)
+    implementation(Dependencies.firebaseMessaging)
+    implementation(Dependencies.firebaseInAppMessaging)
+    implementation(Dependencies.firebaseCrashlytics)
+    implementation(Dependencies.firebaseAnalytics)
 
-    implementation "androidx.room:room-runtime:2.4.2"
+    implementation(Dependencies.playServicesLocation)
 
-    implementation 'com.google.code.gson:gson:2.9.0'
+    implementation(Dependencies.jodaTime)
 
-    implementation "io.coil-kt:coil-compose:2.0.0-rc01"
+    implementation(Dependencies.gson)
 
-    kapt("androidx.room:room-compiler:2.4.2")
-    implementation "androidx.room:room-ktx:2.4.2"
+    implementation(Dependencies.coil)
 
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
-    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
-    debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
-    debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_version"
-    implementation "com.airbnb.android:lottie-compose:4.2.0"
+    implementation(Dependencies.lottieCompose)
+
+    debugImplementation(Dependencies.composeUiTooling)
+    debugImplementation(Dependencies.composeTestManifest)
+
+    testImplementation(Dependencies.junit)
+    androidTestImplementation(Dependencies.testExtJunit)
+    androidTestImplementation(Dependencies.espressoCore)
+    androidTestImplementation(Dependencies.composeUiTestJunit)
 }

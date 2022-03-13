@@ -6,9 +6,7 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -16,19 +14,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
+import com.rodrigmatrix.weatheryou.core.extensions.getTimeZoneCurrentTime
 import com.rodrigmatrix.weatheryou.presentation.components.WeatherIcon
 import com.rodrigmatrix.weatheryou.presentation.components.WeatherYouCard
-import com.rodrigmatrix.weatheryou.presentation.extensions.getTimeZoneCurrentTime
 import com.rodrigmatrix.weatheryou.presentation.extensions.temperatureString
 import com.rodrigmatrix.weatheryou.presentation.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.presentation.utils.PreviewWeatherList
 
 @Composable
 fun WeatherLocationList(
-    weatherLocationList: List<WeatherLocation>,
-    onItemClick: (WeatherLocation) -> Unit,
-    onLongPress: (WeatherLocation) -> Unit,
+    weatherLocationList: List<com.rodrigmatrix.weatheryou.domain.model.WeatherLocation>,
+    onItemClick: (com.rodrigmatrix.weatheryou.domain.model.WeatherLocation) -> Unit,
+    onLongPress: (com.rodrigmatrix.weatheryou.domain.model.WeatherLocation) -> Unit,
     contentPaddingValues: PaddingValues = PaddingValues()
 ) {
     LazyColumn(
@@ -44,9 +41,9 @@ fun WeatherLocationList(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun WeatherLocation(
-    weatherLocation: WeatherLocation,
-    onItemClick: (WeatherLocation) -> Unit,
-    onLongPress: (WeatherLocation) -> Unit
+    weatherLocation: com.rodrigmatrix.weatheryou.domain.model.WeatherLocation,
+    onItemClick: (com.rodrigmatrix.weatheryou.domain.model.WeatherLocation) -> Unit,
+    onLongPress: (com.rodrigmatrix.weatheryou.domain.model.WeatherLocation) -> Unit
 ) {
     WeatherYouCard(
         modifier = Modifier

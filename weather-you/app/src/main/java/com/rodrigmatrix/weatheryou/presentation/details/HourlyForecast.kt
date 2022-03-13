@@ -14,11 +14,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.R
-import com.rodrigmatrix.weatheryou.domain.model.WeatherHour
+import com.rodrigmatrix.weatheryou.core.extensions.getLocalTime
 import com.rodrigmatrix.weatheryou.presentation.components.WeatherIcon
 import com.rodrigmatrix.weatheryou.presentation.components.WeatherYouCard
 import com.rodrigmatrix.weatheryou.presentation.components.WeatherYouDivider
-import com.rodrigmatrix.weatheryou.presentation.extensions.getLocalTime
 import com.rodrigmatrix.weatheryou.presentation.extensions.percentageString
 import com.rodrigmatrix.weatheryou.presentation.extensions.temperatureString
 import com.rodrigmatrix.weatheryou.presentation.theme.WeatherYouTheme
@@ -26,7 +25,7 @@ import com.rodrigmatrix.weatheryou.presentation.utils.PreviewHourlyForecast
 
 @Composable
 fun HourlyForecast(
-    hoursList: List<WeatherHour>,
+    hoursList: List<com.rodrigmatrix.weatheryou.domain.model.WeatherHour>,
     modifier: Modifier = Modifier
 ) {
     WeatherYouCard(modifier) {
@@ -58,7 +57,7 @@ fun HourlyForecast(
 }
 
 @Composable
-fun HourRow(hour: WeatherHour) {
+fun HourRow(hour: com.rodrigmatrix.weatheryou.domain.model.WeatherHour) {
     Column(
         Modifier
             .padding(

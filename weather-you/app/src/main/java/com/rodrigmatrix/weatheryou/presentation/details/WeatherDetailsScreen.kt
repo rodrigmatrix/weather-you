@@ -20,10 +20,10 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.R
-import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
+import com.rodrigmatrix.weatheryou.core.extensions.getLocalTime
+import com.rodrigmatrix.weatheryou.core.extensions.getTimeZoneCurrentTime
 import com.rodrigmatrix.weatheryou.presentation.components.WeatherYouLargeAppBar
 import com.rodrigmatrix.weatheryou.presentation.components.WeatherYouSmallAppBar
-import com.rodrigmatrix.weatheryou.presentation.extensions.*
 import com.rodrigmatrix.weatheryou.presentation.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.presentation.utils.PreviewFutureDaysForecast
 import com.rodrigmatrix.weatheryou.presentation.utils.PreviewHourlyForecast
@@ -32,7 +32,7 @@ import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun WeatherDetailsScreen(
-    weatherLocation: WeatherLocation?,
+    weatherLocation: com.rodrigmatrix.weatheryou.domain.model.WeatherLocation?,
     onCloseClick: () -> Unit,
     expandedScreen: Boolean,
     onDeleteLocation: () -> Unit,

@@ -20,12 +20,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.R
-import com.rodrigmatrix.weatheryou.domain.model.WeatherDay
+import com.rodrigmatrix.weatheryou.core.extensions.getDateWithMonth
+import com.rodrigmatrix.weatheryou.core.extensions.getHourWithMinutesString
 import com.rodrigmatrix.weatheryou.presentation.components.ExpandButton
 import com.rodrigmatrix.weatheryou.presentation.components.WeatherIcon
 import com.rodrigmatrix.weatheryou.presentation.components.WeatherYouCard
 import com.rodrigmatrix.weatheryou.presentation.components.WeatherYouDivider
-import com.rodrigmatrix.weatheryou.presentation.extensions.*
+import com.rodrigmatrix.weatheryou.presentation.extensions.percentageString
+import com.rodrigmatrix.weatheryou.presentation.extensions.speedString
+import com.rodrigmatrix.weatheryou.presentation.extensions.temperatureString
 import com.rodrigmatrix.weatheryou.presentation.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.presentation.utils.PreviewFutureDaysForecast
 
@@ -35,7 +38,7 @@ private const val TOMORROW_INDEX = 1
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun FutureDaysForecast(
-    futureDaysList: List<WeatherDay>,
+    futureDaysList: List<com.rodrigmatrix.weatheryou.domain.model.WeatherDay>,
     isExpanded: Boolean,
     onExpandedButtonClick: (Boolean) -> Unit,
     modifier: Modifier = Modifier
@@ -77,7 +80,7 @@ fun FutureDaysForecast(
 }
 
 @Composable
-fun DayRow(day: WeatherDay, index: Int) {
+fun DayRow(day: com.rodrigmatrix.weatheryou.domain.model.WeatherDay, index: Int) {
     var isExpanded by rememberSaveable {
         mutableStateOf(false)
     }
@@ -156,7 +159,7 @@ fun DayRow(day: WeatherDay, index: Int) {
 
 @Composable
 fun ExpandedCardContent(
-    day: WeatherDay,
+    day: com.rodrigmatrix.weatheryou.domain.model.WeatherDay,
     isExpanded: Boolean
 ) {
     AnimatedVisibility(visible = isExpanded) {

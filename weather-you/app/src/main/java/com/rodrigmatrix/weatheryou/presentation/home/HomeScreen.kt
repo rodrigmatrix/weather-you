@@ -48,7 +48,7 @@ import com.rodrigmatrix.weatheryou.presentation.utils.PreviewWeatherList
 import org.koin.androidx.compose.getViewModel
 
 @Suppress("KotlinConstantConditions")
-@OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun HomeScreen(
     bottomAppState: MutableState<Boolean>,
@@ -168,7 +168,6 @@ fun HomeFabContent(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun HomeScreen(
     viewState: HomeViewState,
@@ -186,7 +185,6 @@ fun HomeScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun HomeScreenContent(
     viewState: HomeViewState,
@@ -274,8 +272,8 @@ fun WeatherLocationsEmptyState() {
     ) {
         WeatherIcon(
             weatherIcons = WeatherIcons(
-                R.raw.weather_cloudynight,
-                R.drawable.ic_weather_cloudynight
+                com.rodrigmatrix.weatheryou.data.R.raw.weather_cloudynight,
+                com.rodrigmatrix.weatheryou.data.R.drawable.ic_weather_cloudynight
             ),
             modifier = Modifier
                 .size(120.dp)

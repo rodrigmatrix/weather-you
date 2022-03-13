@@ -10,7 +10,7 @@ import com.rodrigmatrix.weatheryou.domain.model.WeatherIcons
 
 @Composable
 fun WeatherIcon(
-    weatherIcons: WeatherIcons,
+    weatherIcons: com.rodrigmatrix.weatheryou.domain.model.WeatherIcons,
     modifier: Modifier = Modifier,
     alwaysStatic: Boolean = false,
     contentDescription: String? = null

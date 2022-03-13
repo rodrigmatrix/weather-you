@@ -1,6 +1,6 @@
 package com.rodrigmatrix.weatheryou.presentation.utils
 
-import com.rodrigmatrix.weatheryou.R
+import com.rodrigmatrix.weatheryou.data.R
 import com.rodrigmatrix.weatheryou.domain.model.*
 
 val PreviewWeatherLocation = WeatherLocation(

@@ -18,12 +18,12 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
 class AddLocationViewModel(
-    private val weatherRepository: WeatherRepository,
-    private val getFamousLocationsUseCase: GetFamousLocationsUseCase,
-    private val searchLocationUseCase: SearchLocationUseCase,
-    private val getLocationUseCase: GetLocationUseCase,
+    private val weatherRepository: com.rodrigmatrix.weatheryou.domain.repository.WeatherRepository,
+    private val getFamousLocationsUseCase: com.rodrigmatrix.weatheryou.domain.usecase.GetFamousLocationsUseCase,
+    private val searchLocationUseCase: com.rodrigmatrix.weatheryou.domain.usecase.SearchLocationUseCase,
+    private val getLocationUseCase: com.rodrigmatrix.weatheryou.domain.usecase.GetLocationUseCase,
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
-): ViewModel<AddLocationViewState, AddLocationViewEffect>(AddLocationViewState()) {
+): com.rodrigmatrix.weatheryou.core.viewmodel.ViewModel<AddLocationViewState, AddLocationViewEffect>(AddLocationViewState()) {
 
     init {
         getFamousLocations()

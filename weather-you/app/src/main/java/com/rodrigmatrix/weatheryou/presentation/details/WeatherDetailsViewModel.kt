@@ -8,9 +8,9 @@ private const val EXPANDED_LIST_SIZE = 15
 private const val COLLAPSED_LIST_SIZE = 7
 
 class WeatherDetailsViewModel
-    : ViewModel<WeatherDetailsViewState, WeatherDetailsViewEffect>(WeatherDetailsViewState()) {
+    : com.rodrigmatrix.weatheryou.core.viewmodel.ViewModel<WeatherDetailsViewState, WeatherDetailsViewEffect>(WeatherDetailsViewState()) {
 
-    fun setWeatherLocation(weatherLocation: WeatherLocation?) {
+    fun setWeatherLocation(weatherLocation: com.rodrigmatrix.weatheryou.domain.model.WeatherLocation?) {
         if (weatherLocation != null) {
             setState {
                 it.copy(
@@ -33,7 +33,7 @@ class WeatherDetailsViewModel
         }
     }
 
-    private fun List<WeatherDay>.getFutureDaysList(isExpanded: Boolean): List<WeatherDay> {
+    private fun List<com.rodrigmatrix.weatheryou.domain.model.WeatherDay>.getFutureDaysList(isExpanded: Boolean): List<com.rodrigmatrix.weatheryou.domain.model.WeatherDay> {
         return this.take(if (isExpanded) EXPANDED_LIST_SIZE else COLLAPSED_LIST_SIZE)
     }
 }

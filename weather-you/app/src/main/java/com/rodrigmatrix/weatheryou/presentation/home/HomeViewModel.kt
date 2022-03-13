@@ -14,9 +14,9 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
-    private val weatherRepository: WeatherRepository,
+    private val weatherRepository: com.rodrigmatrix.weatheryou.domain.repository.WeatherRepository,
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
-): ViewModel<HomeViewState, HomeViewEffect>(HomeViewState()) {
+): com.rodrigmatrix.weatheryou.core.viewmodel.ViewModel<HomeViewState, HomeViewEffect>(HomeViewState()) {
 
     init {
         loadLocations()
@@ -43,13 +43,13 @@ class HomeViewModel(
         }
     }
 
-    private fun getSelectedWeatherLocation(locationsList: List<WeatherLocation>): WeatherLocation? {
+    private fun getSelectedWeatherLocation(locationsList: List<com.rodrigmatrix.weatheryou.domain.model.WeatherLocation>): com.rodrigmatrix.weatheryou.domain.model.WeatherLocation? {
         return locationsList.find { location ->
             location.name == viewState.value.selectedWeatherLocation?.name
         }
     }
 
-    fun deleteLocation(weatherLocation: WeatherLocation) {
+    fun deleteLocation(weatherLocation: com.rodrigmatrix.weatheryou.domain.model.WeatherLocation) {
         viewModelScope.launch {
             weatherRepository.deleteLocation(weatherLocation)
                 .flowOn(coroutineDispatcher)
@@ -66,13 +66,13 @@ class HomeViewModel(
         }
     }
 
-    fun selectLocation(weatherLocation: WeatherLocation? = null) {
+    fun selectLocation(weatherLocation: com.rodrigmatrix.weatheryou.domain.model.WeatherLocation? = null) {
         setState {
             it.copy(selectedWeatherLocation = getSelectedLocation(weatherLocation))
         }
     }
 
-    private fun getSelectedLocation(weatherLocation: WeatherLocation?): WeatherLocation? {
+    private fun getSelectedLocation(weatherLocation: com.rodrigmatrix.weatheryou.domain.model.WeatherLocation?): com.rodrigmatrix.weatheryou.domain.model.WeatherLocation? {
         return if (weatherLocation == viewState.value.selectedWeatherLocation) {
             null
         } else {

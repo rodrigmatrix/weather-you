@@ -46,7 +46,7 @@ class CurrentWeatherSmallWidget: GlanceAppWidget(), KoinComponent {
             )
             Spacer(modifier = GlanceModifier.height(20.dp))
             Image(
-                provider = ImageProvider(R.drawable.ic_weather_cloudynight),
+                provider = ImageProvider(com.rodrigmatrix.weatheryou.data.R.drawable.ic_weather_cloudynight),
                 contentDescription = null,
                 modifier = GlanceModifier.size(40.dp)
             )

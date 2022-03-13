@@ -1,0 +1,8 @@
+<resources>
+    <string name="new_york">New York</string>
+    <string name="vancouver">Vancouver</string>
+    <string name="los_angeles">Los Angeles</string>
+    <string name="toronto">Toronto</string>
+    <string name="rio_de_janeiro">Rio de Janeiro</string>
+    <string name="sao_paulo">Sao Paulo</string>
+</resources>

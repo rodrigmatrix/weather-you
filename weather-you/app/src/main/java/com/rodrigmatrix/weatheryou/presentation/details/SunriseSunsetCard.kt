@@ -19,8 +19,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.R
+import com.rodrigmatrix.weatheryou.core.extensions.getHoursAndMinutesDiff
 import com.rodrigmatrix.weatheryou.presentation.components.WeatherYouCard
-import com.rodrigmatrix.weatheryou.presentation.extensions.getHoursAndMinutesDiff
 import com.rodrigmatrix.weatheryou.presentation.theme.WeatherYouTheme
 import org.joda.time.LocalTime
 

@@ -1,0 +1,83 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+    id 'kotlinx-serialization'
+}
+
+android {
+    namespace 'com.rodrigmatrix.weatheryou.data'
+    compileSdk 32
+
+    defaultConfig {
+        minSdk 21
+        targetSdk 32
+
+        def localPropertiesFile = rootProject.file("local.properties")
+        def localProperties = new Properties()
+        localProperties.load(new FileInputStream(localPropertiesFile))
+
+        buildConfigField "String", "VISUAL_CODING_URL", "\"https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/\""
+        buildConfigField "String", "VISUAL_CODING_TOKEN", localProperties['visualcoding.token']
+
+        buildConfigField "String", "OPEN_WEATHER_URL", "\"https://api.openweathermap.org/data/2.5/\""
+        buildConfigField "String", "OPEN_WEATHER_TOKEN", localProperties['openweather.token']
+
+        buildConfigField "String", "GOOGLE_MAPS_URL", "\"https://maps.googleapis.com/maps/api/\""
+        buildConfigField "String", "GOOGLE_MAPS_TOKEN", localProperties['googlemaps.token']
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    kotlin.sourceSets.all {
+        languageSettings.optIn("kotlin.RequiresOptIn")
+    }
+}
+
+dependencies {
+    implementation project(LocalModules.core)
+    implementation project(LocalModules.domain)
+
+    implementation(Dependencies.androidxCore)
+    implementation(Dependencies.lifecycle)
+    implementation(Dependencies.androidxWindow)
+
+    implementation(Dependencies.kotlinStdlib)
+    implementation(Dependencies.kotlinCoroutinesCore)
+    implementation(Dependencies.kotlinCoroutinesAndroid)
+    implementation(Dependencies.kotlinSerialization)
+
+    implementation platform(Dependencies.firebaseBom)
+    implementation(Dependencies.firebaseRemoteConfig)
+
+    implementation(Dependencies.roomRuntime)
+    kapt(Dependencies.roomCompiler)
+    implementation(Dependencies.roomKtx)
+
+    implementation(Dependencies.retrofit)
+    implementation(Dependencies.okHttp)
+    implementation(Dependencies.retrofitKotlinx)
+    implementation(Dependencies.okHttpLoggingInterceptor)
+
+    implementation(Dependencies.koinAndroid)
+
+    implementation(Dependencies.jodaTime)
+
+    implementation(Dependencies.playServicesLocation)
+
+    testImplementation(Dependencies.junit)
+}

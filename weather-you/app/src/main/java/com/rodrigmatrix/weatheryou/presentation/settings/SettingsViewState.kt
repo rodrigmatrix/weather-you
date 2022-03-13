@@ -6,4 +6,4 @@ data class SettingsViewState(
     val selectedUnit: String = "C° km/h",
     val unitsList: List<String> = emptyList(),
     val unitsDialogVisible: Boolean = false
-): ViewState
+): com.rodrigmatrix.weatheryou.core.viewmodel.ViewState

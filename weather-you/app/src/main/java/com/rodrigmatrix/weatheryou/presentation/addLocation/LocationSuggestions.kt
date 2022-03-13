@@ -2,7 +2,6 @@ package com.rodrigmatrix.weatheryou.presentation.addLocation
 
 import android.content.res.Configuration
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -20,20 +19,14 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
-import coil.request.CachePolicy
-import coil.request.ImageRequest
-import coil.size.Scale
 import com.rodrigmatrix.weatheryou.R
-import com.rodrigmatrix.weatheryou.domain.model.City
+import com.rodrigmatrix.weatheryou.data.mapper.FamousCitiesMapper
 import com.rodrigmatrix.weatheryou.presentation.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.presentation.utils.PreviewFamousCities
 import kotlin.math.max
@@ -45,8 +38,8 @@ private const val CategoryTextProportion = 0.55f
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun LocationSuggestions(
-    suggestions: List<City>,
-    onLocationClick: (City) -> Unit
+    suggestions: List<com.rodrigmatrix.weatheryou.domain.model.City>,
+    onLocationClick: (com.rodrigmatrix.weatheryou.domain.model.City) -> Unit
 ) {
     Column {
         Text(
@@ -75,9 +68,9 @@ fun LocationSuggestions(
 
 @Composable
 fun LocationRow(
-    location: City,
+    location: com.rodrigmatrix.weatheryou.domain.model.City,
     gradient: List<Color>,
-    onLocationClick: (City) -> Unit,
+    onLocationClick: (com.rodrigmatrix.weatheryou.domain.model.City) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Layout(

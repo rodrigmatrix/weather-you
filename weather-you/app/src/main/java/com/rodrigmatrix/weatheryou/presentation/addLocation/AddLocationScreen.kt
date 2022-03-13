@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
@@ -44,7 +45,7 @@ fun AddLocationScreen(
         keyboardController?.hide()
         appState.navController.navigateUp()
     }
-    LaunchViewEffect(viewModel) { viewEffect ->
+    com.rodrigmatrix.weatheryou.core.compose.LaunchViewEffect(viewModel) { viewEffect ->
         when (viewEffect) {
             AddLocationViewEffect.LocationAdded -> {
                 keyboardController?.hide()
@@ -131,7 +132,7 @@ fun AddLocationScreen(
 
 @Composable
 fun LocationSelectList(
-    locationsList: List<SearchAutocompleteLocation>,
+    locationsList: List<com.rodrigmatrix.weatheryou.domain.model.SearchAutocompleteLocation>,
     onLocationClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -143,7 +144,7 @@ fun LocationSelectList(
             item {
                 Column(Modifier.fillMaxWidth()) {
                     Image(
-                        painter = rememberImagePainter(R.drawable.powered_by_google),
+                        painter = painterResource(R.drawable.powered_by_google),
                         contentDescription = stringResource(R.string.powered_by_google),
                         modifier = Modifier
                             .padding(start = 20.dp, end = 20.dp, top = 10.dp)
@@ -158,7 +159,7 @@ fun LocationSelectList(
 
 @Composable
 fun LocationItem(
-    location: SearchAutocompleteLocation,
+    location: com.rodrigmatrix.weatheryou.domain.model.SearchAutocompleteLocation,
     onLocationClick: (String) -> Unit
 ) {
     Row(

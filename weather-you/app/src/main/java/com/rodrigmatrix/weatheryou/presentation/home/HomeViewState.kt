@@ -7,10 +7,10 @@ import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 
 data class HomeViewState(
     val isLoading: Boolean = false,
-    val locationsList: List<WeatherLocation> = emptyList(),
-    val selectedWeatherLocation: WeatherLocation? = null,
+    val locationsList: List<com.rodrigmatrix.weatheryou.domain.model.WeatherLocation> = emptyList(),
+    val selectedWeatherLocation: com.rodrigmatrix.weatheryou.domain.model.WeatherLocation? = null,
     val deletePackageDialogVisible: Boolean = false
-): ViewState {
+): com.rodrigmatrix.weatheryou.core.viewmodel.ViewState {
 
     fun isLocationSelected(): Boolean {
         return selectedWeatherLocation != null
