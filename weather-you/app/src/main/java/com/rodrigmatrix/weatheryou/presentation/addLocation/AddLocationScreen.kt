@@ -1,12 +1,10 @@
 package com.rodrigmatrix.weatheryou.presentation.addLocation
 
+import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.focusable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -14,14 +12,19 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Devices
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
 import com.rodrigmatrix.weatheryou.R
@@ -29,6 +32,12 @@ import com.rodrigmatrix.weatheryou.core.compose.LaunchViewEffect
 import com.rodrigmatrix.weatheryou.core.extensions.toast
 import com.rodrigmatrix.weatheryou.domain.model.SearchAutocompleteLocation
 import com.rodrigmatrix.weatheryou.presentation.components.SearchBar
+import com.rodrigmatrix.weatheryou.presentation.extensions.dpadFocusable
+import com.rodrigmatrix.weatheryou.presentation.home.HomeScreenWithLocation
+import com.rodrigmatrix.weatheryou.presentation.home.HomeViewState
+import com.rodrigmatrix.weatheryou.presentation.theme.WeatherYouTheme
+import com.rodrigmatrix.weatheryou.presentation.utils.PreviewFamousCities
+import com.rodrigmatrix.weatheryou.presentation.utils.PreviewWeatherList
 import com.rodrigmatrix.weatheryou.presentation.utils.WeatherYouAppState
 import org.koin.androidx.compose.getViewModel
 
@@ -45,7 +54,7 @@ fun AddLocationScreen(
         keyboardController?.hide()
         appState.navController.navigateUp()
     }
-    com.rodrigmatrix.weatheryou.core.compose.LaunchViewEffect(viewModel) { viewEffect ->
+    LaunchViewEffect(viewModel) { viewEffect ->
         when (viewEffect) {
             AddLocationViewEffect.LocationAdded -> {
                 keyboardController?.hide()
@@ -83,19 +92,20 @@ fun AddLocationScreen(
     onLocationClick: (String) -> Unit,
     onClearQuery: () -> Unit
 ) {
+    val focusRequester = remember { FocusRequester() }
     Scaffold(
         topBar = {
             SearchBar(
                 query = viewState.searchText,
                 onQueryChange  = onQueryChanged,
                 onSearchFocusChange = {
-
+                    if (it) {
+                        focusRequester.requestFocus()
+                    }
                 },
                 onClearQuery = onClearQuery,
                 searching = viewState.isLoading,
-                modifier = Modifier
-                    .padding(bottom = 40.dp)
-                    .focusable(),
+                modifier = Modifier.padding(bottom = 40.dp),
                 keyboardActions = KeyboardActions(
                     onDone = {
                         onLocationClick(viewState.locationsList.firstOrNull()?.placeId.orEmpty())
@@ -109,7 +119,7 @@ fun AddLocationScreen(
                 LocationSelectList(
                     viewState.locationsList,
                     onLocationClick,
-                    Modifier.focusable()
+                    Modifier.focusRequester(focusRequester)
                 )
             } else {
                 Text(
@@ -132,13 +142,14 @@ fun AddLocationScreen(
 
 @Composable
 fun LocationSelectList(
-    locationsList: List<com.rodrigmatrix.weatheryou.domain.model.SearchAutocompleteLocation>,
+    locationsList: List<SearchAutocompleteLocation>,
     onLocationClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    LazyColumn(modifier) {
-        items(locationsList) { item ->
-            LocationItem(item, onLocationClick)
+    val scrollState = rememberLazyListState()
+    LazyColumn(modifier, state = scrollState) {
+        itemsIndexed(locationsList) { index, item ->
+            LocationItem(item, index, scrollState, onLocationClick)
         }
         if (locationsList.isNotEmpty()) {
             item {
@@ -159,14 +170,16 @@ fun LocationSelectList(
 
 @Composable
 fun LocationItem(
-    location: com.rodrigmatrix.weatheryou.domain.model.SearchAutocompleteLocation,
+    location: SearchAutocompleteLocation,
+    index: Int,
+    scrollState: LazyListState,
     onLocationClick: (String) -> Unit
 ) {
     Row(
         Modifier
             .padding(start = 32.dp, end = 32.dp, bottom = 10.dp)
             .fillMaxWidth()
-            .focusable()
+            .dpadFocusable(index, scrollState)
             .clickable {
                 onLocationClick(location.placeId)
             },
@@ -183,6 +196,24 @@ fun LocationItem(
             imageVector = Icons.Default.Add,
             contentDescription = stringResource(R.string.add_x_location, location),
             modifier = Modifier.size(34.dp)
+        )
+    }
+}
+
+@Preview
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(device = Devices.PIXEL_C)
+@Preview(device = Devices.PIXEL_C, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+fun AddLocationScreenPreview() {
+    WeatherYouTheme {
+        AddLocationScreen(
+            viewState = AddLocationViewState(
+                famousLocationsList = PreviewFamousCities
+            ),
+            { },
+            { },
+            { }
         )
     }
 }

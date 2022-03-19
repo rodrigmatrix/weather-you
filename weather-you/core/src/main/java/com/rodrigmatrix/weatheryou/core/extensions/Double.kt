@@ -1,4 +1,4 @@
-package com.rodrigmatrix.weatheryou.presentation.extensions
+package com.rodrigmatrix.weatheryou.core.extensions
 
 fun Double.temperatureString(): String {
     return this.toInt().toString() + "°"

@@ -6,10 +6,12 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
-    <uses-feature android:name="android.hardware.touchscreen"
+    <uses-feature
+        android:name="android.hardware.touchscreen"
         android:required="false" />
 
-    <uses-feature android:name="android.software.leanback"
+    <uses-feature
+        android:name="android.software.leanback"
         android:required="false" />
 
     <application
@@ -22,8 +24,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.WeatherYou"
         tools:targetApi="31"
-        android:name=".WeatherYouApp"
-        android:banner="@drawable/banner_tv">
+        android:banner="@drawable/banner_tv"
+        android:name=".WeatherYouApp">
         <activity
             android:name=".presentation.navigation.MainActivity"
             android:exported="true"

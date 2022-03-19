@@ -20,7 +20,7 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -47,6 +47,7 @@ android {
 dependencies {
     implementation project(LocalModules.domain)
     implementation project(LocalModules.data)
+    implementation project(LocalModules.core)
 
     implementation(Dependencies.androidxCore)
     implementation(Dependencies.lifecycle)
@@ -56,6 +57,8 @@ dependencies {
     implementation(WearOsDependencies.composeFoundation)
     implementation(Dependencies.composePreview)
     implementation(Dependencies.composeActivity)
+
+    implementation(Dependencies.lottieCompose)
 
     implementation(Dependencies.koinAndroid)
     implementation(Dependencies.koinCompose)

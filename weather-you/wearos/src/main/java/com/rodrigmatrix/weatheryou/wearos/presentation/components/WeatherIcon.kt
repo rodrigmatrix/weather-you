@@ -1,4 +1,4 @@
-package com.rodrigmatrix.weatheryou.presentation.components
+package com.rodrigmatrix.weatheryou.wearos.presentation.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable

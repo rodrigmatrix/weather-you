@@ -5,9 +5,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.GridCells
-import androidx.compose.foundation.lazy.LazyVerticalGrid
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -27,6 +25,8 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.rodrigmatrix.weatheryou.R
 import com.rodrigmatrix.weatheryou.data.mapper.FamousCitiesMapper
+import com.rodrigmatrix.weatheryou.domain.model.City
+import com.rodrigmatrix.weatheryou.presentation.extensions.dpadFocusable
 import com.rodrigmatrix.weatheryou.presentation.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.presentation.utils.PreviewFamousCities
 import kotlin.math.max
@@ -38,8 +38,8 @@ private const val CategoryTextProportion = 0.55f
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun LocationSuggestions(
-    suggestions: List<com.rodrigmatrix.weatheryou.domain.model.City>,
-    onLocationClick: (com.rodrigmatrix.weatheryou.domain.model.City) -> Unit
+    suggestions: List<City>,
+    onLocationClick: (City) -> Unit
 ) {
     Column {
         Text(
@@ -50,16 +50,19 @@ fun LocationSuggestions(
                 .padding(horizontal = 24.dp, vertical = 4.dp)
                 .wrapContentHeight()
         )
+        val scrollState = rememberLazyGridState()
         LazyVerticalGrid(
             cells = GridCells.Fixed(2),
-            Modifier.padding(horizontal = 16.dp)
+            state = scrollState,
+            modifier = Modifier.padding(horizontal = 16.dp)
         ) {
-            items(suggestions) {
+            itemsIndexed(suggestions) { index, location ->
                 LocationRow(
-                    location = it,
+                    location = location,
                     gradient = listOf(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.primaryContainer),
-                    onLocationClick,
+                    onLocationClick = onLocationClick,
                     modifier = Modifier.padding(8.dp)
+                        .dpadFocusable(index, scrollState)
                 )
             }
         }
@@ -68,9 +71,9 @@ fun LocationSuggestions(
 
 @Composable
 fun LocationRow(
-    location: com.rodrigmatrix.weatheryou.domain.model.City,
+    location: City,
     gradient: List<Color>,
-    onLocationClick: (com.rodrigmatrix.weatheryou.domain.model.City) -> Unit,
+    onLocationClick: (City) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Layout(

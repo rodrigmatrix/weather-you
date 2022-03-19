@@ -12,10 +12,7 @@ import com.rodrigmatrix.weatheryou.presentation.addLocation.AddLocationViewEffec
 import com.rodrigmatrix.weatheryou.presentation.addLocation.AddLocationViewEffect.ShowError
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class AddLocationViewModel(

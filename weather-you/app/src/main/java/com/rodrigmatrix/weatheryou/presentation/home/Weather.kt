@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.core.extensions.getTimeZoneCurrentTime
 import com.rodrigmatrix.weatheryou.presentation.components.WeatherIcon
 import com.rodrigmatrix.weatheryou.presentation.components.WeatherYouCard
+import com.rodrigmatrix.weatheryou.presentation.extensions.dpadFocusable
 import com.rodrigmatrix.weatheryou.presentation.extensions.temperatureString
 import com.rodrigmatrix.weatheryou.presentation.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.presentation.utils.PreviewWeatherList
@@ -54,6 +55,7 @@ fun WeatherLocation(
                 top = 10.dp,
                 bottom = 10.dp
             )
+            .dpadFocusable()
             .combinedClickable(
                 onClick = {
                     onItemClick(weatherLocation)
@@ -62,6 +64,7 @@ fun WeatherLocation(
                     onLongPress(weatherLocation)
                 }
             )
+
     ) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,

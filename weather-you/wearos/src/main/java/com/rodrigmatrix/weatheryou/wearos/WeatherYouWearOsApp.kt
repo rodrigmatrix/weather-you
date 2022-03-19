@@ -2,6 +2,7 @@ package com.rodrigmatrix.weatheryou.wearos
 
 import android.app.Application
 import com.rodrigmatrix.weatheryou.data.di.WeatherYouDataModules
+import com.rodrigmatrix.weatheryou.wearos.di.WeatherYouWatchModules
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
@@ -12,6 +13,7 @@ class WeatherYouWearOsApp: Application() {
         startKoin {
             androidContext(this@WeatherYouWearOsApp)
             WeatherYouDataModules.loadModules()
+            WeatherYouWatchModules.loadModules()
         }
     }
 }

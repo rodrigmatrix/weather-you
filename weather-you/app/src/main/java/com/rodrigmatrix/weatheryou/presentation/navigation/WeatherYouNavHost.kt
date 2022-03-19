@@ -24,9 +24,9 @@ fun WeatherHomeNavHost(
     val location = rememberPermissionState(Manifest.permission.ACCESS_COARSE_LOCATION)
     NavHost(
         appState.navController,
-        startDestination = HomeEntry.Home.route
+        startDestination = HomeEntry.Locations.route
     ) {
-        composable(HomeEntry.Home.route) {
+        composable(HomeEntry.Locations.route) {
             HomeScreen(
                 bottomAppState,
                 onAddLocation = onAddLocationClick,

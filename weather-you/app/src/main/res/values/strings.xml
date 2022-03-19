@@ -78,4 +78,5 @@
     <string name="units">Units</string>
     <string name="current_weather_small_widget_description">Displays the current weather</string>
     <string name="no_results_found">No results found</string>
+    <string name="locations">Locations</string>
 </resources>

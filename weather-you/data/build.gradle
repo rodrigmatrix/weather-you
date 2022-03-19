@@ -13,9 +13,8 @@ android {
         minSdk 21
         targetSdk 32
 
-        def localPropertiesFile = rootProject.file("local.properties")
         def localProperties = new Properties()
-        localProperties.load(new FileInputStream(localPropertiesFile))
+        localProperties.load(new FileInputStream(rootProject.file("local.properties")))
 
         buildConfigField "String", "VISUAL_CODING_URL", "\"https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/\""
         buildConfigField "String", "VISUAL_CODING_TOKEN", localProperties['visualcoding.token']
@@ -60,6 +59,7 @@ dependencies {
     implementation(Dependencies.kotlinCoroutinesCore)
     implementation(Dependencies.kotlinCoroutinesAndroid)
     implementation(Dependencies.kotlinSerialization)
+    implementation(Dependencies.coroutinesPlayServices)
 
     implementation platform(Dependencies.firebaseBom)
     implementation(Dependencies.firebaseRemoteConfig)

@@ -2,10 +2,9 @@ package com.rodrigmatrix.weatheryou.presentation.details
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
@@ -24,6 +23,7 @@ import com.rodrigmatrix.weatheryou.core.extensions.getLocalTime
 import com.rodrigmatrix.weatheryou.core.extensions.getTimeZoneCurrentTime
 import com.rodrigmatrix.weatheryou.presentation.components.WeatherYouLargeAppBar
 import com.rodrigmatrix.weatheryou.presentation.components.WeatherYouSmallAppBar
+import com.rodrigmatrix.weatheryou.presentation.extensions.dpadFocusable
 import com.rodrigmatrix.weatheryou.presentation.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.presentation.utils.PreviewFutureDaysForecast
 import com.rodrigmatrix.weatheryou.presentation.utils.PreviewHourlyForecast
@@ -52,7 +52,7 @@ fun WeatherDetailsScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WeatherDetailsScreen(
     viewState: WeatherDetailsViewState,
@@ -78,14 +78,16 @@ fun WeatherDetailsScreen(
             }
         }
     ) {
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(20.dp)) {
+        val scrollState = rememberLazyListState()
+        scrollState.layoutInfo.reverseLayout
+        LazyColumn(verticalArrangement = Arrangement.spacedBy(20.dp), state = scrollState) {
             item {
                 viewState.weatherLocation?.let {
                     CurrentWeather(
                         it,
                         modifier = Modifier
                             .padding(start = 16.dp, end = 16.dp)
-                            .focusable()
+                            .dpadFocusable(0, scrollState)
                     )
                 }
             }
@@ -94,7 +96,7 @@ fun WeatherDetailsScreen(
                     hoursList = viewState.todayWeatherHoursList,
                     modifier = Modifier
                         .padding(start = 16.dp, end = 16.dp)
-                        .focusable()
+                        .dpadFocusable(1, scrollState)
                 )
             }
             item {
@@ -104,6 +106,7 @@ fun WeatherDetailsScreen(
                     onExpandedButtonClick = onExpandedButtonClick,
                     modifier = Modifier
                         .padding(start = 16.dp, end = 16.dp)
+                        .dpadFocusable(2, scrollState)
                 )
             }
             item {
@@ -112,14 +115,19 @@ fun WeatherDetailsScreen(
                         WindCard(
                             viewState.weatherLocation?.windSpeed ?: 0.0,
                             viewState.weatherLocation?.windDirection ?: 0.0,
-                            modifier = Modifier.padding(start = 16.dp, end = 8.dp)
+                            modifier = Modifier
+                                .padding(start = 16.dp, end = 8.dp)
+                                .dpadFocusable(3, scrollState)
+
                         )
                     }
                     Column(Modifier.weight(1f)) {
                         HumidityCard(
                             viewState.weatherLocation?.humidity ?: 0.0,
                             viewState.weatherLocation?.dewPoint ?: 0.0,
-                            modifier = Modifier.padding(start = 8.dp, end = 16.dp)
+                            modifier = Modifier
+                                .padding(start = 8.dp, end = 16.dp)
+                                .dpadFocusable(3, scrollState)
                         )
                     }
                 }
@@ -129,13 +137,17 @@ fun WeatherDetailsScreen(
                     Column(Modifier.weight(1f)) {
                         VisibilityCard(
                             viewState.weatherLocation?.visibility ?: 0.0,
-                            modifier = Modifier.padding(start = 16.dp, end = 8.dp)
+                            modifier = Modifier
+                                .padding(start = 16.dp, end = 8.dp)
+                                .dpadFocusable(4, scrollState)
                         )
                     }
                     Column(Modifier.weight(1f)) {
                         UvIndexCard(
                             viewState.weatherLocation?.uvIndex ?: 0.0,
-                            modifier = Modifier.padding(start = 8.dp, end = 16.dp)
+                            modifier = Modifier
+                                .padding(start = 8.dp, end = 16.dp)
+                                .dpadFocusable(4, scrollState)
                         )
                     }
                 }
@@ -146,7 +158,9 @@ fun WeatherDetailsScreen(
                         sunriseHour = weatherLocation.sunrise.getLocalTime(),
                         sunsetHour = weatherLocation.sunset.getLocalTime(),
                         currentTime = weatherLocation.timeZone.getTimeZoneCurrentTime(),
-                        modifier = Modifier.padding(start = 16.dp, end = 16.dp)
+                        modifier = Modifier
+                            .padding(start = 16.dp, end = 16.dp)
+                            .dpadFocusable(5, scrollState)
                     )
                 }
                 Spacer(Modifier.height(10.dp))

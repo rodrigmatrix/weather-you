@@ -1,5 +1,3 @@
-
-
 package com.rodrigmatrix.weatheryou.presentation.home
 
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
@@ -218,7 +216,6 @@ fun HomeScreenContent(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun HomeScreenWithLocation(
     viewState: HomeViewState,
@@ -341,7 +338,6 @@ fun RequestLocationPermission(
     }
 }
 
-@OptIn(ExperimentalPermissionsApi::class)
 @Preview
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
@@ -357,7 +353,6 @@ fun HomeScreenPreview() {
     }
 }
 
-@OptIn(ExperimentalPermissionsApi::class)
 @Preview(device = Devices.PIXEL_C)
 @Preview(device = Devices.PIXEL_C, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable

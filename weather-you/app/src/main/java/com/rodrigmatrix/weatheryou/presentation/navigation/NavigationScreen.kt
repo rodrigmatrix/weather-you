@@ -13,7 +13,6 @@ import com.rodrigmatrix.weatheryou.presentation.utils.WeatherYouAppState
 import com.rodrigmatrix.weatheryou.presentation.utils.WindowSize
 import com.rodrigmatrix.weatheryou.presentation.utils.rememberWeatherYouAppState
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NavigationScreen(
     appState: WeatherYouAppState,
@@ -41,6 +40,9 @@ fun NavigationScreen(
                 appState.navController,
                 onNavigationItemClick = { screen ->
                     appState.navController.navigate(screen.route) {
+                        if (appState.navController.currentDestination?.route == screen.route) {
+                            return@navigate
+                        }
                         popUpTo(appState.navController.graph.findStartDestination().id) {
                             saveState = true
                         }

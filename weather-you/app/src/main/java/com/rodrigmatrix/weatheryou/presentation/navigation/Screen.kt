@@ -9,7 +9,7 @@ enum class HomeEntry(
     @DrawableRes val icon: Int,
     @StringRes val stringRes: Int
 ) {
-    Home("home", R.drawable.ic_home, R.string.home),
+    Locations("locations", R.drawable.ic_light_mode, R.string.locations),
     Settings("settings", R.drawable.ic_settings, R.string.settings),
     About("about", R.drawable.ic_info, R.string.about)
 }

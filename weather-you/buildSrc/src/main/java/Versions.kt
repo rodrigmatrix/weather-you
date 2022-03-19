@@ -5,4 +5,5 @@ object Versions {
     const val composeVersion = "1.1.1"
     const val composeWearVersion = "1.0.0-alpha11"
     const val lifecycleVersion = "2.4.1"
+    const val leanbackVersion = "1.2.0-alpha02"
 }

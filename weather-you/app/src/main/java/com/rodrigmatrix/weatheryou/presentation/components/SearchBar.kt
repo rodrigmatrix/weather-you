@@ -12,15 +12,19 @@ import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.input.key.*
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.R
+import com.rodrigmatrix.weatheryou.presentation.extensions.dpadFocusable
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SearchBar(
     query: String,
@@ -38,6 +42,16 @@ fun SearchBar(
             .fillMaxWidth()
             .height(56.dp)
             .padding(start = 16.dp, end = 16.dp, top = 10.dp)
+            .onKeyEvent {
+                if (it.type == KeyEventType.KeyDown) {
+                    return@onKeyEvent false
+                }
+                if (it.key == Key.DirectionDown) {
+                    onSearchFocusChange(true)
+                }
+                return@onKeyEvent false
+            }
+            .dpadFocusable()
     ) {
         Box(Modifier.fillMaxSize()) {
             if (query.isEmpty()) {
@@ -65,11 +79,7 @@ fun SearchBar(
                     keyboardActions = keyboardActions,
                     cursorBrush = SolidColor(MaterialTheme.colorScheme.onSurface),
                     singleLine = true,
-                    modifier = Modifier
-                        .weight(1f)
-                        .onFocusChanged {
-                            onSearchFocusChange(it.isFocused)
-                        }
+                    modifier = Modifier.weight(1f)
                 )
                 if (searching) {
                     CircularProgressIndicator(

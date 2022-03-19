@@ -1,7 +1,6 @@
 package com.rodrigmatrix.weatheryou.presentation.details
 
 import android.content.res.Configuration
-import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -15,6 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.R
 import com.rodrigmatrix.weatheryou.core.extensions.getLocalTime
+import com.rodrigmatrix.weatheryou.domain.model.WeatherHour
 import com.rodrigmatrix.weatheryou.presentation.components.WeatherIcon
 import com.rodrigmatrix.weatheryou.presentation.components.WeatherYouCard
 import com.rodrigmatrix.weatheryou.presentation.components.WeatherYouDivider
@@ -25,7 +25,7 @@ import com.rodrigmatrix.weatheryou.presentation.utils.PreviewHourlyForecast
 
 @Composable
 fun HourlyForecast(
-    hoursList: List<com.rodrigmatrix.weatheryou.domain.model.WeatherHour>,
+    hoursList: List<WeatherHour>,
     modifier: Modifier = Modifier
 ) {
     WeatherYouCard(modifier) {
@@ -57,7 +57,7 @@ fun HourlyForecast(
 }
 
 @Composable
-fun HourRow(hour: com.rodrigmatrix.weatheryou.domain.model.WeatherHour) {
+fun HourRow(hour: WeatherHour) {
     Column(
         Modifier
             .padding(
@@ -66,7 +66,6 @@ fun HourRow(hour: com.rodrigmatrix.weatheryou.domain.model.WeatherHour) {
                 start = 16.dp,
                 end = 16.dp
             )
-            .focusable()
     ) {
         Text(
             text = hour.temperature.temperatureString(),

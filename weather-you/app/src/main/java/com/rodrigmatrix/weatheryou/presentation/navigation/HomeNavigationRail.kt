@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.rodrigmatrix.weatheryou.R
+import com.rodrigmatrix.weatheryou.presentation.extensions.dpadFocusable
 
 @Composable
 fun HomeNavigationRail(
@@ -30,7 +31,7 @@ fun HomeNavigationRail(
             FloatingActionButton(
                 onClick = onFabClick,
                 shape = CircleShape,
-                modifier = Modifier.padding(8.dp)
+                modifier = Modifier.padding(8.dp).dpadFocusable()
             ) {
                 Icon(
                     imageVector = Icons.Filled.Add,
@@ -45,7 +46,8 @@ fun HomeNavigationRail(
                 icon = { Icon(painterResource(screen.icon), contentDescription = null) },
                 label = { Text(stringResource(screen.stringRes)) },
                 onClick = { onNavigationItemClick(screen) },
-                selected = currentDestination?.route == screen.route
+                selected = currentDestination?.route == screen.route,
+                modifier = Modifier.dpadFocusable()
             )
         }
     }
