@@ -72,7 +72,7 @@ private val DarkColorScheme = darkColorScheme(
 
 @Composable
 fun WeatherYouTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    darkTheme: Boolean = true,
     dynamicColor: Boolean = Build.VERSION.SDK_INT >= 31,
     content: @Composable () -> Unit
 ) {

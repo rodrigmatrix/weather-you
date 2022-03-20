@@ -24,6 +24,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.WeatherYou"
         android:banner="@drawable/banner_tv"
+        android:roundIcon="@mipmap/ic_launcher"
         android:name=".WeatherYouTvApp">
         <activity
             android:name=".presentation.navigation.MainActivity"
