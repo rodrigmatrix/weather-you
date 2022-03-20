@@ -1,7 +1,8 @@
 package com.rodrigmatrix.weatheryou.di
 
 import com.rodrigmatrix.weatheryou.addlocation.AddLocationViewModel
-import com.rodrigmatrix.weatheryou.presentation.settings.SettingsViewModel
+import com.rodrigmatrix.weatheryou.locationdetails.presentaion.details.WeatherDetailsViewModel
+import com.rodrigmatrix.weatheryou.settings.presentation.settings.SettingsViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.loadKoinModules
 import org.koin.dsl.module
@@ -19,7 +20,7 @@ object WeatherYouPresentationModules {
                 deleteLocationUseCase = get()
             )
         }
-        viewModel { com.rodrigmatrix.weatheryou.presentation.details.WeatherDetailsViewModel() }
+        viewModel { WeatherDetailsViewModel() }
         viewModel {
             com.rodrigmatrix.weatheryou.addlocation.AddLocationViewModel(
                 addLocationUseCase = get(),
@@ -29,7 +30,7 @@ object WeatherYouPresentationModules {
             )
         }
         viewModel {
-            SettingsViewModel()
+            com.rodrigmatrix.weatheryou.settings.presentation.settings.SettingsViewModel()
         }
     }
 }

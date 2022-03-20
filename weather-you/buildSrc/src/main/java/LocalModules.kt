@@ -8,6 +8,10 @@ object LocalModules {
     // features
     const val home = ":features:home"
     const val addLocation = ":features:addlocation"
+    const val about = ":features:about"
+    const val settings = ":features:settings"
+    const val locationDetails = ":features:locationdetails"
+    const val widgets = ":features:widgets"
 
     // common
     const val components = ":common:components"

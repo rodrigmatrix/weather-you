@@ -38,6 +38,8 @@ dependencies {
     implementation project(LocalModules.components)
     implementation project(LocalModules.weatherIcons)
 
+    implementation project(LocalModules.locationDetails)
+
     implementation(Dependencies.androidxCore)
     implementation(Dependencies.lifecycle)
     implementation(Dependencies.androidxWindow)

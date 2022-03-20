@@ -42,7 +42,7 @@ import com.rodrigmatrix.weatheryou.core.compose.LaunchViewEffect
 import com.rodrigmatrix.weatheryou.core.extensions.toast
 import com.rodrigmatrix.weatheryou.domain.model.WeatherIcons
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
-import com.rodrigmatrix.weatheryou.presentation.details.WeatherDetailsScreen
+import com.rodrigmatrix.weatheryou.locationdetails.presentaion.details.WeatherDetailsScreen
 import com.rodrigmatrix.weatheryou.presentation.preview.PreviewWeatherList
 import org.koin.androidx.compose.getViewModel
 
@@ -101,7 +101,7 @@ fun HomeScreen(
                 enter = fadeIn(),
                 exit = fadeOut()
             ) {
-                WeatherDetailsScreen(
+                com.rodrigmatrix.weatheryou.locationdetails.presentaion.details.WeatherDetailsScreen(
                     weatherLocation = viewState.selectedWeatherLocation,
                     onCloseClick = {
                         viewModel.selectLocation(null)
@@ -245,7 +245,7 @@ fun HomeScreenWithLocation(
         }
         if (viewState.isLocationSelected()) {
             Column(Modifier.weight(detailsWeight)) {
-                WeatherDetailsScreen(
+                com.rodrigmatrix.weatheryou.locationdetails.presentaion.details.WeatherDetailsScreen(
                     weatherLocation = viewState.selectedWeatherLocation,
                     onCloseClick = onCloseClick,
                     expandedScreen = true,

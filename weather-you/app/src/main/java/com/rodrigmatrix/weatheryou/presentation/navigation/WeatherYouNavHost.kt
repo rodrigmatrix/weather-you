@@ -7,10 +7,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
-import com.rodrigmatrix.weatheryou.presentation.about.AboutScreen
 import com.rodrigmatrix.weatheryou.addlocation.AddLocationScreen
+import com.rodrigmatrix.weatheryou.presentation.about.AboutScreen
 import com.rodrigmatrix.weatheryou.presentation.home.HomeScreen
-import com.rodrigmatrix.weatheryou.presentation.settings.SettingsScreen
+import com.rodrigmatrix.weatheryou.settings.presentation.settings.SettingsScreen
 import com.rodrigmatrix.weatheryou.presentation.utils.WeatherYouAppState
 
 @OptIn(ExperimentalPermissionsApi::class)
@@ -35,7 +35,7 @@ fun WeatherHomeNavHost(
             )
         }
         composable(HomeEntry.Settings.route) {
-            SettingsScreen()
+            com.rodrigmatrix.weatheryou.settings.presentation.settings.SettingsScreen()
         }
         composable(HomeEntry.About.route) {
             AboutScreen()

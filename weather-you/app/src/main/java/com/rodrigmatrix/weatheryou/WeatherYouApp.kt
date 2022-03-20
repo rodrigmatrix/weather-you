@@ -20,7 +20,7 @@ class WeatherYouApp: Application() {
             WeatherYouDataModules.loadModules()
             WeatherYouPresentationModules.loadModules()
         }
-        CurrentWeatherSmallWidget().updateWidget()
+        com.rodrigmatrix.weatheryou.widgets.weather.small.CurrentWeatherSmallWidget().updateWidget()
     }
 
     private fun initRemoteConfig() {
