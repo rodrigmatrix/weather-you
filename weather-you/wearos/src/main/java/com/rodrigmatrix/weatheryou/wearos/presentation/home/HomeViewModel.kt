@@ -26,7 +26,7 @@ class HomeViewModel(
         viewModelScope.launch {
             getCurrentLocationUseCase()
                 .flowOn(coroutineDispatcher)
-                .onStart { setState { it.copy(isLoading = true) } }
+                .onStart { setState { it.copy(isLoading = true, error = null) } }
                 .catch { exception ->
                     exception.handleError()
                 }

@@ -16,11 +16,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
 import androidx.wear.compose.material.MaterialTheme
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.domain.repository.WeatherRepository
 import com.rodrigmatrix.weatheryou.wearos.presentation.components.WeatherIcon
 import com.rodrigmatrix.weatheryou.wearos.presentation.home.HomeScreen
-import com.rodrigmatrix.weatheryou.wearos.presentation.theme.WeatherYouTheme
+import com.rodrigmatrix.weatheryou.wearos.theme.WeatherYouTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
@@ -29,6 +30,7 @@ import org.koin.android.ext.android.get
 
 class MainActivity : ComponentActivity() {
 
+    @OptIn(ExperimentalPermissionsApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {

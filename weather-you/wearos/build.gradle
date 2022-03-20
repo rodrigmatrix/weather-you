@@ -55,8 +55,10 @@ dependencies {
     implementation(Dependencies.composeUi)
     implementation(WearOsDependencies.composeMaterial)
     implementation(WearOsDependencies.composeFoundation)
+    implementation(Dependencies.composeMaterial2)
     implementation(Dependencies.composePreview)
     implementation(Dependencies.composeActivity)
+    implementation(Dependencies.accompanistPermissions)
 
     implementation(Dependencies.lottieCompose)
 

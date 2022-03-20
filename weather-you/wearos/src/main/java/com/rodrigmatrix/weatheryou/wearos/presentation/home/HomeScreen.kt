@@ -1,138 +1,138 @@
 package com.rodrigmatrix.weatheryou.wearos.presentation.home
 
+import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.wear.compose.material.Icon
-import androidx.wear.compose.material.MaterialTheme
-import androidx.wear.compose.material.Text
-import com.rodrigmatrix.weatheryou.core.extensions.temperatureString
+import androidx.wear.compose.material.*
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionState
+import com.google.accompanist.permissions.rememberPermissionState
+import com.rodrigmatrix.weatheryou.core.extensions.getHourWithMinutesString
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.wearos.R
-import com.rodrigmatrix.weatheryou.wearos.presentation.components.WeatherIcon
+import com.rodrigmatrix.weatheryou.wearos.presentation.components.CurvedText
 import org.koin.androidx.compose.getViewModel
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel = getViewModel()
+    viewModel: HomeViewModel = getViewModel(),
+    locationPermissionState: PermissionState = rememberPermissionState(ACCESS_COARSE_LOCATION)
 ) {
     val viewState by viewModel.viewState.collectAsState()
-
-    HomeScreen(viewState = viewState)
+    HomeScreen(
+        viewState = viewState,
+        locationPermissionState = locationPermissionState,
+        onRefreshLocation = viewModel::loadLocation
+    )
 }
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun HomeScreen(
-    viewState: HomeViewState
+    viewState: HomeViewState,
+    locationPermissionState: PermissionState,
+    onRefreshLocation: () -> Unit
 ) {
     when {
+        locationPermissionState.hasPermission.not() -> {
+            RequestLocationPermission(locationPermissionState, onRefreshLocation)
+            return
+        }
         viewState.isLoading -> {
             Loading()
+            return
         }
         viewState.error != null -> {
-            Error(viewState.error)
+            Error(
+                error = viewState.error,
+                onRefreshLocation = onRefreshLocation
+            )
+            return
         }
         viewState.weatherLocation != null -> {
-            CurrentConditions(viewState.weatherLocation)
+            WeatherContent(viewState.weatherLocation)
         }
     }
 }
 
 @Composable
 private fun Loading() {
-    Box(Modifier.fillMaxSize()) {
-
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.fillMaxSize()
+    ) {
+        CircularProgressIndicator()
     }
 }
 
 @Composable
-private fun Error(@StringRes error: Int) {
-
-}
-
-@Composable
-fun CurrentConditions(
-    weatherLocation: WeatherLocation
+private fun Error(
+    @StringRes error: Int,
+    onRefreshLocation: () -> Unit
 ) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(top = 20.dp, start = 16.dp, end = 16.dp)
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.fillMaxSize()
     ) {
-        WeatherIcon(
-            weatherIcons = weatherLocation.weatherIcons,
-            modifier = Modifier.size(40.dp)
-        )
-        Spacer(Modifier.padding(bottom = 4.dp))
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp)
+        ) {
             Text(
-                text = weatherLocation.currentWeather.temperatureString(),
-                color = MaterialTheme.colors.primary,
-                style = MaterialTheme.typography.display3
+                text = stringResource(error),
+                style = MaterialTheme.typography.title3,
+                textAlign = TextAlign.Center
             )
-            Spacer(Modifier.padding(end = 4.dp))
-            Column {
-                Text(
-                    text = weatherLocation.currentWeatherDescription,
-                    color = MaterialTheme.colors.primary,
-                    style = MaterialTheme.typography.caption1,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Text(
-                    text = "Fortaleza",
-                    style = MaterialTheme.typography.caption2,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+            Spacer(Modifier.padding(bottom = 4.dp))
+            Button(
+                modifier = Modifier.size(ButtonDefaults.SmallButtonSize),
+                onClick = onRefreshLocation
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_refresh),
+                    contentDescription = stringResource(R.string.try_again)
                 )
             }
         }
-        Spacer(Modifier.padding(bottom = 4.dp))
-        MaxAndLowestWeather(
-            max = weatherLocation.maxTemperature,
-            lowest = weatherLocation.lowestTemperature
-        )
     }
 }
 
 @Composable
-fun MaxAndLowestWeather(
-    max: Double,
-    lowest: Double,
-    modifier: Modifier = Modifier
+fun WeatherContent(
+    weatherLocation: WeatherLocation
 ) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
+    Scaffold(
+        timeText = {
+            CurvedText(
+                text = weatherLocation.currentTime.getHourWithMinutesString(),
+                style = MaterialTheme.typography.caption2
+            )
+        }
     ) {
-        Icon(
-            painter = painterResource(R.drawable.ic_arrow_upward),
-            contentDescription = null,
-            modifier = Modifier.size(12.dp)
-        )
-        Text(
-            text = max.temperatureString(),
-            style = MaterialTheme.typography.caption2,
-            color = MaterialTheme.colors.secondary
-        )
-        Spacer(Modifier.padding(end = 8.dp))
-        Icon(
-            painter = painterResource(R.drawable.ic_arrow_downward),
-            contentDescription = null,
-            modifier = Modifier.size(12.dp)
-        )
-        Text(
-            text = lowest.temperatureString(),
-            style = MaterialTheme.typography.caption2,
-            color = MaterialTheme.colors.error
-        )
+        ScalingLazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            item {
+                Spacer(modifier = Modifier.padding(bottom = 10.dp))
+            }
+            item {
+                CurrentConditions(weatherLocation)
+            }
+            items(weatherLocation.hours) {
+                WeatherHour(it)
+            }
+        }
     }
 }

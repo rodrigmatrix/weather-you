@@ -4,14 +4,15 @@ import android.annotation.SuppressLint
 import android.location.Address
 import android.location.Geocoder
 import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.tasks.Tasks
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.tasks.CancellationToken
+import com.google.android.gms.tasks.CancellationTokenSource
+import com.google.android.gms.tasks.OnTokenCanceledListener
 import com.rodrigmatrix.weatheryou.data.exception.CurrentLocationNotFoundException
 import com.rodrigmatrix.weatheryou.domain.model.CurrentLocation
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
-import java.util.concurrent.TimeUnit
 
 class UserLocationDataSourceImpl(
     private val locationServices: FusedLocationProviderClient,
@@ -21,7 +22,12 @@ class UserLocationDataSourceImpl(
     @SuppressLint("MissingPermission")
     override fun getCurrentLocation(): Flow<CurrentLocation> {
         return flow {
-            val location = locationServices.lastLocation.await() ?: throw CurrentLocationNotFoundException()
+            val location = locationServices
+                .getCurrentLocation(
+                    LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY,
+                    cancellationRequest
+                )
+                .await() ?: throw CurrentLocationNotFoundException()
 
             val address = geoCoder
                 .getFromLocation(location.latitude, location.longitude, 1)
@@ -36,5 +42,15 @@ class UserLocationDataSourceImpl(
             latitude = this.latitude,
             longitude = this.longitude
         )
+    }
+
+    private val cancellationRequest = object : CancellationToken() {
+        override fun isCancellationRequested(): Boolean {
+            return false
+        }
+
+        override fun onCanceledRequested(p0: OnTokenCanceledListener): CancellationToken {
+            return this
+        }
     }
 }

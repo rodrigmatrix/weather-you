@@ -1,4 +1,4 @@
-package com.rodrigmatrix.weatheryou.wearos.presentation.theme
+package com.rodrigmatrix.weatheryou.wearos.theme
 
 import androidx.compose.runtime.Composable
 import androidx.wear.compose.material.MaterialTheme

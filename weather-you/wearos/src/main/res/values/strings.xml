@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">WeatherYou</string>
-    <string name="current_location_not_found">Couldn\'t retreive your current location</string>
+    <string name="current_location_not_found">Couldn\'t retrieve your current location</string>
     <string name="generic_error">Something went wrong. Try again later</string>
+    <string name="try_again">Try again</string>
+    <string name="location_request_title">We need to use your location to check the current weather.</string>
+    <string name="grant_location_permission">Grant location permission</string>
 </resources>
