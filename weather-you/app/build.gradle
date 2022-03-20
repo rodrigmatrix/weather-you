@@ -71,6 +71,11 @@ dependencies {
     implementation project(LocalModules.data)
     implementation project(LocalModules.core)
 
+    implementation project(LocalModules.components)
+    implementation project(LocalModules.home)
+    implementation project(LocalModules.addLocation)
+    implementation project(LocalModules.weatherIcons)
+
     implementation(Dependencies.androidxCore)
     implementation(Dependencies.lifecycle)
     implementation(Dependencies.androidxWindow)

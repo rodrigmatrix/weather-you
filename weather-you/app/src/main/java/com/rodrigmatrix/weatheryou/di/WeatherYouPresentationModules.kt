@@ -1,8 +1,6 @@
 package com.rodrigmatrix.weatheryou.di
 
-import com.rodrigmatrix.weatheryou.presentation.addLocation.AddLocationViewModel
-import com.rodrigmatrix.weatheryou.presentation.details.WeatherDetailsViewModel
-import com.rodrigmatrix.weatheryou.presentation.home.HomeViewModel
+import com.rodrigmatrix.weatheryou.addlocation.AddLocationViewModel
 import com.rodrigmatrix.weatheryou.presentation.settings.SettingsViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.loadKoinModules
@@ -16,14 +14,14 @@ object WeatherYouPresentationModules {
 
     private val presentationModule = module {
         viewModel {
-            HomeViewModel(
+            com.rodrigmatrix.weatheryou.presentation.home.HomeViewModel(
                 fetchLocationsUseCase = get(),
                 deleteLocationUseCase = get()
             )
         }
-        viewModel { WeatherDetailsViewModel() }
+        viewModel { com.rodrigmatrix.weatheryou.presentation.details.WeatherDetailsViewModel() }
         viewModel {
-            AddLocationViewModel(
+            com.rodrigmatrix.weatheryou.addlocation.AddLocationViewModel(
                 addLocationUseCase = get(),
                 getFamousLocationsUseCase = get(),
                 searchLocationUseCase = get(),

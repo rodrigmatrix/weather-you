@@ -1,0 +1,114 @@
+package com.rodrigmatrix.weatheryou.presentation.details
+
+import android.content.res.Configuration
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.rodrigmatrix.weatheryou.home.R
+import com.rodrigmatrix.weatheryou.components.WeatherIcon
+import com.rodrigmatrix.weatheryou.components.WeatherYouCard
+import com.rodrigmatrix.weatheryou.components.WeatherYouDivider
+import com.rodrigmatrix.weatheryou.core.extensions.getLocalTime
+import com.rodrigmatrix.weatheryou.core.extensions.percentageString
+import com.rodrigmatrix.weatheryou.core.extensions.temperatureString
+import com.rodrigmatrix.weatheryou.domain.model.WeatherHour
+import com.rodrigmatrix.weatheryou.presentation.preview.PreviewHourlyForecast
+
+@Composable
+fun HourlyForecast(
+    hoursList: List<WeatherHour>,
+    modifier: Modifier = Modifier
+) {
+    WeatherYouCard(modifier) {
+        Column {
+            Text(
+                text = stringResource(R.string.daily_forecast),
+                modifier = Modifier
+                    .padding(
+                        start = 16.dp,
+                        end = 16.dp,
+                        bottom = 10.dp,
+                        top = 10.dp
+                    ),
+                style = MaterialTheme.typography.headlineSmall
+            )
+            WeatherYouDivider(
+                Modifier
+                    .padding(bottom = 10.dp)
+                    .height(1.dp)
+            )
+            LazyRow(Modifier.padding(start = 16.dp, end = 16.dp)) {
+                items(hoursList) { item  ->
+                    HourRow(item)
+                }
+            }
+        }
+    }
+
+}
+
+@Composable
+fun HourRow(hour: WeatherHour) {
+    Column(
+        Modifier
+            .padding(
+                top = 10.dp,
+                bottom = 10.dp,
+                start = 16.dp,
+                end = 16.dp
+            )
+    ) {
+        Text(
+            text = hour.temperature.temperatureString(),
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(bottom = 4.dp),
+            style = MaterialTheme.typography.bodySmall
+        )
+        if (hour.precipitationType.isNotEmpty()) {
+            Text(
+                text = hour.precipitationProbability.percentageString(),
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(bottom = 4.dp),
+                style = MaterialTheme.typography.bodySmall
+            )
+        } else {
+            Spacer(
+                Modifier
+                    .padding(bottom = 4.dp)
+                    .height(16.dp)
+            )
+        }
+        WeatherIcon(
+            weatherIcons = hour.weatherIcons,
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(bottom = 10.dp)
+                .size(34.dp)
+        )
+        Text(
+            text = hour.dateTime.getLocalTime().toString("hh:mm aa"),
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            style = MaterialTheme.typography.bodySmall
+        )
+    }
+}
+
+@Preview
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+fun WeatherLocationPreview() {
+    MaterialTheme {
+        HourlyForecast(PreviewHourlyForecast)
+    }
+}
+

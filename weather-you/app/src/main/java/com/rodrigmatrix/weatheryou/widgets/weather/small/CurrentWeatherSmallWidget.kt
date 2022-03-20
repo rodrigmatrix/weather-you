@@ -17,6 +17,7 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import com.rodrigmatrix.weatheryou.R
+import com.rodrigmatrix.weatheryou.weathericons.R.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -46,7 +47,7 @@ class CurrentWeatherSmallWidget: GlanceAppWidget(), KoinComponent {
             )
             Spacer(modifier = GlanceModifier.height(20.dp))
             Image(
-                provider = ImageProvider(com.rodrigmatrix.weatheryou.data.R.drawable.ic_weather_cloudynight),
+                provider = ImageProvider(drawable.ic_weather_cloudynight),
                 contentDescription = null,
                 modifier = GlanceModifier.size(40.dp)
             )

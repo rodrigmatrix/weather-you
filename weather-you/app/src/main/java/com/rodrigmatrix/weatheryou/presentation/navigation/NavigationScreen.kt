@@ -1,17 +1,15 @@
 package com.rodrigmatrix.weatheryou.presentation.navigation
 
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraph.Companion.findStartDestination
-import com.rodrigmatrix.weatheryou.presentation.components.WeatherYouScaffold
+import com.rodrigmatrix.weatheryou.components.WeatherYouScaffold
 import com.rodrigmatrix.weatheryou.presentation.utils.WeatherYouAppState
 import com.rodrigmatrix.weatheryou.presentation.utils.WindowSize
-import com.rodrigmatrix.weatheryou.presentation.utils.rememberWeatherYouAppState
 
 @Composable
 fun NavigationScreen(

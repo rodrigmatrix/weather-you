@@ -8,7 +8,7 @@ import androidx.navigation.compose.composable
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
 import com.rodrigmatrix.weatheryou.presentation.about.AboutScreen
-import com.rodrigmatrix.weatheryou.presentation.addLocation.AddLocationScreen
+import com.rodrigmatrix.weatheryou.addlocation.AddLocationScreen
 import com.rodrigmatrix.weatheryou.presentation.home.HomeScreen
 import com.rodrigmatrix.weatheryou.presentation.settings.SettingsScreen
 import com.rodrigmatrix.weatheryou.presentation.utils.WeatherYouAppState
@@ -41,7 +41,7 @@ fun WeatherHomeNavHost(
             AboutScreen()
         }
         composable(NavigationEntries.ADD_LOCATION_ROUTE) {
-            AddLocationScreen(appState)
+            AddLocationScreen(appState.navController)
         }
     }
 }

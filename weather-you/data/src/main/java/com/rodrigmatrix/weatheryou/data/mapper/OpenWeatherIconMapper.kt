@@ -1,6 +1,6 @@
 package com.rodrigmatrix.weatheryou.data.mapper
 
-import com.rodrigmatrix.weatheryou.data.R
+import com.rodrigmatrix.weatheryou.weathericons.R
 import com.rodrigmatrix.weatheryou.data.model.openweather.OpenWeatherWeather
 import com.rodrigmatrix.weatheryou.domain.model.WeatherIcons
 

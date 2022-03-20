@@ -1,0 +1,78 @@
+plugins {
+    id("com.android.library")
+    id("org.jetbrains.kotlin.android")
+}
+
+android {
+    namespace = "com.rodrigmatrix.weatheryou.home"
+    compileSdk = 32
+
+    defaultConfig {
+        minSdk = 21
+        targetSdk = 32
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles("consumer-rules.pro")
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+    kotlin.sourceSets.all {
+        languageSettings.optIn("kotlin.RequiresOptIn")
+    }
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion Versions.composeVersion
+    }
+}
+
+dependencies {
+    implementation project(LocalModules.domain)
+    implementation project(LocalModules.core)
+    implementation project(LocalModules.components)
+    implementation project(LocalModules.weatherIcons)
+
+    implementation(Dependencies.androidxCore)
+    implementation(Dependencies.lifecycle)
+    implementation(Dependencies.androidxWindow)
+
+    implementation(Dependencies.kotlinStdlib)
+    implementation(Dependencies.kotlinCoroutinesCore)
+    implementation(Dependencies.kotlinCoroutinesAndroid)
+    implementation(Dependencies.kotlinSerialization)
+
+    implementation(Dependencies.composeUi)
+    implementation(Dependencies.composeMaterial3)
+    implementation(Dependencies.composeMaterial2)
+    implementation(Dependencies.composePreview)
+    implementation(Dependencies.composeActivity)
+    implementation(Dependencies.composeNavigation)
+    implementation(Dependencies.composeConstraintLayout)
+    implementation(Dependencies.accompanistNavigation)
+    implementation(Dependencies.accompanistFlowLayout)
+    implementation(Dependencies.accompanistSwipeRefresh)
+    implementation(Dependencies.accompanistPermissions)
+
+    implementation(Dependencies.koinAndroid)
+    implementation(Dependencies.koinCompose)
+
+    implementation(Dependencies.jodaTime)
+
+    implementation(Dependencies.coil)
+
+    implementation(Dependencies.lottieCompose)
+
+    debugImplementation(Dependencies.composeUiTooling)
+    debugImplementation(Dependencies.composeTestManifest)
+
+    testImplementation(Dependencies.junit)
+    androidTestImplementation(Dependencies.testExtJunit)
+    androidTestImplementation(Dependencies.espressoCore)
+    androidTestImplementation(Dependencies.composeUiTestJunit)
+}
