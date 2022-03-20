@@ -119,9 +119,12 @@ fun Modifier.dpadFocusable(
 }
 
 
-fun Modifier.dpadFocusable() = composed {
+fun Modifier.dpadFocusable(
+    onFocusChanged: ((isFocused: Boolean) -> Unit)? = null
+) = composed {
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
+    onFocusChanged?.invoke(isFocused)
     val scale by animateFloatAsState(
         targetValue = if (isFocused) 1.03f else 1f
     )

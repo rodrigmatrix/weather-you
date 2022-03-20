@@ -20,6 +20,20 @@ class UserLocationDataSourceImpl(
 ) : UserLocationDataSource {
 
     @SuppressLint("MissingPermission")
+    override fun getLastKnownLocation(): Flow<CurrentLocation> {
+        return flow {
+            val location = locationServices
+                .lastLocation
+                .await() ?: throw CurrentLocationNotFoundException()
+
+            val address = geoCoder
+                .getFromLocation(location.latitude, location.longitude, 1)
+                .firstOrNull() ?: throw CurrentLocationNotFoundException()
+            emit(address.toCurrentLocation())
+        }
+    }
+
+    @SuppressLint("MissingPermission")
     override fun getCurrentLocation(): Flow<CurrentLocation> {
         return flow {
             val location = locationServices

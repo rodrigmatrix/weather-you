@@ -8,6 +8,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.rodrigmatrix.weatheryou.components.WeatherYouScaffold
+import com.rodrigmatrix.weatheryou.home.presentation.navigation.NavigationEntries
 import com.rodrigmatrix.weatheryou.presentation.utils.WeatherYouAppState
 import com.rodrigmatrix.weatheryou.presentation.utils.WindowSize
 

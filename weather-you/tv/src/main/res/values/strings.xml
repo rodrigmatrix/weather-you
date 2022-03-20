@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">WeatherYou</string>
+    <string name="add_location">Add location</string>
+</resources>

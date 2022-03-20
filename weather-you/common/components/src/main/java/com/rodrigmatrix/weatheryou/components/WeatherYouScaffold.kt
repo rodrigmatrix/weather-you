@@ -34,6 +34,4 @@ fun WeatherYouScaffold(
             content()
         }
     }
-
-
 }

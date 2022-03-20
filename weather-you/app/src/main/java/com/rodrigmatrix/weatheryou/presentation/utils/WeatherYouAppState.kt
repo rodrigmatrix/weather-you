@@ -7,8 +7,8 @@ import androidx.compose.runtime.*
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.rodrigmatrix.weatheryou.presentation.navigation.HomeEntry
-import com.rodrigmatrix.weatheryou.presentation.navigation.routes
+import com.rodrigmatrix.weatheryou.home.presentation.navigation.HomeEntry
+import com.rodrigmatrix.weatheryou.home.presentation.navigation.routes
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 

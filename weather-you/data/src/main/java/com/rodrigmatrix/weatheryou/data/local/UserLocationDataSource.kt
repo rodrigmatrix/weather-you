@@ -5,5 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface UserLocationDataSource {
 
+    fun getLastKnownLocation(): Flow<CurrentLocation>
+
     fun getCurrentLocation(): Flow<CurrentLocation>
 }

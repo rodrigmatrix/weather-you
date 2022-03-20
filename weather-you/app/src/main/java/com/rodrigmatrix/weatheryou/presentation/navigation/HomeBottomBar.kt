@@ -10,6 +10,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.rodrigmatrix.weatheryou.home.presentation.navigation.HomeEntry
 
 @Composable
 fun HomeBottomBar(

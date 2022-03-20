@@ -4,7 +4,7 @@ import com.rodrigmatrix.weatheryou.core.viewmodel.ViewModel
 
 class SettingsViewModel(
 
-): com.rodrigmatrix.weatheryou.core.viewmodel.ViewModel<SettingsViewState, SettingsViewEffect>(
+): ViewModel<SettingsViewState, SettingsViewEffect>(
     SettingsViewState()
 ) {
 

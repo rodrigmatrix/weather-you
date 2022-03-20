@@ -16,6 +16,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.rodrigmatrix.weatheryou.R
 import com.rodrigmatrix.weatheryou.components.extensions.dpadFocusable
+import com.rodrigmatrix.weatheryou.home.presentation.navigation.HomeEntry
 
 @Composable
 fun HomeNavigationRail(

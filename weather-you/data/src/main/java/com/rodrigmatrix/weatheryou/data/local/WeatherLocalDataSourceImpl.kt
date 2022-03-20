@@ -15,7 +15,9 @@ class WeatherLocalDataSourceImpl(
 
     override fun getAllLocations(): Flow<List<WeatherLocationEntity>> {
         return weatherDAO.getAllLocations().map { locationsList ->
-            val currentLocation = userLocationDataSource.getCurrentLocation().firstOrNull()
+            val currentLocation = userLocationDataSource.getLastKnownLocation()
+                .catch {  }
+                .firstOrNull()
             val mutableLocationsList = locationsList.toMutableList()
             if (currentLocation != null) {
                 mutableLocationsList.add(
