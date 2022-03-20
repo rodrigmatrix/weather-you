@@ -9,13 +9,13 @@ plugins {
 }
 
 android {
-    compileSdk 32
+    compileSdk Sdk.compileSdk
 
     defaultConfig {
-        applicationId "com.rodrigmatrix.weatheryou"
-        minSdk 21
-        targetSdk 32
-        versionCode 2
+        applicationId Sdk.applicationId
+        minSdk Sdk.phoneMinSdk
+        targetSdk Sdk.targetSdk
+        versionCode Sdk.versionCode
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

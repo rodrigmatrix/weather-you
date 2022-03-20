@@ -1,4 +1,4 @@
-package com.rodrigmatrix.weatheryou.wearos.presentation.home
+package com.rodrigmatrix.weatheryou.wearos.presentation.home.viewmodel
 
 import androidx.annotation.StringRes
 import com.rodrigmatrix.weatheryou.core.viewmodel.ViewState

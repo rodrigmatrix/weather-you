@@ -5,11 +5,11 @@ plugins {
 
 android {
     namespace = "com.rodrigmatrix.weatheryou.widgets"
-    compileSdk = 32
+    compileSdk Sdk.compileSdk
 
     defaultConfig {
-        minSdk = 21
-        targetSdk = 32
+        minSdk Sdk.phoneMinSdk
+        targetSdk Sdk.targetSdk
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")

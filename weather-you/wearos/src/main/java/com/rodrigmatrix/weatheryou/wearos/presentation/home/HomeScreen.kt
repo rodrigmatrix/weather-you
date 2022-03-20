@@ -3,6 +3,8 @@ package com.rodrigmatrix.weatheryou.wearos.presentation.home
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -21,6 +23,8 @@ import com.rodrigmatrix.weatheryou.core.extensions.getHourWithMinutesString
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.wearos.R
 import com.rodrigmatrix.weatheryou.wearos.presentation.components.CurvedText
+import com.rodrigmatrix.weatheryou.wearos.presentation.home.viewmodel.HomeViewModel
+import com.rodrigmatrix.weatheryou.wearos.presentation.home.viewmodel.HomeViewState
 import org.koin.androidx.compose.getViewModel
 
 @OptIn(ExperimentalPermissionsApi::class)
@@ -130,8 +134,20 @@ fun WeatherContent(
             item {
                 CurrentConditions(weatherLocation)
             }
-            items(weatherLocation.hours) {
-                WeatherHour(it)
+            item {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, end = 16.dp)
+                ) {
+                    weatherLocation.hours.take(3).forEach {
+                        WeatherHour(it)
+                    }
+                }
+            }
+            item {
+                Spacer(Modifier.padding(vertical = 20.dp))
             }
         }
     }

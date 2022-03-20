@@ -1,18 +1,19 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'com.google.gms.google-services'
     id 'com.google.firebase.crashlytics'
 }
 
 android {
     namespace 'com.rodrigmatrix.weatheryou.wearos'
-    compileSdk 32
+    compileSdk Sdk.compileSdk
 
     defaultConfig {
-        applicationId "com.rodrigmatrix.weatheryou.wearos"
-        minSdk 25
-        targetSdk 32
-        versionCode 1
+        applicationId Sdk.applicationId
+        minSdk Sdk.wearMinSdk
+        targetSdk Sdk.targetSdk
+        versionCode Sdk.versionCode
         versionName "1.0"
         vectorDrawables {
             useSupportLibrary true

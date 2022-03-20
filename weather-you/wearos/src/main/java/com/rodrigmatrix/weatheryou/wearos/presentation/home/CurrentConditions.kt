@@ -4,12 +4,14 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
 import com.rodrigmatrix.weatheryou.core.extensions.temperatureString
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
+import com.rodrigmatrix.weatheryou.wearos.R
 import com.rodrigmatrix.weatheryou.wearos.presentation.components.WeatherIcon
 
 @Composable
@@ -50,6 +52,13 @@ fun CurrentConditions(
                 )
             }
         }
+        Spacer(Modifier.padding(bottom = 4.dp))
+        Text(
+            text = stringResource(R.string.feels_like, weatherLocation.feelsLike.temperatureString()),
+            style = MaterialTheme.typography.body2,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
         Spacer(Modifier.padding(bottom = 4.dp))
         MaxAndLowestWeather(
             max = weatherLocation.maxTemperature,

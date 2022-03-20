@@ -37,6 +37,7 @@ import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.rodrigmatrix.weatheryou.components.WeatherIcon
+import com.rodrigmatrix.weatheryou.components.extensions.dpadFocusable
 import com.rodrigmatrix.weatheryou.core.compose.LaunchViewEffect
 import com.rodrigmatrix.weatheryou.core.extensions.toast
 import com.rodrigmatrix.weatheryou.domain.model.WeatherIcons
@@ -330,7 +331,10 @@ fun RequestLocationPermission(
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(16.dp)
                 )
-                Button(onClick = { permissionState.launchPermissionRequest() }) {
+                Button(
+                    onClick = permissionState::launchPermissionRequest,
+                    modifier = Modifier.dpadFocusable()
+                ) {
                     Text(stringResource(R.string.grant_location_permission))
                 }
             }

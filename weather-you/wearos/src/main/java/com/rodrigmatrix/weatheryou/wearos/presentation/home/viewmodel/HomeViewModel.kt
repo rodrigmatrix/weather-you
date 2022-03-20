@@ -1,4 +1,4 @@
-package com.rodrigmatrix.weatheryou.wearos.presentation.home
+package com.rodrigmatrix.weatheryou.wearos.presentation.home.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.rodrigmatrix.weatheryou.core.viewmodel.ViewEffect
@@ -6,6 +6,7 @@ import com.rodrigmatrix.weatheryou.core.viewmodel.ViewModel
 import com.rodrigmatrix.weatheryou.data.exception.CurrentLocationNotFoundException
 import com.rodrigmatrix.weatheryou.wearos.R
 import com.rodrigmatrix.weatheryou.wearos.domain.usecase.GetCurrentLocationUseCase
+import com.rodrigmatrix.weatheryou.wearos.domain.usecase.GetLocationWeatherUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
@@ -15,6 +16,7 @@ import kotlinx.coroutines.launch
 
 class HomeViewModel(
     private val getCurrentLocationUseCase: GetCurrentLocationUseCase,
+    private val getLocationWeatherUseCase: GetLocationWeatherUseCase,
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
 ): ViewModel<HomeViewState, ViewEffect>(HomeViewState()) {
 

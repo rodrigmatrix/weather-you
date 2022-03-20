@@ -7,11 +7,11 @@ plugins {
 
 android {
     namespace 'com.rodrigmatrix.weatheryou.data'
-    compileSdk 32
+    compileSdk Sdk.compileSdk
 
     defaultConfig {
-        minSdk 21
-        targetSdk 32
+        minSdk Sdk.phoneMinSdk
+        targetSdk Sdk.targetSdk
 
         def localProperties = new Properties()
         localProperties.load(new FileInputStream(rootProject.file("local.properties")))

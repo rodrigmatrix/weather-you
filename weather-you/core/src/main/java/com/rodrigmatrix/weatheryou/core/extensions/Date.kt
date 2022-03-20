@@ -57,6 +57,16 @@ fun String.getHourWithMinutesString(): String {
     }
 }
 
+fun String.getHourString(): String {
+    return try {
+        val localTime = LocalTime(this)
+        val output = localTime.toDateTimeToday().toDate()
+        SimpleDateFormat("hh aa", Locale.getDefault()).format(output)
+    } catch (e: Exception) {
+        this
+    }
+}
+
 fun String.getDateWithMonth(): String {
     return try {
         val date = DateTime(this).toDate()
