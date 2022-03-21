@@ -96,7 +96,7 @@ fun HourRow(hour: WeatherHour) {
                 .size(34.dp)
         )
         Text(
-            text = hour.dateTime.getLocalTime().toString("hh:mm aa"),
+            text = hour.dateTime.getLocalTime().toString("hh aa"),
             modifier = Modifier.align(Alignment.CenterHorizontally),
             style = MaterialTheme.typography.bodySmall
         )
