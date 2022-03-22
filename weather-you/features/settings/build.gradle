@@ -34,6 +34,7 @@ android {
 
 dependencies {
     implementation project(LocalModules.core)
+    implementation project(LocalModules.domain)
     implementation project(LocalModules.components)
     implementation project(LocalModules.weatherIcons)
 

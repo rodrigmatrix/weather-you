@@ -5,6 +5,7 @@ import com.rodrigmatrix.weatheryou.data.mapper.WeatherLocationDomainToEntityMapp
 import com.rodrigmatrix.weatheryou.data.model.visualcrossing.VisualCrossingUnits
 import com.rodrigmatrix.weatheryou.data.remote.WeatherYouRemoteDataSource
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
+import com.rodrigmatrix.weatheryou.domain.repository.SettingsRepository
 import com.rodrigmatrix.weatheryou.domain.repository.WeatherRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
@@ -14,24 +15,26 @@ import java.util.*
 class WeatherRepositoryImpl(
     private val weatherYouRemoteDataSource: WeatherYouRemoteDataSource,
     private val weatherLocalDataSource: WeatherLocalDataSource,
+    private val settingsRepository: SettingsRepository,
     private val weatherLocationDomainToEntityMapper: WeatherLocationDomainToEntityMapper
 ) : WeatherRepository {
 
     override fun addLocation(name: String, latitude: Double, longitude: Double): Flow<Unit> {
-        return weatherYouRemoteDataSource.getWeather(
-            latitude,
-            longitude
-        ).flatMapLatest { location ->
-            val entity = weatherLocationDomainToEntityMapper.map(location.copy(name = name))
-            weatherLocalDataSource.addLocation(entity)
-        }
+        return settingsRepository.getTemperaturePreference()
+            .flatMapLatest { unit ->
+                weatherYouRemoteDataSource.getWeather(latitude, longitude, unit)
+            }
+            .flatMapLatest { location ->
+                val entity = weatherLocationDomainToEntityMapper.map(location.copy(name = name))
+                weatherLocalDataSource.addLocation(entity)
+            }
     }
 
     override fun fetchLocation(latitude: Double, longitude: Double): Flow<WeatherLocation> {
-        return weatherYouRemoteDataSource.getWeather(
-            latitude,
-            longitude
-        )
+        return settingsRepository.getTemperaturePreference()
+            .flatMapLatest { unit ->
+                weatherYouRemoteDataSource.getWeather(latitude, longitude, unit)
+            }
     }
 
     override fun fetchLocationsList(): Flow<List<WeatherLocation>> {

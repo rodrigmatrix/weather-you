@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="units">Units</string>
+    <string name="metric_preference">Degrees/Celsius</string>
+    <string name="imperial_preference">Degrees/Fahrenheit</string>
 </resources>

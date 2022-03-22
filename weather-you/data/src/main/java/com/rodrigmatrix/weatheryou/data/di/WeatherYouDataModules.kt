@@ -1,15 +1,13 @@
 package com.rodrigmatrix.weatheryou.data.di
 
+import android.content.Context
 import android.location.Geocoder
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.rodrigmatrix.weatheryou.data.BuildConfig
-import com.rodrigmatrix.weatheryou.data.local.UserLocationDataSource
-import com.rodrigmatrix.weatheryou.data.local.UserLocationDataSourceImpl
-import com.rodrigmatrix.weatheryou.data.local.WeatherLocalDataSource
-import com.rodrigmatrix.weatheryou.data.local.WeatherLocalDataSourceImpl
+import com.rodrigmatrix.weatheryou.data.local.*
 import com.rodrigmatrix.weatheryou.data.local.database.WeatherDatabase
 import com.rodrigmatrix.weatheryou.data.mapper.*
 import com.rodrigmatrix.weatheryou.data.remote.RemoteConfigDataSource
@@ -21,11 +19,13 @@ import com.rodrigmatrix.weatheryou.data.remote.search.SearchRemoteDataSource
 import com.rodrigmatrix.weatheryou.data.remote.search.SearchRemoteDataSourceImpl
 import com.rodrigmatrix.weatheryou.data.remote.visualcrossing.VisualCrossingRemoteDataSourceImpl
 import com.rodrigmatrix.weatheryou.data.repository.SearchRepositoryImpl
+import com.rodrigmatrix.weatheryou.data.repository.SettingsRepositoryImpl
 import com.rodrigmatrix.weatheryou.data.repository.WeatherRepositoryImpl
 import com.rodrigmatrix.weatheryou.data.service.OpenWeatherService
 import com.rodrigmatrix.weatheryou.data.service.SearchLocationService
 import com.rodrigmatrix.weatheryou.data.service.VisualCrossingService
 import com.rodrigmatrix.weatheryou.domain.repository.SearchRepository
+import com.rodrigmatrix.weatheryou.domain.repository.SettingsRepository
 import com.rodrigmatrix.weatheryou.domain.repository.WeatherRepository
 import com.rodrigmatrix.weatheryou.domain.usecase.*
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -44,6 +44,7 @@ import java.util.*
 object WeatherYouDataModules {
 
     private const val GOOGLE_MAPS_SERVICE = "GOOGLE_MAPS_SERVICE"
+    private const val WEATHER_YOU_SHARED_PREFERENCES = "weather_you_shared_preferences"
 
     fun loadModules() {
         loadKoinModules(
@@ -71,6 +72,7 @@ object WeatherYouDataModules {
             WeatherRepositoryImpl(
                 weatherYouRemoteDataSource = get(),
                 weatherLocalDataSource = get(),
+                settingsRepository = get(),
                 weatherLocationDomainToEntityMapper = WeatherLocationDomainToEntityMapper()
             )
         }
@@ -80,6 +82,7 @@ object WeatherYouDataModules {
                 famousCitiesMapper = FamousCitiesMapper()
             )
         }
+        factory<SettingsRepository> { SettingsRepositoryImpl(settingsLocalDataSource = get()) }
     }
 
     private val dataSourceModule = module {
@@ -115,6 +118,15 @@ object WeatherYouDataModules {
                 searchAutocompleteRemoteMapper = SearchAutocompleteRemoteMapper(),
                 searchLocationRemoteMapper = SearchLocationRemoteMapper()
             )
+        }
+        factory<SharedPreferencesDataSource> {
+            SharedPreferencesDataSourceImpl(
+                sharedPreferences = androidApplication()
+                    .getSharedPreferences(WEATHER_YOU_SHARED_PREFERENCES, Context.MODE_PRIVATE)
+            )
+        }
+        factory<SettingsLocalDataSource> {
+            SettingsLocalDataSourceImpl(sharedPreferencesDataSource = get())
         }
     }
 

@@ -4,11 +4,16 @@ import com.rodrigmatrix.weatheryou.data.mapper.OpenWeatherRemoteMapper
 import com.rodrigmatrix.weatheryou.data.model.visualcrossing.VisualCrossingUnits
 import com.rodrigmatrix.weatheryou.data.remote.WeatherYouRemoteDataSource
 import com.rodrigmatrix.weatheryou.data.service.OpenWeatherService
+import com.rodrigmatrix.weatheryou.domain.model.TemperaturePreference
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import java.util.*
+
+private const val METRIC = "metric"
+private const val IMPERIAL = "imperial"
+private const val STANDARD = "standard"
 
 class OpenWeatherRemoteDataSourceImpl(
     private val openWeatherService: OpenWeatherService,
@@ -17,25 +22,26 @@ class OpenWeatherRemoteDataSourceImpl(
 
     override fun getWeather(
         latitude: Double,
-        longitude: Double
+        longitude: Double,
+        unit: TemperaturePreference
     ): Flow<WeatherLocation> {
         return flow {
             emit(
                 openWeatherService.getWeather(
                     latitude = latitude.toString(),
                     longitude = longitude.toString(),
-                    unit = getUnit(),
+                    unit = getUnit(unit),
                     language = Locale.getDefault().toString()
                 )
             )
         }.map(openWeatherRemoteMapper::map)
     }
 
-    private fun getUnit(): String {
-        return when (Locale.getDefault().language) {
-            Locale.UK.language -> "metric"
-            Locale.US.language -> "metric"
-            else -> "metric"
+    private fun getUnit(unit: TemperaturePreference): String {
+        return when (unit) {
+            TemperaturePreference.METRIC -> METRIC
+            TemperaturePreference.IMPERIAL -> IMPERIAL
+            else -> STANDARD
         }
     }
 }

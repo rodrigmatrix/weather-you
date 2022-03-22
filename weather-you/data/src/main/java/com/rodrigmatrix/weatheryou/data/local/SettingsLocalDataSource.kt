@@ -1,9 +1,9 @@
-package com.rodrigmatrix.weatheryou.domain.repository
+package com.rodrigmatrix.weatheryou.data.local
 
 import com.rodrigmatrix.weatheryou.domain.model.TemperaturePreference
 import kotlinx.coroutines.flow.Flow
 
-interface SettingsRepository {
+interface SettingsLocalDataSource {
 
     fun getTemperaturePreference(): Flow<TemperaturePreference>
 

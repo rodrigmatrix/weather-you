@@ -16,7 +16,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.rodrigmatrix.weatheryou.domain.model.TemperaturePreference
 import com.rodrigmatrix.weatheryou.settings.R
+import com.rodrigmatrix.weatheryou.settings.presentation.settings.model.TemperaturePreferenceOption
 import org.koin.androidx.compose.getViewModel
 
 @Composable
@@ -33,8 +35,8 @@ fun SettingsScreen(
         onNewUnit = {
             viewModel.onNewUnit(it)
         },
-        onDismissRequest = {
-            viewModel.onDismissDialog()
+        onDismissDialog = {
+            viewModel.hideDialogs()
         }
     )
 }
@@ -43,22 +45,20 @@ fun SettingsScreen(
 fun SettingsScreen(
     viewState: SettingsViewState,
     onEditUnits: () -> Unit,
-    onNewUnit: (String) -> Unit,
-    onDismissRequest: () -> Unit
+    onNewUnit: (TemperaturePreferenceOption) -> Unit,
+    onDismissDialog: () -> Unit
 ) {
     if (viewState.unitsDialogVisible) {
         UnitsDialog(
-            options = viewState.unitsList,
-            selected = viewState.selectedUnit,
+            selected = viewState.selectedTemperature,
             onNewUnit = onNewUnit,
-            onDismissRequest = onDismissRequest,
-
+            onDismissRequest = onDismissDialog
         )
     }
     Column(Modifier.fillMaxSize()) {
         SettingWithOption(
             title = stringResource(R.string.units),
-            selected = viewState.selectedUnit,
+            selected = stringResource(viewState.selectedTemperature.title),
             onClick = onEditUnits
         )
     }
@@ -66,9 +66,8 @@ fun SettingsScreen(
 
 @Composable
 fun UnitsDialog(
-    options: List<String>,
-    selected: String,
-    onNewUnit: (String) -> Unit,
+    selected: TemperaturePreferenceOption,
+    onNewUnit: (TemperaturePreferenceOption) -> Unit,
     onDismissRequest: () -> Unit
 ) {
     Dialog(
@@ -88,8 +87,12 @@ fun UnitsDialog(
                     style = MaterialTheme.typography.headlineSmall
                 )
                 LazyColumn(modifier = Modifier.padding(top = 16.dp)) {
-                    items(options) {
-                        ChoiceItem(it, it == selected, onNewUnit)
+                    items(TemperaturePreferenceOption.values()) {
+                        ChoiceItem(
+                            option = it,
+                            selected = it == selected,
+                            onNewUnit
+                        )
                     }
                 }
             }
@@ -101,9 +104,9 @@ fun UnitsDialog(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChoiceItem(
-    choice: String,
+    option: TemperaturePreferenceOption,
     selected: Boolean,
-    onClick: (String) -> Unit
+    onClick: (TemperaturePreferenceOption) -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -111,12 +114,12 @@ fun ChoiceItem(
             .selectable(
                 selected = selected,
                 onClick = {
-                    onClick(choice)
+                    onClick(option)
                 }
             )
     ) {
         Text(
-            text = choice,
+            text = stringResource(option.title),
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier
                 .padding(start = 16.dp)
@@ -125,7 +128,7 @@ fun ChoiceItem(
         RadioButton(
             selected = selected,
             onClick = {
-                onClick(choice)
+                onClick(option)
             },
             modifier = Modifier.align(Alignment.CenterVertically)
         )
@@ -141,7 +144,7 @@ fun UvIndexCardPreview() {
             viewState = SettingsViewState(),
             onEditUnits = { },
             onNewUnit = { },
-            onDismissRequest = { }
+            onDismissDialog = { }
         )
     }
 }
