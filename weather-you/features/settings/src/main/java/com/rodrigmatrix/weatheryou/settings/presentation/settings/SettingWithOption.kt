@@ -21,7 +21,7 @@ fun SettingWithOption(
     Column(
         modifier
             .fillMaxWidth()
-            .padding(start = 16.dp, end = 16.dp)
+            .padding(start = 24.dp, end = 24.dp)
             .clickable(onClick = onClick)
     ) {
         Text(

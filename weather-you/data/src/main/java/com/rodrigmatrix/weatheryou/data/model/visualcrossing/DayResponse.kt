@@ -13,7 +13,7 @@ data class DayResponse(
     @SerialName("datetime")
     val datetime: String? = null,
     @SerialName("datetimeEpoch")
-    val datetimeEpoch: Int? = null,
+    val datetimeEpoch: Long? = null,
     @SerialName("description")
     val description: String? = null,
     @SerialName("dew")
@@ -57,11 +57,11 @@ data class DayResponse(
     @SerialName("sunrise")
     val sunrise: String? = null,
     @SerialName("sunriseEpoch")
-    val sunriseEpoch: Int? = null,
+    val sunriseEpoch: Long? = null,
     @SerialName("sunset")
     val sunset: String? = null,
     @SerialName("sunsetEpoch")
-    val sunsetEpoch: Int? = null,
+    val sunsetEpoch: Long? = null,
     @SerialName("temp")
     val temp: Double? = null,
     @SerialName("tempmax")

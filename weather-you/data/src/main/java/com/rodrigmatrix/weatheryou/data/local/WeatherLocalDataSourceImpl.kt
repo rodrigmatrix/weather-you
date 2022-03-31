@@ -42,6 +42,6 @@ class WeatherLocalDataSourceImpl(
     }
 
     override fun getLocalWeather(): Flow<WeatherLocationEntity> {
-        return userLocationDataSource.getCurrentLocation().map(currentLocationToEntityMapper::map)
+        return userLocationDataSource.getLastKnownLocation().map(currentLocationToEntityMapper::map)
     }
 }

@@ -15,6 +15,7 @@ import com.rodrigmatrix.weatheryou.data.remote.RemoteConfigDataSourceImpl
 import com.rodrigmatrix.weatheryou.data.remote.WeatherYouRemoteDataSource
 import com.rodrigmatrix.weatheryou.data.remote.builder.RetrofitClientGenerator
 import com.rodrigmatrix.weatheryou.data.remote.interceptor.GoogleMapsInterceptor
+import com.rodrigmatrix.weatheryou.data.remote.openweather.OpenWeatherRemoteDataSourceImpl
 import com.rodrigmatrix.weatheryou.data.remote.search.SearchRemoteDataSource
 import com.rodrigmatrix.weatheryou.data.remote.search.SearchRemoteDataSourceImpl
 import com.rodrigmatrix.weatheryou.data.remote.visualcrossing.VisualCrossingRemoteDataSourceImpl
@@ -87,17 +88,18 @@ object WeatherYouDataModules {
 
     private val dataSourceModule = module {
         factory<WeatherYouRemoteDataSource> {
-            VisualCrossingRemoteDataSourceImpl(
-                visualCrossingService = get(),
-                VisualCrossingRemoteMapper(VisualCrossingWeatherIconMapper())
-            )
+            if (true) {
+                OpenWeatherRemoteDataSourceImpl(
+                    openWeatherService = get(),
+                    OpenWeatherRemoteMapper(OpenWeatherIconMapper())
+                )
+            } else {
+                VisualCrossingRemoteDataSourceImpl(
+                    visualCrossingService = get(),
+                    VisualCrossingRemoteMapper(VisualCrossingWeatherIconMapper())
+                )
+            }
         }
-//    factory<WeatherYouRemoteDataSource> {
-//        OpenWeatherRemoteDataSourceImpl(
-//            openWeatherService = get(),
-//            OpenWeatherRemoteMapper(OpenWeatherIconMapper())
-//        )
-//    }
         factory<WeatherLocalDataSource> {
             WeatherLocalDataSourceImpl(
                 weatherDAO = get(),

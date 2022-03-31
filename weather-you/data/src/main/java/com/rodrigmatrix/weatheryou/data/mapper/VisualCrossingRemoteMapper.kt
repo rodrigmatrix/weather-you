@@ -29,7 +29,7 @@ class VisualCrossingRemoteMapper(
             lowestTemperature = source.days?.firstOrNull()?.tempmin ?: 0.0,
             feelsLike = source.currentConditions?.feelslike ?: 0.0,
             weatherIcons = weatherIconMapper.map(source.currentConditions?.icon.orEmpty()),
-            currentTime = source.currentConditions?.datetime.orEmpty(),
+            currentTime = source.currentConditions?.datetimeEpoch ?: 0L,
             timeZone = source.timezone.orEmpty(),
             precipitationProbability = source.currentConditions?.precipprob ?: 0.0,
             precipitationType = source.currentConditions?.preciptype?.firstOrNull().orEmpty(),
@@ -38,8 +38,8 @@ class VisualCrossingRemoteMapper(
             windDirection = source.currentConditions?.winddir ?: 0.0,
             windSpeed = source.currentConditions?.windspeed ?: 0.0,
             uvIndex = source.currentConditions?.uvindex ?: 0.0,
-            sunrise = source.currentConditions?.sunrise.orEmpty(),
-            sunset = source.currentConditions?.sunset.orEmpty(),
+            sunrise = source.currentConditions?.sunriseEpoch ?: 0L,
+            sunset = source.currentConditions?.sunsetEpoch ?: 0L,
             visibility = source.currentConditions?.visibility ?: 0.0,
             pressure = source.currentConditions?.pressure ?: 0.0,
             days = source.days?.mapDaysList().orEmpty(),
@@ -50,7 +50,7 @@ class VisualCrossingRemoteMapper(
     private fun List<DayResponse>.mapDaysList(): List<WeatherDay> {
         return this.map {
             WeatherDay(
-                dateTime = it.datetime.orEmpty(),
+                dateTime = it.datetimeEpoch ?: 0L,
                 weatherCondition = it.conditions
                     .orEmpty()
                     .split(",")
@@ -65,8 +65,8 @@ class VisualCrossingRemoteMapper(
                 precipitationType = it.preciptype?.firstOrNull().orEmpty(),
                 windSpeed = it.windspeed ?: 0.0,
                 humidity = it.humidity ?: 0.0,
-                sunrise = it.sunrise.orEmpty(),
-                sunset = it.sunset.orEmpty()
+                sunrise = it.sunriseEpoch ?: 0L,
+                sunset = it.sunsetEpoch ?: 0L
             )
         }
     }
@@ -74,7 +74,7 @@ class VisualCrossingRemoteMapper(
     private fun List<HourResponse>.mapHoursList(): List<WeatherHour> {
         return this.map {
             WeatherHour(
-                dateTime = it.datetime.orEmpty(),
+                dateTime = it.datetimeEpoch ?: 0L,
                 weatherCondition = it.conditions.orEmpty(),
                 temperature = it.temp ?: 0.0,
                 weatherIcons = weatherIconMapper.map(it.icon.orEmpty()),

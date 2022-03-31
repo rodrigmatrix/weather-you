@@ -13,7 +13,7 @@ data class HourResponse(
     @SerialName("datetime")
     val datetime: String? = null,
     @SerialName("datetimeEpoch")
-    val datetimeEpoch: Int? = null,
+    val datetimeEpoch: Long? = null,
     @SerialName("dew")
     val dew: Double? = null,
     @SerialName("feelslike")

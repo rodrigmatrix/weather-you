@@ -1,7 +1,7 @@
 package com.rodrigmatrix.weatheryou.domain.model
 
 data class WeatherDay(
-    val dateTime: String,
+    val dateTime: Long,
     val weatherCondition: String,
     val temperature: Double,
     val maxTemperature: Double,
@@ -12,6 +12,6 @@ data class WeatherDay(
     val precipitationType: String,
     val windSpeed: Double,
     val humidity: Double,
-    val sunrise: String,
-    val sunset: String
+    val sunrise: Long,
+    val sunset: Long
 )

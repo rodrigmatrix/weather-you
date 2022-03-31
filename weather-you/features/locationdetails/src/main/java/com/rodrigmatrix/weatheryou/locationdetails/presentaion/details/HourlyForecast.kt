@@ -16,9 +16,7 @@ import com.rodrigmatrix.weatheryou.locationdetails.R
 import com.rodrigmatrix.weatheryou.components.WeatherIcon
 import com.rodrigmatrix.weatheryou.components.WeatherYouCard
 import com.rodrigmatrix.weatheryou.components.WeatherYouDivider
-import com.rodrigmatrix.weatheryou.core.extensions.getLocalTime
-import com.rodrigmatrix.weatheryou.core.extensions.percentageString
-import com.rodrigmatrix.weatheryou.core.extensions.temperatureString
+import com.rodrigmatrix.weatheryou.core.extensions.*
 import com.rodrigmatrix.weatheryou.domain.model.WeatherHour
 import com.rodrigmatrix.weatheryou.locationdetails.presentaion.preview.PreviewHourlyForecast
 
@@ -96,7 +94,7 @@ fun HourRow(hour: WeatherHour) {
                 .size(34.dp)
         )
         Text(
-            text = hour.dateTime.getLocalTime().toString("hh aa"),
+            text = hour.dateTime.toStringPattern("hh aa"),
             modifier = Modifier.align(Alignment.CenterHorizontally),
             style = MaterialTheme.typography.bodySmall
         )

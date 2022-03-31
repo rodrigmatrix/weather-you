@@ -21,13 +21,14 @@ import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.locationdetails.R
 import com.rodrigmatrix.weatheryou.components.WeatherYouCard
 import com.rodrigmatrix.weatheryou.core.extensions.getHoursAndMinutesDiff
+import com.rodrigmatrix.weatheryou.core.extensions.getLocalTime
 import org.joda.time.LocalTime
 
 @Composable
 fun SunriseSunsetCard(
-    sunriseHour: LocalTime,
-    sunsetHour: LocalTime,
-    currentTime: LocalTime,
+    sunriseHour: Long,
+    sunsetHour: Long,
+    currentTime: Long,
     modifier: Modifier = Modifier
 ) {
     WeatherYouCard(modifier) {
@@ -55,9 +56,9 @@ fun SunriseSunsetCard(
             }
             Box {
                 SunriseSunsetVisualizer(
-                    sunriseHour = sunriseHour.hourOfDay,
-                    sunsetHour = sunsetHour.hourOfDay,
-                    currentHour = currentTime.hourOfDay,
+                    sunriseHour = sunriseHour.getLocalTime().hourOfDay,
+                    sunsetHour = sunsetHour.getLocalTime().hourOfDay,
+                    currentHour = currentTime.getLocalTime().hourOfDay,
                     modifier = Modifier.height(140.dp)
                 )
                 Column(
@@ -71,7 +72,7 @@ fun SunriseSunsetCard(
                         style = MaterialTheme.typography.bodySmall
                     )
                     Text(
-                        text = sunriseHour.toString("hh:mm aa"),
+                        text = sunriseHour.getLocalTime().toString("hh:mm aa"),
                         style = MaterialTheme.typography.titleMedium
                     )
                 }
@@ -86,7 +87,7 @@ fun SunriseSunsetCard(
                         style = MaterialTheme.typography.bodySmall
                     )
                     Text(
-                        text = sunsetHour.toString("hh:mm aa"),
+                        text = sunsetHour.getLocalTime().toString("hh:mm aa"),
                         style = MaterialTheme.typography.titleMedium
                     )
                 }
@@ -219,19 +220,19 @@ fun SunriseSunsetCardPreview() {
     MaterialTheme {
         Column {
             SunriseSunsetCard(
-                sunriseHour = LocalTime(5, 0),
-                sunsetHour = LocalTime(17, 0),
-                currentTime = LocalTime(13, 0)
+                sunriseHour = 0,
+                sunsetHour = 0,
+                currentTime = 0
             )
             SunriseSunsetCard(
-                sunriseHour = LocalTime(6, 0),
-                sunsetHour = LocalTime(17, 0),
-                currentTime = LocalTime(8, 0)
+                sunriseHour = 0,
+                sunsetHour = 0,
+                currentTime = 0
             )
             SunriseSunsetCard(
-                sunriseHour = LocalTime(6, 0),
-                sunsetHour = LocalTime(17, 0),
-                currentTime = LocalTime(18, 0)
+                sunriseHour = 0,
+                sunsetHour = 0,
+                currentTime = 0
             )
         }
     }

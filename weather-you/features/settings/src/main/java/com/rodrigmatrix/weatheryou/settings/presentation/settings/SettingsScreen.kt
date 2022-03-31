@@ -16,6 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.rodrigmatrix.weatheryou.components.extensions.dpadFocusable
 import com.rodrigmatrix.weatheryou.domain.model.TemperaturePreference
 import com.rodrigmatrix.weatheryou.settings.R
 import com.rodrigmatrix.weatheryou.settings.presentation.settings.model.TemperaturePreferenceOption
@@ -29,15 +30,12 @@ fun SettingsScreen(
 
     SettingsScreen(
         viewState,
-        onEditUnits = {
-            viewModel.onEditUnits()
-        },
+        onEditUnits = viewModel::onEditUnit,
+        onEditTheme = viewModel::onEditTheme,
         onNewUnit = {
             viewModel.onNewUnit(it)
         },
-        onDismissDialog = {
-            viewModel.hideDialogs()
-        }
+        onDismissDialog = viewModel::hideDialogs
     )
 }
 
@@ -45,6 +43,7 @@ fun SettingsScreen(
 fun SettingsScreen(
     viewState: SettingsViewState,
     onEditUnits: () -> Unit,
+    onEditTheme: () -> Unit,
     onNewUnit: (TemperaturePreferenceOption) -> Unit,
     onDismissDialog: () -> Unit
 ) {
@@ -56,12 +55,37 @@ fun SettingsScreen(
         )
     }
     Column(Modifier.fillMaxSize()) {
+        Spacer(Modifier.height(10.dp))
+        SettingTitle(stringResource(R.string.units))
+        Spacer(Modifier.height(10.dp))
         SettingWithOption(
             title = stringResource(R.string.units),
             selected = stringResource(viewState.selectedTemperature.title),
-            onClick = onEditUnits
+            onClick = onEditUnits,
+            modifier = Modifier.dpadFocusable()
+        )
+        Spacer(Modifier.height(10.dp))
+        SettingTitle(stringResource(R.string.appearance))
+        Spacer(Modifier.height(10.dp))
+        SettingWithOption(
+            title = stringResource(R.string.app_theme),
+            selected = stringResource(viewState.appTheme.title),
+            onClick = onEditTheme,
+            modifier = Modifier.dpadFocusable()
         )
     }
+}
+
+@Composable
+fun SettingTitle(
+    title: String
+) {
+    Text(
+        text = title,
+        style = MaterialTheme.typography.titleLarge,
+        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
+        modifier = Modifier.padding(start = 16.dp, end = 16.dp)
+    )
 }
 
 @Composable
@@ -143,6 +167,7 @@ fun UvIndexCardPreview() {
         SettingsScreen(
             viewState = SettingsViewState(),
             onEditUnits = { },
+            onEditTheme = { },
             onNewUnit = { },
             onDismissDialog = { }
         )

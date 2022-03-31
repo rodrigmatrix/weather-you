@@ -1,6 +1,5 @@
 package com.rodrigmatrix.weatheryou.data.mapper
 
-import com.rodrigmatrix.weatheryou.core.extensions.getLocalTime
 import com.rodrigmatrix.weatheryou.data.model.openweather.OpenWeatherDaily
 import com.rodrigmatrix.weatheryou.data.model.openweather.OpenWeatherHourly
 import com.rodrigmatrix.weatheryou.data.model.openweather.OpenWeatherLocationResponse
@@ -25,7 +24,7 @@ class OpenWeatherRemoteMapper(
             lowestTemperature = source.daily?.firstOrNull()?.temp?.min ?: 0.0,
             feelsLike = source.current?.feelsLike ?: 0.0,
             weatherIcons = weatherIconMapper.map(source.current?.weather?.firstOrNull()),
-            currentTime = source.current?.datetime?.toTimeString().orEmpty(),
+            currentTime = source.current?.datetime ?: 0L,
             timeZone = source.timezone.orEmpty(),
             precipitationProbability = source.minutely.toChanceOfPrecipitation(source.current?.datetime ?: 0L),
             precipitationType = source.current?.weather?.firstOrNull()?.main.orEmpty(),
@@ -34,9 +33,9 @@ class OpenWeatherRemoteMapper(
             windDirection = source.current?.windDeg ?: 0.0,
             windSpeed = source.current?.windSpeed ?: 0.0,
             uvIndex = source.current?.uvi ?: 0.0,
-            sunrise = source.current?.sunrise?.toTimeString().orEmpty(),
-            sunset = source.current?.sunset?.toTimeString().orEmpty(),
-            visibility = source.current?.visibility ?: 0.0,
+            sunrise = source.current?.sunrise ?: 0L,
+            sunset = source.current?.sunset ?: 0L,
+            visibility = (source.current?.visibility ?: 0.0) / 1000.0,
             pressure = source.current?.pressure?.toDouble() ?: 0.0,
             days = source.daily?.mapDaysList().orEmpty(),
             hours = source.getTodayHoursList()
@@ -46,18 +45,18 @@ class OpenWeatherRemoteMapper(
     private fun List<OpenWeatherDaily>.mapDaysList(): List<WeatherDay> {
         return this.map {
             WeatherDay(
-                dateTime = it.datetime?.toTimeString().orEmpty(),
+                dateTime = it.datetime ?: 0L,
                 weatherCondition = it.weather?.firstOrNull()?.main.orEmpty(),
                 temperature = it.temp?.day ?: 0.0,
                 maxTemperature = it.temp?.max ?: 0.0,
                 minTemperature = it.temp?.min ?: 0.0,
                 weatherIcons = weatherIconMapper.map(it.weather?.first()),
-                precipitationProbability = it.pop ?: 0.0,
+                precipitationProbability = it.pop.calculatePrecipitation(),
                 precipitationType = it.weather?.firstOrNull()?.main.orEmpty(),
                 windSpeed = it.windSpeed ?: 0.0,
                 humidity = it.humidity ?: 0.0,
-                sunrise = it.sunrise?.toTimeString().orEmpty(),
-                sunset = it.sunset?.toTimeString().orEmpty(),
+                sunrise = it.sunrise ?: 0L,
+                sunset = it.sunset ?: 0L,
                 hours = emptyList()
             )
         }
@@ -66,11 +65,11 @@ class OpenWeatherRemoteMapper(
     private fun List<OpenWeatherHourly>.mapHoursList(): List<WeatherHour> {
         return this.map {
             WeatherHour(
-                dateTime = it.datetime?.toTimeString().orEmpty(),
+                dateTime = it.datetime ?: 0L,
                 weatherCondition = it.weather?.first()?.description.orEmpty(),
                 temperature = it.temp ?: 0.0,
                 weatherIcons = weatherIconMapper.map(it.weather?.firstOrNull()),
-                precipitationProbability = it.pop ?: 0.0,
+                precipitationProbability = it.pop.calculatePrecipitation(),
                 precipitationType = it.weather?.firstOrNull()?.main.orEmpty()
             )
         }
@@ -80,11 +79,9 @@ class OpenWeatherRemoteMapper(
         return hourly?.mapHoursList().orEmpty()
     }
 
-    private fun Long.toTimeString(): String {
-        return this.getLocalTime().toString("hh::mm::ss")
+    private fun List<OpenWeatherMinutely>?.toChanceOfPrecipitation(currentTime: Long): Double {
+        return this?.find { it.datetime == currentTime }?.precipitation.calculatePrecipitation()
     }
 
-    private fun List<OpenWeatherMinutely>?.toChanceOfPrecipitation(currentTime: Long): Double {
-        return this?.find { it.datetime == currentTime }?.precipitation ?: 0.0
-    }
+    private fun Double?.calculatePrecipitation(): Double = (this ?: 0.0) * 100.0
 }

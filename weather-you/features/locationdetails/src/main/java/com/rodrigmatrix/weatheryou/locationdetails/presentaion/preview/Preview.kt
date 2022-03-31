@@ -17,7 +17,7 @@ val PreviewWeatherLocation = WeatherLocation(
         animatedIcon = 0,
         staticIcon = R.drawable.ic_weather_partly_shower
     ),
-    currentTime = "11:00 PM",
+    currentTime = 0,
     timeZone = "",
     precipitationProbability = 60.0,
     precipitationType = "snow",
@@ -26,8 +26,8 @@ val PreviewWeatherLocation = WeatherLocation(
     windSpeed = 0.0,
     windDirection = 0.0,
     uvIndex = 0.0,
-    sunrise = "",
-    sunset = "",
+    sunrise = 0,
+    sunset = 0,
     visibility = 0.0,
     pressure = 0.0,
 )
@@ -47,7 +47,7 @@ val PreviewWeatherList = listOf(
             animatedIcon = 0,
             staticIcon = R.drawable.ic_weather_partly_shower
         ),
-        currentTime = "11:00 PM",
+        currentTime = 0,
         timeZone = "",
         precipitationProbability = 0.0,
         precipitationType = "",
@@ -56,8 +56,8 @@ val PreviewWeatherList = listOf(
         windSpeed = 0.0,
         windDirection = 0.0,
         uvIndex = 0.0,
-        sunrise = "",
-        sunset = "",
+        sunrise = 0,
+        sunset = 0,
         visibility = 0.0,
         pressure = 0.0,
     ),
@@ -75,7 +75,7 @@ val PreviewWeatherList = listOf(
             animatedIcon = 0,
             staticIcon = R.drawable.ic_weather_snow
         ),
-        currentTime = "10:00 PM",
+        currentTime = 0,
         timeZone = "",
         precipitationProbability = 0.0,
         precipitationType = "",
@@ -84,8 +84,8 @@ val PreviewWeatherList = listOf(
         windSpeed = 0.0,
         windDirection = 0.0,
         uvIndex = 0.0,
-        sunrise = "",
-        sunset = "",
+        sunrise = 0,
+        sunset = 0,
         visibility = 0.0,
         pressure = 0.0
     ),
@@ -103,7 +103,7 @@ val PreviewWeatherList = listOf(
             animatedIcon = 0,
             staticIcon = R.drawable.ic_weather_storm
         ),
-        currentTime = "10:00 PM",
+        currentTime = 0,
         timeZone = "",
         precipitationProbability = 0.0,
         precipitationType = "",
@@ -112,8 +112,8 @@ val PreviewWeatherList = listOf(
         windSpeed = 0.0,
         windDirection = 0.0,
         uvIndex = 0.0,
-        sunrise = "",
-        sunset = "",
+        sunrise = 0,
+        sunset = 0,
         visibility = 0.0,
         pressure = 0.0
     ),
@@ -131,7 +131,7 @@ val PreviewWeatherList = listOf(
             animatedIcon = 0,
             staticIcon = R.drawable.ic_weather_rainynight
         ),
-        currentTime = "10:00 PM",
+        currentTime = 0,
         timeZone = "",
         precipitationProbability = 0.0,
         precipitationType = "",
@@ -140,8 +140,8 @@ val PreviewWeatherList = listOf(
         windSpeed = 0.0,
         windDirection = 0.0,
         uvIndex = 0.0,
-        sunrise = "",
-        sunset = "",
+        sunrise = 0,
+        sunset = 0,
         visibility = 0.0,
         pressure = 0.0
     ),
@@ -159,7 +159,7 @@ val PreviewWeatherList = listOf(
             animatedIcon = 0,
             staticIcon = R.drawable.ic_weather_partly_shower
         ),
-        currentTime = "10:00 PM",
+        currentTime = 0,
         timeZone = "",
         precipitationProbability = 0.0,
         precipitationType = "",
@@ -168,8 +168,8 @@ val PreviewWeatherList = listOf(
         windSpeed = 0.0,
         windDirection = 0.0,
         uvIndex = 0.0,
-        sunrise = "",
-        sunset = "",
+        sunrise = 0,
+        sunset = 0,
         visibility = 0.0,
         pressure = 0.0
     ),
@@ -187,7 +187,7 @@ val PreviewWeatherList = listOf(
             animatedIcon = 0,
             staticIcon = R.drawable.ic_weather_night
         ),
-        currentTime = "10:00 PM",
+        currentTime = 0,
         timeZone = "",
         precipitationProbability = 0.0,
         precipitationType = "",
@@ -196,8 +196,8 @@ val PreviewWeatherList = listOf(
         windSpeed = 0.0,
         windDirection = 0.0,
         uvIndex = 0.0,
-        sunrise = "",
-        sunset = "",
+        sunrise = 0,
+        sunset = 0,
         visibility = 0.0,
         pressure = 0.0
     ),
@@ -215,7 +215,7 @@ val PreviewWeatherList = listOf(
             animatedIcon = 0,
             staticIcon = R.drawable.ic_weather_stormshowersday
         ),
-        currentTime = "10:00 PM",
+        currentTime = 0,
         timeZone = "",
         precipitationProbability = 0.0,
         precipitationType = "",
@@ -224,8 +224,8 @@ val PreviewWeatherList = listOf(
         windSpeed = 0.0,
         windDirection = 0.0,
         uvIndex = 0.0,
-        sunrise = "",
-        sunset = "",
+        sunrise = 0,
+        sunset = 0,
         visibility = 0.0,
         pressure = 0.0
     ),
@@ -243,7 +243,7 @@ val PreviewWeatherList = listOf(
             animatedIcon = 0,
             staticIcon = R.drawable.ic_weather_snow_sunny
         ),
-        currentTime = "10:00 PM",
+        currentTime = 0,
         timeZone = "",
         precipitationProbability = 0.0,
         precipitationType = "",
@@ -252,8 +252,8 @@ val PreviewWeatherList = listOf(
         windSpeed = 0.0,
         windDirection = 0.0,
         uvIndex = 0.0,
-        sunrise = "",
-        sunset = "",
+        sunrise = 0,
+        sunset = 0,
         visibility = 0.0,
         pressure = 0.0
     ),
@@ -271,7 +271,7 @@ val PreviewWeatherList = listOf(
             animatedIcon = 0,
             staticIcon = R.drawable.ic_weather_snow
         ),
-        currentTime = "10:00 PM",
+        currentTime = 0,
         timeZone = "",
         precipitationProbability = 0.0,
         precipitationType = "",
@@ -280,8 +280,8 @@ val PreviewWeatherList = listOf(
         windSpeed = 0.0,
         windDirection = 0.0,
         uvIndex = 0.0,
-        sunrise = "",
-        sunset = "",
+        sunrise = 0,
+        sunset = 0,
         visibility = 0.0,
         pressure = 0.0
     )
@@ -294,7 +294,7 @@ val PreviewHourlyForecast = listOf(
             animatedIcon = 0,
             staticIcon = R.drawable.ic_weather_snow_sunny
         ),
-        dateTime = "Now",
+        dateTime = 0,
         weatherCondition = "wd",
         precipitationProbability = 60.0,
         precipitationType = "snow"
@@ -305,7 +305,7 @@ val PreviewHourlyForecast = listOf(
             animatedIcon = 0,
             staticIcon = R.drawable.ic_weather_night
         ),
-        dateTime = "6AM",
+        dateTime = 0,
         weatherCondition = "",
         precipitationProbability = 0.0,
         precipitationType = ""
@@ -316,7 +316,7 @@ val PreviewHourlyForecast = listOf(
             animatedIcon = 0,
             staticIcon = R.drawable.ic_weather_snow
         ),
-        dateTime = "7AM",
+        dateTime = 0,
         weatherCondition = "",
         precipitationProbability = 0.0,
         precipitationType = ""
@@ -327,7 +327,7 @@ val PreviewHourlyForecast = listOf(
             animatedIcon = 0,
             staticIcon = R.drawable.ic_weather_partly_shower
         ),
-        dateTime = "8AM",
+        dateTime = 0,
         weatherCondition = "",
         precipitationProbability = 0.0,
         precipitationType = ""
@@ -338,7 +338,7 @@ val PreviewHourlyForecast = listOf(
             animatedIcon = 0,
             staticIcon = R.drawable.ic_weather_partly_shower
         ),
-        dateTime = "9AM",
+        dateTime = 0,
         weatherCondition = "",
         precipitationProbability = 0.0,
         precipitationType = ""
@@ -349,7 +349,7 @@ val PreviewHourlyForecast = listOf(
             animatedIcon = 0,
             staticIcon = R.drawable.ic_weather_cloudynight
         ),
-        dateTime = "11AM",
+        dateTime = 0,
         weatherCondition = "",
         precipitationProbability = 0.0,
         precipitationType = ""
@@ -360,7 +360,7 @@ val PreviewHourlyForecast = listOf(
             animatedIcon = 0,
             staticIcon = R.drawable.ic_weather_rainynight
         ),
-        dateTime = "12PM",
+        dateTime = 0,
         weatherCondition = "",
         precipitationProbability = 0.0,
         precipitationType = ""
@@ -371,7 +371,7 @@ val PreviewHourlyForecast = listOf(
             animatedIcon = 0,
             staticIcon = R.drawable.ic_weather_thunder
         ),
-        dateTime = "1PM",
+        dateTime = 0,
         weatherCondition = "",
         precipitationProbability = 0.0,
         precipitationType = ""
@@ -380,7 +380,7 @@ val PreviewHourlyForecast = listOf(
 
 val PreviewFutureDaysForecast = listOf(
     WeatherDay(
-        dateTime = "Today",
+        dateTime = 0,
         weatherCondition = "Parcialmente nublado",
         temperature = 10.0,
         maxTemperature = 14.0,
@@ -394,11 +394,11 @@ val PreviewFutureDaysForecast = listOf(
         precipitationType = "",
         windSpeed = 0.0,
         humidity = 0.0,
-        sunrise = "7:00AM",
-        sunset = "7:00AM",
+        sunrise = 0,
+        sunset = 0
     ),
     WeatherDay(
-        dateTime = "Tomorrow",
+        dateTime = 0,
         weatherCondition = "Cloudy",
         temperature = 10.0,
         maxTemperature = 14.0,
@@ -412,11 +412,11 @@ val PreviewFutureDaysForecast = listOf(
         precipitationType = "rain",
         windSpeed = 0.0,
         humidity = 0.0,
-        sunrise = "7:00AM",
-        sunset = "7:00AM",
+        sunrise = 0,
+        sunset = 0
     ),
     WeatherDay(
-        dateTime = "Monday, Jan 7",
+        dateTime = 0,
         weatherCondition = "Cloudy",
         temperature = 10.0,
         maxTemperature = 14.0,
@@ -430,11 +430,11 @@ val PreviewFutureDaysForecast = listOf(
         precipitationType = "",
         windSpeed = 0.0,
         humidity = 0.0,
-        sunrise = "7:00AM",
-        sunset = "7:00AM",
+        sunrise = 0,
+        sunset = 0
     ),
     WeatherDay(
-        dateTime = "Monday, Jan 7",
+        dateTime = 0,
         weatherCondition = "Cloudy",
         temperature = 10.0,
         maxTemperature = 14.0,
@@ -448,11 +448,11 @@ val PreviewFutureDaysForecast = listOf(
         precipitationType = "",
         windSpeed = 0.0,
         humidity = 0.0,
-        sunrise = "7:00AM",
-        sunset = "7:00AM",
+        sunrise = 0,
+        sunset = 0
     ),
     WeatherDay(
-        dateTime = "Monday, Jan 7",
+        dateTime = 0,
         weatherCondition = "Cloudy",
         temperature = 10.0,
         maxTemperature = 14.0,
@@ -466,11 +466,11 @@ val PreviewFutureDaysForecast = listOf(
         precipitationType = "",
         windSpeed = 0.0,
         humidity = 0.0,
-        sunrise = "7:00AM",
-        sunset = "7:00AM",
+        sunrise = 0,
+        sunset = 0
     ),
     WeatherDay(
-        dateTime = "Monday, Jan 7",
+        dateTime = 0,
         weatherCondition = "Cloudy",
         temperature = 10.0,
         maxTemperature = 14.0,
@@ -484,11 +484,11 @@ val PreviewFutureDaysForecast = listOf(
         precipitationType = "",
         windSpeed = 0.0,
         humidity = 0.0,
-        sunrise = "7:00AM",
-        sunset = "7:00AM",
+        sunrise = 0,
+        sunset = 0
     ),
     WeatherDay(
-        dateTime = "Monday, Jan 7",
+        dateTime = 0,
         weatherCondition = "Cloudy",
         temperature = 10.0,
         maxTemperature = 14.0,
@@ -502,7 +502,7 @@ val PreviewFutureDaysForecast = listOf(
         precipitationType = "",
         windSpeed = 0.0,
         humidity = 0.0,
-        sunrise = "7:00AM",
-        sunset = "7:00AM",
+        sunrise = 0,
+        sunset = 0
     )
 )

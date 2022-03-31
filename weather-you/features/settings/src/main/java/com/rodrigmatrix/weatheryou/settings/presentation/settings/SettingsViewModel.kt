@@ -35,8 +35,12 @@ class SettingsViewModel(
         }
     }
 
-    fun onEditUnits() {
+    fun onEditUnit() {
         setState { it.copy(unitsDialogVisible = true) }
+    }
+
+    fun onEditTheme() {
+        setState { it.copy(themeDialogVisible = true) }
     }
 
     fun onNewUnit(newUnit: TemperaturePreferenceOption) {
@@ -60,7 +64,7 @@ class SettingsViewModel(
 
     fun hideDialogs() {
         setState {
-            it.copy(unitsDialogVisible = false)
+            it.copy(unitsDialogVisible = false, themeDialogVisible = false)
         }
     }
 }

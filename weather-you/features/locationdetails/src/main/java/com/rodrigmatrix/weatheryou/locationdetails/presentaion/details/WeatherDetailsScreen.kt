@@ -24,6 +24,7 @@ import com.rodrigmatrix.weatheryou.components.WeatherYouSmallAppBar
 import com.rodrigmatrix.weatheryou.components.extensions.dpadFocusable
 import com.rodrigmatrix.weatheryou.core.extensions.getLocalTime
 import com.rodrigmatrix.weatheryou.core.extensions.getTimeZoneCurrentTime
+import com.rodrigmatrix.weatheryou.core.extensions.getTimeZoneTimestamp
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.locationdetails.presentaion.preview.PreviewFutureDaysForecast
 import com.rodrigmatrix.weatheryou.locationdetails.presentaion.preview.PreviewHourlyForecast
@@ -155,9 +156,9 @@ fun WeatherDetailsScreen(
             item {
                 viewState.weatherLocation?.let { weatherLocation ->
                     SunriseSunsetCard(
-                        sunriseHour = weatherLocation.sunrise.getLocalTime(),
-                        sunsetHour = weatherLocation.sunset.getLocalTime(),
-                        currentTime = weatherLocation.timeZone.getTimeZoneCurrentTime(),
+                        sunriseHour = weatherLocation.sunrise,
+                        sunsetHour = weatherLocation.sunset,
+                        currentTime = weatherLocation.timeZone.getTimeZoneTimestamp(),
                         modifier = Modifier
                             .padding(start = 16.dp, end = 16.dp)
                             .dpadFocusable(5, scrollState)
