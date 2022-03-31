@@ -1,20 +1,22 @@
 package com.rodrigmatrix.weatheryou.data.repository
 
+import com.rodrigmatrix.weatheryou.data.local.UserLocationDataSource
 import com.rodrigmatrix.weatheryou.data.local.WeatherLocalDataSource
 import com.rodrigmatrix.weatheryou.data.mapper.WeatherLocationDomainToEntityMapper
-import com.rodrigmatrix.weatheryou.data.model.visualcrossing.VisualCrossingUnits
 import com.rodrigmatrix.weatheryou.data.remote.WeatherYouRemoteDataSource
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.domain.repository.SettingsRepository
 import com.rodrigmatrix.weatheryou.domain.repository.WeatherRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
-import java.util.*
+
+private const val FIRST_INDEX = 0
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class WeatherRepositoryImpl(
     private val weatherYouRemoteDataSource: WeatherYouRemoteDataSource,
     private val weatherLocalDataSource: WeatherLocalDataSource,
+    private val userLocationDataSource: UserLocationDataSource,
     private val settingsRepository: SettingsRepository,
     private val weatherLocationDomainToEntityMapper: WeatherLocationDomainToEntityMapper
 ) : WeatherRepository {
@@ -38,14 +40,25 @@ class WeatherRepositoryImpl(
     }
 
     override fun fetchLocationsList(): Flow<List<WeatherLocation>> {
-        return weatherLocalDataSource
-            .getAllLocations()
+        return weatherLocalDataSource.getAllLocations()
             .map { weatherLocations ->
-                weatherLocations.mapNotNull {
+                val currentLocation = userLocationDataSource.getLastKnownLocation()
+                    .catch {  }
+                    .firstOrNull()
+
+                val fetchedLocations = weatherLocations.mapNotNull {
                     fetchLocation(it.latitude, it.longitude)
-                        .catch { emitAll(flowOf()) }
+                        .catch {  }
                         .firstOrNull()?.copy(name = it.name)
+                }.toMutableList()
+
+                if (currentLocation!= null) {
+                    val location = fetchLocation(currentLocation.latitude, currentLocation.longitude)
+                        .catch { }
+                        .firstOrNull()?.copy(name = currentLocation.name, isCurrentLocation = true)
+                    location?.let { fetchedLocations.add(FIRST_INDEX, it) }
                 }
+                fetchedLocations
             }
     }
 
@@ -54,7 +67,7 @@ class WeatherRepositoryImpl(
     }
 
     override fun getLocalWeather(): Flow<WeatherLocation> {
-        return weatherLocalDataSource.getLocalWeather().flatMapLatest { locationEntity ->
+        return userLocationDataSource.getLastKnownLocation().flatMapLatest { locationEntity ->
             fetchLocation(locationEntity.latitude, locationEntity.longitude).map { location ->
                 location.copy(name = locationEntity.name)
             }

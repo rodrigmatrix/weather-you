@@ -15,6 +15,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -68,13 +69,15 @@ fun WeatherDetailsScreen(
                 ExpandedTopAppBar(
                     viewState.weatherLocation?.name.orEmpty(),
                     onCloseClick,
-                    onDeleteClick
+                    onDeleteClick,
+                    viewState.weatherLocation?.isCurrentLocation?.not() == true
                 )
             } else {
                 SmallScreenTopAppBar(
                     viewState.weatherLocation?.name.orEmpty(),
                     onCloseClick,
-                    onDeleteClick
+                    onDeleteClick,
+                    viewState.weatherLocation?.isCurrentLocation?.not() == true
                 )
             }
         }
@@ -174,12 +177,15 @@ fun WeatherDetailsScreen(
 fun SmallScreenTopAppBar(
     title: String,
     onCloseClick: () -> Unit,
-    onDeleteButtonClick: () -> Unit
+    onDeleteButtonClick: () -> Unit,
+    showDeleteButton: Boolean
 ) {
     WeatherYouSmallAppBar(
         title = {
             Text(
                 text = title,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.bodyLarge
             )
         },
@@ -192,15 +198,17 @@ fun SmallScreenTopAppBar(
             }
         },
         actions = {
-            IconButton(onClick = onDeleteButtonClick) {
-                Icon(
-                    imageVector = Icons.Outlined.Delete,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier
-                        .padding(horizontal = 12.dp, vertical = 16.dp)
-                        .height(24.dp),
-                    contentDescription = stringResource(R.string.delete_location)
-                )
+            if (showDeleteButton) {
+                IconButton(onClick = onDeleteButtonClick) {
+                    Icon(
+                        imageVector = Icons.Outlined.Delete,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier
+                            .padding(horizontal = 12.dp, vertical = 16.dp)
+                            .height(24.dp),
+                        contentDescription = stringResource(R.string.delete_location)
+                    )
+                }
             }
         }
     )
@@ -210,12 +218,15 @@ fun SmallScreenTopAppBar(
 fun ExpandedTopAppBar(
     title: String,
     onCloseClick: () -> Unit,
-    onDeleteButtonClick: () -> Unit
+    onDeleteButtonClick: () -> Unit,
+    showDeleteButton: Boolean
 ) {
     WeatherYouLargeAppBar(
         title = {
             Text(
                 text = title,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.bodyLarge
             )
         },
@@ -228,15 +239,17 @@ fun ExpandedTopAppBar(
             }
         },
         actions = {
-            IconButton(onClick = onDeleteButtonClick) {
-                Icon(
-                    imageVector = Icons.Outlined.Delete,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier
-                        .padding(horizontal = 12.dp, vertical = 16.dp)
-                        .height(24.dp),
-                    contentDescription = stringResource(R.string.delete_location)
-                )
+            if (showDeleteButton) {
+                IconButton(onClick = onDeleteButtonClick) {
+                    Icon(
+                        imageVector = Icons.Outlined.Delete,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier
+                            .padding(horizontal = 12.dp, vertical = 16.dp)
+                            .height(24.dp),
+                        contentDescription = stringResource(R.string.delete_location)
+                    )
+                }
             }
         },
         modifier = Modifier.animateContentSize()

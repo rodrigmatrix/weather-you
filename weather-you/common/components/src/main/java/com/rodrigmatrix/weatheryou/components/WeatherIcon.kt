@@ -26,7 +26,7 @@ fun WeatherIcon(
         LottieAnimation(
             composition,
             progress,
-            modifier = modifier,
+            modifier = modifier
         )
     } else {
         Image(

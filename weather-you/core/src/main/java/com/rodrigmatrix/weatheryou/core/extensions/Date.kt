@@ -62,7 +62,7 @@ fun Long.getHourWithMinutesString(): String {
     return try {
         val localTime = LocalTime(this.toUnixTimestamp())
         val output = localTime.toDateTimeToday().toDate()
-        SimpleDateFormat("hh:mmaa", Locale.getDefault()).format(output)
+        SimpleDateFormat("hh:mm aa", Locale.getDefault()).format(output)
     } catch (e: Exception) {
         ""
     }

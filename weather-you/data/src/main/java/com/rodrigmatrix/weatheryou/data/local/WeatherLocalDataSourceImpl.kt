@@ -2,31 +2,15 @@ package com.rodrigmatrix.weatheryou.data.local
 
 import com.rodrigmatrix.weatheryou.data.local.dao.WeatherDAO
 import com.rodrigmatrix.weatheryou.data.local.model.WeatherLocationEntity
-import com.rodrigmatrix.weatheryou.data.mapper.CurrentLocationToEntityMapper
-import kotlinx.coroutines.flow.*
-
-private const val FIRST_INDEX = 0
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 class WeatherLocalDataSourceImpl(
-    private val weatherDAO: WeatherDAO,
-    private val userLocationDataSource: UserLocationDataSource,
-    private val currentLocationToEntityMapper: CurrentLocationToEntityMapper
+    private val weatherDAO: WeatherDAO
 ) : WeatherLocalDataSource {
 
     override fun getAllLocations(): Flow<List<WeatherLocationEntity>> {
-        return weatherDAO.getAllLocations().map { locationsList ->
-            val currentLocation = userLocationDataSource.getLastKnownLocation()
-                .catch {  }
-                .firstOrNull()
-            val mutableLocationsList = locationsList.toMutableList()
-            if (currentLocation != null) {
-                mutableLocationsList.add(
-                    FIRST_INDEX,
-                    currentLocationToEntityMapper.map(currentLocation)
-                )
-            }
-            return@map mutableLocationsList
-        }
+        return weatherDAO.getAllLocations()
     }
 
     override fun addLocation(location: WeatherLocationEntity): Flow<Unit> {
@@ -39,9 +23,5 @@ class WeatherLocalDataSourceImpl(
         return flow {
             emit(weatherDAO.deleteLocation(latitude, longitude))
         }
-    }
-
-    override fun getLocalWeather(): Flow<WeatherLocationEntity> {
-        return userLocationDataSource.getLastKnownLocation().map(currentLocationToEntityMapper::map)
     }
 }

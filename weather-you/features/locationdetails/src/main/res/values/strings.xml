@@ -6,10 +6,11 @@
     <string name="daily_forecast">Daily Forecast</string>
     <string name="today">Today</string>
     <string name="show_all_days_forecast">Show all days forecast button</string>
-    <string name="chance_of_precipitation">Chance of %s: %s</string>
+    <string name="chance_of_precipitation">Chance of precipitation: %s</string>
     <string name="wind_x">Wind: %s</string>
     <string name="humidity_x">Humidity: %s</string>
-    <string name="sunrise_sunset_x_y">Sunrise/sunset: %s/%s</string>
+    <string name="sunrise_x">Sunrise: %s</string>
+    <string name="sunset_x">Sunset: %s</string>
     <string name="back">Back button</string>
     <string name="tomorrow">Tomorrow</string>
     <string name="delete_location">Delete location</string>
@@ -46,4 +47,5 @@
     <string name="remaining_daylight_x">Remaining daylight:</string>
     <string name="hours_minutes_x_y">%dh %dm</string>
     <string name="minutes_x">%dm</string>
+    <string name="current_location">Current location</string>
 </resources>

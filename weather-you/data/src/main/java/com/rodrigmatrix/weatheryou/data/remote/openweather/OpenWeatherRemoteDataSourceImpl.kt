@@ -1,7 +1,6 @@
 package com.rodrigmatrix.weatheryou.data.remote.openweather
 
 import com.rodrigmatrix.weatheryou.data.mapper.OpenWeatherRemoteMapper
-import com.rodrigmatrix.weatheryou.data.model.visualcrossing.VisualCrossingUnits
 import com.rodrigmatrix.weatheryou.data.remote.WeatherYouRemoteDataSource
 import com.rodrigmatrix.weatheryou.data.service.OpenWeatherService
 import com.rodrigmatrix.weatheryou.domain.model.TemperaturePreference

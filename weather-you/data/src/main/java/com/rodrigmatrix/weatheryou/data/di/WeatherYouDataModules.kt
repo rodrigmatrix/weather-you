@@ -15,7 +15,12 @@ import com.rodrigmatrix.weatheryou.data.remote.RemoteConfigDataSourceImpl
 import com.rodrigmatrix.weatheryou.data.remote.WeatherYouRemoteDataSource
 import com.rodrigmatrix.weatheryou.data.remote.builder.RetrofitClientGenerator
 import com.rodrigmatrix.weatheryou.data.remote.interceptor.GoogleMapsInterceptor
+import com.rodrigmatrix.weatheryou.data.remote.interceptor.OpenWeatherInterceptor
+import com.rodrigmatrix.weatheryou.data.remote.interceptor.VisualCrossingInterceptor
 import com.rodrigmatrix.weatheryou.data.remote.openweather.OpenWeatherRemoteDataSourceImpl
+import com.rodrigmatrix.weatheryou.data.remote.remoteconfig.WeatherYouRemoteConfigKeys.OPEN_WEATHER_API_KEY
+import com.rodrigmatrix.weatheryou.data.remote.remoteconfig.WeatherYouRemoteConfigKeys.VISUAL_CROSSING_API_KEY
+import com.rodrigmatrix.weatheryou.data.remote.remoteconfig.WeatherYouRemoteConfigKeys.WEATHER_PROVIDER
 import com.rodrigmatrix.weatheryou.data.remote.search.SearchRemoteDataSource
 import com.rodrigmatrix.weatheryou.data.remote.search.SearchRemoteDataSourceImpl
 import com.rodrigmatrix.weatheryou.data.remote.visualcrossing.VisualCrossingRemoteDataSourceImpl
@@ -46,6 +51,7 @@ object WeatherYouDataModules {
 
     private const val GOOGLE_MAPS_SERVICE = "GOOGLE_MAPS_SERVICE"
     private const val WEATHER_YOU_SHARED_PREFERENCES = "weather_you_shared_preferences"
+    private const val OPEN_WEATHER = "OPEN_WEATHER"
 
     fun loadModules() {
         loadKoinModules(
@@ -73,6 +79,7 @@ object WeatherYouDataModules {
             WeatherRepositoryImpl(
                 weatherYouRemoteDataSource = get(),
                 weatherLocalDataSource = get(),
+                userLocationDataSource = get(),
                 settingsRepository = get(),
                 weatherLocationDomainToEntityMapper = WeatherLocationDomainToEntityMapper()
             )
@@ -87,8 +94,8 @@ object WeatherYouDataModules {
     }
 
     private val dataSourceModule = module {
-        factory<WeatherYouRemoteDataSource> {
-            if (true) {
+        single<WeatherYouRemoteDataSource> {
+            if (get<RemoteConfigDataSource>().getString(WEATHER_PROVIDER) == OPEN_WEATHER) {
                 OpenWeatherRemoteDataSourceImpl(
                     openWeatherService = get(),
                     OpenWeatherRemoteMapper(OpenWeatherIconMapper())
@@ -100,20 +107,18 @@ object WeatherYouDataModules {
                 )
             }
         }
-        factory<WeatherLocalDataSource> {
-            WeatherLocalDataSourceImpl(
-                weatherDAO = get(),
-                userLocationDataSource = get(),
-                currentLocationToEntityMapper = CurrentLocationToEntityMapper()
-            )
-        }
+        factory<WeatherLocalDataSource> { WeatherLocalDataSourceImpl(weatherDAO = get()) }
         factory<UserLocationDataSource> {
             UserLocationDataSourceImpl(
                 get(),
                 get()
             )
         }
-        factory<RemoteConfigDataSource> { RemoteConfigDataSourceImpl(get()) }
+        factory<RemoteConfigDataSource> {
+            RemoteConfigDataSourceImpl(
+                remoteConfig = Firebase.remoteConfig
+            )
+        }
         factory<SearchRemoteDataSource> {
             SearchRemoteDataSourceImpl(
                 searchLocationService = get(named(GOOGLE_MAPS_SERVICE)),
@@ -136,9 +141,6 @@ object WeatherYouDataModules {
     private val otherModules = module {
         single { WeatherDatabase(androidApplication()) }
         factory { get<WeatherDatabase>().locationsDao() }
-        single {
-            Firebase.remoteConfig
-        }
         factory {
             Json {
                 encodeDefaults = true
@@ -147,28 +149,44 @@ object WeatherYouDataModules {
             }
         }
         single {
-            OkHttpClient.Builder().apply {
+            val interceptor = OkHttpClient.Builder().apply {
                 if (BuildConfig.DEBUG) {
                     val logging = HttpLoggingInterceptor()
                     logging.setLevel(HttpLoggingInterceptor.Level.BASIC)
                     addNetworkInterceptor(logging)
                 }
+                addNetworkInterceptor(
+                    OpenWeatherInterceptor(
+                        apiKey = get<RemoteConfigDataSource>().getString(OPEN_WEATHER_API_KEY)
+                            .ifEmpty { BuildConfig.OPEN_WEATHER_TOKEN }
+                    )
+                )
             }.build()
-        }
-        single {
             val openWeatherRetrofit = RetrofitClientGenerator().create(
                 baseUrl = BuildConfig.OPEN_WEATHER_URL,
                 converterFactory = get<Json>().asConverterFactory("application/json".toMediaType()),
-                httpClient = get()
+                httpClient = interceptor
             )
             openWeatherRetrofit.create(OpenWeatherService::class.java)
         }
         single {
+            val interceptor = OkHttpClient.Builder().apply {
+                if (BuildConfig.DEBUG) {
+                    val logging = HttpLoggingInterceptor()
+                    logging.setLevel(HttpLoggingInterceptor.Level.BASIC)
+                    addNetworkInterceptor(logging)
+                }
+                addNetworkInterceptor(
+                    VisualCrossingInterceptor(
+                        apiKey = get<RemoteConfigDataSource>().getString(VISUAL_CROSSING_API_KEY)
+                            .ifEmpty { BuildConfig.VISUAL_CODING_TOKEN }
+                    )
+                )
+            }.build()
             val visualCrossingRetrofit = RetrofitClientGenerator().create(
-                baseUrl =
-                BuildConfig.VISUAL_CODING_URL,
+                baseUrl = BuildConfig.VISUAL_CODING_URL,
                 converterFactory = get<Json>().asConverterFactory("application/json".toMediaType()),
-                httpClient = get()
+                httpClient = interceptor
             )
             visualCrossingRetrofit.create(VisualCrossingService::class.java)
         }
@@ -182,8 +200,7 @@ object WeatherYouDataModules {
                 addNetworkInterceptor(GoogleMapsInterceptor(BuildConfig.GOOGLE_MAPS_TOKEN))
             }.build()
             val searchRetrofit = RetrofitClientGenerator().create(
-                baseUrl =
-                BuildConfig.GOOGLE_MAPS_URL,
+                baseUrl = BuildConfig.GOOGLE_MAPS_URL,
                 converterFactory = get<Json>().asConverterFactory("application/json".toMediaType()),
                 httpClient = interceptor
             )

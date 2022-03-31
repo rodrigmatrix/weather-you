@@ -2,12 +2,15 @@ package com.rodrigmatrix.weatheryou.locationdetails.presentaion.details
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -18,11 +21,13 @@ import com.rodrigmatrix.weatheryou.components.WeatherYouCard
 import com.rodrigmatrix.weatheryou.core.extensions.getTimeZoneCurrentTime
 import com.rodrigmatrix.weatheryou.core.extensions.percentageString
 import com.rodrigmatrix.weatheryou.core.extensions.temperatureString
+import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.locationdetails.presentaion.preview.PreviewWeatherLocation
+import java.util.*
 
 @Composable
 fun CurrentWeather(
-    weatherLocation: com.rodrigmatrix.weatheryou.domain.model.WeatherLocation,
+    weatherLocation: WeatherLocation,
     modifier: Modifier = Modifier
 ) {
     WeatherYouCard(modifier.fillMaxWidth()) {
@@ -30,7 +35,7 @@ fun CurrentWeather(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxHeight()
                 .padding(
                     start = 16.dp,
                     end = 16.dp,
@@ -81,27 +86,37 @@ fun CurrentWeather(
                     Text(
                         text = stringResource(
                             R.string.chance_of_precipitation,
-                            weatherLocation.precipitationType,
                             weatherLocation.precipitationProbability.percentageString()
                         ),
                         style = MaterialTheme.typography.titleSmall
                     )
                 }
             }
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.SpaceBetween
+            Box(
+                modifier = Modifier.fillMaxHeight()
             ) {
-                WeatherIcon(
-                    weatherIcons = weatherLocation.weatherIcons,
-                    modifier = Modifier
-                        .padding(bottom = 10.dp)
-                        .size(100.dp)
-                )
-                Text(
-                    text = weatherLocation.currentWeatherDescription,
-                    style = MaterialTheme.typography.titleSmall,
-                )
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.SpaceBetween
+                ) {
+                    WeatherIcon(
+                        weatherIcons = weatherLocation.weatherIcons,
+                        modifier = Modifier
+                            .padding(bottom = 10.dp)
+                            .size(100.dp)
+                    )
+                    Text(
+                        text = weatherLocation.currentWeatherDescription.capitalize(Locale.getDefault()),
+                        style = MaterialTheme.typography.titleSmall,
+                    )
+                }
+                if (weatherLocation.isCurrentLocation) {
+                    Icon(
+                        painter = painterResource(com.rodrigmatrix.weatheryou.components.R.drawable.ic_my_location),
+                        contentDescription = stringResource(R.string.current_location),
+                        modifier = Modifier.align(Alignment.TopEnd)
+                    )
+                }
             }
         }
     }

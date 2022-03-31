@@ -10,7 +10,7 @@
     <string name="now">Now</string>
     <string name="today">Today</string>
     <string name="show_all_days_forecast">Show all days forecast button</string>
-    <string name="chance_of_precipitation">Chance of %s: %s</string>
+    <string name="chance_of_precipitation">Chance of precipitation: %s</string>
     <string name="wind_x">Wind: %s</string>
     <string name="humidity_x">Humidity: %s</string>
     <string name="sunrise_sunset_x_y">Sunrise/sunset: %s/%s</string>

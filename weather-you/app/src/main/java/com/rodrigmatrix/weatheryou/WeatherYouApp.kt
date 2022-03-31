@@ -32,9 +32,11 @@ class WeatherYouApp: Application() {
     private fun initRemoteConfig() {
         val remoteConfig = Firebase.remoteConfig
         val configSettings = remoteConfigSettings {
-            minimumFetchIntervalInSeconds = 3600
+            minimumFetchIntervalInSeconds = if (BuildConfig.DEBUG) 0 else 3600
+            fetchTimeoutInSeconds = if (BuildConfig.DEBUG) 0 else 3600
         }
         remoteConfig.setConfigSettingsAsync(configSettings)
         remoteConfig.setDefaultsAsync(R.xml.remote_config_defaults)
+        remoteConfig.fetchAndActivate()
     }
 }

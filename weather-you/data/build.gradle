@@ -64,6 +64,7 @@ dependencies {
 
     implementation platform(Dependencies.firebaseBom)
     implementation(Dependencies.firebaseRemoteConfig)
+    implementation(Dependencies.firebaseAnalytics)
 
     implementation(Dependencies.roomRuntime)
     kapt(Dependencies.roomCompiler)
