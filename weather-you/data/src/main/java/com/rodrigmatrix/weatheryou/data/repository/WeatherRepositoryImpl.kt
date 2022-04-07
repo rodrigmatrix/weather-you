@@ -1,5 +1,6 @@
 package com.rodrigmatrix.weatheryou.data.repository
 
+import com.rodrigmatrix.weatheryou.core.extensions.catch
 import com.rodrigmatrix.weatheryou.data.local.UserLocationDataSource
 import com.rodrigmatrix.weatheryou.data.local.WeatherLocalDataSource
 import com.rodrigmatrix.weatheryou.data.mapper.WeatherLocationDomainToEntityMapper
@@ -43,12 +44,12 @@ class WeatherRepositoryImpl(
         return weatherLocalDataSource.getAllLocations()
             .map { weatherLocations ->
                 val currentLocation = userLocationDataSource.getLastKnownLocation()
-                    .catch {  }
+                    .catch()
                     .firstOrNull()
 
                 val fetchedLocations = weatherLocations.mapNotNull {
                     fetchLocation(it.latitude, it.longitude)
-                        .catch {  }
+                        .catch()
                         .firstOrNull()?.copy(name = it.name)
                 }.toMutableList()
 
@@ -72,5 +73,9 @@ class WeatherRepositoryImpl(
                 location.copy(name = locationEntity.name)
             }
         }
+    }
+
+    override fun getLocationsSize(): Flow<Int> {
+        return weatherLocalDataSource.getAllLocations().map { locationsList -> locationsList.size }
     }
 }

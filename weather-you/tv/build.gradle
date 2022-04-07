@@ -70,9 +70,11 @@ dependencies {
     implementation project(LocalModules.settings)
     implementation project(LocalModules.locationDetails)
 
+    implementation(Dependencies.appCompat)
     implementation(Dependencies.androidxCore)
     implementation(Dependencies.lifecycle)
     implementation(Dependencies.androidxWindow)
+    implementation(Dependencies.material3)
 
     implementation(Dependencies.kotlinStdlib)
     implementation(Dependencies.kotlinCoroutinesCore)

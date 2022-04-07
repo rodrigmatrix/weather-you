@@ -8,20 +8,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.rodrigmatrix.weatheryou.locationdetails.R
 import com.rodrigmatrix.weatheryou.components.WeatherIcon
 import com.rodrigmatrix.weatheryou.components.WeatherYouCard
-import com.rodrigmatrix.weatheryou.core.extensions.getTimeZoneCurrentTime
-import com.rodrigmatrix.weatheryou.core.extensions.percentageString
-import com.rodrigmatrix.weatheryou.core.extensions.temperatureString
+import com.rodrigmatrix.weatheryou.core.extensions.*
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
+import com.rodrigmatrix.weatheryou.locationdetails.R
 import com.rodrigmatrix.weatheryou.locationdetails.presentaion.preview.PreviewWeatherLocation
 import java.util.*
 
@@ -30,12 +28,12 @@ fun CurrentWeather(
     weatherLocation: WeatherLocation,
     modifier: Modifier = Modifier
 ) {
-    WeatherYouCard(modifier.fillMaxWidth()) {
+    val context = LocalContext.current
+    WeatherYouCard(modifier) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .fillMaxHeight()
                 .padding(
                     start = 16.dp,
                     end = 16.dp,
@@ -67,7 +65,7 @@ fun CurrentWeather(
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = weatherLocation.timeZone.getTimeZoneCurrentTime().toString("hh:mm aa"),
+                    text = weatherLocation.timeZone.getTimeZoneHourAndMinutes(context),
                     style = MaterialTheme.typography.titleSmall
                 )
                 Text(
@@ -108,6 +106,8 @@ fun CurrentWeather(
                     Text(
                         text = weatherLocation.currentWeatherDescription.capitalize(Locale.getDefault()),
                         style = MaterialTheme.typography.titleSmall,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
                 if (weatherLocation.isCurrentLocation) {

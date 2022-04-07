@@ -39,6 +39,7 @@ dependencies {
     implementation project(LocalModules.weatherIcons)
 
     implementation(Dependencies.androidxCore)
+    implementation(Dependencies.appCompat)
     implementation(Dependencies.lifecycle)
     implementation(Dependencies.androidxWindow)
 

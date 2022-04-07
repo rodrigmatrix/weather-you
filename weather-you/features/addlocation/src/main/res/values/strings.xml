@@ -10,4 +10,6 @@
     <string name="toronto">Toronto</string>
     <string name="rio_de_janeiro">Rio de Janeiro</string>
     <string name="sao_paulo">Sao Paulo</string>
+    <string name="add_location_error">Could not add this location. Try again later</string>
+    <string name="add_location_limit_error">You have reached the limit of locations allowed. Delete a location and try adding this again</string>
 </resources>

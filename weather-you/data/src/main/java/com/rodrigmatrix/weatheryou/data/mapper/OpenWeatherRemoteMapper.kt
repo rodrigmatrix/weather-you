@@ -26,7 +26,7 @@ class OpenWeatherRemoteMapper(
             weatherIcons = weatherIconMapper.map(source.current?.weather?.firstOrNull()),
             currentTime = source.current?.datetime ?: 0L,
             timeZone = source.timezone.orEmpty(),
-            precipitationProbability = source.minutely.toChanceOfPrecipitation(source.current?.datetime ?: 0L),
+            precipitationProbability = source.hourly.toChanceOfPrecipitation(),
             precipitationType = source.current?.weather?.firstOrNull()?.main.orEmpty(),
             humidity = source.current?.humidity ?: 0.0,
             dewPoint = source.current?.dewPoint ?: 0.0,
@@ -79,8 +79,8 @@ class OpenWeatherRemoteMapper(
         return hourly?.mapHoursList().orEmpty()
     }
 
-    private fun List<OpenWeatherMinutely>?.toChanceOfPrecipitation(currentTime: Long): Double {
-        return this?.find { it.datetime == currentTime }?.precipitation.calculatePrecipitation()
+    private fun List<OpenWeatherHourly>?.toChanceOfPrecipitation(): Double {
+        return this?.firstOrNull()?.pop.calculatePrecipitation()
     }
 
     private fun Double?.calculatePrecipitation(): Double = (this ?: 0.0) * 100.0

@@ -1,6 +1,7 @@
 package com.rodrigmatrix.weatheryou
 
 import android.app.Application
+import androidx.appcompat.app.AppCompatDelegate
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
@@ -9,15 +10,22 @@ import com.rodrigmatrix.weatheryou.data.di.WeatherYouDataModules
 import com.rodrigmatrix.weatheryou.home.di.HomeModule
 import com.rodrigmatrix.weatheryou.locationdetails.di.LocationDetailsModule
 import com.rodrigmatrix.weatheryou.settings.di.SettingsModule
+import com.rodrigmatrix.weatheryou.settings.utils.AppThemeManager
 import com.rodrigmatrix.weatheryou.widgets.weather.small.CurrentWeatherSmallWidget
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import org.koin.android.ext.android.get
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
 class WeatherYouApp: Application() {
 
+    private val mainScope: CoroutineScope = MainScope()
+
     override fun onCreate() {
         super.onCreate()
-        initRemoteConfig()
         startKoin {
             androidContext(this@WeatherYouApp)
             WeatherYouDataModules.loadModules()
@@ -26,6 +34,8 @@ class WeatherYouApp: Application() {
             LocationDetailsModule.loadModules()
             SettingsModule.loadModules()
         }
+        initRemoteConfig()
+        setAppTheme()
         CurrentWeatherSmallWidget().updateWidget()
     }
 
@@ -38,5 +48,11 @@ class WeatherYouApp: Application() {
         remoteConfig.setConfigSettingsAsync(configSettings)
         remoteConfig.setDefaultsAsync(R.xml.remote_config_defaults)
         remoteConfig.fetchAndActivate()
+    }
+
+    private fun setAppTheme() {
+        mainScope.launch {
+            get<AppThemeManager>().setAppTheme()
+        }
     }
 }

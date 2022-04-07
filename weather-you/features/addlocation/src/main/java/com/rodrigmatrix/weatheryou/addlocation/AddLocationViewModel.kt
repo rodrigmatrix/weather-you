@@ -8,6 +8,7 @@ import com.rodrigmatrix.weatheryou.domain.usecase.GetLocationUseCase
 import com.rodrigmatrix.weatheryou.domain.usecase.SearchLocationUseCase
 import com.rodrigmatrix.weatheryou.addlocation.AddLocationViewEffect.LocationAdded
 import com.rodrigmatrix.weatheryou.addlocation.AddLocationViewEffect.ShowError
+import com.rodrigmatrix.weatheryou.domain.exception.LocationLimitException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -78,8 +79,11 @@ class AddLocationViewModel(
     }
 
     private fun Throwable.handleError() {
-        val exception = this
-        setEffect { ShowError(exception.message.orEmpty()) }
+        val exception = when (this) {
+            is LocationLimitException -> R.string.add_location_limit_error
+            else -> R.string.add_location_error
+        }
+        setEffect { ShowError(exception) }
         setState { it.copy(isLoading = false) }
     }
 }

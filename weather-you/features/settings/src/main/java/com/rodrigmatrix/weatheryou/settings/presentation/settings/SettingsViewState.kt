@@ -5,7 +5,7 @@ import com.rodrigmatrix.weatheryou.settings.presentation.settings.model.Temperat
 
 data class SettingsViewState(
     val selectedTemperature: TemperaturePreferenceOption = TemperaturePreferenceOption.METRIC,
-    val appTheme: AppThemePreferenceOption = AppThemePreferenceOption.SYSTEM_DEFAULT,
+    val selectedAppTheme: AppThemePreferenceOption = AppThemePreferenceOption.SYSTEM_DEFAULT,
     val unitsDialogVisible: Boolean = false,
     val themeDialogVisible: Boolean = false
 ): com.rodrigmatrix.weatheryou.core.viewmodel.ViewState

@@ -12,17 +12,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.rodrigmatrix.weatheryou.locationdetails.R
 import com.rodrigmatrix.weatheryou.components.WeatherYouCard
+import com.rodrigmatrix.weatheryou.core.extensions.getHourWithMinutesString
 import com.rodrigmatrix.weatheryou.core.extensions.getHoursAndMinutesDiff
 import com.rodrigmatrix.weatheryou.core.extensions.getLocalTime
-import org.joda.time.LocalTime
+import com.rodrigmatrix.weatheryou.locationdetails.R
 
 @Composable
 fun SunriseSunsetCard(
@@ -31,6 +33,7 @@ fun SunriseSunsetCard(
     currentTime: Long,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     WeatherYouCard(modifier) {
         Column(
             verticalArrangement = Arrangement.SpaceBetween,
@@ -72,7 +75,7 @@ fun SunriseSunsetCard(
                         style = MaterialTheme.typography.bodySmall
                     )
                     Text(
-                        text = sunriseHour.getLocalTime().toString("hh:mm aa"),
+                        text = sunriseHour.getHourWithMinutesString(context),
                         style = MaterialTheme.typography.titleMedium
                     )
                 }
@@ -87,15 +90,12 @@ fun SunriseSunsetCard(
                         style = MaterialTheme.typography.bodySmall
                     )
                     Text(
-                        text = sunsetHour.getLocalTime().toString("hh:mm aa"),
+                        text = sunsetHour.getHourWithMinutesString(context),
                         style = MaterialTheme.typography.titleMedium
                     )
                 }
             }
-            val (
-                dayLengthHours,
-                dayLengthMinutes
-            ) = sunriseHour.getHoursAndMinutesDiff(sunsetHour)
+            val (dayLengthHours, dayLengthMinutes) = sunriseHour.getHoursAndMinutesDiff(sunsetHour)
             if (dayLengthHours > 0 || dayLengthMinutes > 0) {
                 val dayLengthString = if (dayLengthHours > 0) {
                     stringResource(
@@ -111,10 +111,7 @@ fun SunriseSunsetCard(
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
-            val (
-                remainingHours,
-                remainingMinutes
-            ) = currentTime.getHoursAndMinutesDiff(sunsetHour)
+            val (remainingHours, remainingMinutes) = currentTime.getHoursAndMinutesDiff(sunsetHour)
             if (remainingHours > 0 || remainingMinutes > 0) {
                 val remainingDaylightString = if (remainingHours > 0) {
                     stringResource(R.string.hours_minutes_x_y, remainingHours, remainingMinutes)

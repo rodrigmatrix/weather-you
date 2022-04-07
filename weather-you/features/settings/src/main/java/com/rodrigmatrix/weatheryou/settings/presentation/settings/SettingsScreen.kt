@@ -19,6 +19,7 @@ import androidx.compose.ui.window.Dialog
 import com.rodrigmatrix.weatheryou.components.extensions.dpadFocusable
 import com.rodrigmatrix.weatheryou.domain.model.TemperaturePreference
 import com.rodrigmatrix.weatheryou.settings.R
+import com.rodrigmatrix.weatheryou.settings.presentation.settings.model.AppThemePreferenceOption
 import com.rodrigmatrix.weatheryou.settings.presentation.settings.model.TemperaturePreferenceOption
 import org.koin.androidx.compose.getViewModel
 
@@ -35,6 +36,9 @@ fun SettingsScreen(
         onNewUnit = {
             viewModel.onNewUnit(it)
         },
+        onNewTheme = {
+            viewModel.onNewTheme(it)
+        },
         onDismissDialog = viewModel::hideDialogs
     )
 }
@@ -45,12 +49,20 @@ fun SettingsScreen(
     onEditUnits: () -> Unit,
     onEditTheme: () -> Unit,
     onNewUnit: (TemperaturePreferenceOption) -> Unit,
+    onNewTheme: (AppThemePreferenceOption) -> Unit,
     onDismissDialog: () -> Unit
 ) {
     if (viewState.unitsDialogVisible) {
         UnitsDialog(
             selected = viewState.selectedTemperature,
             onNewUnit = onNewUnit,
+            onDismissRequest = onDismissDialog
+        )
+    }
+    if (viewState.themeDialogVisible) {
+        ThemeDialog(
+            selected = viewState.selectedAppTheme,
+            onNewTheme = onNewTheme,
             onDismissRequest = onDismissDialog
         )
     }
@@ -69,7 +81,7 @@ fun SettingsScreen(
         Spacer(Modifier.height(10.dp))
         SettingWithOption(
             title = stringResource(R.string.app_theme),
-            selected = stringResource(viewState.appTheme.title),
+            selected = stringResource(viewState.selectedAppTheme.title),
             onClick = onEditTheme,
             modifier = Modifier.dpadFocusable()
         )
@@ -112,7 +124,7 @@ fun UnitsDialog(
                 )
                 LazyColumn(modifier = Modifier.padding(top = 16.dp)) {
                     items(TemperaturePreferenceOption.values()) {
-                        ChoiceItem(
+                        UnitChoiceItem(
                             option = it,
                             selected = it == selected,
                             onNewUnit
@@ -124,13 +136,82 @@ fun UnitsDialog(
     }
 }
 
+@Composable
+fun ThemeDialog(
+    selected: AppThemePreferenceOption,
+    onNewTheme: (AppThemePreferenceOption) -> Unit,
+    onDismissRequest: () -> Unit
+) {
+    Dialog(
+        onDismissRequest = onDismissRequest
+    ) {
+        Surface(
+            color = MaterialTheme.colorScheme.secondaryContainer,
+            tonalElevation = 8.dp,
+            shape = RoundedCornerShape(16.dp),
+            modifier = Modifier
+        ) {
+            Column(
+                Modifier.padding(16.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.app_theme),
+                    style = MaterialTheme.typography.headlineSmall
+                )
+                LazyColumn(modifier = Modifier.padding(top = 16.dp)) {
+                    items(AppThemePreferenceOption.values()) {
+                        ThemeChoiceItem(
+                            option = it,
+                            selected = it == selected,
+                            onNewTheme
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChoiceItem(
+fun UnitChoiceItem(
     option: TemperaturePreferenceOption,
     selected: Boolean,
     onClick: (TemperaturePreferenceOption) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .selectable(
+                selected = selected,
+                onClick = {
+                    onClick(option)
+                }
+            )
+    ) {
+        Text(
+            text = stringResource(option.title),
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier
+                .padding(start = 16.dp)
+                .align(Alignment.CenterVertically)
+        )
+        RadioButton(
+            selected = selected,
+            onClick = {
+                onClick(option)
+            },
+            modifier = Modifier.align(Alignment.CenterVertically)
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ThemeChoiceItem(
+    option: AppThemePreferenceOption,
+    selected: Boolean,
+    onClick: (AppThemePreferenceOption) -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -169,6 +250,7 @@ fun UvIndexCardPreview() {
             onEditUnits = { },
             onEditTheme = { },
             onNewUnit = { },
+            onNewTheme = { },
             onDismissDialog = { }
         )
     }

@@ -2,6 +2,7 @@ object Dependencies {
 
     // Android
     const val androidxCore = "androidx.core:core-ktx:1.7.0"
+    const val appCompat = "androidx.appcompat:appcompat:1.3.1"
     const val lifecycle = "androidx.lifecycle:lifecycle-runtime-ktx:${Versions.lifecycleVersion}"
     const val lifecycleViewModel = "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.lifecycleVersion}"
     const val androidxWindow = "androidx.window:window:1.0.0"
@@ -25,6 +26,9 @@ object Dependencies {
     const val accompanistSwipeRefresh = "com.google.accompanist:accompanist-swiperefresh:0.17.0"
     const val accompanistPermissions = "com.google.accompanist:accompanist-permissions:0.24.0-alpha"
     const val composeConstraintLayout = "androidx.constraintlayout:constraintlayout-compose:1.0.0"
+
+    // Material
+    const val material3 = "com.google.android.material:material:1.6.0-alpha03"
 
     // Glance
     const val glanceAppWidget = "androidx.glance:glance-appwidget:1.0.0-alpha03"

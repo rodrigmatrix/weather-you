@@ -80,6 +80,8 @@ dependencies {
     implementation project(LocalModules.locationDetails)
     implementation project(LocalModules.widgets)
 
+    implementation(Dependencies.material3)
+
     implementation(Dependencies.androidxCore)
     implementation(Dependencies.lifecycle)
     implementation(Dependencies.androidxWindow)

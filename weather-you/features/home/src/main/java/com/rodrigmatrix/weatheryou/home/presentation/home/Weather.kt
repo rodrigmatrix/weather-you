@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -21,7 +22,7 @@ import com.rodrigmatrix.weatheryou.components.R
 import com.rodrigmatrix.weatheryou.components.WeatherIcon
 import com.rodrigmatrix.weatheryou.components.WeatherYouCard
 import com.rodrigmatrix.weatheryou.components.extensions.dpadFocusable
-import com.rodrigmatrix.weatheryou.core.extensions.getTimeZoneCurrentTime
+import com.rodrigmatrix.weatheryou.core.extensions.getTimeZoneHourAndMinutes
 import com.rodrigmatrix.weatheryou.core.extensions.temperatureString
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.home.presentation.preview.PreviewWeatherList
@@ -50,6 +51,7 @@ fun WeatherLocation(
     onItemClick: (WeatherLocation) -> Unit,
     onLongPress: (WeatherLocation) -> Unit
 ) {
+    val context = LocalContext.current
     WeatherYouCard(
         modifier = Modifier
             .fillMaxWidth()
@@ -68,7 +70,6 @@ fun WeatherLocation(
                     onLongPress(weatherLocation)
                 }
             )
-
     ) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -81,7 +82,7 @@ fun WeatherLocation(
                     modifier = Modifier.padding(start = 16.dp, end = 16.dp)
                 )
                 Text(
-                    text = weatherLocation.timeZone.getTimeZoneCurrentTime().toString("hh:mm aa"),
+                    text = weatherLocation.timeZone.getTimeZoneHourAndMinutes(context),
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(start = 16.dp, end = 16.dp)
                 )
