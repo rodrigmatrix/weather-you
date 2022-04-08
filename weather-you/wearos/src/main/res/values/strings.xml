@@ -6,4 +6,6 @@
     <string name="location_request_title">We need to use your location to check the current weather.</string>
     <string name="grant_location_permission">Grant location permission</string>
     <string name="feels_like">Feels like: %s</string>
+    <string name="sunset">Sunset</string>
+    <string name="sunrise">Sunrise</string>
 </resources>

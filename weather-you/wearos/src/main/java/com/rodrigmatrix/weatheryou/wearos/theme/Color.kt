@@ -3,21 +3,19 @@ package com.rodrigmatrix.weatheryou.wearos.theme
 import androidx.compose.ui.graphics.Color
 import androidx.wear.compose.material.Colors
 
-val Purple200 = Color(0xFFb4c4ff)
-val Purple500 = Color(0xFF6200EE)
-val Purple700 = Color(0xFF3700B3)
-val Teal200 = Color(0xFF03DAC5)
-val Red400 = Color(0xFFCF6679)
+private val Primary = Color(0xFFb4c4ff)
+private val Secondary = Color(0xFFb4c5ff)
+private val Error = Color(0xFFCF6679)
 
-val MaxTemperatureColor = Color(0xFF3695E6)
-val LowestTemperatureColor = Color(0xFF12E2B8)
+val MaxTemperatureColor = Color(0xFFF53C70)
+val LowestTemperatureColor = Primary
 
-internal val wearColorPalette: Colors = Colors(
-    primary = Purple200,
-    primaryVariant = Purple700,
-    secondary = Teal200,
-    secondaryVariant = Teal200,
-    error = Red400,
+internal val WearColorPalette: Colors = Colors(
+    primary = Primary,
+    primaryVariant = Primary,
+    secondary = Secondary,
+    secondaryVariant = Secondary,
+    error = Error,
     onPrimary = Color.Black,
     onSecondary = Color.Black,
     onError = Color.Black

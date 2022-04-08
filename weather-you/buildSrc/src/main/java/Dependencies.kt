@@ -6,6 +6,7 @@ object Dependencies {
     const val lifecycle = "androidx.lifecycle:lifecycle-runtime-ktx:${Versions.lifecycleVersion}"
     const val lifecycleViewModel = "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.lifecycleVersion}"
     const val androidxWindow = "androidx.window:window:1.0.0"
+    const val splashScreen = "androidx.core:core-splashscreen:1.0.0-beta02"
 
     // Kotlin
     const val kotlinStdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${Versions.kotlinVersion}"

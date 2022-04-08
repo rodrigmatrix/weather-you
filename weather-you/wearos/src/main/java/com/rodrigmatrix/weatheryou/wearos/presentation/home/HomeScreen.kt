@@ -2,15 +2,22 @@ package com.rodrigmatrix.weatheryou.wearos.presentation.home
 
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import androidx.annotation.StringRes
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.input.rotary.onRotaryScrollEvent
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -25,6 +32,7 @@ import com.rodrigmatrix.weatheryou.wearos.R
 import com.rodrigmatrix.weatheryou.wearos.presentation.components.CurvedText
 import com.rodrigmatrix.weatheryou.wearos.presentation.home.viewmodel.HomeViewModel
 import com.rodrigmatrix.weatheryou.wearos.presentation.home.viewmodel.HomeViewState
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
 
 @OptIn(ExperimentalPermissionsApi::class)
@@ -76,7 +84,7 @@ private fun Loading() {
         contentAlignment = Alignment.Center,
         modifier = Modifier.fillMaxSize()
     ) {
-        CircularProgressIndicator()
+        CircularProgressIndicator(color = MaterialTheme.colors.primary)
     }
 }
 
@@ -112,24 +120,47 @@ private fun Error(
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun WeatherContent(
     weatherLocation: WeatherLocation
 ) {
+    val context = LocalContext.current
+    val haptic = LocalHapticFeedback.current
+    val focusRequester = remember { FocusRequester() }
+    val scrollState = rememberScalingLazyListState()
+    val coroutineScope = rememberCoroutineScope()
     Scaffold(
         timeText = {
             CurvedText(
-                text = weatherLocation.currentTime.getHourWithMinutesString(),
+                text = weatherLocation.currentTime.getHourWithMinutesString(context),
                 style = MaterialTheme.typography.caption2
             )
+        },
+        positionIndicator = {
+            PositionIndicator(scalingLazyListState = scrollState)
+        },
+        vignette = {
+            Vignette(vignettePosition = VignettePosition.TopAndBottom)
         }
     ) {
         ScalingLazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            modifier = Modifier
+                .fillMaxSize()
+                .onRotaryScrollEvent {
+                    coroutineScope.launch {
+                        scrollState.scrollBy(it.verticalScrollPixels)
+                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                    }
+                    true
+                }
+                .focusRequester(focusRequester)
+                .focusable(),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            state = scrollState
         ) {
             item {
-                Spacer(modifier = Modifier.padding(bottom = 10.dp))
+                Spacer(modifier = Modifier.height(10.dp))
             }
             item {
                 CurrentConditions(weatherLocation)
@@ -147,8 +178,20 @@ fun WeatherContent(
                 }
             }
             item {
-                Spacer(Modifier.padding(vertical = 20.dp))
+                Spacer(modifier = Modifier.height(20.dp))
             }
+            item {
+                SunriseSunset(
+                    sunrise = weatherLocation.sunrise,
+                    sunset = weatherLocation.sunset
+                )
+            }
+            item {
+                Spacer(modifier = Modifier.height(20.dp))
+            }
+        }
+        LaunchedEffect(Unit) {
+            focusRequester.requestFocus()
         }
     }
 }

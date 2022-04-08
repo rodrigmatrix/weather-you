@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material.Chip
 import androidx.wear.compose.material.MaterialTheme
@@ -17,11 +18,12 @@ import com.rodrigmatrix.weatheryou.wearos.presentation.components.WeatherIcon
 
 @Composable
 fun WeatherHour(weatherHour: WeatherHour) {
+    val context = LocalContext.current
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = weatherHour.dateTime.getHourString(),
+            text = weatherHour.dateTime.getHourString(context),
             style = MaterialTheme.typography.caption2
         )
         WeatherIcon(

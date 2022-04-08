@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.AppTheme" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">#000000</item>
+        <item name="splashScreenIconSize">100dp</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher_adaptive_fore</item>
+        <item name="windowSplashScreenAnimationDuration">300</item>
+        <item name="postSplashScreenTheme">@android:style/Theme.DeviceDefault</item>
+    </style>
+</resources>

@@ -8,7 +8,7 @@ fun WeatherYouTheme(
     content: @Composable () -> Unit
 ) {
     MaterialTheme(
-        colors = wearColorPalette,
+        colors = WearColorPalette,
         typography = Typography,
         content = content
     )

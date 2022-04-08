@@ -25,7 +25,7 @@
         <activity
             android:name="com.rodrigmatrix.weatheryou.wearos.presentation.MainActivity"
             android:exported="true"
-            android:theme="@android:style/Theme.DeviceDefault">
+            android:theme="@style/Theme.AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

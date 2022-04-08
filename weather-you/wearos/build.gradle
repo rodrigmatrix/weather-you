@@ -53,6 +53,7 @@ dependencies {
 
     implementation(Dependencies.androidxCore)
     implementation(Dependencies.lifecycle)
+    implementation(Dependencies.splashScreen)
 
     implementation(Dependencies.composeUi)
     implementation(WearOsDependencies.composeMaterial)
