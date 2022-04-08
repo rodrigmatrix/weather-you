@@ -206,8 +206,8 @@ object WeatherYouDataModules {
             )
             searchRetrofit.create(SearchLocationService::class.java)
         }
-        single { LocationServices.getFusedLocationProviderClient(androidContext()) }
-        factory { Geocoder(androidContext(), Locale.getDefault()) }
+        single { LocationServices.getFusedLocationProviderClient(androidApplication()) }
+        factory { Geocoder(androidApplication(), Locale.getDefault()) }
     }
 
 }

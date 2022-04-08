@@ -6,7 +6,6 @@ import android.location.Geocoder
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.tasks.CancellationToken
-import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.android.gms.tasks.OnTokenCanceledListener
 import com.rodrigmatrix.weatheryou.data.exception.CurrentLocationNotFoundException
 import com.rodrigmatrix.weatheryou.domain.model.CurrentLocation

@@ -70,7 +70,7 @@ class WeatherRepositoryImpl(
     override fun getLocalWeather(): Flow<WeatherLocation> {
         return userLocationDataSource.getCurrentLocation().flatMapLatest { currentLocation ->
             fetchLocation(currentLocation.latitude, currentLocation.longitude).map { location ->
-                location.copy(name = location.name)
+                location
             }
         }
     }

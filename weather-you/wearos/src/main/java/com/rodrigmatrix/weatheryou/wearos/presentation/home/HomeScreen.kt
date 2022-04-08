@@ -181,6 +181,12 @@ fun WeatherContent(
                 Spacer(modifier = Modifier.height(20.dp))
             }
             item {
+                UvIndex(uvIndex = weatherLocation.uvIndex)
+            }
+            item {
+                Spacer(modifier = Modifier.height(20.dp))
+            }
+            item {
                 SunriseSunset(
                     sunrise = weatherLocation.sunrise,
                     sunset = weatherLocation.sunset

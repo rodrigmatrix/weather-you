@@ -47,7 +47,7 @@ fun UvIndexCard(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         painter = painterResource(R.drawable.ic_sunny),
-                        contentDescription = stringResource(R.string.humidity),
+                        contentDescription = stringResource(R.string.uv_index),
                         modifier = Modifier.padding(end = 4.dp)
                     )
                     Text(

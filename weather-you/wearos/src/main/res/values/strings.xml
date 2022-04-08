@@ -8,4 +8,9 @@
     <string name="feels_like">Feels like: %s</string>
     <string name="sunset">Sunset</string>
     <string name="sunrise">Sunrise</string>
+    <string name="low">Low</string>
+    <string name="moderate">Moderate</string>
+    <string name="high">High</string>
+    <string name="very_high">Very High</string>
+    <string name="uv_index">UV Index</string>
 </resources>
