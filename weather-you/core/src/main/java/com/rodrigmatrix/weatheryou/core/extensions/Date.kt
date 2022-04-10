@@ -13,13 +13,13 @@ import java.util.*
 
 fun String.getTimeZoneHourAndMinutes(context: Context): String {
     return try {
-        val calendar = DateTime(DateTimeZone.forID(this))
+        val localTime = LocalTime(DateTimeZone.forID(this))
         val pattern = if (DateFormat.is24HourFormat(context)) {
             "HH:mm"
         } else {
             "hh:mm aa"
         }
-        SimpleDateFormat(pattern, Locale.getDefault()).format(calendar.toDate())
+        localTime.toString(pattern)
     } catch (e: Exception) {
         ""
     }
@@ -44,13 +44,12 @@ fun Long.getHoursAndMinutesDiff(second: Long): Pair<Int, Int> {
 fun Long.getHourWithMinutesString(context: Context): String {
     return try {
         val localTime = LocalTime(this.toUnixTimestamp())
-        val output = localTime.toDateTimeToday().toDate()
         val pattern = if (DateFormat.is24HourFormat(context)) {
             "HH:mm"
         } else {
             "hh:mm aa"
         }
-        SimpleDateFormat(pattern, Locale.getDefault()).format(output)
+        localTime.toString(pattern)
     } catch (e: Exception) {
         ""
     }
@@ -59,13 +58,12 @@ fun Long.getHourWithMinutesString(context: Context): String {
 fun Long.getHourString(context: Context): String {
     return try {
         val localTime = LocalTime(this.toUnixTimestamp())
-        val output = localTime.toDateTimeToday().toDate()
         val pattern = if (DateFormat.is24HourFormat(context)) {
             "HH:mm"
         } else {
             "hh aa"
         }
-        SimpleDateFormat(pattern, Locale.getDefault()).format(output)
+        localTime.toString(pattern)
     } catch (e: Exception) {
         ""
     }
