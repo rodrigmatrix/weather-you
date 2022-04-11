@@ -7,8 +7,11 @@ import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 
+private const val MAX_LOCATIONS_KEY = "locations_limit"
+
 class AddLocationUseCase(
-    private val weatherRepository: WeatherRepository
+    private val weatherRepository: WeatherRepository,
+    private val getRemoteConfigLongUseCase: GetRemoteConfigLongUseCase
 ) {
 
     operator fun invoke(
@@ -18,8 +21,9 @@ class AddLocationUseCase(
     ): Flow<Unit> {
         return flow {
             val locationsCount = weatherRepository.getLocationsSize().first()
-            if (locationsCount > 5) {
-                throw LocationLimitException(5)
+            val maxLocations = getRemoteConfigLongUseCase(MAX_LOCATIONS_KEY).toInt()
+            if (locationsCount >= maxLocations) {
+                throw LocationLimitException(maxLocations)
             } else{
                 emitAll(weatherRepository.addLocation(name, latitude, longitude))
             }

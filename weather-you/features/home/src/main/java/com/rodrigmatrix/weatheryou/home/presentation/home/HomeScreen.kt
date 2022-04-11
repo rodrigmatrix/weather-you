@@ -65,8 +65,14 @@ fun HomeScreen(
     }
     LaunchViewEffect(viewModel) { viewEffect ->
         when (viewEffect) {
-            is HomeViewEffect.Error -> context.toast(viewEffect.message)
+            is HomeViewEffect.Error -> context.toast(viewEffect.stringRes)
         }
+    }
+    if (viewState.deletePackageDialogVisible) {
+        DeletePackageDialog(
+            onDismiss = viewModel::hideDeleteLocationDialog,
+            onDeleteLocationClicked = viewModel::deleteLocation
+        )
     }
     when {
         viewState.showLocationPermissionRequest(locationPermissionState) -> {
@@ -91,9 +97,7 @@ fun HomeScreen(
                 },
                 onSwipeRefresh = viewModel::loadLocations,
                 onCloseClick = viewModel::onCloseClicked,
-                onDeleteLocation = { location ->
-                    viewModel.deleteLocation(location)
-                }
+                onDeleteLocationClicked = viewModel::showDeleteLocationDialog
             )
         }
         else -> {
@@ -108,9 +112,7 @@ fun HomeScreen(
                         viewModel.selectLocation(null)
                     },
                     expandedScreen = expandedScreen,
-                    onDeleteLocation = {
-                        viewState.selectedWeatherLocation?.let { viewModel.deleteLocation(it) }
-                    }
+                    onDeleteLocationClicked = viewModel::showDeleteLocationDialog
                 )
             }
             AnimatedVisibility(
@@ -129,9 +131,7 @@ fun HomeScreen(
                             viewModel.selectLocation(weatherLocation)
                         },
                         onSwipeRefresh = viewModel::loadLocations,
-                        onDeleteLocation = { location ->
-                            viewModel.deleteLocation(location)
-                        }
+                        onDeleteLocationClicked = viewModel::showDeleteLocationDialog
                     )
                 }
             }
@@ -174,14 +174,14 @@ fun HomeScreen(
     expandedScreen: Boolean,
     onItemClick: (WeatherLocation) -> Unit,
     onSwipeRefresh: () -> Unit,
-    onDeleteLocation: (WeatherLocation) -> Unit
+    onDeleteLocationClicked: () -> Unit
 ) {
     HomeScreenContent(
         viewState,
         expandedScreen,
         onItemClick,
         onSwipeRefresh,
-        onDeleteLocation
+        onDeleteLocationClicked
     )
 }
 
@@ -191,7 +191,7 @@ fun HomeScreenContent(
     expandedScreen: Boolean,
     onItemClick: (WeatherLocation) -> Unit,
     onSwipeRefresh: () -> Unit,
-    onDeleteLocation: (WeatherLocation) -> Unit
+    onDeleteLocationClicked: () -> Unit
 ) {
     Surface(Modifier.fillMaxSize()) {
         when {
@@ -207,7 +207,6 @@ fun HomeScreenContent(
                     WeatherLocationList(
                         viewState.locationsList,
                         onItemClick = onItemClick,
-                        onLongPress = onDeleteLocation,
                         contentPaddingValues = PaddingValues(
                             bottom = if (expandedScreen) 0.dp else 200.dp
                         )
@@ -223,7 +222,7 @@ fun HomeScreenWithLocation(
     viewState: HomeViewState,
     expandedScreen: Boolean,
     onItemClick: (WeatherLocation) -> Unit,
-    onDeleteLocation: (WeatherLocation) -> Unit,
+    onDeleteLocationClicked: () -> Unit,
     onSwipeRefresh: () -> Unit,
     onCloseClick: () -> Unit
 ) {
@@ -241,7 +240,7 @@ fun HomeScreenWithLocation(
                 expandedScreen,
                 onItemClick,
                 onSwipeRefresh,
-                onDeleteLocation
+                onDeleteLocationClicked
             )
         }
         if (viewState.isLocationSelected()) {
@@ -250,9 +249,7 @@ fun HomeScreenWithLocation(
                     weatherLocation = viewState.selectedWeatherLocation,
                     onCloseClick = onCloseClick,
                     expandedScreen = true,
-                    onDeleteLocation = {
-                        viewState.selectedWeatherLocation?.let { onDeleteLocation(it) }
-                    }
+                    onDeleteLocationClicked = onDeleteLocationClicked
                 )
             }
         }
@@ -341,6 +338,29 @@ fun RequestLocationPermission(
             }
         }
     }
+}
+
+@Composable
+fun DeletePackageDialog(
+    onDeleteLocationClicked: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(text = stringResource(com.rodrigmatrix.weatheryou.components.R.string.delete_location_title))
+        },
+        confirmButton = {
+            TextButton(onClick = onDeleteLocationClicked) {
+                Text(text = stringResource(R.string.delete))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(text = stringResource(R.string.cancel))
+            }
+        }
+    )
 }
 
 @Preview

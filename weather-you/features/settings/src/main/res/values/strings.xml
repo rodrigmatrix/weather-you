@@ -2,7 +2,7 @@
 <resources>
     <string name="units">Units</string>
     <string name="metric_preference">Celsius</string>
-    <string name="imperial_preference">Fahrenheit</string>
+    <string name="imperial_preference">Fahrenheit/</string>
     <string name="theme">Theme</string>
     <string name="app_theme">App theme</string>
     <string name="appearance">Appearance</string>

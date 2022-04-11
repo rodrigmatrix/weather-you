@@ -2,6 +2,7 @@ package com.rodrigmatrix.weatheryou.home.presentation.home
 
 import android.content.res.Configuration
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -31,7 +32,6 @@ import com.rodrigmatrix.weatheryou.home.presentation.preview.PreviewWeatherList
 fun WeatherLocationList(
     weatherLocationList: List<WeatherLocation>,
     onItemClick: (WeatherLocation) -> Unit,
-    onLongPress: (WeatherLocation) -> Unit,
     contentPaddingValues: PaddingValues = PaddingValues()
 ) {
     LazyColumn(
@@ -39,7 +39,7 @@ fun WeatherLocationList(
         modifier = Modifier.fillMaxHeight()
     ) {
         items(weatherLocationList) { item ->
-            WeatherLocation(item, onItemClick, onLongPress)
+            WeatherLocation(item, onItemClick)
         }
     }
 }
@@ -48,8 +48,7 @@ fun WeatherLocationList(
 @Composable
 fun WeatherLocation(
     weatherLocation: WeatherLocation,
-    onItemClick: (WeatherLocation) -> Unit,
-    onLongPress: (WeatherLocation) -> Unit
+    onItemClick: (WeatherLocation) -> Unit
 ) {
     val context = LocalContext.current
     WeatherYouCard(
@@ -62,14 +61,7 @@ fun WeatherLocation(
                 bottom = 10.dp
             )
             .dpadFocusable()
-            .combinedClickable(
-                onClick = {
-                    onItemClick(weatherLocation)
-                },
-                onLongClick = {
-                    onLongPress(weatherLocation)
-                }
-            )
+            .clickable { onItemClick(weatherLocation) }
     ) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -123,6 +115,6 @@ fun WeatherLocation(
 @Composable
 fun WeatherLocationPreview() {
     MaterialTheme {
-        WeatherLocationList(PreviewWeatherList, { }, {})
+        WeatherLocationList(PreviewWeatherList, { })
     }
 }

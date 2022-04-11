@@ -14,6 +14,7 @@ class OpenWeatherRemoteMapper(
 
     fun map(source: OpenWeatherLocationResponse): WeatherLocation {
         return WeatherLocation(
+            id = 0,
             name = source.name.orEmpty().split(",").dropLast(1).joinToString(),
             latitude = source.lat ?: 0.0,
             longitude = source.lon ?: 0.0,

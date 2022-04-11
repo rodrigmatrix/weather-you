@@ -11,7 +11,7 @@
 
     <uses-feature
         android:name="android.software.leanback"
-        android:required="false" />
+        android:required="true" />
 
     <uses-feature
         android:name="android.hardware.location.gps"

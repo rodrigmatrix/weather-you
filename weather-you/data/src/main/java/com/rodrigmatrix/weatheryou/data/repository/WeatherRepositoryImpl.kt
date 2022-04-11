@@ -50,7 +50,7 @@ class WeatherRepositoryImpl(
                 val fetchedLocations = weatherLocations.mapNotNull {
                     fetchLocation(it.latitude, it.longitude)
                         .catch()
-                        .firstOrNull()?.copy(name = it.name)
+                        .firstOrNull()?.copy(name = it.name, id = it.id)
                 }.toMutableList()
 
                 if (currentLocation!= null) {
@@ -63,14 +63,14 @@ class WeatherRepositoryImpl(
             }
     }
 
-    override fun deleteLocation(weatherLocation: WeatherLocation): Flow<Unit> {
-        return weatherLocalDataSource.deleteLocation(weatherLocation.latitude, weatherLocation.longitude)
+    override fun deleteLocation(id: Int): Flow<Unit> {
+        return weatherLocalDataSource.deleteLocation(id)
     }
 
     override fun getLocalWeather(): Flow<WeatherLocation> {
         return userLocationDataSource.getCurrentLocation().flatMapLatest { currentLocation ->
             fetchLocation(currentLocation.latitude, currentLocation.longitude).map { location ->
-                location
+                location.copy(name = currentLocation.name.ifEmpty { location.name })
             }
         }
     }

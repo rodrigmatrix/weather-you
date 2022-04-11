@@ -9,4 +9,8 @@
     <string name="enable_location_description">We need your permission access your current location. You can add other locations on the add button.</string>
     <string name="add_location_description">You can add a new location on the add location button.</string>
     <string name="locations">Locations</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+    <string name="generic_error">An error has ocurred. Try again later</string>
+    <string name="internet_error">It looks like you are not connected to the internet.</string>
 </resources>

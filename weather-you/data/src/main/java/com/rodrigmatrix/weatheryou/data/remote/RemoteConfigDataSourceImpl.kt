@@ -9,4 +9,8 @@ class RemoteConfigDataSourceImpl(
     override fun getString(key: String): String {
         return remoteConfig.getString(key)
     }
+
+    override fun getLong(key: String): Long {
+        return remoteConfig.getLong(key)
+    }
 }

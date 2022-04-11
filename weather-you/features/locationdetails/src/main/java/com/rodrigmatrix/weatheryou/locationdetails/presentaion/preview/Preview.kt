@@ -4,6 +4,7 @@ import com.rodrigmatrix.weatheryou.weathericons.R
 import com.rodrigmatrix.weatheryou.domain.model.*
 
 val PreviewWeatherLocation = WeatherLocation(
+    id = 0,
     name = "Toronto",
     latitude = 0.0,
     longitude = 0.0,
@@ -34,6 +35,7 @@ val PreviewWeatherLocation = WeatherLocation(
 
 val PreviewWeatherList = listOf(
     WeatherLocation(
+        id = 0,
         name = "Toronto",
         latitude = 0.0,
         longitude = 0.0,
@@ -62,6 +64,7 @@ val PreviewWeatherList = listOf(
         pressure = 0.0,
     ),
     WeatherLocation(
+        id = 0,
         name = "Montreal",
         latitude = 0.0,
         longitude = 0.0,
@@ -90,6 +93,7 @@ val PreviewWeatherList = listOf(
         pressure = 0.0
     ),
     WeatherLocation(
+        id = 0,
         name = "Montreal",
         latitude = 0.0,
         longitude = 0.0,
@@ -118,6 +122,7 @@ val PreviewWeatherList = listOf(
         pressure = 0.0
     ),
     WeatherLocation(
+        id = 0,
         name = "Montreal",
         latitude = 0.0,
         longitude = 0.0,
@@ -146,6 +151,7 @@ val PreviewWeatherList = listOf(
         pressure = 0.0
     ),
     WeatherLocation(
+        id = 0,
         name = "Montreal",
         latitude = 0.0,
         longitude = 0.0,
@@ -174,6 +180,7 @@ val PreviewWeatherList = listOf(
         pressure = 0.0
     ),
     WeatherLocation(
+        id = 0,
         name = "Montreal",
         latitude = 0.0,
         longitude = 0.0,
@@ -202,6 +209,7 @@ val PreviewWeatherList = listOf(
         pressure = 0.0
     ),
     WeatherLocation(
+        id = 0,
         name = "Montreal",
         latitude = 0.0,
         longitude = 0.0,
@@ -230,6 +238,7 @@ val PreviewWeatherList = listOf(
         pressure = 0.0
     ),
     WeatherLocation(
+        id = 0,
         name = "Montreal",
         latitude = 0.0,
         longitude = 0.0,
@@ -258,6 +267,7 @@ val PreviewWeatherList = listOf(
         pressure = 0.0
     ),
     WeatherLocation(
+        id = 0,
         name = "Montreal",
         latitude = 0.0,
         longitude = 0.0,

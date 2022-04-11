@@ -19,9 +19,9 @@ class WeatherLocalDataSourceImpl(
         }
     }
 
-    override fun deleteLocation(latitude: Double, longitude: Double): Flow<Unit> {
+    override fun deleteLocation(id: Int): Flow<Unit> {
         return flow {
-            emit(weatherDAO.deleteLocation(latitude, longitude))
+            emit(weatherDAO.deleteLocation(id))
         }
     }
 }

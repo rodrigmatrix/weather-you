@@ -13,4 +13,5 @@
     <string name="high">High</string>
     <string name="very_high">Very High</string>
     <string name="uv_index">UV Index</string>
+    <string name="no_internet_connect">No internet connection available</string>
 </resources>

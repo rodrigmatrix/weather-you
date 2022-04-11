@@ -1,6 +1,7 @@
 package com.rodrigmatrix.weatheryou.domain.model
 
 data class WeatherLocation(
+    val id: Int,
     val name: String,
     val latitude: Double,
     val longitude: Double,

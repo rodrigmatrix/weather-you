@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
+import java.io.IOException
 
 class HomeViewModel(
     private val getCurrentLocationUseCase: GetCurrentLocationUseCase,
@@ -26,7 +27,7 @@ class HomeViewModel(
 
     fun loadLocation() {
         viewModelScope.launch {
-            getLocationWeatherUseCase(40.0, -73.0)
+            getCurrentLocationUseCase()
                 .flowOn(coroutineDispatcher)
                 .onStart { setState { it.copy(isLoading = true, error = null) } }
                 .catch { exception ->
@@ -47,6 +48,7 @@ class HomeViewModel(
     private fun Throwable.handleError() {
         val errorString = when (this) {
             is CurrentLocationNotFoundException -> R.string.current_location_not_found
+            is IOException -> R.string.no_internet_connect
             else -> R.string.generic_error
         }
         setState { it.copy(error = errorString, isLoading = false) }

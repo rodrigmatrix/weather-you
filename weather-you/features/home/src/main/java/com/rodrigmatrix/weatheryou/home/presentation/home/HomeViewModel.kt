@@ -6,6 +6,7 @@ import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.domain.repository.WeatherRepository
 import com.rodrigmatrix.weatheryou.domain.usecase.DeleteLocationUseCase
 import com.rodrigmatrix.weatheryou.domain.usecase.FetchLocationsUseCase
+import com.rodrigmatrix.weatheryou.home.R
 import com.rodrigmatrix.weatheryou.home.presentation.home.HomeViewEffect.Error
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -14,6 +15,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
+import java.io.IOException
 
 class HomeViewModel(
     private val fetchLocationsUseCase: FetchLocationsUseCase,
@@ -32,7 +34,7 @@ class HomeViewModel(
                 .onStart { setState { it.copy(isLoading = true) } }
                 .onCompletion { setState { it.copy(isLoading = false) } }
                 .catch { exception ->
-                    setEffect { Error(exception.message.orEmpty()) }
+                    exception.handleError()
                 }
                 .collect { weatherLocationsList ->
                     setState {
@@ -52,20 +54,31 @@ class HomeViewModel(
         }
     }
 
-    fun deleteLocation(weatherLocation: WeatherLocation) {
+    fun showDeleteLocationDialog() {
+        setState { it.copy(deletePackageDialogVisible = true) }
+    }
+
+    fun hideDeleteLocationDialog() {
+        setState { it.copy(deletePackageDialogVisible = false) }
+    }
+
+    fun deleteLocation() {
         viewModelScope.launch {
-            deleteLocationUseCase(weatherLocation)
-                .flowOn(coroutineDispatcher)
-                .onStart { setState { it.copy(isLoading = true) } }
-                .onCompletion { setState { it.copy(isLoading = false) } }
-                .catch { exception ->
-                    setEffect { Error(exception.message.orEmpty()) }
-                }
-                .collect {
-                    setState {
-                        it.copy(isLoading = false, selectedWeatherLocation = null)
+            hideDeleteLocationDialog()
+            viewState.value.selectedWeatherLocation?.let { location ->
+                deleteLocationUseCase(location.id)
+                    .flowOn(coroutineDispatcher)
+                    .onStart { setState { it.copy(isLoading = true) } }
+                    .onCompletion { setState { it.copy(isLoading = false) } }
+                    .catch { exception ->
+                        exception.handleError()
                     }
-                }
+                    .collect {
+                        setState {
+                            it.copy(isLoading = false, selectedWeatherLocation = null)
+                        }
+                    }
+            }
         }
     }
 
@@ -85,5 +98,13 @@ class HomeViewModel(
 
     fun onCloseClicked() {
         setState { it.copy(selectedWeatherLocation = null) }
+    }
+
+    private fun Throwable.handleError() {
+        val error = when(this) {
+            is IOException -> R.string.internet_error
+            else -> R.string.generic_error
+        }
+        setEffect { Error(error) }
     }
 }

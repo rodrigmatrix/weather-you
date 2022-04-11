@@ -1,12 +1,16 @@
 package com.rodrigmatrix.weatheryou.data.di
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Geocoder
 import com.google.android.gms.location.LocationServices
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.rodrigmatrix.weatheryou.data.BuildConfig
+import com.rodrigmatrix.weatheryou.data.analytics.WeatherYouAnalytics
+import com.rodrigmatrix.weatheryou.data.analytics.WeatherYouAnalyticsImpl
 import com.rodrigmatrix.weatheryou.data.local.*
 import com.rodrigmatrix.weatheryou.data.local.database.WeatherDatabase
 import com.rodrigmatrix.weatheryou.data.mapper.*
@@ -24,12 +28,14 @@ import com.rodrigmatrix.weatheryou.data.remote.remoteconfig.WeatherYouRemoteConf
 import com.rodrigmatrix.weatheryou.data.remote.search.SearchRemoteDataSource
 import com.rodrigmatrix.weatheryou.data.remote.search.SearchRemoteDataSourceImpl
 import com.rodrigmatrix.weatheryou.data.remote.visualcrossing.VisualCrossingRemoteDataSourceImpl
+import com.rodrigmatrix.weatheryou.data.repository.RemoteConfigRepositoryImpl
 import com.rodrigmatrix.weatheryou.data.repository.SearchRepositoryImpl
 import com.rodrigmatrix.weatheryou.data.repository.SettingsRepositoryImpl
 import com.rodrigmatrix.weatheryou.data.repository.WeatherRepositoryImpl
 import com.rodrigmatrix.weatheryou.data.service.OpenWeatherService
 import com.rodrigmatrix.weatheryou.data.service.SearchLocationService
 import com.rodrigmatrix.weatheryou.data.service.VisualCrossingService
+import com.rodrigmatrix.weatheryou.domain.repository.RemoteConfigRepository
 import com.rodrigmatrix.weatheryou.domain.repository.SearchRepository
 import com.rodrigmatrix.weatheryou.domain.repository.SettingsRepository
 import com.rodrigmatrix.weatheryou.domain.repository.WeatherRepository
@@ -68,10 +74,11 @@ object WeatherYouDataModules {
         factory { GetFamousLocationsUseCase(searchRepository = get()) }
         factory { SearchLocationUseCase(searchRepository = get()) }
         factory { GetLocationUseCase(searchRepository = get()) }
-        factory { AddLocationUseCase(weatherRepository = get()) }
+        factory { AddLocationUseCase(weatherRepository = get(), getRemoteConfigLongUseCase = get()) }
         factory { DeleteLocationUseCase(weatherRepository = get()) }
         factory { FetchLocationsUseCase(weatherRepository = get()) }
         factory { FetchLocationUseCase(weatherRepository = get()) }
+        factory { GetRemoteConfigLongUseCase(remoteConfigRepository = get()) }
     }
 
     private val repositoryModule = module {
@@ -91,8 +98,12 @@ object WeatherYouDataModules {
             )
         }
         factory<SettingsRepository> { SettingsRepositoryImpl(settingsLocalDataSource = get()) }
+        factory<RemoteConfigRepository> {
+            RemoteConfigRepositoryImpl(remoteConfigDataSource = get())
+        }
     }
 
+    @SuppressLint("MissingPermission")
     private val dataSourceModule = module {
         single<WeatherYouRemoteDataSource> {
             if (get<RemoteConfigDataSource>().getString(WEATHER_PROVIDER) == OPEN_WEATHER) {
@@ -134,6 +145,11 @@ object WeatherYouDataModules {
         }
         factory<SettingsLocalDataSource> {
             SettingsLocalDataSourceImpl(sharedPreferencesDataSource = get())
+        }
+        factory<WeatherYouAnalytics> {
+            WeatherYouAnalyticsImpl(
+                firebaseAnalytics = FirebaseAnalytics.getInstance(androidApplication())
+            )
         }
     }
 

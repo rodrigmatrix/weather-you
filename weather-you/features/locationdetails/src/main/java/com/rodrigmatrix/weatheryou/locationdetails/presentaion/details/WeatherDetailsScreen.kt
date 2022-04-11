@@ -35,7 +35,7 @@ fun WeatherDetailsScreen(
     weatherLocation: WeatherLocation?,
     onCloseClick: () -> Unit,
     expandedScreen: Boolean,
-    onDeleteLocation: () -> Unit,
+    onDeleteLocationClicked: () -> Unit,
     viewModel: WeatherDetailsViewModel = getViewModel()
 ) {
     val viewState by viewModel.viewState.collectAsState()
@@ -48,7 +48,7 @@ fun WeatherDetailsScreen(
             viewModel.onFutureWeatherButtonClick(it)
         },
         onCloseClick = onCloseClick,
-        onDeleteClick = onDeleteLocation
+        onDeleteClick = onDeleteLocationClicked
     )
 }
 
@@ -61,7 +61,6 @@ fun WeatherDetailsScreen(
     onCloseClick: () -> Unit,
     onDeleteClick: () -> Unit
 ) {
-    val context = LocalContext.current
     Scaffold(
         topBar = {
             if (expandedScreen) {
