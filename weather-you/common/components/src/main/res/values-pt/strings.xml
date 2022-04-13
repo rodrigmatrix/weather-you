@@ -14,7 +14,7 @@
     <string name="chance_of_precipitation">Chance de precipitação: %s</string>
     <string name="wind_x">Vento: %s</string>
     <string name="humidity_x">Humidade: %s</string>
-    <string name="sunrise_sunset_x_y">Nascer do sol/Por do sol: %s/%s</string>
+    <string name="sunrise_sunset_x_y">Nascer do sol/Pôr do sol: %s/%s</string>
     <string name="empty_locations">Nenhuma localização adicionada</string>
     <string name="home">Home</string>
     <string name="details">Detalhes</string>
@@ -63,13 +63,13 @@
     <string name="clear_visibility">A visibilidade é alta.</string>
     <string name="dense_fog">Neblina densa está afetando a visibilidade.</string>
     <string name="thick_fog">Nevoeiro está afetando a visibilidade.</string>
-    <string name="sunrise_sunset"><![CDATA[Nascer & Por do sol]]></string>
+    <string name="sunrise_sunset"><![CDATA[Nascer & Pôr do sol]]></string>
     <string name="north_char">N</string>
     <string name="south_char">S</string>
     <string name="east_char">L</string>
     <string name="west_char">O</string>
     <string name="sunrise">Nascer do sol</string>
-    <string name="sunset">Por do sol</string>
+    <string name="sunset">Pôr do sol</string>
     <string name="length_of_day">Duração do dia:</string>
     <string name="remaining_daylight_x">Restante de luz solar:</string>
     <string name="hours_minutes_x_y">%dh %dm</string>
