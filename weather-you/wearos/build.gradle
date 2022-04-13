@@ -76,8 +76,8 @@ dependencies {
 
     implementation(WearOsDependencies.playServicesWearable)
 
-    debugImplementation(Dependencies.composeUiTooling)
-    debugImplementation(Dependencies.composeTestManifest)
+    debugImplementation(TestDependencies.composeUiTooling)
+    debugImplementation(TestDependencies.composeTestManifest)
 
-    androidTestImplementation(Dependencies.composeUiTestJunit)
+    androidTestImplementation(TestDependencies.composeUiTestJunit)
 }

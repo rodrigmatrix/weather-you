@@ -66,11 +66,6 @@ dependencies {
 
     implementation(Dependencies.lottieCompose)
 
-    debugImplementation(Dependencies.composeUiTooling)
-    debugImplementation(Dependencies.composeTestManifest)
-
-    testImplementation(Dependencies.junit)
-    androidTestImplementation(Dependencies.testExtJunit)
-    androidTestImplementation(Dependencies.espressoCore)
-    androidTestImplementation(Dependencies.composeUiTestJunit)
+    debugImplementation(TestDependencies.composeUiTooling)
+    debugImplementation(TestDependencies.composeTestManifest)
 }

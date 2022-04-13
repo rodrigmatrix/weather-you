@@ -139,9 +139,6 @@ fun WeatherContent(
         },
         positionIndicator = {
             PositionIndicator(scalingLazyListState = scrollState)
-        },
-        vignette = {
-            Vignette(vignettePosition = VignettePosition.TopAndBottom)
         }
     ) {
         ScalingLazyColumn(

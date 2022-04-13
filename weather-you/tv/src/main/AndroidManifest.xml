@@ -25,9 +25,9 @@
         android:theme="@style/Theme.WeatherYou"
         android:banner="@drawable/banner_tv"
         android:roundIcon="@mipmap/ic_launcher"
-        android:name=".WeatherYouTvApp">
+        android:name="com.rodrigmatrix.weatheryou.tv.WeatherYouTvApp">
         <activity
-            android:name=".presentation.navigation.MainActivity"
+            android:name="com.rodrigmatrix.weatheryou.tv.presentation.navigation.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -81,5 +81,7 @@ dependencies {
 
     implementation(Dependencies.playServicesLocation)
 
-    testImplementation(Dependencies.junit)
+    testImplementation(TestDependencies.junit)
+    testImplementation(TestDependencies.mockk)
+    testImplementation(TestDependencies.turbine)
 }
