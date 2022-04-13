@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="current_location_not_found">Não encontramos sua localização atual</string>
+    <string name="generic_error">Algo deu erro. Tente novamente mais tarde.</string>
+    <string name="try_again">Tentar novamente</string>
+    <string name="location_request_title">Precisamos de sua localização para verificar a temperatura local</string>
+    <string name="grant_location_permission">Permitir uso de localização</string>
+    <string name="feels_like">Sensasão de: %s</string>
+    <string name="sunset">Nascer do sol</string>
+    <string name="sunrise">Por do sol</string>
+    <string name="low">Baixo</string>
+    <string name="moderate">Moderado</string>
+    <string name="high">Alto</string>
+    <string name="very_high">Muito alto</string>
+    <string name="uv_index">Índice UV</string>
+    <string name="no_internet_connect">Sem conexão com a internet</string>
+</resources>

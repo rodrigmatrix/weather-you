@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="units">Units</string>
+    <string name="units">Unidades</string>
     <string name="metric_preference">Celsius</string>
     <string name="imperial_preference">Fahrenheit</string>
-    <string name="theme">Theme</string>
-    <string name="app_theme">App theme</string>
-    <string name="appearance">Appearance</string>
+    <string name="theme">Tema</string>
+    <string name="app_theme">Tema do aplicativo</string>
+    <string name="appearance">Aparência</string>
     <string name="light">Light</string>
     <string name="dark">Dark</string>
-    <string name="system_default">System default</string>
+    <string name="system_default">Padrão do sistema</string>
 </resources>

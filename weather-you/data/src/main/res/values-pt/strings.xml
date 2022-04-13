@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="new_york">Nova Iorque</string>
+    <string name="vancouver">Vancouver</string>
+    <string name="los_angeles">Los Angeles</string>
+    <string name="toronto">Toronto</string>
+    <string name="rio_de_janeiro">Rio de Janeiro</string>
+    <string name="paris">Paris</string>
+    <string name="london">Londres</string>
+    <string name="hong_kong">Hong Kong</string>
+    <string name="seoul">Seoul</string>
+    <string name="new_delhi">Nova Deli</string>
+    <string name="sydney">Sydney</string>
+    <string name="tokyo">Tokyo</string>
+</resources>

@@ -9,7 +9,7 @@
     <string name="daily_forecast">Daily Forecast</string>
     <string name="now">Now</string>
     <string name="today">Today</string>
-    <string name="show_all_days_forecast">Show all days forecast button</string>
+    <string name="show_all_days_forecast">Show all days forecast</string>
     <string name="chance_of_precipitation">Chance of precipitation: %s</string>
     <string name="wind_x">Wind: %s</string>
     <string name="humidity_x">Humidity: %s</string>
@@ -27,8 +27,8 @@
     <string name="add_location">Add location</string>
     <string name="label_search">Label search</string>
     <string name="search_location">Search Location</string>
-    <string name="back">Back button</string>
-    <string name="image_of_developer">Image of the developer of the app</string>
+    <string name="back">Back</string>
+    <string name="image_of_developer">Picture of the developer of the app</string>
     <string name="click_to_add">Click to add</string>
     <string name="location_image">Location image</string>
     <string name="grant_location_permission">Grant location permission</string>
