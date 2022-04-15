@@ -11,7 +11,7 @@ WeatherYou is an open source weather app build entirely using Jetpack Compose. T
 The architecture was based upon Clean Architecture and the presentation layer is using MVI with Jetpack Compose. The app uses a shared domain across features modules and different device types to provide data.
 
 
-## Phone
+## Phone Screenshots
 <p float="center">
     <img width="200" src="https://user-images.githubusercontent.com/7853887/162599730-90c84185-d97a-4784-a72b-eb2563a2ce2e.png">
     <img width="200" src="https://user-images.githubusercontent.com/7853887/162599735-919779e2-37bc-4b48-a822-f5dae9abd4b6.png">
@@ -27,7 +27,7 @@ The architecture was based upon Clean Architecture and the presentation layer is
     <img width="200" src="https://user-images.githubusercontent.com/7853887/162599775-0bb98dc1-5179-4787-b962-559a65c17a7a.png">
 </p>
 
-## Tablet
+## Tablet Screenshots
 <p float="center">
     <img width="200" src="https://user-images.githubusercontent.com/7853887/162599738-8c7cfe34-8c57-463e-a938-ac5ad6e46172.png">
     <img width="200" src="https://user-images.githubusercontent.com/7853887/162599739-5eb0dd2e-9364-4cc4-b72d-316267a7cdab.png">
@@ -44,6 +44,12 @@ The architecture was based upon Clean Architecture and the presentation layer is
     <img width="200" src="https://user-images.githubusercontent.com/7853887/162599760-43e6edf8-2d54-4719-819d-02bdb08f7fb0.png">
 </p>
 
+## WearOS Screenshots
+<p float="center">
+    <img width="231" src="https://user-images.githubusercontent.com/7853887/162537675-29ec372f-585c-4c43-9c32-ff6b8dcaf09e.png">
+    <img width="231" src="https://user-images.githubusercontent.com/7853887/162537677-62f59a77-0b8e-407b-946c-77d96889d63c.png">
+    <img width="231" src="https://user-images.githubusercontent.com/7853887/162537679-ee3d9405-03d0-4a08-a1cb-4215e2cbc411.png">
+</p>
 
 ## Android TV Screenshots
 <p float="center">
@@ -53,11 +59,4 @@ The architecture was based upon Clean Architecture and the presentation layer is
     <img width="400" src="https://user-images.githubusercontent.com/7853887/163089333-267c9e1e-e4b2-4837-a868-cb7ef4a877b8.png">
     <img width="400" src="https://user-images.githubusercontent.com/7853887/163089340-c98f17c9-b44f-47ae-8086-b930caa67d1e.png">
     <img width="400" src="https://user-images.githubusercontent.com/7853887/163089341-6192ab97-cd0a-43a3-a077-c0d7f4dddf94.png">
-</p>
-
-## WearOS Screenshots
-<p float="center">
-    <img width="231" src="https://user-images.githubusercontent.com/7853887/162537675-29ec372f-585c-4c43-9c32-ff6b8dcaf09e.png">
-    <img width="231" src="https://user-images.githubusercontent.com/7853887/162537677-62f59a77-0b8e-407b-946c-77d96889d63c.png">
-    <img width="231" src="https://user-images.githubusercontent.com/7853887/162537679-ee3d9405-03d0-4a08-a1cb-4215e2cbc411.png">
 </p>
