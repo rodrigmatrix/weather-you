@@ -13,7 +13,6 @@ abstract class WeatherDatabase : RoomDatabase() {
     abstract fun locationsDao(): WeatherDAO
 
     companion object {
-
         @Volatile private var instance: WeatherDatabase? = null
         private val LOCK = Any()
 
@@ -25,7 +24,6 @@ abstract class WeatherDatabase : RoomDatabase() {
             context.applicationContext,
             WeatherDatabase::class.java,
             "weather_you.db"
-        ).build()
+        ).fallbackToDestructiveMigration().build()
     }
-
 }
