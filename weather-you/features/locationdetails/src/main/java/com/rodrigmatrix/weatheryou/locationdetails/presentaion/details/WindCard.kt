@@ -79,7 +79,7 @@ fun WindDirectionsVisualizer(
 ) {
     var animate by remember { mutableStateOf(false) }
     val arrowAngle: Float by animateFloatAsState(
-        targetValue = windDirection.toFloat(),
+        targetValue = windDirection.toFloat() * -1,
         animationSpec = tween(
             durationMillis = if (animate) 1000 else 0,
             easing = FastOutSlowInEasing
