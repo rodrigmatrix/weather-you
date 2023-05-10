@@ -5,10 +5,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.appwidget.GlanceAppWidget
+import androidx.glance.appwidget.provideContent
 import androidx.glance.appwidget.updateAll
 import androidx.glance.background
 import androidx.glance.layout.*
@@ -30,8 +32,7 @@ class CurrentWeatherSmallWidget: GlanceAppWidget(), KoinComponent {
 
     private val mainScope: CoroutineScope = MainScope()
 
-    @Composable
-    override fun Content() {
+    override suspend fun provideGlance(context: Context, id: GlanceId) = provideContent {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = GlanceModifier

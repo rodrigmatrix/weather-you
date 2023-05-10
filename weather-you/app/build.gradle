@@ -1,3 +1,5 @@
+import Dependencies
+
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
@@ -44,11 +46,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '17'
     }
     kotlin.sourceSets.all {
         languageSettings.optIn("kotlin.RequiresOptIn")
@@ -57,13 +59,14 @@ android {
         compose true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion Versions.composeVersion
+        kotlinCompilerExtensionVersion Versions.composeCompilerVersion
     }
     packagingOptions {
         resources {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
+    namespace 'com.rodrigmatrix.weatheryou'
 }
 
 dependencies {
@@ -87,7 +90,6 @@ dependencies {
     implementation(Dependencies.androidxWindow)
 
     implementation(Dependencies.kotlinStdlib)
-    implementation(Dependencies.kotlinCoroutinesCore)
     implementation(Dependencies.kotlinCoroutinesAndroid)
     implementation(Dependencies.kotlinSerialization)
 
@@ -99,8 +101,6 @@ dependencies {
     implementation(Dependencies.composeNavigation)
     implementation(Dependencies.composeConstraintLayout)
     implementation(Dependencies.accompanistNavigation)
-    implementation(Dependencies.accompanistFlowLayout)
-    implementation(Dependencies.accompanistSwipeRefresh)
     implementation(Dependencies.accompanistPermissions)
 
     implementation(Dependencies.glanceAppWidget)

@@ -2,19 +2,17 @@ package com.rodrigmatrix.weatheryou.components.extensions
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.border
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
-import androidx.compose.foundation.lazy.LazyGridState
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.scale
@@ -27,7 +25,6 @@ import androidx.compose.ui.input.key.type
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalComposeUiApi::class)
 fun Modifier.dpadFocusable(
     itemIndex: Int,
     scrollState: LazyListState
@@ -36,10 +33,11 @@ fun Modifier.dpadFocusable(
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
     val scale by animateFloatAsState(
-        targetValue = if (isFocused) 1.03f else 1f
+        targetValue = if (isFocused) 1.03f else 1f, label = ""
     )
     val borderColor by animateColorAsState(
-        targetValue = if (isFocused) MaterialTheme.colorScheme.primary else Color.Transparent
+        targetValue = if (isFocused) MaterialTheme.colorScheme.primary else Color.Transparent,
+        label = ""
     )
     this.onKeyEvent {
             if (it.type == KeyUp) {
@@ -73,7 +71,6 @@ fun Modifier.dpadFocusable(
 }
 
 
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalFoundationApi::class)
 fun Modifier.dpadFocusable(
     itemIndex: Int,
     scrollState: LazyGridState
@@ -82,10 +79,11 @@ fun Modifier.dpadFocusable(
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
     val scale by animateFloatAsState(
-        targetValue = if (isFocused) 1.03f else 1f
+        targetValue = if (isFocused) 1.03f else 1f, label = ""
     )
     val borderColor by animateColorAsState(
-        targetValue = if (isFocused) MaterialTheme.colorScheme.primary else Color.Transparent
+        targetValue = if (isFocused) MaterialTheme.colorScheme.primary else Color.Transparent,
+        label = ""
     )
     this.onKeyEvent {
         if (it.type == KeyUp) {
@@ -126,10 +124,11 @@ fun Modifier.dpadFocusable(
     val isFocused by interactionSource.collectIsFocusedAsState()
     onFocusChanged?.invoke(isFocused)
     val scale by animateFloatAsState(
-        targetValue = if (isFocused) 1.03f else 1f
+        targetValue = if (isFocused) 1.03f else 1f, label = ""
     )
     val borderColor by animateColorAsState(
-        targetValue = if (isFocused) MaterialTheme.colorScheme.primary else Color.Transparent
+        targetValue = if (isFocused) MaterialTheme.colorScheme.primary else Color.Transparent,
+        label = ""
     )
     this.focusable(interactionSource = interactionSource)
         .scale(scale)

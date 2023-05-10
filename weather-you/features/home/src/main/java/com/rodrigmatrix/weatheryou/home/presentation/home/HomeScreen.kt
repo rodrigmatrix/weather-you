@@ -1,6 +1,7 @@
 package com.rodrigmatrix.weatheryou.home.presentation.home
 
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
+import android.annotation.SuppressLint
 import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
@@ -14,9 +15,13 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Place
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -34,8 +39,6 @@ import androidx.compose.ui.unit.dp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.rememberPermissionState
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.rodrigmatrix.weatheryou.components.WeatherIcon
 import com.rodrigmatrix.weatheryou.components.extensions.dpadFocusable
 import com.rodrigmatrix.weatheryou.core.compose.LaunchViewEffect
@@ -139,6 +142,7 @@ fun HomeScreen(
     }
 }
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeFabContent(
@@ -185,6 +189,7 @@ fun HomeScreen(
     )
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun HomeScreenContent(
     viewState: HomeViewState,
@@ -193,17 +198,23 @@ fun HomeScreenContent(
     onSwipeRefresh: () -> Unit,
     onDeleteLocationClicked: () -> Unit
 ) {
+    val pullRefreshState = rememberPullRefreshState(
+        viewState.isLoading,
+        onSwipeRefresh
+    )
     Surface(Modifier.fillMaxSize()) {
         when {
             viewState.isLoading.not() && viewState.locationsList.isEmpty() -> {
                 WeatherLocationsEmptyState()
             }
             else -> {
-                SwipeRefresh(
-                    state = rememberSwipeRefreshState(viewState.isLoading),
-                    onRefresh = onSwipeRefresh,
-                    swipeEnabled = viewState.locationsList.isNotEmpty()
-                ) {
+                Box(modifier = Modifier.pullRefresh(pullRefreshState)) {
+                    PullRefreshIndicator(
+                        viewState.isLoading,
+                        pullRefreshState,
+                        Modifier.align(Alignment.TopCenter)
+                    )
+
                     WeatherLocationList(
                         viewState.locationsList,
                         onItemClick = onItemClick,

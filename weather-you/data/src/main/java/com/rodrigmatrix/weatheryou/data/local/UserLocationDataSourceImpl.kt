@@ -27,7 +27,7 @@ class UserLocationDataSourceImpl(
 
             val address = geoCoder
                 .getFromLocation(location.latitude, location.longitude, 1)
-                .firstOrNull() ?: throw CurrentLocationNotFoundException()
+                ?.firstOrNull() ?: throw CurrentLocationNotFoundException()
             emit(address.toCurrentLocation())
         }
     }
@@ -44,7 +44,7 @@ class UserLocationDataSourceImpl(
 
             val address = geoCoder
                 .getFromLocation(location.latitude, location.longitude, 1)
-                .firstOrNull() ?: throw CurrentLocationNotFoundException()
+                ?.firstOrNull() ?: throw CurrentLocationNotFoundException()
             emit(address.toCurrentLocation())
         }
     }

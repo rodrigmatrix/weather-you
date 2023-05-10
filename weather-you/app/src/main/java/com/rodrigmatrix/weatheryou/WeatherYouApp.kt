@@ -1,7 +1,6 @@
 package com.rodrigmatrix.weatheryou
 
 import android.app.Application
-import androidx.appcompat.app.AppCompatDelegate
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
@@ -13,7 +12,6 @@ import com.rodrigmatrix.weatheryou.settings.di.SettingsModule
 import com.rodrigmatrix.weatheryou.settings.utils.AppThemeManager
 import com.rodrigmatrix.weatheryou.widgets.weather.small.CurrentWeatherSmallWidget
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
