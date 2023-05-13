@@ -3,7 +3,6 @@ package com.rodrigmatrix.weatheryou.home.presentation.home
 import androidx.lifecycle.viewModelScope
 import com.rodrigmatrix.weatheryou.core.viewmodel.ViewModel
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
-import com.rodrigmatrix.weatheryou.domain.repository.WeatherRepository
 import com.rodrigmatrix.weatheryou.domain.usecase.DeleteLocationUseCase
 import com.rodrigmatrix.weatheryou.domain.usecase.FetchLocationsUseCase
 import com.rodrigmatrix.weatheryou.home.R
@@ -21,7 +20,7 @@ class HomeViewModel(
     private val fetchLocationsUseCase: FetchLocationsUseCase,
     private val deleteLocationUseCase: DeleteLocationUseCase,
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
-): ViewModel<HomeViewState, HomeViewEffect>(HomeViewState()) {
+): ViewModel<HomeUiState, HomeViewEffect>(HomeUiState()) {
 
     init {
         loadLocations()
@@ -55,30 +54,44 @@ class HomeViewModel(
     }
 
     fun showDeleteLocationDialog() {
-        setState { it.copy(deletePackageDialogVisible = true) }
+        setState { it.copy(deleteLocationDialogVisible = true) }
     }
 
     fun hideDeleteLocationDialog() {
-        setState { it.copy(deletePackageDialogVisible = false) }
+        setState { it.copy(deleteLocationDialogVisible = false) }
     }
 
     fun deleteLocation() {
+        viewState.value.selectedWeatherLocation?.let {
+            deleteLocation(it, setSelectedLocation = false)
+        }
+    }
+
+    fun deleteLocation(location: WeatherLocation, setSelectedLocation: Boolean = true) {
         viewModelScope.launch {
             hideDeleteLocationDialog()
-            viewState.value.selectedWeatherLocation?.let { location ->
-                deleteLocationUseCase(location.id)
-                    .flowOn(coroutineDispatcher)
-                    .onStart { setState { it.copy(isLoading = true) } }
-                    .onCompletion { setState { it.copy(isLoading = false) } }
-                    .catch { exception ->
-                        exception.handleError()
-                    }
-                    .collect {
-                        setState {
-                            it.copy(isLoading = false, selectedWeatherLocation = null)
+            deleteLocationUseCase(location.id)
+                .flowOn(coroutineDispatcher)
+                .onStart { setState { it.copy(isLoading = true) } }
+                .onCompletion { setState { it.copy(isLoading = false) } }
+                .catch { exception ->
+                    exception.handleError()
+                }
+                .collect {
+                    setState {
+                        if (setSelectedLocation) {
+                            it.copy(
+                                isLoading = false,
+                                selectedWeatherLocation = it.locationsList.first()
+                            )
+                        } else {
+                            it.copy(
+                                isLoading = false,
+                                selectedWeatherLocation = null
+                            )
                         }
                     }
-            }
+                }
         }
     }
 

@@ -1,5 +1,6 @@
 package com.rodrigmatrix.weatheryou.presentation.theme
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -72,6 +73,7 @@ private val DarkColorScheme = darkColorScheme(
     inverseSurface = md_theme_dark_inverseSurface,
 )
 
+@SuppressLint("NewApi")
 @Composable
 fun WeatherYouTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),

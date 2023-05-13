@@ -26,11 +26,13 @@ fun SettingWithOption(
     ) {
         Text(
             text = title,
+            color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.titleMedium
         )
         Text(
             text = selected,
             style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.alpha(0.7f)
         )
     }

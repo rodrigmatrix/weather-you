@@ -59,6 +59,7 @@ dependencies {
     implementation(Dependencies.composeConstraintLayout)
     implementation(Dependencies.accompanistNavigation)
     implementation(Dependencies.accompanistPermissions)
+    implementation(Dependencies.accompanistAdaptive)
 
     implementation(Dependencies.koinAndroid)
     implementation(Dependencies.koinCompose)

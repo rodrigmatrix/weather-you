@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -36,6 +37,7 @@ fun AboutScreen() {
     Column(
         Modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
             .verticalScroll(rememberScrollState())
             .padding(bottom = 100.dp)
     ) {
@@ -56,6 +58,7 @@ fun AboutScreen() {
         Text(
             text = stringResource(R.string.developed_by),
             style = MaterialTheme.typography.headlineSmall,
+            color = MaterialTheme.colorScheme.onBackground,
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
@@ -64,6 +67,7 @@ fun AboutScreen() {
         Text(
             text = stringResource(R.string.about_description),
             style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onBackground,
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)

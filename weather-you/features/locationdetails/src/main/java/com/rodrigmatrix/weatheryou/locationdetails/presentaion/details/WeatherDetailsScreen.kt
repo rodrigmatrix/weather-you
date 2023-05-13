@@ -1,5 +1,6 @@
 package com.rodrigmatrix.weatheryou.locationdetails.presentaion.details
 
+import android.annotation.SuppressLint
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.*
@@ -34,7 +35,7 @@ import org.koin.androidx.compose.getViewModel
 fun WeatherDetailsScreen(
     weatherLocation: WeatherLocation?,
     onCloseClick: () -> Unit,
-    expandedScreen: Boolean,
+    isFullScreen: Boolean,
     onDeleteLocationClicked: () -> Unit,
     viewModel: WeatherDetailsViewModel = getViewModel()
 ) {
@@ -43,7 +44,7 @@ fun WeatherDetailsScreen(
 
     WeatherDetailsScreen(
         viewState = viewState,
-        expandedScreen = expandedScreen,
+        isFullScreen = isFullScreen,
         onExpandedButtonClick = {
             viewModel.onFutureWeatherButtonClick(it)
         },
@@ -52,18 +53,18 @@ fun WeatherDetailsScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun WeatherDetailsScreen(
     viewState: WeatherDetailsViewState,
-    expandedScreen: Boolean,
+    isFullScreen: Boolean,
     onExpandedButtonClick: (Boolean) -> Unit,
     onCloseClick: () -> Unit,
     onDeleteClick: () -> Unit
 ) {
     Scaffold(
         topBar = {
-            if (expandedScreen) {
+            if (isFullScreen) {
                 ExpandedTopAppBar(
                     viewState.weatherLocation?.name.orEmpty(),
                     onCloseClick,
@@ -79,10 +80,13 @@ fun WeatherDetailsScreen(
                 )
             }
         }
-    ) {
+    ) { paddingValues ->
         val scrollState = rememberLazyListState()
-        scrollState.layoutInfo.reverseLayout
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(20.dp), state = scrollState) {
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(20.dp),
+            state = scrollState,
+            contentPadding = paddingValues,
+        ) {
             item {
                 viewState.weatherLocation?.let {
                     CurrentWeather(
@@ -190,6 +194,7 @@ fun SmallScreenTopAppBar(
             IconButton(onClick = onCloseClick) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
+                    tint = MaterialTheme.colorScheme.primary,
                     contentDescription = stringResource(R.string.back)
                 )
             }
@@ -199,10 +204,8 @@ fun SmallScreenTopAppBar(
                 IconButton(onClick = onDeleteButtonClick) {
                     Icon(
                         imageVector = Icons.Outlined.Delete,
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier
-                            .padding(horizontal = 12.dp, vertical = 16.dp)
-                            .height(24.dp),
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(24.dp),
                         contentDescription = stringResource(R.string.delete_location)
                     )
                 }
@@ -231,6 +234,7 @@ fun ExpandedTopAppBar(
             IconButton(onClick = onCloseClick) {
                 Icon(
                     imageVector = Icons.Filled.Close,
+                    tint = MaterialTheme.colorScheme.primary,
                     contentDescription = stringResource(R.string.back)
                 )
             }
@@ -240,10 +244,8 @@ fun ExpandedTopAppBar(
                 IconButton(onClick = onDeleteButtonClick) {
                     Icon(
                         imageVector = Icons.Outlined.Delete,
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier
-                            .padding(horizontal = 12.dp, vertical = 16.dp)
-                            .height(24.dp),
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(24.dp),
                         contentDescription = stringResource(R.string.delete_location)
                     )
                 }
@@ -264,7 +266,7 @@ fun WeatherDetailsScreenPreview() {
                 todayWeatherHoursList = PreviewHourlyForecast,
                 futureDaysList = PreviewFutureDaysForecast
             ),
-            expandedScreen = false,
+            isFullScreen = false,
             onExpandedButtonClick = { },
             onCloseClick = {},
             onDeleteClick = {}
@@ -283,7 +285,7 @@ fun WeatherDetailsScreenTabletPreview() {
                 todayWeatherHoursList = PreviewHourlyForecast,
                 futureDaysList = PreviewFutureDaysForecast
             ),
-            expandedScreen = true,
+            isFullScreen = true,
             onExpandedButtonClick = { },
             onCloseClick = {},
             onDeleteClick = {}

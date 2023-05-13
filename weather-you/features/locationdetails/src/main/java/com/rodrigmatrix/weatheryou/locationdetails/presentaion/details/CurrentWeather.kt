@@ -30,19 +30,15 @@ fun CurrentWeather(
 ) {
     val context = LocalContext.current
     WeatherYouCard(modifier) {
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
+        Column(
             modifier = Modifier
                 .padding(
-                    start = 16.dp,
-                    end = 16.dp,
-                    top = 10.dp,
-                    bottom = 10.dp
+                    horizontal = 16.dp,
+                    vertical = 10.dp,
                 )
         ) {
-            Column(Modifier.weight(1f)) {
-                Row {
+            Row(Modifier.fillMaxWidth()) {
+                Row(Modifier.weight(1f)) {
                     Text(
                         text = stringResource(
                             R.string.day_x,
@@ -58,67 +54,76 @@ fun CurrentWeather(
                         style = MaterialTheme.typography.titleSmall
                     )
                 }
-                Text(
-                    text = weatherLocation.name,
-                    style = MaterialTheme.typography.titleMedium,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Text(
-                    text = weatherLocation.timeZone.getTimeZoneHourAndMinutes(context),
-                    style = MaterialTheme.typography.titleSmall
-                )
-                Text(
-                    text = weatherLocation.currentWeather.temperatureString(),
-                    style = MaterialTheme.typography.headlineLarge,
-                    fontSize = 80.sp
-                )
-                Text(
-                    text = stringResource(
-                        R.string.feels_like_x,
-                        weatherLocation.feelsLike.temperatureString()
-                    ),
-                    style = MaterialTheme.typography.titleSmall
-                )
-                if (weatherLocation.precipitationType.isNotEmpty()) {
-                    Text(
-                        text = stringResource(
-                            R.string.chance_of_precipitation,
-                            weatherLocation.precipitationProbability.percentageString()
-                        ),
-                        style = MaterialTheme.typography.titleSmall
-                    )
-                }
-            }
-            Box(
-                modifier = Modifier.fillMaxHeight()
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.SpaceBetween
-                ) {
-                    WeatherIcon(
-                        weatherIcons = weatherLocation.weatherIcons,
-                        modifier = Modifier
-                            .padding(bottom = 10.dp)
-                            .size(100.dp)
-                    )
-                    Text(
-                        text = weatherLocation.currentWeatherDescription.capitalize(Locale.getDefault()),
-                        style = MaterialTheme.typography.titleSmall,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
+
                 if (weatherLocation.isCurrentLocation) {
                     Icon(
                         painter = painterResource(com.rodrigmatrix.weatheryou.components.R.drawable.ic_my_location),
+                        tint = MaterialTheme.colorScheme.primary,
                         contentDescription = stringResource(R.string.current_location),
-                        modifier = Modifier.align(Alignment.TopEnd)
+                        modifier = Modifier
                     )
                 }
             }
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Column(Modifier.weight(1f)) {
+                    Text(
+                        text = weatherLocation.name,
+                        style = MaterialTheme.typography.titleMedium,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Text(
+                        text = weatherLocation.timeZone.getTimeZoneHourAndMinutes(context),
+                        style = MaterialTheme.typography.titleSmall
+                    )
+                    Text(
+                        text = weatherLocation.currentWeather.temperatureString(),
+                        style = MaterialTheme.typography.headlineLarge,
+                        fontSize = 80.sp
+                    )
+                    Text(
+                        text = stringResource(
+                            R.string.feels_like_x,
+                            weatherLocation.feelsLike.temperatureString()
+                        ),
+                        style = MaterialTheme.typography.titleSmall
+                    )
+                    if (weatherLocation.precipitationType.isNotEmpty()) {
+                        Text(
+                            text = stringResource(
+                                R.string.chance_of_precipitation,
+                                weatherLocation.precipitationProbability.percentageString()
+                            ),
+                            style = MaterialTheme.typography.titleSmall
+                        )
+                    }
+                }
+                Box {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        WeatherIcon(
+                            weatherIcons = weatherLocation.weatherIcons,
+                            modifier = Modifier
+                                .padding(bottom = 10.dp)
+                                .size(100.dp)
+                        )
+                        Text(
+                            text = weatherLocation.currentWeatherDescription.capitalize(Locale.getDefault()),
+                            style = MaterialTheme.typography.titleSmall,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+
+                }
+            }
         }
+
     }
 }
 

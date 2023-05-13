@@ -64,7 +64,7 @@ val PreviewWeatherList = listOf(
         pressure = 0.0,
     ),
     WeatherLocation(
-        id = 0,
+        id = 1,
         name = "Montreal",
         latitude = 0.0,
         longitude = 0.0,
@@ -93,7 +93,7 @@ val PreviewWeatherList = listOf(
         pressure = 0.0
     ),
     WeatherLocation(
-        id = 0,
+        id = 2,
         name = "Montreal",
         latitude = 0.0,
         longitude = 0.0,
@@ -122,7 +122,7 @@ val PreviewWeatherList = listOf(
         pressure = 0.0
     ),
     WeatherLocation(
-        id = 0,
+        id = 3,
         name = "Montreal",
         latitude = 0.0,
         longitude = 0.0,
@@ -151,7 +151,7 @@ val PreviewWeatherList = listOf(
         pressure = 0.0
     ),
     WeatherLocation(
-        id = 0,
+        id = 4,
         name = "Montreal",
         latitude = 0.0,
         longitude = 0.0,
@@ -180,7 +180,7 @@ val PreviewWeatherList = listOf(
         pressure = 0.0
     ),
     WeatherLocation(
-        id = 0,
+        id = 5,
         name = "Montreal",
         latitude = 0.0,
         longitude = 0.0,
@@ -209,7 +209,7 @@ val PreviewWeatherList = listOf(
         pressure = 0.0
     ),
     WeatherLocation(
-        id = 0,
+        id = 6,
         name = "Montreal",
         latitude = 0.0,
         longitude = 0.0,
@@ -238,7 +238,7 @@ val PreviewWeatherList = listOf(
         pressure = 0.0
     ),
     WeatherLocation(
-        id = 0,
+        id = 7,
         name = "Montreal",
         latitude = 0.0,
         longitude = 0.0,
@@ -267,7 +267,7 @@ val PreviewWeatherList = listOf(
         pressure = 0.0
     ),
     WeatherLocation(
-        id = 0,
+        id = 8,
         name = "Montreal",
         latitude = 0.0,
         longitude = 0.0,

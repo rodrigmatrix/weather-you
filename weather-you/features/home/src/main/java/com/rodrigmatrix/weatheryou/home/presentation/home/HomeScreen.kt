@@ -5,27 +5,24 @@ import android.annotation.SuppressLint
 import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Place
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,191 +33,172 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.window.layout.DisplayFeature
+import com.google.accompanist.adaptive.TwoPane
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.rememberPermissionState
+import com.rodrigmatrix.weatheryou.components.ScreenContentType
+import com.rodrigmatrix.weatheryou.components.ScreenNavigationType
+import com.google.accompanist.adaptive.HorizontalTwoPaneStrategy
 import com.rodrigmatrix.weatheryou.components.WeatherIcon
 import com.rodrigmatrix.weatheryou.components.extensions.dpadFocusable
-import com.rodrigmatrix.weatheryou.core.compose.LaunchViewEffect
-import com.rodrigmatrix.weatheryou.core.extensions.toast
 import com.rodrigmatrix.weatheryou.domain.model.WeatherIcons
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.home.R
 import com.rodrigmatrix.weatheryou.home.presentation.preview.PreviewWeatherList
 import com.rodrigmatrix.weatheryou.locationdetails.presentaion.details.WeatherDetailsScreen
-import org.koin.androidx.compose.getViewModel
 
 @Suppress("KotlinConstantConditions")
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun HomeScreen(
-    bottomAppState: MutableState<Boolean>,
+    homeUiState: HomeUiState,
+    navigationType: ScreenNavigationType,
+    displayFeatures: List<DisplayFeature>,
+    contentType: ScreenContentType,
+    onLocationSelected: (WeatherLocation?) -> Unit,
+    onDismissLocationDialogClicked: () -> Unit,
+    onSwipeRefresh: () -> Unit,
+    onDeleteLocation: (WeatherLocation) -> Unit,
+    onDeleteLocationClicked: () -> Unit,
+    onDeleteLocationConfirmButtonClicked: () -> Unit,
     onAddLocation: () -> Unit,
-    expandedScreen: Boolean,
-    viewModel: HomeViewModel = getViewModel(),
     locationPermissionState: PermissionState = rememberPermissionState(ACCESS_COARSE_LOCATION)
 ) {
-    val viewState by viewModel.viewState.collectAsState()
-    val context = LocalContext.current
-    bottomAppState.value = viewState.isLocationSelected().not()
-    BackHandler(enabled = viewState.isLocationSelected()) {
-        viewModel.selectLocation(null)
+    BackHandler(enabled = homeUiState.isLocationSelected()) {
+        onLocationSelected(null)
     }
-    LaunchViewEffect(viewModel) { viewEffect ->
-        when (viewEffect) {
-            is HomeViewEffect.Error -> context.toast(viewEffect.stringRes)
-        }
-    }
-    if (viewState.deletePackageDialogVisible) {
-        DeletePackageDialog(
-            onDismiss = viewModel::hideDeleteLocationDialog,
-            onDeleteLocationClicked = viewModel::deleteLocation
+
+    if (homeUiState.deleteLocationDialogVisible) {
+        DeleteLocationDialog(
+            onDismiss = onDismissLocationDialogClicked,
+            onDeleteLocationClicked = onDeleteLocationConfirmButtonClicked,
         )
     }
-    when {
-        viewState.showLocationPermissionRequest(locationPermissionState) -> {
-            HomeFabContent(
-                expandedScreen = expandedScreen,
-                onAddLocation = onAddLocation
-            ) {
-                RequestLocationPermission(
-                    locationPermissionState,
-                    onLocationPermissionChanged = {
-                        viewModel.loadLocations()
-                    }
+
+    if (contentType == ScreenContentType.DUAL_PANE && homeUiState.isLocationSelected()) {
+        TwoPane(
+            first = {
+                WeatherLocationsListScreen(
+                    uiState = homeUiState,
+                    isFullScreen = false,
+                    onItemClick = onLocationSelected,
+                    onSwipeRefresh = onSwipeRefresh,
+                    onDeleteLocation = onDeleteLocation,
+                    onSearchLocationClick = onAddLocation,
+                    onLocationPermissionChanged = onSwipeRefresh,
+                    locationPermissionState = locationPermissionState,
                 )
-            }
-        }
-        expandedScreen -> {
-            HomeScreenWithLocation(
-                viewState = viewState,
-                expandedScreen = expandedScreen,
-                onItemClick = { weatherLocation ->
-                    viewModel.selectLocation(weatherLocation)
+            },
+            second = {
+                AnimatedVisibility(
+                    visible = homeUiState.isLocationSelected(),
+                    enter = fadeIn(),
+                    exit = fadeOut()
+                ) {
+                    WeatherDetailsScreen(
+                        weatherLocation = homeUiState.selectedWeatherLocation,
+                        onCloseClick = {
+                            onLocationSelected(null)
+                        },
+                        isFullScreen = false,
+                        onDeleteLocationClicked = onDeleteLocationClicked
+                    )
+                }
+            },
+            strategy = HorizontalTwoPaneStrategy(splitFraction = 0.5f, gapWidth = 16.dp),
+            displayFeatures = displayFeatures
+        )
+    } else {
+        WeatherLocationsListScreen(
+            uiState = homeUiState,
+            isFullScreen = false,
+            onItemClick = onLocationSelected,
+            onSwipeRefresh = onSwipeRefresh,
+            onDeleteLocation = onDeleteLocation,
+            onSearchLocationClick = onAddLocation,
+            onLocationPermissionChanged = onSwipeRefresh,
+            locationPermissionState = locationPermissionState,
+        )
+        AnimatedVisibility(
+            visible = homeUiState.isLocationSelected(),
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+            WeatherDetailsScreen(
+                weatherLocation = homeUiState.selectedWeatherLocation,
+                onCloseClick = {
+                    onLocationSelected(null)
                 },
-                onSwipeRefresh = viewModel::loadLocations,
-                onCloseClick = viewModel::onCloseClicked,
-                onDeleteLocationClicked = viewModel::showDeleteLocationDialog
+                isFullScreen = false,
+                onDeleteLocationClicked = onDeleteLocationClicked
             )
         }
-        else -> {
-            AnimatedVisibility(
-                visible = viewState.isLocationSelected(),
-                enter = fadeIn(),
-                exit = fadeOut()
-            ) {
-                WeatherDetailsScreen(
-                    weatherLocation = viewState.selectedWeatherLocation,
-                    onCloseClick = {
-                        viewModel.selectLocation(null)
-                    },
-                    expandedScreen = expandedScreen,
-                    onDeleteLocationClicked = viewModel::showDeleteLocationDialog
-                )
-            }
-            AnimatedVisibility(
-                visible = viewState.isLocationSelected().not(),
-                enter = fadeIn(),
-                exit = fadeOut()
-            ) {
-                HomeFabContent(
-                    expandedScreen = expandedScreen,
-                    onAddLocation = onAddLocation
-                ) {
-                    HomeScreen(
-                        viewState = viewState,
-                        expandedScreen = expandedScreen,
-                        onItemClick = { weatherLocation ->
-                            viewModel.selectLocation(weatherLocation)
-                        },
-                        onSwipeRefresh = viewModel::loadLocations,
-                        onDeleteLocationClicked = viewModel::showDeleteLocationDialog
-                    )
-                }
-            }
-        }
     }
 }
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalPermissionsApi::class)
 @Composable
-fun HomeFabContent(
-    expandedScreen: Boolean,
-    onAddLocation: () -> Unit,
-    content: @Composable () -> Unit
-) {
-    Scaffold(
-        floatingActionButton = {
-            if (expandedScreen.not()) {
-                LargeFloatingActionButton(
-                    onClick = onAddLocation,
-                    modifier = Modifier.padding(bottom = 80.dp),
-                    shape = RoundedCornerShape(100)
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Add,
-                        modifier = Modifier.size(24.dp),
-                        contentDescription = stringResource(R.string.add_location)
-                    )
-                }
-            }
-        },
-        floatingActionButtonPosition = FabPosition.Center
-    ) {
-        content()
-    }
-}
-
-@Composable
-fun HomeScreen(
-    viewState: HomeViewState,
-    expandedScreen: Boolean,
+fun WeatherLocationsListScreen(
+    uiState: HomeUiState,
+    isFullScreen: Boolean,
     onItemClick: (WeatherLocation) -> Unit,
     onSwipeRefresh: () -> Unit,
-    onDeleteLocationClicked: () -> Unit
-) {
-    HomeScreenContent(
-        viewState,
-        expandedScreen,
-        onItemClick,
-        onSwipeRefresh,
-        onDeleteLocationClicked
-    )
-}
-
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
-fun HomeScreenContent(
-    viewState: HomeViewState,
-    expandedScreen: Boolean,
-    onItemClick: (WeatherLocation) -> Unit,
-    onSwipeRefresh: () -> Unit,
-    onDeleteLocationClicked: () -> Unit
+    onDeleteLocation: (WeatherLocation) -> Unit,
+    onSearchLocationClick: () -> Unit,
+    onLocationPermissionChanged: () -> Unit,
+    locationPermissionState: PermissionState,
 ) {
     val pullRefreshState = rememberPullRefreshState(
-        viewState.isLoading,
-        onSwipeRefresh
+        refreshing = uiState.isLoading,
+        onRefresh = onSwipeRefresh,
     )
-    Surface(Modifier.fillMaxSize()) {
+    Scaffold(
+        topBar = {
+            SearchLocationBar(
+                onSearchLocationClick = onSearchLocationClick,
+            )
+        }
+    ) { paddingValues ->
         when {
-            viewState.isLoading.not() && viewState.locationsList.isEmpty() -> {
-                WeatherLocationsEmptyState()
+            uiState.showLocationPermissionRequest(locationPermissionState) -> {
+                RequestLocationPermission(
+                    permissionState = locationPermissionState,
+                    onLocationPermissionChanged = onLocationPermissionChanged,
+                    modifier = Modifier.padding(paddingValues)
+                )
             }
+
+            uiState.isLoading.not() && uiState.locationsList.isEmpty() -> {
+                WeatherLocationsEmptyState(
+                    Modifier
+                        .padding(paddingValues)
+                )
+            }
+
             else -> {
-                Box(modifier = Modifier.pullRefresh(pullRefreshState)) {
-                    PullRefreshIndicator(
-                        viewState.isLoading,
-                        pullRefreshState,
-                        Modifier.align(Alignment.TopCenter)
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                        .pullRefresh(pullRefreshState)
+                ) {
+                    WeatherLocationList(
+                        weatherLocationList = uiState.locationsList,
+                        selectedLocation = uiState.selectedWeatherLocation,
+                        onItemClick = onItemClick,
+                        onDismiss = onDeleteLocation,
+                        modifier = Modifier.padding(top = 4.dp)
                     )
 
-                    WeatherLocationList(
-                        viewState.locationsList,
-                        onItemClick = onItemClick,
-                        contentPaddingValues = PaddingValues(
-                            bottom = if (expandedScreen) 0.dp else 200.dp
-                        )
+                    PullRefreshIndicator(
+                        refreshing = uiState.isLoading,
+                        state = pullRefreshState,
+                        backgroundColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.secondaryContainer,
+                        scale = true,
+                        modifier = Modifier.align(Alignment.TopCenter),
                     )
                 }
             }
@@ -229,50 +207,13 @@ fun HomeScreenContent(
 }
 
 @Composable
-fun HomeScreenWithLocation(
-    viewState: HomeViewState,
-    expandedScreen: Boolean,
-    onItemClick: (WeatherLocation) -> Unit,
-    onDeleteLocationClicked: () -> Unit,
-    onSwipeRefresh: () -> Unit,
-    onCloseClick: () -> Unit
+fun WeatherLocationsEmptyState(
+    modifier: Modifier = Modifier,
 ) {
-    val detailsWeight: Float by animateFloatAsState(
-        targetValue = if (viewState.isLocationSelected()) 1F else 0.1F,
-        animationSpec = tween(
-            durationMillis = 300,
-            easing = LinearOutSlowInEasing
-        )
-    )
-    Row {
-        Column(Modifier.weight(1f)) {
-            HomeScreenContent(
-                viewState,
-                expandedScreen,
-                onItemClick,
-                onSwipeRefresh,
-                onDeleteLocationClicked
-            )
-        }
-        if (viewState.isLocationSelected()) {
-            Column(Modifier.weight(detailsWeight)) {
-                WeatherDetailsScreen(
-                    weatherLocation = viewState.selectedWeatherLocation,
-                    onCloseClick = onCloseClick,
-                    expandedScreen = true,
-                    onDeleteLocationClicked = onDeleteLocationClicked
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun WeatherLocationsEmptyState() {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(start = 16.dp, end = 16.dp, bottom = 200.dp)
@@ -292,12 +233,6 @@ fun WeatherLocationsEmptyState() {
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(10.dp)
         )
-        Text(
-            text = stringResource(R.string.add_location_description),
-            style = MaterialTheme.typography.titleSmall,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(16.dp)
-        )
     }
 }
 
@@ -305,7 +240,8 @@ fun WeatherLocationsEmptyState() {
 @Composable
 fun RequestLocationPermission(
     permissionState: PermissionState = rememberPermissionState(ACCESS_COARSE_LOCATION),
-    onLocationPermissionChanged: () -> Unit
+    onLocationPermissionChanged: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     when {
         permissionState.hasPermission -> {
@@ -315,7 +251,7 @@ fun RequestLocationPermission(
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
-                modifier = Modifier
+                modifier = modifier
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
                     .padding(start = 16.dp, end = 16.dp, bottom = 200.dp)
@@ -352,7 +288,7 @@ fun RequestLocationPermission(
 }
 
 @Composable
-fun DeletePackageDialog(
+fun DeleteLocationDialog(
     onDeleteLocationClicked: () -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -374,35 +310,114 @@ fun DeletePackageDialog(
     )
 }
 
+
+@Composable
+fun SearchLocationBar(
+    onSearchLocationClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Surface(
+        shape = CircleShape,
+        color = MaterialTheme.colorScheme.secondaryContainer,
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(top = 24.dp, bottom = 4.dp, start = 16.dp, end = 16.dp),
+        onClick = onSearchLocationClick,
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Default.Search,
+                contentDescription = null,
+                modifier = Modifier.padding(start = 16.dp),
+                tint = MaterialTheme.colorScheme.primary,
+            )
+
+            Text(
+                text = stringResource(id = com.rodrigmatrix.weatheryou.components.R.string.search_location),
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(16.dp),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalPermissionsApi::class)
 @Preview
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun HomeScreenPreview() {
     MaterialTheme {
         HomeScreen(
-            viewState = HomeViewState(locationsList = PreviewWeatherList),
-            expandedScreen = false,
-            { },
-            { },
-            { }
+            homeUiState = HomeUiState(
+                locationsList = PreviewWeatherList,
+                selectedWeatherLocation = PreviewWeatherList.first(),
+            ),
+            navigationType = ScreenNavigationType.BOTTOM_NAVIGATION,
+            displayFeatures = emptyList(),
+            contentType = ScreenContentType.SINGLE_PANE,
+            onLocationSelected = { },
+            onDismissLocationDialogClicked = { },
+            onSwipeRefresh = { },
+            onDeleteLocation = { },
+            onDeleteLocationClicked = { },
+            onDeleteLocationConfirmButtonClicked = { },
+            onAddLocation = { },
+            locationPermissionState = object : PermissionState {
+                override val hasPermission: Boolean
+                    get() = true
+                override val permission: String
+                    get() = ""
+                override val permissionRequested: Boolean
+                    get() = true
+                override val shouldShowRationale: Boolean
+                    get() = false
+
+                override fun launchPermissionRequest() {
+                }
+            }
         )
     }
 }
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Preview(device = Devices.PIXEL_C)
 @Preview(device = Devices.PIXEL_C, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun HomeScreenWithLocationPreview() {
     MaterialTheme {
-        HomeScreenWithLocation(
-            viewState = HomeViewState(
-                locationsList = PreviewWeatherList
+        HomeScreen(
+            homeUiState = HomeUiState(
+                locationsList = PreviewWeatherList,
+                selectedWeatherLocation = PreviewWeatherList.first(),
             ),
-            expandedScreen = false,
-            { },
-            { },
-            { },
-            { }
+            navigationType = ScreenNavigationType.NAVIGATION_RAIL,
+            displayFeatures = emptyList(),
+            contentType = ScreenContentType.DUAL_PANE,
+            onLocationSelected = { },
+            onDismissLocationDialogClicked = { },
+            onSwipeRefresh = { },
+            onDeleteLocation = { },
+            onDeleteLocationClicked = { },
+            onDeleteLocationConfirmButtonClicked = { },
+            onAddLocation = { },
+            locationPermissionState = object : PermissionState {
+                override val hasPermission: Boolean
+                    get() = true
+                override val permission: String
+                    get() = ""
+                override val permissionRequested: Boolean
+                    get() = true
+                override val shouldShowRationale: Boolean
+                    get() = false
+
+                override fun launchPermissionRequest() {
+                }
+            }
         )
     }
 }

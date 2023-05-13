@@ -1,12 +1,23 @@
 package com.rodrigmatrix.weatheryou.settings.presentation.settings
 
 import android.content.res.Configuration
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -17,7 +28,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.rodrigmatrix.weatheryou.components.extensions.dpadFocusable
-import com.rodrigmatrix.weatheryou.domain.model.TemperaturePreference
 import com.rodrigmatrix.weatheryou.settings.R
 import com.rodrigmatrix.weatheryou.settings.presentation.settings.model.AppThemePreferenceOption
 import com.rodrigmatrix.weatheryou.settings.presentation.settings.model.TemperaturePreferenceOption
@@ -66,7 +76,11 @@ fun SettingsScreen(
             onDismissRequest = onDismissDialog
         )
     }
-    Column(Modifier.fillMaxSize()) {
+    Column(
+        Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
         Spacer(Modifier.height(10.dp))
         SettingTitle(stringResource(R.string.units))
         Spacer(Modifier.height(10.dp))

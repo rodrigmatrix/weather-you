@@ -24,6 +24,8 @@ object Dependencies {
     const val accompanistNavigation = "com.google.accompanist:accompanist-navigation-animation:0.16.1"
     const val accompanistPermissions = "com.google.accompanist:accompanist-permissions:0.24.0-alpha"
     const val composeConstraintLayout = "androidx.constraintlayout:constraintlayout-compose:1.0.1"
+    const val composeWindowSizeClass = "androidx.compose.material3:material3-window-size-class:1.2.0-alpha01"
+    const val accompanistAdaptive = "com.google.accompanist:accompanist-adaptive:0.31.1-alpha"
 
     const val composeTvFoundation = "androidx.tv:tv-foundation:${Versions.composeTvVersion}"
     const val composeTvMaterial = "androidx.tv:tv-material:${Versions.composeTvVersion}"

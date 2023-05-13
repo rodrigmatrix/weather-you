@@ -2,9 +2,15 @@ package com.rodrigmatrix.weatheryou.home.presentation.home
 
 import android.content.res.Configuration
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
@@ -22,50 +28,70 @@ import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.components.R
 import com.rodrigmatrix.weatheryou.components.WeatherIcon
 import com.rodrigmatrix.weatheryou.components.WeatherYouCard
-import com.rodrigmatrix.weatheryou.components.extensions.dpadFocusable
 import com.rodrigmatrix.weatheryou.core.extensions.getTimeZoneHourAndMinutes
 import com.rodrigmatrix.weatheryou.core.extensions.temperatureString
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.home.presentation.preview.PreviewWeatherList
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun WeatherLocationList(
     weatherLocationList: List<WeatherLocation>,
+    selectedLocation: WeatherLocation?,
     onItemClick: (WeatherLocation) -> Unit,
-    contentPaddingValues: PaddingValues = PaddingValues()
+    onDismiss: (WeatherLocation) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     LazyColumn(
-        contentPadding = contentPaddingValues,
-        modifier = Modifier.fillMaxHeight()
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+        modifier = modifier.fillMaxHeight(),
     ) {
-        items(weatherLocationList) { item ->
-            WeatherLocation(item, onItemClick)
+        items(
+            items = weatherLocationList,
+            key = { it.id },
+        ) { item ->
+            WeatherLocation(
+                weatherLocation = item,
+                isSelected = selectedLocation == item,
+                onItemClick = onItemClick,
+                onDismiss = onDismiss,
+                modifier = Modifier.animateItemPlacement()
+            )
         }
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun WeatherLocation(
     weatherLocation: WeatherLocation,
-    onItemClick: (WeatherLocation) -> Unit
+    isSelected: Boolean,
+    onItemClick: (WeatherLocation) -> Unit,
+    onDismiss: (WeatherLocation) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
     WeatherYouCard(
-        modifier = Modifier
+        color = if (isSelected) {
+            MaterialTheme.colorScheme.primaryContainer
+        } else {
+            MaterialTheme.colorScheme.secondaryContainer
+        },
+        isDismissible = weatherLocation.isCurrentLocation.not(),
+        onClick = {
+            onItemClick(weatherLocation)
+        },
+        onDismiss = {
+            onDismiss(weatherLocation)
+        },
+        modifier = modifier
+            .padding(horizontal = 16.dp)
             .fillMaxWidth()
-            .padding(
-                start = 16.dp,
-                end = 16.dp,
-                top = 10.dp,
-                bottom = 10.dp
-            )
-            .dpadFocusable()
-            .clickable { onItemClick(weatherLocation) }
     ) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.padding(top = 10.dp, bottom = 10.dp)
+            modifier = Modifier
+                .padding(top = 10.dp, bottom = 10.dp)
+                .fillMaxHeight()
         ) {
             Column(Modifier.weight(1f)) {
                 Text(
@@ -87,10 +113,9 @@ fun WeatherLocation(
                 )
             }
             Box(
-                contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .padding(start = 8.dp, end = 8.dp)
-                    .fillMaxHeight()
+                    .height(100.dp),
             ) {
                 WeatherIcon(
                     weatherIcons = weatherLocation.weatherIcons,
@@ -101,6 +126,7 @@ fun WeatherLocation(
                 if (weatherLocation.isCurrentLocation) {
                     Icon(
                         painter = painterResource(R.drawable.ic_my_location),
+                        tint = MaterialTheme.colorScheme.primary,
                         contentDescription = stringResource(com.rodrigmatrix.weatheryou.locationdetails.R.string.current_location),
                         modifier = Modifier.align(Alignment.TopEnd)
                     )
@@ -110,11 +136,17 @@ fun WeatherLocation(
     }
 }
 
+
 @Preview
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun WeatherLocationPreview() {
     MaterialTheme {
-        WeatherLocationList(PreviewWeatherList, { })
+        WeatherLocationList(
+            weatherLocationList = PreviewWeatherList,
+            selectedLocation = null,
+            onItemClick = { },
+            onDismiss = { },
+        )
     }
 }

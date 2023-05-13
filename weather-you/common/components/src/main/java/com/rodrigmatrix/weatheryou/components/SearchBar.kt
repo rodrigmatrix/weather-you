@@ -22,7 +22,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.components.extensions.dpadFocusable
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SearchBar(
     query: String,
@@ -49,7 +48,6 @@ fun SearchBar(
                 }
                 return@onKeyEvent false
             }
-            .dpadFocusable()
     ) {
         Box(Modifier.fillMaxSize()) {
             if (query.isEmpty()) {

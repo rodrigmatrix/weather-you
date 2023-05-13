@@ -102,6 +102,8 @@ dependencies {
     implementation(Dependencies.composeConstraintLayout)
     implementation(Dependencies.accompanistNavigation)
     implementation(Dependencies.accompanistPermissions)
+    implementation(Dependencies.composeWindowSizeClass)
+    implementation(Dependencies.accompanistAdaptive)
 
     implementation(Dependencies.glanceAppWidget)
 

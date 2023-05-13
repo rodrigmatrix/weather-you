@@ -76,7 +76,6 @@ fun AddLocationScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddLocationScreen(
     viewState: AddLocationViewState,
@@ -97,7 +96,7 @@ fun AddLocationScreen(
                 },
                 onClearQuery = onClearQuery,
                 searching = viewState.isLoading,
-                modifier = Modifier.padding(bottom = 40.dp),
+                modifier = Modifier.padding(bottom = 8.dp),
                 keyboardActions = KeyboardActions(
                     onDone = {
                         onLocationClick(viewState.locationsList.firstOrNull()?.placeId.orEmpty())
@@ -105,8 +104,8 @@ fun AddLocationScreen(
                 )
             )
         }
-    ) {
-        Column {
+    ) { paddingValues ->
+        Column(Modifier.padding(paddingValues)) {
             if (viewState.isLocationsListVisible()) {
                 LocationSelectList(
                     viewState.locationsList,
