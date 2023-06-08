@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">WeatherYou</string>
+    <string name="app_name">WeatherYou</string>
     <string name="feels_like_x">Feels Like %s</string>
     <string name="high_lowercase_x">H%s</string>
     <string name="low_lowercase_x">L%s</string>

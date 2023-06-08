@@ -34,7 +34,7 @@ class VisualCrossingRemoteDataSourceImpl(
 
     private fun getUnit(unit: TemperaturePreference): String {
         return when (unit) {
-            TemperaturePreference.METRIC -> VisualCrossingUnits.Metric.unit
+            TemperaturePreference.METRIC -> VisualCrossingUnits.METRIC.unit
             TemperaturePreference.IMPERIAL -> VisualCrossingUnits.US.unit
             else -> VisualCrossingUnits.UK.unit
         }

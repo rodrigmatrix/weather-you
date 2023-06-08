@@ -11,7 +11,7 @@ object Dependencies {
     // Kotlin
     const val kotlinStdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${Versions.kotlinVersion}"
     const val kotlinCoroutinesAndroid = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.coroutinesVersion}"
-    const val kotlinSerialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0"
+    const val kotlinSerialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1"
     const val coroutinesPlayServices = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:${Versions.coroutinesVersion}"
 
     // Compose
@@ -50,9 +50,9 @@ object Dependencies {
 
     // Retrofit
     const val retrofit = "com.squareup.retrofit2:retrofit:2.9.0"
-    const val okHttp = "com.squareup.okhttp3:okhttp:4.11.0"
+    const val okHttp = "com.squareup.okhttp3:okhttp-bom:4.11.0"
     const val retrofitKotlinx = "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0"
-    const val okHttpLoggingInterceptor = "com.squareup.okhttp3:logging-interceptor:4.11.0"
+    const val okHttpLoggingInterceptor = "com.squareup.okhttp3:logging-interceptor"
 
     // Room
     const val roomRuntime = "androidx.room:room-runtime:2.5.1"

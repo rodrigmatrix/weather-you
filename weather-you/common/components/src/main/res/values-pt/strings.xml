@@ -79,4 +79,18 @@
     <string name="current_weather_small_widget_description">Exibe a temperatura atual</string>
     <string name="no_results_found">Nenhum resultado encontrado</string>
     <string name="locations">Localizações</string>
+    <string name="metric_preference">Celsius</string>
+    <string name="imperial_preference">Fahrenheit</string>
+    <string name="app_theme">Tema do aplicativo</string>
+    <string name="appearance">Aparência</string>
+    <string name="light">Light</string>
+    <string name="dark">Dark</string>
+    <string name="system_default">Padrão do sistema</string>
+    <string name="label_search">Pesquisar</string>
+    <string name="new_york">Nova Iorque</string>
+    <string name="vancouver">Vancouver</string>
+    <string name="los_angeles">Los Angeles</string>
+    <string name="toronto">Toronto</string>
+    <string name="rio_de_janeiro">Rio de Janeiro</string>
+    <string name="sao_paulo">São Paulo</string>
 </resources>

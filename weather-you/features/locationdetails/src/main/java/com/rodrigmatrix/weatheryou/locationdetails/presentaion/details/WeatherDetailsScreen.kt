@@ -15,7 +15,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Devices
@@ -23,9 +22,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.components.WeatherYouLargeAppBar
 import com.rodrigmatrix.weatheryou.components.WeatherYouSmallAppBar
-import com.rodrigmatrix.weatheryou.components.extensions.dpadFocusable
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
-import com.rodrigmatrix.weatheryou.locationdetails.R
+import com.rodrigmatrix.weatheryou.components.R
 import com.rodrigmatrix.weatheryou.locationdetails.presentaion.preview.PreviewFutureDaysForecast
 import com.rodrigmatrix.weatheryou.locationdetails.presentaion.preview.PreviewHourlyForecast
 import com.rodrigmatrix.weatheryou.locationdetails.presentaion.preview.PreviewWeatherLocation
@@ -93,7 +91,6 @@ fun WeatherDetailsScreen(
                         it,
                         modifier = Modifier
                             .padding(start = 16.dp, end = 16.dp)
-                            .dpadFocusable(0, scrollState)
                     )
                 }
             }
@@ -102,7 +99,6 @@ fun WeatherDetailsScreen(
                     hoursList = viewState.todayWeatherHoursList,
                     modifier = Modifier
                         .padding(start = 16.dp, end = 16.dp)
-                        .dpadFocusable(1, scrollState)
                 )
             }
             item {
@@ -112,7 +108,6 @@ fun WeatherDetailsScreen(
                     onExpandedButtonClick = onExpandedButtonClick,
                     modifier = Modifier
                         .padding(start = 16.dp, end = 16.dp)
-                        .dpadFocusable(2, scrollState)
                 )
             }
             item {
@@ -123,7 +118,6 @@ fun WeatherDetailsScreen(
                             viewState.weatherLocation?.windDirection ?: 0.0,
                             modifier = Modifier
                                 .padding(start = 16.dp, end = 8.dp)
-                                .dpadFocusable(3, scrollState)
                         )
                     }
                     Column(Modifier.weight(1f)) {
@@ -132,7 +126,6 @@ fun WeatherDetailsScreen(
                             viewState.weatherLocation?.dewPoint ?: 0.0,
                             modifier = Modifier
                                 .padding(start = 8.dp, end = 16.dp)
-                                .dpadFocusable(3, scrollState)
                         )
                     }
                 }
@@ -144,7 +137,6 @@ fun WeatherDetailsScreen(
                             viewState.weatherLocation?.visibility ?: 0.0,
                             modifier = Modifier
                                 .padding(start = 16.dp, end = 8.dp)
-                                .dpadFocusable(4, scrollState)
                         )
                     }
                     Column(Modifier.weight(1f)) {
@@ -152,7 +144,6 @@ fun WeatherDetailsScreen(
                             viewState.weatherLocation?.uvIndex ?: 0.0,
                             modifier = Modifier
                                 .padding(start = 8.dp, end = 16.dp)
-                                .dpadFocusable(4, scrollState)
                         )
                     }
                 }
@@ -165,7 +156,6 @@ fun WeatherDetailsScreen(
                         currentTime = weatherLocation.currentTime,
                         modifier = Modifier
                             .padding(start = 16.dp, end = 16.dp)
-                            .dpadFocusable(5, scrollState)
                     )
                 }
                 Spacer(Modifier.height(10.dp))

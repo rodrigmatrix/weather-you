@@ -12,6 +12,7 @@ import com.rodrigmatrix.weatheryou.domain.exception.LocationLimitException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
+import com.rodrigmatrix.weatheryou.components.R
 import kotlinx.coroutines.launch
 
 class AddLocationViewModel(

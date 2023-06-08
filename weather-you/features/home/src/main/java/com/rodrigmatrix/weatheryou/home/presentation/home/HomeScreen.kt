@@ -1,55 +1,62 @@
 package com.rodrigmatrix.weatheryou.home.presentation.home
 
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
-import android.annotation.SuppressLint
 import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.*
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.window.layout.DisplayFeature
+import com.google.accompanist.adaptive.HorizontalTwoPaneStrategy
 import com.google.accompanist.adaptive.TwoPane
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.rememberPermissionState
+import com.rodrigmatrix.weatheryou.components.R
 import com.rodrigmatrix.weatheryou.components.ScreenContentType
 import com.rodrigmatrix.weatheryou.components.ScreenNavigationType
-import com.google.accompanist.adaptive.HorizontalTwoPaneStrategy
 import com.rodrigmatrix.weatheryou.components.WeatherIcon
-import com.rodrigmatrix.weatheryou.components.extensions.dpadFocusable
 import com.rodrigmatrix.weatheryou.domain.model.WeatherIcons
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
-import com.rodrigmatrix.weatheryou.home.R
 import com.rodrigmatrix.weatheryou.home.presentation.preview.PreviewWeatherList
 import com.rodrigmatrix.weatheryou.locationdetails.presentaion.details.WeatherDetailsScreen
 
-@Suppress("KotlinConstantConditions")
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun HomeScreen(
@@ -64,7 +71,7 @@ fun HomeScreen(
     onDeleteLocationClicked: () -> Unit,
     onDeleteLocationConfirmButtonClicked: () -> Unit,
     onAddLocation: () -> Unit,
-    locationPermissionState: PermissionState = rememberPermissionState(ACCESS_COARSE_LOCATION)
+    locationPermissionState: PermissionState = rememberPermissionState(ACCESS_COARSE_LOCATION),
 ) {
     BackHandler(enabled = homeUiState.isLocationSelected()) {
         onLocationSelected(null)
@@ -77,18 +84,47 @@ fun HomeScreen(
         )
     }
 
+    HomeScreen(
+        homeUiState = homeUiState,
+        showLocationPermissionRequest = homeUiState.showLocationPermissionRequest(locationPermissionState),
+        navigationType = navigationType,
+        displayFeatures = displayFeatures,
+        contentType = contentType,
+        onLocationSelected = onLocationSelected,
+        onSwipeRefresh = onSwipeRefresh,
+        onDeleteLocation = onDeleteLocation,
+        onDeleteLocationClicked = onDeleteLocationClicked,
+        onAddLocation = onAddLocation,
+        onRequestPermission = locationPermissionState::launchPermissionRequest,
+    )
+}
+
+@Composable
+fun HomeScreen(
+    homeUiState: HomeUiState,
+    showLocationPermissionRequest: Boolean,
+    navigationType: ScreenNavigationType,
+    displayFeatures: List<DisplayFeature>,
+    contentType: ScreenContentType,
+    onLocationSelected: (WeatherLocation?) -> Unit,
+    onSwipeRefresh: () -> Unit,
+    onDeleteLocation: (WeatherLocation) -> Unit,
+    onDeleteLocationClicked: () -> Unit,
+    onAddLocation: () -> Unit,
+    onRequestPermission: () -> Unit,
+) {
     if (contentType == ScreenContentType.DUAL_PANE && homeUiState.isLocationSelected()) {
         TwoPane(
             first = {
                 WeatherLocationsListScreen(
                     uiState = homeUiState,
                     isFullScreen = false,
+                    showLocationPermissionRequest = showLocationPermissionRequest,
                     onItemClick = onLocationSelected,
                     onSwipeRefresh = onSwipeRefresh,
                     onDeleteLocation = onDeleteLocation,
                     onSearchLocationClick = onAddLocation,
-                    onLocationPermissionChanged = onSwipeRefresh,
-                    locationPermissionState = locationPermissionState,
+                    onRequestPermission = onRequestPermission,
                 )
             },
             second = {
@@ -113,13 +149,13 @@ fun HomeScreen(
     } else {
         WeatherLocationsListScreen(
             uiState = homeUiState,
+            showLocationPermissionRequest = showLocationPermissionRequest,
             isFullScreen = false,
             onItemClick = onLocationSelected,
             onSwipeRefresh = onSwipeRefresh,
             onDeleteLocation = onDeleteLocation,
             onSearchLocationClick = onAddLocation,
-            onLocationPermissionChanged = onSwipeRefresh,
-            locationPermissionState = locationPermissionState,
+            onRequestPermission = onRequestPermission,
         )
         AnimatedVisibility(
             visible = homeUiState.isLocationSelected(),
@@ -138,17 +174,17 @@ fun HomeScreen(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalPermissionsApi::class)
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun WeatherLocationsListScreen(
     uiState: HomeUiState,
+    showLocationPermissionRequest: Boolean,
     isFullScreen: Boolean,
     onItemClick: (WeatherLocation) -> Unit,
     onSwipeRefresh: () -> Unit,
     onDeleteLocation: (WeatherLocation) -> Unit,
     onSearchLocationClick: () -> Unit,
-    onLocationPermissionChanged: () -> Unit,
-    locationPermissionState: PermissionState,
+    onRequestPermission: () -> Unit,
 ) {
     val pullRefreshState = rememberPullRefreshState(
         refreshing = uiState.isLoading,
@@ -162,10 +198,9 @@ fun WeatherLocationsListScreen(
         }
     ) { paddingValues ->
         when {
-            uiState.showLocationPermissionRequest(locationPermissionState) -> {
+            showLocationPermissionRequest -> {
                 RequestLocationPermission(
-                    permissionState = locationPermissionState,
-                    onLocationPermissionChanged = onLocationPermissionChanged,
+                    onRequestPermission = onRequestPermission,
                     modifier = Modifier.padding(paddingValues)
                 )
             }
@@ -236,53 +271,44 @@ fun WeatherLocationsEmptyState(
     }
 }
 
-@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun RequestLocationPermission(
-    permissionState: PermissionState = rememberPermissionState(ACCESS_COARSE_LOCATION),
-    onLocationPermissionChanged: () -> Unit,
+    onRequestPermission: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    when {
-        permissionState.hasPermission -> {
-            onLocationPermissionChanged()
-        }
-        else -> {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-                modifier = modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(start = 16.dp, end = 16.dp, bottom = 200.dp)
-            ) {
-                Image(
-                    imageVector = Icons.Filled.Place,
-                    contentDescription = stringResource(R.string.location_image),
-                    modifier = Modifier
-                        .size(120.dp)
-                        .padding(10.dp),
-                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
-                )
-                Text(
-                    text = stringResource(R.string.enable_location),
-                    style = MaterialTheme.typography.headlineSmall,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(10.dp)
-                )
-                Text(
-                    text = stringResource(R.string.enable_location_description),
-                    style = MaterialTheme.typography.titleSmall,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(16.dp)
-                )
-                Button(
-                    onClick = permissionState::launchPermissionRequest,
-                    modifier = Modifier.dpadFocusable()
-                ) {
-                    Text(stringResource(R.string.grant_location_permission))
-                }
-            }
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(start = 16.dp, end = 16.dp, bottom = 200.dp)
+    ) {
+        Image(
+            imageVector = Icons.Filled.Place,
+            contentDescription = stringResource(R.string.location_image),
+            modifier = Modifier
+                .size(120.dp)
+                .padding(10.dp),
+            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
+        )
+        Text(
+            text = stringResource(R.string.enable_location),
+            style = MaterialTheme.typography.headlineSmall,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(10.dp)
+        )
+        Text(
+            text = stringResource(R.string.enable_location_description),
+            style = MaterialTheme.typography.titleSmall,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(16.dp)
+        )
+        Button(
+            onClick = onRequestPermission,
+            modifier = Modifier
+        ) {
+            Text(stringResource(R.string.grant_location_permission))
         }
     }
 }
@@ -346,7 +372,6 @@ fun SearchLocationBar(
     }
 }
 
-@OptIn(ExperimentalPermissionsApi::class)
 @Preview
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
@@ -357,34 +382,20 @@ fun HomeScreenPreview() {
                 locationsList = PreviewWeatherList,
                 selectedWeatherLocation = PreviewWeatherList.first(),
             ),
+            showLocationPermissionRequest = false,
             navigationType = ScreenNavigationType.BOTTOM_NAVIGATION,
             displayFeatures = emptyList(),
             contentType = ScreenContentType.SINGLE_PANE,
             onLocationSelected = { },
-            onDismissLocationDialogClicked = { },
             onSwipeRefresh = { },
             onDeleteLocation = { },
             onDeleteLocationClicked = { },
-            onDeleteLocationConfirmButtonClicked = { },
             onAddLocation = { },
-            locationPermissionState = object : PermissionState {
-                override val hasPermission: Boolean
-                    get() = true
-                override val permission: String
-                    get() = ""
-                override val permissionRequested: Boolean
-                    get() = true
-                override val shouldShowRationale: Boolean
-                    get() = false
-
-                override fun launchPermissionRequest() {
-                }
-            }
+            onRequestPermission = { },
         )
     }
 }
 
-@OptIn(ExperimentalPermissionsApi::class)
 @Preview(device = Devices.PIXEL_C)
 @Preview(device = Devices.PIXEL_C, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
@@ -395,29 +406,16 @@ fun HomeScreenWithLocationPreview() {
                 locationsList = PreviewWeatherList,
                 selectedWeatherLocation = PreviewWeatherList.first(),
             ),
+            showLocationPermissionRequest = false,
             navigationType = ScreenNavigationType.NAVIGATION_RAIL,
             displayFeatures = emptyList(),
             contentType = ScreenContentType.DUAL_PANE,
             onLocationSelected = { },
-            onDismissLocationDialogClicked = { },
             onSwipeRefresh = { },
             onDeleteLocation = { },
             onDeleteLocationClicked = { },
-            onDeleteLocationConfirmButtonClicked = { },
             onAddLocation = { },
-            locationPermissionState = object : PermissionState {
-                override val hasPermission: Boolean
-                    get() = true
-                override val permission: String
-                    get() = ""
-                override val permissionRequested: Boolean
-                    get() = true
-                override val shouldShowRationale: Boolean
-                    get() = false
-
-                override fun launchPermissionRequest() {
-                }
-            }
+            onRequestPermission = { },
         )
     }
 }

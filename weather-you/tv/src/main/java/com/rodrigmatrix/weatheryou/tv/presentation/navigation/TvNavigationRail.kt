@@ -59,13 +59,6 @@ fun TvNavigationRail(
                 modifier = Modifier
                     .padding(8.dp)
                     .fillMaxWidth()
-                    .dpadFocusable(
-                        onFocusChanged = { focused ->
-                            selectedList = selectedList.toMutableList().apply {
-                                this[0] = focused
-                            }
-                        }
-                    )
             )
         },
         modifier = Modifier.fillMaxWidth(fraction = fraction)

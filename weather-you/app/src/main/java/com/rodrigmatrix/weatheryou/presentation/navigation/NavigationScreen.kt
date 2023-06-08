@@ -121,7 +121,7 @@ fun HomeNavigationScreen(
         onDeleteLocation = { location ->
             viewModel.deleteLocation(
                 location = location,
-                setSelectedLocation = navigationType != ScreenNavigationType.BOTTOM_NAVIGATION
+                navigationType = navigationType
             )
         },
         onSwipeRefresh = viewModel::loadLocations,
@@ -129,7 +129,11 @@ fun HomeNavigationScreen(
         onAddLocation = {
             navController.navigate(NavigationEntries.ADD_LOCATION_ROUTE)
         },
-        onDeleteLocationConfirmButtonClicked = viewModel::deleteLocation
+        onDeleteLocationConfirmButtonClicked = {
+            viewModel.deleteLocation(
+                navigationType = navigationType
+            )
+        }
     )
 }
 

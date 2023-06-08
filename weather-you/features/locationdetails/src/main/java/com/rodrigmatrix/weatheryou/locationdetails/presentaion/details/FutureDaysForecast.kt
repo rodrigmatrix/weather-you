@@ -21,7 +21,7 @@ import com.rodrigmatrix.weatheryou.components.WeatherYouCard
 import com.rodrigmatrix.weatheryou.components.WeatherYouDivider
 import com.rodrigmatrix.weatheryou.core.extensions.*
 import com.rodrigmatrix.weatheryou.domain.model.WeatherDay
-import com.rodrigmatrix.weatheryou.locationdetails.R
+import com.rodrigmatrix.weatheryou.components.R
 import com.rodrigmatrix.weatheryou.locationdetails.presentaion.preview.PreviewFutureDaysForecast
 
 private const val TODAY_INDEX = 0

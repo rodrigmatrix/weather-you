@@ -27,9 +27,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.rodrigmatrix.weatheryou.addlocation.preview.PreviewFamousCities
-import com.rodrigmatrix.weatheryou.components.extensions.dpadFocusable
 import com.rodrigmatrix.weatheryou.core.compose.LaunchViewEffect
 import com.rodrigmatrix.weatheryou.core.extensions.toast
+import com.rodrigmatrix.weatheryou.components.R as Strings
 import com.rodrigmatrix.weatheryou.domain.model.SearchAutocompleteLocation
 import org.koin.androidx.compose.getViewModel
 
@@ -114,7 +114,7 @@ fun AddLocationScreen(
                 )
             } else {
                 Text(
-                    text = stringResource(R.string.no_results_found),
+                    text = stringResource(Strings.string.no_results_found),
                     style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
@@ -147,7 +147,7 @@ fun LocationSelectList(
                 Column(Modifier.fillMaxWidth()) {
                     Image(
                         painter = painterResource(R.drawable.powered_by_google),
-                        contentDescription = stringResource(R.string.powered_by_google),
+                        contentDescription = stringResource(Strings.string.powered_by_google),
                         modifier = Modifier
                             .padding(start = 20.dp, end = 20.dp, top = 10.dp)
                             .size(width = 130.dp, height = 50.dp)
@@ -170,7 +170,6 @@ fun LocationItem(
         Modifier
             .padding(start = 32.dp, end = 32.dp, bottom = 10.dp)
             .fillMaxWidth()
-            .dpadFocusable(index, scrollState)
             .clickable {
                 onLocationClick(location.placeId)
             },
@@ -185,7 +184,7 @@ fun LocationItem(
         }
         Icon(
             imageVector = Icons.Default.Add,
-            contentDescription = stringResource(R.string.add_x_location, location),
+            contentDescription = stringResource(Strings.string.add_x_location, location),
             modifier = Modifier.size(34.dp)
         )
     }

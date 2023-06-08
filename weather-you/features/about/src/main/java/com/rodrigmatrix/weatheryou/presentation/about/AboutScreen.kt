@@ -30,6 +30,7 @@ import androidx.compose.ui.tooling.preview.Devices.PIXEL_C
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.about.R
+import com.rodrigmatrix.weatheryou.components.R as Strings
 import com.rodrigmatrix.weatheryou.presentation.about.model.SocialNetwork
 
 @Composable
@@ -43,7 +44,7 @@ fun AboutScreen() {
     ) {
         Image(
             painter = painterResource(R.drawable.image_about),
-            contentDescription = stringResource(R.string.image_of_developer),
+            contentDescription = stringResource(Strings.string.image_of_developer),
             contentScale = ContentScale.FillBounds,
             modifier = Modifier
                 .padding(top = 16.dp)
@@ -56,7 +57,7 @@ fun AboutScreen() {
                 .align(Alignment.CenterHorizontally)
         )
         Text(
-            text = stringResource(R.string.developed_by),
+            text = stringResource(Strings.string.developed_by),
             style = MaterialTheme.typography.headlineSmall,
             color = MaterialTheme.colorScheme.onBackground,
             textAlign = TextAlign.Center,
@@ -65,7 +66,7 @@ fun AboutScreen() {
                 .padding(bottom = 16.dp)
         )
         Text(
-            text = stringResource(R.string.about_description),
+            text = stringResource(Strings.string.about_description),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onBackground,
             textAlign = TextAlign.Center,

@@ -24,7 +24,7 @@ import com.rodrigmatrix.weatheryou.components.WeatherYouCard
 import com.rodrigmatrix.weatheryou.core.extensions.getHourWithMinutesString
 import com.rodrigmatrix.weatheryou.core.extensions.getHoursAndMinutesDiff
 import com.rodrigmatrix.weatheryou.core.extensions.getLocalTime
-import com.rodrigmatrix.weatheryou.locationdetails.R
+import com.rodrigmatrix.weatheryou.components.R
 
 @Composable
 fun SunriseSunsetCard(
@@ -47,7 +47,7 @@ fun SunriseSunsetCard(
             Column(modifier = Modifier.padding(bottom = 20.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
-                        painter = painterResource(R.drawable.ic_sunny),
+                        painter = painterResource(com.rodrigmatrix.weatheryou.locationdetails.R.drawable.ic_sunny),
                         contentDescription = stringResource(R.string.sunrise_sunset),
                         modifier = Modifier.padding(end = 4.dp)
                     )

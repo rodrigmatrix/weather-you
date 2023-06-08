@@ -21,7 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.rodrigmatrix.weatheryou.locationdetails.R
+import com.rodrigmatrix.weatheryou.components.R
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.rodrigmatrix.weatheryou.components.WeatherYouCard
 import com.rodrigmatrix.weatheryou.locationdetails.presentaion.color.*
@@ -46,7 +46,7 @@ fun UvIndexCard(
             Column {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
-                        painter = painterResource(R.drawable.ic_sunny),
+                        painter = painterResource(com.rodrigmatrix.weatheryou.locationdetails.R.drawable.ic_sunny),
                         contentDescription = stringResource(R.string.uv_index),
                         modifier = Modifier.padding(end = 4.dp)
                     )
@@ -117,7 +117,7 @@ private fun UvIndexBar(
                 }
         )
         Icon(
-            painter = painterResource(R.drawable.ic_dot),
+            painter = painterResource(com.rodrigmatrix.weatheryou.locationdetails.R.drawable.ic_dot),
             contentDescription = null,
             tint = Color.White,
             modifier = Modifier

@@ -5,7 +5,8 @@ import com.rodrigmatrix.weatheryou.core.viewmodel.ViewModel
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.domain.usecase.DeleteLocationUseCase
 import com.rodrigmatrix.weatheryou.domain.usecase.FetchLocationsUseCase
-import com.rodrigmatrix.weatheryou.home.R
+import com.rodrigmatrix.weatheryou.components.R
+import com.rodrigmatrix.weatheryou.components.ScreenNavigationType
 import com.rodrigmatrix.weatheryou.home.presentation.home.HomeViewEffect.Error
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -61,13 +62,13 @@ class HomeViewModel(
         setState { it.copy(deleteLocationDialogVisible = false) }
     }
 
-    fun deleteLocation() {
+    fun deleteLocation(navigationType: ScreenNavigationType) {
         viewState.value.selectedWeatherLocation?.let {
-            deleteLocation(it, setSelectedLocation = false)
+            deleteLocation(it, navigationType)
         }
     }
 
-    fun deleteLocation(location: WeatherLocation, setSelectedLocation: Boolean = true) {
+    fun deleteLocation(location: WeatherLocation, navigationType: ScreenNavigationType) {
         viewModelScope.launch {
             hideDeleteLocationDialog()
             deleteLocationUseCase(location.id)
@@ -79,7 +80,9 @@ class HomeViewModel(
                 }
                 .collect {
                     setState {
-                        if (setSelectedLocation) {
+                        if (it.selectedWeatherLocation == location &&
+                            navigationType == ScreenNavigationType.NAVIGATION_RAIL
+                        ) {
                             it.copy(
                                 isLoading = false,
                                 selectedWeatherLocation = it.locationsList.first()

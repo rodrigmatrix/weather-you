@@ -127,7 +127,7 @@ fun WeatherLocation(
                     Icon(
                         painter = painterResource(R.drawable.ic_my_location),
                         tint = MaterialTheme.colorScheme.primary,
-                        contentDescription = stringResource(com.rodrigmatrix.weatheryou.locationdetails.R.string.current_location),
+                        contentDescription = stringResource(R.string.current_location),
                         modifier = Modifier.align(Alignment.TopEnd)
                     )
                 }

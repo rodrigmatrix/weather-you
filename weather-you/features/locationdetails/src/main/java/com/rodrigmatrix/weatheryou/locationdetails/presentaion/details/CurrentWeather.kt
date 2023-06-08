@@ -19,7 +19,7 @@ import com.rodrigmatrix.weatheryou.components.WeatherIcon
 import com.rodrigmatrix.weatheryou.components.WeatherYouCard
 import com.rodrigmatrix.weatheryou.core.extensions.*
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
-import com.rodrigmatrix.weatheryou.locationdetails.R
+import com.rodrigmatrix.weatheryou.components.R
 import com.rodrigmatrix.weatheryou.locationdetails.presentaion.preview.PreviewWeatherLocation
 import java.util.*
 
@@ -57,7 +57,7 @@ fun CurrentWeather(
 
                 if (weatherLocation.isCurrentLocation) {
                     Icon(
-                        painter = painterResource(com.rodrigmatrix.weatheryou.components.R.drawable.ic_my_location),
+                        painter = painterResource(R.drawable.ic_my_location),
                         tint = MaterialTheme.colorScheme.primary,
                         contentDescription = stringResource(R.string.current_location),
                         modifier = Modifier

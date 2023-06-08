@@ -27,8 +27,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.rodrigmatrix.weatheryou.components.extensions.dpadFocusable
-import com.rodrigmatrix.weatheryou.settings.R
+import com.rodrigmatrix.weatheryou.components.R
 import com.rodrigmatrix.weatheryou.settings.presentation.settings.model.AppThemePreferenceOption
 import com.rodrigmatrix.weatheryou.settings.presentation.settings.model.TemperaturePreferenceOption
 import org.koin.androidx.compose.getViewModel
@@ -88,7 +87,7 @@ fun SettingsScreen(
             title = stringResource(R.string.units),
             selected = stringResource(viewState.selectedTemperature.title),
             onClick = onEditUnits,
-            modifier = Modifier.dpadFocusable()
+            modifier = Modifier
         )
         Spacer(Modifier.height(10.dp))
         SettingTitle(stringResource(R.string.appearance))
@@ -97,7 +96,7 @@ fun SettingsScreen(
             title = stringResource(R.string.app_theme),
             selected = stringResource(viewState.selectedAppTheme.title),
             onClick = onEditTheme,
-            modifier = Modifier.dpadFocusable()
+            modifier = Modifier
         )
     }
 }

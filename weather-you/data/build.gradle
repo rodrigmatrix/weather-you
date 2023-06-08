@@ -72,7 +72,7 @@ dependencies {
     implementation(Dependencies.roomKtx)
 
     implementation(Dependencies.retrofit)
-    implementation(Dependencies.okHttp)
+    implementation(platform(Dependencies.okHttp))
     implementation(Dependencies.retrofitKotlinx)
     implementation(Dependencies.okHttpLoggingInterceptor)
 

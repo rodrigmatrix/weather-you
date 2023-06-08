@@ -1,18 +1,18 @@
 <resources>
-    <string name="app_name" translatable="false">WeatherYou</string>
-    <string name="feels_like_x">Feels Like %s</string>
+    <string name="app_name">WeatherYou</string>
+    <string name="feels_like_x">%s 같은 느낌</string>
     <string name="high_lowercase_x">H%s</string>
     <string name="low_lowercase_x">L%s</string>
-    <string name="day_x">Day %s</string>
-    <string name="night_x">Night %s</string>
-    <string name="next_x_days_forecast">Next %d Days Forecast</string>
-    <string name="daily_forecast">Daily Forecast</string>
-    <string name="now">Now</string>
-    <string name="today">Today</string>
-    <string name="show_all_days_forecast">Show all days forecast</string>
-    <string name="chance_of_precipitation">Chance of precipitation: %s</string>
-    <string name="wind_x">Wind: %s</string>
-    <string name="humidity_x">Humidity: %s</string>
+    <string name="day_x">날</string>
+    <string name="night_x">밤 %s</string>
+    <string name="next_x_days_forecast">다음 %d일 예측</string>
+    <string name="daily_forecast">일일예보</string>
+    <string name="now">지금</string>
+    <string name="today">오늘</string>
+    <string name="show_all_days_forecast">모든 일 예보 표시</string>
+    <string name="chance_of_precipitation">강수 확률: %s</string>
+    <string name="wind_x">바람: %s</string>
+    <string name="humidity_x">습도: %s</string>
     <string name="sunrise_sunset_x_y">Sunrise/sunset: %s/%s</string>
     <string name="empty_locations">No locations found</string>
     <string name="home">Home</string>

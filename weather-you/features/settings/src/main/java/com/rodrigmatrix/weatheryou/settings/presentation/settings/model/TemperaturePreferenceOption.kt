@@ -2,7 +2,7 @@ package com.rodrigmatrix.weatheryou.settings.presentation.settings.model
 
 import androidx.annotation.StringRes
 import com.rodrigmatrix.weatheryou.domain.model.TemperaturePreference
-import com.rodrigmatrix.weatheryou.settings.R
+import com.rodrigmatrix.weatheryou.components.R
 
 enum class TemperaturePreferenceOption(
     @StringRes val title: Int,

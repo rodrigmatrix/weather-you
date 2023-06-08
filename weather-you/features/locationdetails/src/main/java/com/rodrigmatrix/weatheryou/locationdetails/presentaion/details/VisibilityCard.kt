@@ -12,7 +12,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.rodrigmatrix.weatheryou.locationdetails.R
+import com.rodrigmatrix.weatheryou.components.R
 import com.rodrigmatrix.weatheryou.components.WeatherYouCard
 import com.rodrigmatrix.weatheryou.core.extensions.speedString
 import com.rodrigmatrix.weatheryou.locationdetails.presentaion.extensions.visibilityConditionsStringRes
@@ -35,7 +35,9 @@ fun VisibilityCard(
             Column {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
-                        painter = painterResource(R.drawable.ic_visibility),
+                        painter = painterResource(
+                            com.rodrigmatrix.weatheryou.locationdetails.R.drawable.ic_visibility
+                        ),
                         contentDescription = stringResource(R.string.visibility),
                         modifier = Modifier.padding(end = 4.dp)
                     )

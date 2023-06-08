@@ -1,5 +1,4 @@
 <resources>
     <string name="app_name">WeatherYou</string>
-    <string name="add_location">Add location</string>
     <string name="current_weather_small_widget_description">Displays the current weather</string>
 </resources>
