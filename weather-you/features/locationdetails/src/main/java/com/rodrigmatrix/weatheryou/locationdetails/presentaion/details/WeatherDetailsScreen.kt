@@ -89,16 +89,14 @@ fun WeatherDetailsScreen(
                 viewState.weatherLocation?.let {
                     CurrentWeather(
                         it,
-                        modifier = Modifier
-                            .padding(start = 16.dp, end = 16.dp)
+                        modifier = Modifier.padding(horizontal = 16.dp),
                     )
                 }
             }
             item {
                 HourlyForecast(
                     hoursList = viewState.todayWeatherHoursList,
-                    modifier = Modifier
-                        .padding(start = 16.dp, end = 16.dp)
+                    modifier = Modifier.padding(horizontal = 16.dp),
                 )
             }
             item {
@@ -106,8 +104,7 @@ fun WeatherDetailsScreen(
                     futureDaysList = viewState.futureDaysList,
                     isExpanded = viewState.isFutureWeatherExpanded,
                     onExpandedButtonClick = onExpandedButtonClick,
-                    modifier = Modifier
-                        .padding(start = 16.dp, end = 16.dp)
+                    modifier = Modifier.padding(horizontal = 16.dp),
                 )
             }
             item {
@@ -116,16 +113,14 @@ fun WeatherDetailsScreen(
                         WindCard(
                             viewState.weatherLocation?.windSpeed ?: 0.0,
                             viewState.weatherLocation?.windDirection ?: 0.0,
-                            modifier = Modifier
-                                .padding(start = 16.dp, end = 8.dp)
+                            modifier = Modifier.padding(start = 16.dp, end = 8.dp),
                         )
                     }
                     Column(Modifier.weight(1f)) {
                         HumidityCard(
                             viewState.weatherLocation?.humidity ?: 0.0,
                             viewState.weatherLocation?.dewPoint ?: 0.0,
-                            modifier = Modifier
-                                .padding(start = 8.dp, end = 16.dp)
+                            modifier = Modifier.padding(start = 8.dp, end = 16.dp),
                         )
                     }
                 }
@@ -135,15 +130,13 @@ fun WeatherDetailsScreen(
                     Column(Modifier.weight(1f)) {
                         VisibilityCard(
                             viewState.weatherLocation?.visibility ?: 0.0,
-                            modifier = Modifier
-                                .padding(start = 16.dp, end = 8.dp)
+                            modifier = Modifier.padding(start = 16.dp, end = 8.dp),
                         )
                     }
                     Column(Modifier.weight(1f)) {
                         UvIndexCard(
                             viewState.weatherLocation?.uvIndex ?: 0.0,
-                            modifier = Modifier
-                                .padding(start = 8.dp, end = 16.dp)
+                            modifier = Modifier.padding(start = 8.dp, end = 16.dp),
                         )
                     }
                 }
@@ -154,8 +147,7 @@ fun WeatherDetailsScreen(
                         sunriseHour = weatherLocation.sunrise,
                         sunsetHour = weatherLocation.sunset,
                         currentTime = weatherLocation.currentTime,
-                        modifier = Modifier
-                            .padding(start = 16.dp, end = 16.dp)
+                        modifier = Modifier.padding(horizontal = 16.dp),
                     )
                 }
                 Spacer(Modifier.height(10.dp))
