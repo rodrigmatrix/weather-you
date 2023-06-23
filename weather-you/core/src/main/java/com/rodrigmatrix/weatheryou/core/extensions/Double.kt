@@ -1,13 +1,28 @@
 package com.rodrigmatrix.weatheryou.core.extensions
 
+import java.lang.Exception
+import kotlin.math.roundToInt
+
 fun Double.temperatureString(): String {
-    return this.toInt().toString() + "°"
+    return try {
+        this.roundToInt().toString() + "°"
+    } catch (e: Exception) {
+        "${this}°"
+    }
 }
 
 fun Double.percentageString(): String {
-    return this.toInt().toString() + "%"
+    return try {
+        this.roundToInt().toString() + "%"
+    } catch (e: Exception) {
+        "${this}%"
+    }
 }
 
 fun Double.speedString(): String {
-    return this.toInt().toString() + "km/h"
+    return try {
+        this.roundToInt().toString() + "km/h"
+    } catch (e: Exception) {
+        "${this}km/h"
+    }
 }

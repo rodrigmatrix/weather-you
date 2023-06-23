@@ -61,6 +61,9 @@ dependencies {
     implementation(Dependencies.koinAndroid)
     implementation(Dependencies.koinCompose)
 
+    implementation platform(Dependencies.firebaseBom)
+    implementation(Dependencies.firebaseCrashlytics)
+
     implementation(Dependencies.jodaTime)
 
     implementation(Dependencies.coil)

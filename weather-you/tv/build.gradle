@@ -62,15 +62,10 @@ android {
 }
 
 dependencies {
+    implementation project(LocalModules.domain)
     implementation project(LocalModules.data)
 
     implementation project(LocalModules.components)
-    implementation project(LocalModules.home)
-    implementation project(LocalModules.addLocation)
-    implementation project(LocalModules.weatherIcons)
-    implementation project(LocalModules.about)
-    implementation project(LocalModules.settings)
-    implementation project(LocalModules.locationDetails)
 
     implementation(Dependencies.appCompat)
     implementation(Dependencies.androidxCore)
@@ -83,8 +78,6 @@ dependencies {
     implementation(Dependencies.kotlinSerialization)
 
     implementation(Dependencies.composeUi)
-    implementation(Dependencies.composeMaterial3)
-    implementation(Dependencies.composeMaterial2)
     implementation(Dependencies.composePreview)
     implementation(Dependencies.composeActivity)
     implementation(Dependencies.composeNavigation)

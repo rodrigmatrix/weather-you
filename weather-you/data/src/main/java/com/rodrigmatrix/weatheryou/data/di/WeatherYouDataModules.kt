@@ -52,7 +52,6 @@ import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import java.util.*
 
-@OptIn(ExperimentalSerializationApi::class)
 object WeatherYouDataModules {
 
     private const val GOOGLE_MAPS_SERVICE = "GOOGLE_MAPS_SERVICE"

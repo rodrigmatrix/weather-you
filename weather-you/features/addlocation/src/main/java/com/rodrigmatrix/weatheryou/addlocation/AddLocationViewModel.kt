@@ -1,6 +1,7 @@
 package com.rodrigmatrix.weatheryou.addlocation
 
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.rodrigmatrix.weatheryou.core.viewmodel.ViewModel
 import com.rodrigmatrix.weatheryou.domain.usecase.AddLocationUseCase
 import com.rodrigmatrix.weatheryou.domain.usecase.GetFamousLocationsUseCase
@@ -20,6 +21,7 @@ class AddLocationViewModel(
     private val getFamousLocationsUseCase: GetFamousLocationsUseCase,
     private val searchLocationUseCase: SearchLocationUseCase,
     private val getLocationUseCase: GetLocationUseCase,
+    private val firebaseCrashlytics: FirebaseCrashlytics,
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
 ): ViewModel<AddLocationViewState, AddLocationViewEffect>(AddLocationViewState()) {
 
@@ -80,6 +82,7 @@ class AddLocationViewModel(
     }
 
     private fun Throwable.handleError() {
+        firebaseCrashlytics.recordException(this)
         val exception = when (this) {
             is LocationLimitException -> R.string.add_location_limit_error
             else -> R.string.add_location_error
