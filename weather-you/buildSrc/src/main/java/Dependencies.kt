@@ -37,8 +37,8 @@ object Dependencies {
     const val glanceAppWidget = "androidx.glance:glance-appwidget:1.0.0-beta01"
 
     // Koin
-    const val koinAndroid = "io.insert-koin:koin-android:3.4.0"
-    const val koinCompose = "io.insert-koin:koin-androidx-compose:3.4.4"
+    const val koinAndroid = "io.insert-koin:koin-android:3.4.2"
+    const val koinCompose = "io.insert-koin:koin-androidx-compose:3.4.5"
 
     // Firebase
     const val firebaseBom = "com.google.firebase:firebase-bom:32.0.0"

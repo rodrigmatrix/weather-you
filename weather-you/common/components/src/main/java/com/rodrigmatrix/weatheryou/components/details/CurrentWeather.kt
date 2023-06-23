@@ -30,7 +30,6 @@ import com.rodrigmatrix.weatheryou.core.extensions.temperatureString
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import java.util.Locale
 
-
 @Composable
 fun CurrentWeatherContent(
     weatherLocation: WeatherLocation,

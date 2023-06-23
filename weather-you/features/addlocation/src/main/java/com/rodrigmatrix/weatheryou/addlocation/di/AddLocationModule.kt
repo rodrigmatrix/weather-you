@@ -1,5 +1,6 @@
 package com.rodrigmatrix.weatheryou.addlocation.di
 
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.rodrigmatrix.weatheryou.addlocation.AddLocationViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.loadKoinModules
@@ -17,7 +18,8 @@ object AddLocationModule {
                 addLocationUseCase = get(),
                 getFamousLocationsUseCase = get(),
                 searchLocationUseCase = get(),
-                getLocationUseCase = get()
+                getLocationUseCase = get(),
+                firebaseCrashlytics = FirebaseCrashlytics.getInstance(),
             )
         }
     }
