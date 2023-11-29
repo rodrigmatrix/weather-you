@@ -20,7 +20,9 @@ class VisualCrossingRemoteMapper(
     fun map(source: VisualCrossingWeatherResponse): WeatherLocation {
         return WeatherLocation(
             id = 0,
-            name = source.resolvedAddress.orEmpty().split(",").dropLast(1).joinToString(),
+            name = if (source.resolvedAddress.orEmpty().hasLetters()) {
+                source.resolvedAddress.orEmpty().split(",").dropLast(1).joinToString()
+            } else { "" },
             latitude = source.latitude ?: 0.0,
             longitude = source.longitude ?: 0.0,
             isCurrentLocation = false,
@@ -71,6 +73,8 @@ class VisualCrossingRemoteMapper(
             )
         }
     }
+
+    fun String.hasLetters() = any { it.isLetter() }
 
     private fun List<HourResponse>.mapHoursList(): List<WeatherHour> {
         return this.map {

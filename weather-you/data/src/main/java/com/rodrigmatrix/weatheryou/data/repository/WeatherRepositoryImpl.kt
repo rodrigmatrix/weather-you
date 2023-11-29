@@ -22,7 +22,7 @@ class WeatherRepositoryImpl(
     private val weatherLocationDomainToEntityMapper: WeatherLocationDomainToEntityMapper
 ) : WeatherRepository {
 
-    override fun    addLocation(name: String, latitude: Double, longitude: Double): Flow<Unit> {
+    override fun addLocation(name: String, latitude: Double, longitude: Double): Flow<Unit> {
         return settingsRepository.getTemperaturePreference()
             .flatMapLatest { unit ->
                 weatherYouRemoteDataSource.getWeather(latitude, longitude, unit)
@@ -49,10 +49,10 @@ class WeatherRepositoryImpl(
                     .catch()
                     .firstOrNull()
 
-                val fetchedLocations = weatherLocations.mapNotNull {
-                    fetchLocation(it.latitude, it.longitude)
+                val fetchedLocations = weatherLocations.mapNotNull { weatherEntity ->
+                    fetchLocation(weatherEntity.latitude, weatherEntity.longitude)
                         .catch()
-                        .firstOrNull()?.copy(name = it.name, id = it.id)
+                        .firstOrNull()?.copy(name = weatherEntity.name, id = weatherEntity.id)
                 }.toMutableList()
 
                 if (currentLocation!= null) {

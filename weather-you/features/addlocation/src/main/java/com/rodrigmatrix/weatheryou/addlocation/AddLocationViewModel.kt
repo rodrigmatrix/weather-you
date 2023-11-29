@@ -44,7 +44,7 @@ class AddLocationViewModel(
                     searchLocationUseCase(query)
                         .flowOn(coroutineDispatcher)
                         .catch { exception ->
-                            exception.handleError()
+                            exception.logError()
                         }
                         .collect { locations ->
                             setState { it.copy(locationsList = locations, isLoading = false) }
@@ -90,7 +90,7 @@ class AddLocationViewModel(
             getFamousLocationsUseCase()
                 .flowOn(coroutineDispatcher)
                 .catch { exception ->
-                    exception.handleError()
+                    exception.logError()
                 }
                 .collect { famousLocationsList ->
                     setState { it.copy(famousLocationsList = famousLocationsList) }
@@ -109,6 +109,12 @@ class AddLocationViewModel(
             else -> R.string.add_location_error
         }
         setEffect { ShowError(exception) }
+        setState { it.copy(isLoading = false) }
+    }
+
+    private fun Throwable.logError() {
+        firebaseCrashlytics.recordException(this)
+        setEffect { AddLocationViewEffect.ShowErrorString(this.toString()) }
         setState { it.copy(isLoading = false) }
     }
 }

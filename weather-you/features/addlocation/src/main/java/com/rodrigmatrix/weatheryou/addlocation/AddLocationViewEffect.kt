@@ -6,5 +6,7 @@ sealed class AddLocationViewEffect : com.rodrigmatrix.weatheryou.core.viewmodel.
 
     data class ShowError(@StringRes val string: Int) : AddLocationViewEffect()
 
+    data class ShowErrorString(val string: String) : AddLocationViewEffect()
+
     object LocationAdded : AddLocationViewEffect()
 }

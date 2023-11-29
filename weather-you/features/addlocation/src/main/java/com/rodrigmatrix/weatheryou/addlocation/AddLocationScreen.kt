@@ -56,6 +56,10 @@ fun AddLocationScreen(
             is AddLocationViewEffect.ShowError -> {
                 context.toast(viewEffect.string)
             }
+
+            is AddLocationViewEffect.ShowErrorString -> {
+                context.toast(viewEffect.string)
+            }
         }
     }
     AddLocationScreen(
