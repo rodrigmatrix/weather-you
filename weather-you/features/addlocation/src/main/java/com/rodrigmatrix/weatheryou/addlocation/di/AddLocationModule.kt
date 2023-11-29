@@ -18,7 +18,6 @@ object AddLocationModule {
                 addLocationUseCase = get(),
                 getFamousLocationsUseCase = get(),
                 searchLocationUseCase = get(),
-                getLocationUseCase = get(),
                 firebaseCrashlytics = FirebaseCrashlytics.getInstance(),
             )
         }

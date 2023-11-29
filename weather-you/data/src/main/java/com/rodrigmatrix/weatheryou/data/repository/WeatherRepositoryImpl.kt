@@ -28,7 +28,9 @@ class WeatherRepositoryImpl(
                 weatherYouRemoteDataSource.getWeather(latitude, longitude, unit)
             }
             .flatMapLatest { location ->
-                val entity = weatherLocationDomainToEntityMapper.map(location.copy(name = name))
+                val entity = weatherLocationDomainToEntityMapper.map(
+                    location.copy(name = location.name.ifEmpty { name })
+                )
                 weatherLocalDataSource.addLocation(entity)
             }
     }
@@ -47,10 +49,10 @@ class WeatherRepositoryImpl(
                     .catch()
                     .firstOrNull()
 
-                val fetchedLocations = weatherLocations.mapNotNull {
-                    fetchLocation(it.latitude, it.longitude)
+                val fetchedLocations = weatherLocations.mapNotNull { weatherEntity ->
+                    fetchLocation(weatherEntity.latitude, weatherEntity.longitude)
                         .catch()
-                        .firstOrNull()?.copy(name = it.name, id = it.id)
+                        .firstOrNull()?.copy(name = weatherEntity.name, id = weatherEntity.id)
                 }.toMutableList()
 
                 if (currentLocation!= null) {

@@ -50,6 +50,7 @@ dependencies {
     implementation(Dependencies.kotlinSerialization)
 
     implementation(Dependencies.composeUi)
+    implementation(Dependencies.composeRuntime)
     implementation(Dependencies.composeMaterial3)
     implementation(Dependencies.composeMaterial2)
     implementation(Dependencies.composePreview)

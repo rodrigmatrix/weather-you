@@ -7,6 +7,4 @@ import kotlinx.coroutines.flow.Flow
 interface SearchRemoteDataSource {
 
     fun searchLocation(locationName: String): Flow<List<SearchAutocompleteLocation>>
-
-    fun getLocation(placeId: String): Flow<SearchLocation>
 }

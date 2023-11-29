@@ -16,8 +16,9 @@ object Dependencies {
 
     // Compose
     const val composeUi = "androidx.compose.ui:ui:${Versions.composeVersion}"
-    const val composeMaterial3 = "androidx.compose.material3:material3:1.2.0-alpha01"
-    const val composeMaterial2 = "androidx.compose.material:material:1.5.0-alpha04"
+    const val composeRuntime = "androidx.compose.runtime:runtime:${Versions.composeVersion}"
+    const val composeMaterial3 = "androidx.compose.material3:material3:1.2.0-alpha10"
+    const val composeMaterial2 = "androidx.compose.material:material:1.6.0-alpha08"
     const val composePreview = "androidx.compose.ui:ui-tooling-preview:${Versions.composeVersion}"
     const val composeActivity = "androidx.activity:activity-compose:${Versions.composeVersion}"
     const val composeNavigation = "androidx.navigation:navigation-compose:2.5.3"
@@ -47,6 +48,7 @@ object Dependencies {
     const val firebaseInAppMessaging = "com.google.firebase:firebase-inappmessaging-display"
     const val firebaseCrashlytics = "com.google.firebase:firebase-crashlytics-ktx"
     const val firebaseAnalytics = "com.google.firebase:firebase-analytics-ktx"
+    const val firebaseDatabase = "com.google.firebase:firebase-database-ktx"
 
     // Retrofit
     const val retrofit = "com.squareup.retrofit2:retrofit:2.9.0"

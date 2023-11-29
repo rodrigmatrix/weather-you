@@ -9,7 +9,5 @@ interface SearchRepository {
 
     fun searchLocation(locationName: String): Flow<List<SearchAutocompleteLocation>>
 
-    fun getLocation(placeId: String): Flow<SearchLocation>
-
     fun getFamousCities(): Flow<List<City>>
 }

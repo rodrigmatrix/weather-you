@@ -9,7 +9,8 @@ class FamousCitiesMapper {
         return source.map { city ->
             City(
                 name = city.displayName,
-                placeId = city.placeId,
+                lat = city.lat,
+                long = city.long,
                 image = city.image
             )
         }

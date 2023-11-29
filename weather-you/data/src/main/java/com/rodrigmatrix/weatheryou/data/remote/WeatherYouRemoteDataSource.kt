@@ -11,4 +11,9 @@ interface WeatherYouRemoteDataSource {
         longitude: Double,
         unit: TemperaturePreference
     ): Flow<WeatherLocation>
+
+    fun getWeather(
+        name: String,
+        unit: TemperaturePreference
+    ): Flow<WeatherLocation>
 }

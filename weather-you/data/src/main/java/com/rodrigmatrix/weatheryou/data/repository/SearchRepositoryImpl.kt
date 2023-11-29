@@ -12,20 +12,16 @@ import kotlinx.coroutines.flow.flow
 
 class SearchRepositoryImpl(
     private val searchRemoteDataSource: SearchRemoteDataSource,
-    private val famousCitiesMapper: FamousCitiesMapper
+    private val famousCitiesMapper: FamousCitiesMapper,
 ): SearchRepository {
 
     override fun searchLocation(locationName: String): Flow<List<SearchAutocompleteLocation>> {
         return searchRemoteDataSource.searchLocation(locationName)
     }
 
-    override fun getLocation(placeId: String): Flow<SearchLocation> {
-        return searchRemoteDataSource.getLocation(placeId)
-    }
-
     override fun getFamousCities(): Flow<List<City>> {
         return flow {
-            emit(Cities.values().let { famousCitiesMapper.map(it.toList()) })
+            emit(Cities.entries.let { famousCitiesMapper.map(it.toList()) })
         }
     }
 }
