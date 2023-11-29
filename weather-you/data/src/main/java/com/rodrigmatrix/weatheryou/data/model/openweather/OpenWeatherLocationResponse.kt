@@ -23,5 +23,5 @@ data class OpenWeatherLocationResponse(
     @SerialName("timezone_offset")
     val timezoneOffset: Int? = null,
     @SerialName("name")
-    val name: String? = null
+    val name: String? = null,
 )

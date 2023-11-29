@@ -1,5 +1,6 @@
 package com.rodrigmatrix.weatheryou.addlocation
 
+import android.content.Context
 import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.*
@@ -29,11 +30,11 @@ import androidx.navigation.NavController
 import com.rodrigmatrix.weatheryou.addlocation.preview.PreviewFamousCities
 import com.rodrigmatrix.weatheryou.core.compose.LaunchViewEffect
 import com.rodrigmatrix.weatheryou.core.extensions.toast
+import com.rodrigmatrix.weatheryou.domain.model.City
 import com.rodrigmatrix.weatheryou.components.R as Strings
 import com.rodrigmatrix.weatheryou.domain.model.SearchAutocompleteLocation
 import org.koin.androidx.compose.getViewModel
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun AddLocationScreen(
     navController: NavController,
@@ -59,12 +60,8 @@ fun AddLocationScreen(
     }
     AddLocationScreen(
         viewState,
-        onQueryChanged = {
-            viewModel.onSearch(it)
-        },
-        onLocationClick = {
-            viewModel.addLocation(it)
-        },
+        onQueryChanged = viewModel::onSearch,
+        onLocationClick = viewModel::addLocation,
         onClearQuery = {
             if (viewState.searchText.isNotEmpty()) {
                 viewModel.onSearch("")
@@ -72,7 +69,8 @@ fun AddLocationScreen(
                 keyboardController?.hide()
                 navController.navigateUp()
             }
-        }
+        },
+        onFamousLocationClicked = viewModel::addFamousLocation
     )
 }
 
@@ -80,10 +78,12 @@ fun AddLocationScreen(
 fun AddLocationScreen(
     viewState: AddLocationViewState,
     onQueryChanged: (String) -> Unit,
-    onLocationClick: (String) -> Unit,
+    onLocationClick: (SearchAutocompleteLocation?) -> Unit,
+    onFamousLocationClicked: (City, Context) -> Unit,
     onClearQuery: () -> Unit
 ) {
     val focusRequester = remember { FocusRequester() }
+    val context = LocalContext.current
     Scaffold(
         topBar = {
             com.rodrigmatrix.weatheryou.components.SearchBar(
@@ -99,7 +99,7 @@ fun AddLocationScreen(
                 modifier = Modifier.padding(bottom = 8.dp),
                 keyboardActions = KeyboardActions(
                     onDone = {
-                        onLocationClick(viewState.locationsList.firstOrNull()?.placeId.orEmpty())
+                        onLocationClick(viewState.locationsList.firstOrNull())
                     }
                 )
             )
@@ -124,7 +124,7 @@ fun AddLocationScreen(
             LocationSuggestions(
                 viewState.famousLocationsList,
                 onLocationClick = {
-                    onLocationClick(it.placeId)
+                    onFamousLocationClicked(it, context)
                 }
             )
         }
@@ -134,7 +134,7 @@ fun AddLocationScreen(
 @Composable
 fun LocationSelectList(
     locationsList: List<SearchAutocompleteLocation>,
-    onLocationClick: (String) -> Unit,
+    onLocationClick: (SearchAutocompleteLocation) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scrollState = rememberLazyListState()
@@ -164,21 +164,21 @@ fun LocationItem(
     location: SearchAutocompleteLocation,
     index: Int,
     scrollState: LazyListState,
-    onLocationClick: (String) -> Unit
+    onLocationClick: (SearchAutocompleteLocation) -> Unit
 ) {
     Row(
         Modifier
             .padding(start = 32.dp, end = 32.dp, bottom = 10.dp)
             .fillMaxWidth()
             .clickable {
-                onLocationClick(location.placeId)
+                onLocationClick(location)
             },
         horizontalArrangement = Arrangement.SpaceAround,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(Modifier.weight(1f)) {
             Text(
-                text = location.locationName,
+                text = location.name,
                 style = MaterialTheme.typography.headlineSmall
             )
         }
@@ -203,7 +203,8 @@ fun AddLocationScreenPreview() {
             ),
             { },
             { },
-            { }
+            { _, _ -> },
+            { },
         )
     }
 }

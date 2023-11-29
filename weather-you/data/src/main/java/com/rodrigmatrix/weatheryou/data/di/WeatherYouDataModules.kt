@@ -5,6 +5,7 @@ import android.content.Context
 import android.location.Geocoder
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
@@ -19,9 +20,11 @@ import com.rodrigmatrix.weatheryou.data.remote.RemoteConfigDataSourceImpl
 import com.rodrigmatrix.weatheryou.data.remote.WeatherYouRemoteDataSource
 import com.rodrigmatrix.weatheryou.data.remote.builder.RetrofitClientGenerator
 import com.rodrigmatrix.weatheryou.data.remote.interceptor.GoogleMapsInterceptor
+import com.rodrigmatrix.weatheryou.data.remote.interceptor.NinjasApiInterceptor
 import com.rodrigmatrix.weatheryou.data.remote.interceptor.OpenWeatherInterceptor
 import com.rodrigmatrix.weatheryou.data.remote.interceptor.VisualCrossingInterceptor
 import com.rodrigmatrix.weatheryou.data.remote.openweather.OpenWeatherRemoteDataSourceImpl
+import com.rodrigmatrix.weatheryou.data.remote.remoteconfig.WeatherYouRemoteConfigKeys.NINJAS_API_KEY
 import com.rodrigmatrix.weatheryou.data.remote.remoteconfig.WeatherYouRemoteConfigKeys.OPEN_WEATHER_API_KEY
 import com.rodrigmatrix.weatheryou.data.remote.remoteconfig.WeatherYouRemoteConfigKeys.VISUAL_CROSSING_API_KEY
 import com.rodrigmatrix.weatheryou.data.remote.remoteconfig.WeatherYouRemoteConfigKeys.WEATHER_PROVIDER
@@ -32,6 +35,7 @@ import com.rodrigmatrix.weatheryou.data.repository.RemoteConfigRepositoryImpl
 import com.rodrigmatrix.weatheryou.data.repository.SearchRepositoryImpl
 import com.rodrigmatrix.weatheryou.data.repository.SettingsRepositoryImpl
 import com.rodrigmatrix.weatheryou.data.repository.WeatherRepositoryImpl
+import com.rodrigmatrix.weatheryou.data.service.ApiNinjasService
 import com.rodrigmatrix.weatheryou.data.service.OpenWeatherService
 import com.rodrigmatrix.weatheryou.data.service.SearchLocationService
 import com.rodrigmatrix.weatheryou.data.service.VisualCrossingService
@@ -57,6 +61,7 @@ object WeatherYouDataModules {
     private const val GOOGLE_MAPS_SERVICE = "GOOGLE_MAPS_SERVICE"
     private const val WEATHER_YOU_SHARED_PREFERENCES = "weather_you_shared_preferences"
     private const val OPEN_WEATHER = "OPEN_WEATHER"
+    private const val API_NINJAS = "API_NINJAS"
 
     fun loadModules() {
         loadKoinModules(
@@ -72,7 +77,6 @@ object WeatherYouDataModules {
     private val useCaseModule = module {
         factory { GetFamousLocationsUseCase(searchRepository = get()) }
         factory { SearchLocationUseCase(searchRepository = get()) }
-        factory { GetLocationUseCase(searchRepository = get()) }
         factory { AddLocationUseCase(weatherRepository = get(), getRemoteConfigLongUseCase = get()) }
         factory { DeleteLocationUseCase(weatherRepository = get()) }
         factory { FetchLocationsUseCase(weatherRepository = get()) }
@@ -131,9 +135,9 @@ object WeatherYouDataModules {
         }
         factory<SearchRemoteDataSource> {
             SearchRemoteDataSourceImpl(
-                searchLocationService = get(named(GOOGLE_MAPS_SERVICE)),
+                apiNinjasService = get(named(API_NINJAS)),
                 searchAutocompleteRemoteMapper = SearchAutocompleteRemoteMapper(),
-                searchLocationRemoteMapper = SearchLocationRemoteMapper()
+                searchLocationRemoteMapper = SearchLocationRemoteMapper(),
             )
         }
         factory<SharedPreferencesDataSource> {
@@ -205,6 +209,28 @@ object WeatherYouDataModules {
             )
             visualCrossingRetrofit.create(VisualCrossingService::class.java)
         }
+        single(named(API_NINJAS)) {
+            val interceptor = OkHttpClient.Builder().apply {
+                if (BuildConfig.DEBUG) {
+                    val logging = HttpLoggingInterceptor()
+                    logging.setLevel(HttpLoggingInterceptor.Level.BASIC)
+                    addNetworkInterceptor(logging)
+                }
+                addNetworkInterceptor(
+                    NinjasApiInterceptor(
+                        apiKey = get<RemoteConfigDataSource>().getString(NINJAS_API_KEY)
+                            .ifEmpty { BuildConfig.API_NINJAS_TOKEN }
+                    )
+                )
+            }.build()
+            val ninjasRetrofit = RetrofitClientGenerator().create(
+                baseUrl = BuildConfig.API_NINJAS_URL,
+                converterFactory = get<Json>().asConverterFactory("application/json".toMediaType()),
+                httpClient = interceptor
+            )
+            ninjasRetrofit.create(ApiNinjasService::class.java)
+        }
+
         single(named(GOOGLE_MAPS_SERVICE)) {
             val interceptor = OkHttpClient.Builder().apply {
                 if (BuildConfig.DEBUG) {

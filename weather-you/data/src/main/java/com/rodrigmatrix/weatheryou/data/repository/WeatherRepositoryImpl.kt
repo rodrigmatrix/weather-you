@@ -22,13 +22,15 @@ class WeatherRepositoryImpl(
     private val weatherLocationDomainToEntityMapper: WeatherLocationDomainToEntityMapper
 ) : WeatherRepository {
 
-    override fun addLocation(name: String, latitude: Double, longitude: Double): Flow<Unit> {
+    override fun    addLocation(name: String, latitude: Double, longitude: Double): Flow<Unit> {
         return settingsRepository.getTemperaturePreference()
             .flatMapLatest { unit ->
                 weatherYouRemoteDataSource.getWeather(latitude, longitude, unit)
             }
             .flatMapLatest { location ->
-                val entity = weatherLocationDomainToEntityMapper.map(location.copy(name = name))
+                val entity = weatherLocationDomainToEntityMapper.map(
+                    location.copy(name = location.name.ifEmpty { name })
+                )
                 weatherLocalDataSource.addLocation(entity)
             }
     }

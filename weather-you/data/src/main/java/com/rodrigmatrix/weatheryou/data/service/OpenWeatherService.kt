@@ -13,4 +13,11 @@ interface OpenWeatherService {
         @Query("units") unit: String,
         @Query("lang") language: String
     ): OpenWeatherLocationResponse
+
+    @GET("onecall")
+    suspend fun getWeather(
+        @Query("location") location: String,
+        @Query("units") unit: String,
+        @Query("lang") language: String
+    ): OpenWeatherLocationResponse
 }

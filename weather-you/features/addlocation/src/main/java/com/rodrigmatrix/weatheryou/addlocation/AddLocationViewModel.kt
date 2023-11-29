@@ -1,11 +1,11 @@
 package com.rodrigmatrix.weatheryou.addlocation
 
+import android.content.Context
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.rodrigmatrix.weatheryou.core.viewmodel.ViewModel
 import com.rodrigmatrix.weatheryou.domain.usecase.AddLocationUseCase
 import com.rodrigmatrix.weatheryou.domain.usecase.GetFamousLocationsUseCase
-import com.rodrigmatrix.weatheryou.domain.usecase.GetLocationUseCase
 import com.rodrigmatrix.weatheryou.domain.usecase.SearchLocationUseCase
 import com.rodrigmatrix.weatheryou.addlocation.AddLocationViewEffect.LocationAdded
 import com.rodrigmatrix.weatheryou.addlocation.AddLocationViewEffect.ShowError
@@ -14,41 +14,74 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import com.rodrigmatrix.weatheryou.components.R
+import com.rodrigmatrix.weatheryou.domain.model.City
+import com.rodrigmatrix.weatheryou.domain.model.SearchAutocompleteLocation
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 
+@OptIn(FlowPreview::class)
 class AddLocationViewModel(
     private val addLocationUseCase: AddLocationUseCase,
     private val getFamousLocationsUseCase: GetFamousLocationsUseCase,
     private val searchLocationUseCase: SearchLocationUseCase,
-    private val getLocationUseCase: GetLocationUseCase,
     private val firebaseCrashlytics: FirebaseCrashlytics,
-    private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ): ViewModel<AddLocationViewState, AddLocationViewEffect>(AddLocationViewState()) {
+
+    private val querySearch = Channel<String>()
 
     init {
         getFamousLocations()
+        viewModelScope.launch {
+            querySearch
+                .receiveAsFlow()
+                .onEach { query ->
+                    setState { it.copy(searchText = query, isLoading = true) }
+                }
+                .debounce(600L)
+                .collect { query ->
+                    searchLocationUseCase(query)
+                        .flowOn(coroutineDispatcher)
+                        .catch { exception ->
+                            exception.handleError()
+                        }
+                        .collect { locations ->
+                            setState { it.copy(locationsList = locations, isLoading = false) }
+                        }
+            }
+        }
     }
 
-    fun addLocation(placeId: String) {
+    fun addLocation(location: SearchAutocompleteLocation?) {
         viewModelScope.launch {
-            getLocationUseCase(placeId)
-                .flowOn(coroutineDispatcher)
+            if (location != null) {
+                addLocationUseCase(
+                    location.name,
+                    location.lat,
+                    location.long,
+                ).flowOn(coroutineDispatcher)
+                    .onStart { setState { it.copy(isLoading = true) } }
+                    .catch { exception ->
+                        exception.handleError()
+                    }
+                    .collect { setEffect { LocationAdded } }
+            }
+        }
+    }
+
+    fun addFamousLocation(city: City, context: Context) {
+        viewModelScope.launch {
+            addLocationUseCase(
+                context.getString(city.name),
+                city.lat,
+                city.long,
+            ).flowOn(coroutineDispatcher)
                 .onStart { setState { it.copy(isLoading = true) } }
                 .catch { exception ->
                     exception.handleError()
                 }
-                .collect { searchLocation ->
-                    addLocationUseCase(
-                        searchLocation.name,
-                        searchLocation.latitude,
-                        searchLocation.longitude
-                    ).flowOn(coroutineDispatcher)
-                        .onStart { setState { it.copy(isLoading = true) } }
-                        .catch { exception ->
-                            exception.handleError()
-                        }
-                        .collect { setEffect { LocationAdded } }
-                }
+                .collect { setEffect { LocationAdded } }
         }
     }
 
@@ -66,19 +99,7 @@ class AddLocationViewModel(
     }
 
     fun onSearch(searchText: String) {
-        viewModelScope.launch {
-            searchLocationUseCase(searchText)
-                .flowOn(coroutineDispatcher)
-                .onStart {
-                    setState { it.copy(searchText = searchText, isLoading = true) }
-                }
-                .catch { exception ->
-                    exception.handleError()
-                }
-                .collect { locations ->
-                    setState { it.copy(locationsList = locations, isLoading = false) }
-                }
-        }
+        querySearch.trySend(searchText)
     }
 
     private fun Throwable.handleError() {

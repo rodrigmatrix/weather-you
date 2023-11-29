@@ -18,7 +18,7 @@ android {
         minSdk Sdk.phoneMinSdk
         targetSdk Sdk.targetSdk
         versionCode Sdk.versionCode
-        versionName "2.0.1"
+        versionName "2.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -97,6 +97,7 @@ dependencies {
     implementation(Dependencies.kotlinSerialization)
 
     implementation(Dependencies.composeUi)
+    implementation(Dependencies.composeRuntime)
     implementation(Dependencies.composeMaterial3)
     implementation(Dependencies.composeMaterial2)
     implementation(Dependencies.composePreview)

@@ -16,7 +16,7 @@ private const val STANDARD = "standard"
 
 class OpenWeatherRemoteDataSourceImpl(
     private val openWeatherService: OpenWeatherService,
-    private val openWeatherRemoteMapper: OpenWeatherRemoteMapper
+    private val openWeatherRemoteMapper: OpenWeatherRemoteMapper,
 ) : WeatherYouRemoteDataSource {
 
     override fun getWeather(
@@ -30,7 +30,19 @@ class OpenWeatherRemoteDataSourceImpl(
                     latitude = latitude.toString(),
                     longitude = longitude.toString(),
                     unit = getUnit(unit),
-                    language = Locale.getDefault().toString()
+                    language = Locale.getDefault().toString(),
+                )
+            )
+        }.map(openWeatherRemoteMapper::map)
+    }
+
+    override fun getWeather(name: String, unit: TemperaturePreference): Flow<WeatherLocation> {
+        return flow {
+            emit(
+                openWeatherService.getWeather(
+                    location = name,
+                    unit = getUnit(unit),
+                    language = Locale.getDefault().toString(),
                 )
             )
         }.map(openWeatherRemoteMapper::map)
