@@ -40,7 +40,6 @@ fun WeatherYouTheme(
 ) {
     MaterialTheme(
         colorScheme = DarkColorScheme,
-        typography = Typography,
         content = content
     )
 }
