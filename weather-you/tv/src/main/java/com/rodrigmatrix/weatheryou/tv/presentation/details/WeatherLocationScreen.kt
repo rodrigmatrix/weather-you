@@ -16,7 +16,6 @@ import androidx.tv.material3.ClickableSurfaceDefaults
 import androidx.tv.material3.ExperimentalTvMaterial3Api
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Surface
-import androidx.tv.material3.ToggleableSurfaceDefaults
 import com.rodrigmatrix.weatheryou.components.details.CurrentWeatherContent
 import com.rodrigmatrix.weatheryou.components.details.FutureDaysForecastContent
 import com.rodrigmatrix.weatheryou.components.details.HourlyForecastContent
@@ -114,10 +113,10 @@ private fun WeatherInfoCard(
     val cardShape = CircleShape.copy(CornerSize(20.dp))
     Surface(
         onClick = { },
-        color = ClickableSurfaceDefaults.color(
-            color = MaterialTheme.colorScheme.primaryContainer,
-            focusedColor = MaterialTheme.colorScheme.primaryContainer,
-            pressedColor = MaterialTheme.colorScheme.primaryContainer,
+        colors = ClickableSurfaceDefaults.colors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+            pressedContainerColor = MaterialTheme.colorScheme.primaryContainer,
         ),
         border = ClickableSurfaceDefaults.border(
             focusedBorder = Border(

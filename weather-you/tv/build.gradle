@@ -16,7 +16,7 @@ android {
         minSdk Sdk.tvMinSdk
         targetSdk Sdk.targetSdk
         versionCode Sdk.versionCode
-        versionName "1.0"
+        versionName "1.0.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -64,6 +64,7 @@ android {
 dependencies {
     implementation project(LocalModules.domain)
     implementation project(LocalModules.data)
+    implementation project(LocalModules.core)
 
     implementation project(LocalModules.components)
 
@@ -78,15 +79,20 @@ dependencies {
     implementation(Dependencies.kotlinSerialization)
 
     implementation(Dependencies.composeUi)
+    implementation(Dependencies.composeRuntime)
     implementation(Dependencies.composePreview)
     implementation(Dependencies.composeActivity)
     implementation(Dependencies.composeNavigation)
     implementation(Dependencies.accompanistPermissions)
     implementation(Dependencies.composeTvFoundation)
     implementation(Dependencies.composeTvMaterial)
+    implementation(Dependencies.composeMaterial3)
+    implementation(Dependencies.composeMaterial2)
 
     implementation(Dependencies.koinAndroid)
     implementation(Dependencies.koinCompose)
+
+    implementation(Dependencies.coil)
 
     implementation platform(Dependencies.firebaseBom)
     implementation(Dependencies.firebaseRemoteConfig)
