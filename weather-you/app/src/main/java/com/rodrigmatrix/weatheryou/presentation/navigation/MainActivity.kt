@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import com.google.accompanist.adaptive.calculateDisplayFeatures
-import com.rodrigmatrix.weatheryou.presentation.theme.WeatherYouTheme
+import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 
 class MainActivity : AppCompatActivity() {
 

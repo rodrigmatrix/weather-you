@@ -1,4 +1,4 @@
-package com.rodrigmatrix.weatheryou.presentation.theme
+package com.rodrigmatrix.weatheryou.components.theme
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -14,9 +14,7 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
-import androidx.core.os.BuildCompat
 import androidx.core.view.ViewCompat
-import com.rodrigmatrix.weatheryou.BuildConfig
 
 private val LightColorScheme = lightColorScheme(
     primary = md_theme_light_primary,

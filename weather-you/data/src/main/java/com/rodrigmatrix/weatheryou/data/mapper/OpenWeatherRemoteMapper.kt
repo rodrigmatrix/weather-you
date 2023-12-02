@@ -24,7 +24,7 @@ class OpenWeatherRemoteMapper(
             maxTemperature = source.daily?.firstOrNull()?.temp?.max ?: 0.0,
             lowestTemperature = source.daily?.firstOrNull()?.temp?.min ?: 0.0,
             feelsLike = source.current?.feelsLike ?: 0.0,
-            weatherIcons = weatherIconMapper.map(source.current?.weather?.firstOrNull()),
+            weatherIcons = weatherIconMapper.map(source.current?.weather?.firstOrNull()?.icon.orEmpty()),
             currentTime = source.current?.datetime ?: 0L,
             timeZone = source.timezone.orEmpty(),
             precipitationProbability = source.hourly.toChanceOfPrecipitation(),
@@ -51,7 +51,7 @@ class OpenWeatherRemoteMapper(
                 temperature = it.temp?.day ?: 0.0,
                 maxTemperature = it.temp?.max ?: 0.0,
                 minTemperature = it.temp?.min ?: 0.0,
-                weatherIcons = weatherIconMapper.map(it.weather?.first()),
+                weatherIcons = weatherIconMapper.map(it.weather?.first()?.icon.orEmpty()),
                 precipitationProbability = it.pop.calculatePrecipitation(),
                 precipitationType = it.weather?.firstOrNull()?.main.orEmpty(),
                 windSpeed = it.windSpeed ?: 0.0,
@@ -69,7 +69,7 @@ class OpenWeatherRemoteMapper(
                 dateTime = it.datetime ?: 0L,
                 weatherCondition = it.weather?.first()?.description.orEmpty(),
                 temperature = it.temp ?: 0.0,
-                weatherIcons = weatherIconMapper.map(it.weather?.firstOrNull()),
+                weatherIcons = weatherIconMapper.map(it.weather?.firstOrNull()?.icon.orEmpty()),
                 precipitationProbability = it.pop.calculatePrecipitation(),
                 precipitationType = it.weather?.firstOrNull()?.main.orEmpty()
             )

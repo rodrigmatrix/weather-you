@@ -9,7 +9,9 @@ class WeatherLocationDomainToEntityMapper {
         return WeatherLocationEntity(
             latitude = source.latitude,
             longitude = source.longitude,
-            name = source.name
+            name = source.name,
+            isCurrentLocation = 0,
+            isWidgetLocation = 0,
         )
     }
 }

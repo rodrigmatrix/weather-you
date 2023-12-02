@@ -35,7 +35,8 @@ object Dependencies {
     const val material3 = "com.google.android.material:material:1.9.0"
 
     // Glance
-    const val glanceAppWidget = "androidx.glance:glance-appwidget:1.0.0-beta01"
+    const val glanceAppWidget = "androidx.glance:glance-appwidget:1.0.0"
+    const val glanceMaterial3 = "androidx.glance:glance-material3:1.0.0"
 
     // Koin
     const val koinAndroid = "io.insert-koin:koin-android:3.4.2"
@@ -57,9 +58,9 @@ object Dependencies {
     const val okHttpLoggingInterceptor = "com.squareup.okhttp3:logging-interceptor"
 
     // Room
-    const val roomRuntime = "androidx.room:room-runtime:2.5.1"
-    const val roomCompiler = "androidx.room:room-compiler:2.5.1"
-    const val roomKtx = "androidx.room:room-ktx:2.5.1"
+    const val roomRuntime = "androidx.room:room-runtime:2.6.1"
+    const val roomCompiler = "androidx.room:room-compiler:2.6.1"
+    const val roomKtx = "androidx.room:room-ktx:2.6.1"
 
     const val jodaTime = "joda-time:joda-time:2.12.5"
 

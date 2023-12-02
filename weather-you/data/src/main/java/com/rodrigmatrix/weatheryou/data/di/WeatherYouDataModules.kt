@@ -82,6 +82,7 @@ object WeatherYouDataModules {
         factory { FetchLocationsUseCase(weatherRepository = get()) }
         factory { FetchLocationUseCase(weatherRepository = get()) }
         factory { GetRemoteConfigLongUseCase(remoteConfigRepository = get()) }
+        factory { GetWidgetTemperatureUseCase(weatherRepository = get()) }
     }
 
     private val repositoryModule = module {
@@ -91,7 +92,8 @@ object WeatherYouDataModules {
                 weatherLocalDataSource = get(),
                 userLocationDataSource = get(),
                 settingsRepository = get(),
-                weatherLocationDomainToEntityMapper = WeatherLocationDomainToEntityMapper()
+                weatherLocationDomainToEntityMapper = WeatherLocationDomainToEntityMapper(),
+                weatherLocationEntityToSavedLocationMapper = WeatherLocationEntityToSavedLocationMapper(),
             )
         }
         factory<SearchRepository> {
@@ -121,7 +123,12 @@ object WeatherYouDataModules {
                 )
             }
         }
-        factory<WeatherLocalDataSource> { WeatherLocalDataSourceImpl(weatherDAO = get()) }
+        factory<WeatherLocalDataSource> {
+            WeatherLocalDataSourceImpl(
+                weatherDAO = get(),
+                widgetDataDao = get(),
+            )
+        }
         factory<UserLocationDataSource> {
             UserLocationDataSourceImpl(
                 get(),
@@ -160,6 +167,7 @@ object WeatherYouDataModules {
     private val otherModules = module {
         single { WeatherDatabase(androidApplication()) }
         factory { get<WeatherDatabase>().locationsDao() }
+        factory { get<WeatherDatabase>().widgetDataDao() }
         factory {
             Json {
                 encodeDefaults = true

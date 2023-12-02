@@ -10,14 +10,13 @@ import com.rodrigmatrix.weatheryou.home.di.HomeModule
 import com.rodrigmatrix.weatheryou.locationdetails.di.LocationDetailsModule
 import com.rodrigmatrix.weatheryou.settings.di.SettingsModule
 import com.rodrigmatrix.weatheryou.settings.utils.AppThemeManager
-import com.rodrigmatrix.weatheryou.widgets.weather.small.CurrentWeatherSmallWidget
+import com.rodrigmatrix.weatheryou.widgets.weather.CurrentWeatherSmallWidget
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
-import org.koin.dsl.module
 
 class WeatherYouApp: Application() {
 

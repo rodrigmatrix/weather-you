@@ -3,9 +3,9 @@ package com.rodrigmatrix.weatheryou.data.mapper
 import com.rodrigmatrix.weatheryou.weathericons.R
 import com.rodrigmatrix.weatheryou.domain.model.WeatherIcons
 
-class VisualCrossingWeatherIconMapper {
+class VisualCrossingWeatherIconMapper : IconsMapper {
 
-    fun map(source: String): WeatherIcons {
+    override fun map(source: String): WeatherIcons {
         return when(source) {
             "partly-cloudy-day" -> WeatherIcons(
                 animatedIcon = R.raw.weather_partly_cloudy,

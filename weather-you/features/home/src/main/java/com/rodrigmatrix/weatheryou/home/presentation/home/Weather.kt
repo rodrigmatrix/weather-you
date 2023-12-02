@@ -21,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.components.WeatherLocationCardContent
 import com.rodrigmatrix.weatheryou.components.WeatherYouCard
+import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.home.presentation.preview.PreviewWeatherList
 
@@ -88,7 +89,7 @@ fun WeatherLocation(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun WeatherLocationPreview() {
-    MaterialTheme {
+    WeatherYouTheme {
         WeatherLocationList(
             weatherLocationList = PreviewWeatherList,
             selectedLocation = null,

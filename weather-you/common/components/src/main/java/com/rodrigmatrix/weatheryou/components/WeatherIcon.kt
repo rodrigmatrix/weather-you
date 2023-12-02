@@ -19,13 +19,9 @@ fun WeatherIcon(
         val composition by rememberLottieComposition(
             LottieCompositionSpec.RawRes(weatherIcons.animatedIcon)
         )
-        val progress by animateLottieCompositionAsState(
-            composition,
-            iterations = LottieConstants.IterateForever
-        )
         LottieAnimation(
-            composition,
-            progress,
+            composition = composition,
+            iterations = LottieConstants.IterateForever,
             modifier = modifier
         )
     } else {

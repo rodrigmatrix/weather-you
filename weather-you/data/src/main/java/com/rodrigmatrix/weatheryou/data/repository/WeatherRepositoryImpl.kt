@@ -4,8 +4,12 @@ import com.rodrigmatrix.weatheryou.core.extensions.catch
 import com.rodrigmatrix.weatheryou.data.local.UserLocationDataSource
 import com.rodrigmatrix.weatheryou.data.local.WeatherLocalDataSource
 import com.rodrigmatrix.weatheryou.data.mapper.WeatherLocationDomainToEntityMapper
+import com.rodrigmatrix.weatheryou.data.mapper.WeatherLocationEntityToSavedLocationMapper
+import com.rodrigmatrix.weatheryou.data.mapper.toWidgetWeather
 import com.rodrigmatrix.weatheryou.data.remote.WeatherYouRemoteDataSource
+import com.rodrigmatrix.weatheryou.domain.model.SavedLocation
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
+import com.rodrigmatrix.weatheryou.domain.model.WidgetWeather
 import com.rodrigmatrix.weatheryou.domain.repository.SettingsRepository
 import com.rodrigmatrix.weatheryou.domain.repository.WeatherRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -19,7 +23,8 @@ class WeatherRepositoryImpl(
     private val weatherLocalDataSource: WeatherLocalDataSource,
     private val userLocationDataSource: UserLocationDataSource,
     private val settingsRepository: SettingsRepository,
-    private val weatherLocationDomainToEntityMapper: WeatherLocationDomainToEntityMapper
+    private val weatherLocationDomainToEntityMapper: WeatherLocationDomainToEntityMapper,
+    private val weatherLocationEntityToSavedLocationMapper: WeatherLocationEntityToSavedLocationMapper,
 ) : WeatherRepository {
 
     override fun addLocation(name: String, latitude: Double, longitude: Double): Flow<Unit> {
@@ -58,7 +63,10 @@ class WeatherRepositoryImpl(
                 if (currentLocation!= null) {
                     val location = fetchLocation(currentLocation.latitude, currentLocation.longitude)
                         .catch { }
-                        .firstOrNull()?.copy(name = currentLocation.name, isCurrentLocation = true)
+                        .firstOrNull()?.copy(
+                            name = currentLocation.name,
+                            isCurrentLocation = true,
+                        )
                     location?.let { fetchedLocations.add(FIRST_INDEX, it) }
                 }
                 fetchedLocations
@@ -79,5 +87,40 @@ class WeatherRepositoryImpl(
 
     override fun getLocationsSize(): Flow<Int> {
         return weatherLocalDataSource.getAllLocations().map { locationsList -> locationsList.size }
+    }
+
+    override fun getSavedLocation(): Flow<SavedLocation?> {
+        return weatherLocalDataSource.getSavedLocation()
+            .map(weatherLocationEntityToSavedLocationMapper::map)
+    }
+
+    override fun getWidgetWeather(): Flow<WidgetWeather?> {
+        return getSavedLocation().flatMapLatest { savedLocation ->
+            if (savedLocation != null) {
+                fetchLocation(
+                    latitude = savedLocation.latitude,
+                    longitude = savedLocation.longitude
+                ).mapLatest { it.toWidgetWeather().copy(name = savedLocation.name) }
+            } else {
+                val gpsLocation = userLocationDataSource.getLastKnownLocation()
+                    .firstOrNull()
+                val firstSavedLocation = weatherLocalDataSource.getAllLocations()
+                    .firstOrNull()?.firstOrNull()
+
+                if (gpsLocation != null) {
+                    fetchLocation(
+                        latitude = gpsLocation.latitude,
+                        longitude = gpsLocation.longitude,
+                    ).mapLatest { it.toWidgetWeather().copy(name = gpsLocation.name) }
+                } else if (firstSavedLocation != null) {
+                    fetchLocation(
+                        latitude = firstSavedLocation.latitude,
+                        longitude = firstSavedLocation.longitude,
+                    ).mapLatest { it.toWidgetWeather().copy(name = firstSavedLocation.name) }
+                } else {
+                    flowOf(null)
+                }
+            }
+        }
     }
 }

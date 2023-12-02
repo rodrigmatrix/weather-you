@@ -4,10 +4,10 @@ import com.rodrigmatrix.weatheryou.weathericons.R
 import com.rodrigmatrix.weatheryou.data.model.openweather.OpenWeatherWeather
 import com.rodrigmatrix.weatheryou.domain.model.WeatherIcons
 
-class OpenWeatherIconMapper {
+class OpenWeatherIconMapper : IconsMapper {
 
-    fun map(source: OpenWeatherWeather?): WeatherIcons {
-        return when(source?.icon.orEmpty()) {
+    override fun map(source: String): WeatherIcons {
+        return when(source) {
             "01d" -> WeatherIcons(
                 animatedIcon = R.raw.weather_sunny,
                 staticIcon = R.drawable.ic_weather_sunny

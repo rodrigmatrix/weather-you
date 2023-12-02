@@ -1,4 +1,4 @@
-package com.rodrigmatrix.weatheryou.widgets.weather.small
+package com.rodrigmatrix.weatheryou.widgets.weather
 
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
