@@ -48,6 +48,7 @@ The architecture was based upon Clean Architecture and the presentation layer is
 <p float="center">
     <img width="200" src="https://github.com/rodrigmatrix/weather-you/assets/7853887/84c0a70b-329e-40a8-8509-90432fc4aa58">
     <img width="200" src="https://github.com/rodrigmatrix/weather-you/assets/7853887/9875f1b4-152e-4b67-a78c-f253b9639e04">
+    <img width="200" src="https://github.com/rodrigmatrix/weather-you/assets/7853887/06b99b62-b335-4845-9de0-b24229fc99df">
 
 </p>
 
