@@ -16,4 +16,8 @@ interface WeatherLocalDataSource {
     fun getSavedLocation(): Flow<WeatherLocationEntity?>
 
     fun getWidgetLocation(): Flow<WeatherWidgetLocationEntity?>
+
+    fun getWidgetWeather(): Flow<WeatherWidgetLocationEntity?>
+
+    fun saveWidgetLocation(location: WeatherWidgetLocationEntity): Flow<Unit>
 }

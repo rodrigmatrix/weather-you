@@ -75,6 +75,8 @@ dependencies {
     kapt(Dependencies.roomCompiler)
     implementation(Dependencies.roomKtx)
 
+    implementation(Dependencies.workManager)
+
     implementation(Dependencies.retrofit)
     implementation(platform(Dependencies.okHttp))
     implementation(Dependencies.retrofitKotlinx)

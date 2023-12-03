@@ -22,10 +22,11 @@ import androidx.glance.layout.width
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
+import com.rodrigmatrix.weatheryou.components.extensions.getStaticIcon
 import com.rodrigmatrix.weatheryou.core.extensions.temperatureString
-import com.rodrigmatrix.weatheryou.domain.model.WeatherIcons
+import com.rodrigmatrix.weatheryou.domain.model.WeatherCondition
 import com.rodrigmatrix.weatheryou.domain.model.WidgetWeather
-import com.rodrigmatrix.weatheryou.weathericons.R
+import com.rodrigmatrix.weatheryou.widgets.R
 
 private const val MAX_WIDTH = 186
 
@@ -38,7 +39,7 @@ fun SmallWidget(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = glanceModifier
-            .background(GlanceTheme.colors.primaryContainer)
+            .background(ImageProvider(R.drawable.weather_outside_shape_widget))
             .size(width = MAX_WIDTH.dp, height = 184.dp)
             .clickable(onClick = onWidgetClicked)
     ) {
@@ -50,7 +51,7 @@ fun SmallWidget(
                 .padding(horizontal = 16.dp)
         ) {
             Image(
-                provider = ImageProvider(weather.weatherIcons.staticIcon),
+                provider = ImageProvider(weather.currentCondition.getStaticIcon()),
                 contentDescription = null,
                 modifier = GlanceModifier.size(36.dp)
             )
@@ -61,7 +62,6 @@ fun SmallWidget(
                 style = TextStyle(
                     color = GlanceTheme.colors.onPrimaryContainer,
                     fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
                 )
             )
         }
@@ -119,12 +119,8 @@ val PreviewWidgetWeather = WidgetWeather(
     name = "São Paulo",
     lat = 0.0,
     long = 0.0,
-    weatherIcons = WeatherIcons(
-        animatedIcon = R.drawable.ic_weather_rainynight,
-        staticIcon = R.drawable.ic_weather_rainynight,
-    ),
+    currentCondition = WeatherCondition.SNOW_DAY,
     currentWeather = 20.0,
-    currentCondition = "cloudy",
     maxWeather = 21.0,
     minWeather = 8.0,
     lastUpdate = "",

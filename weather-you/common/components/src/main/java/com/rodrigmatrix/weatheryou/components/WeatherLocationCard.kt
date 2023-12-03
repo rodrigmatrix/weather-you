@@ -60,7 +60,7 @@ fun WeatherLocationCardContent(
                 .height(100.dp),
         ) {
             WeatherIcon(
-                weatherIcons = weatherLocation.weatherIcons,
+                weatherCondition = weatherLocation.currentCondition,
                 modifier = Modifier
                     .size(64.dp)
                     .align(Alignment.Center)

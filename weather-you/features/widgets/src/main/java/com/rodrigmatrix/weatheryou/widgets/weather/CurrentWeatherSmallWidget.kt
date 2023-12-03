@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.glance.GlanceId
@@ -15,8 +16,14 @@ import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.provideContent
 import androidx.glance.appwidget.updateAll
 import com.rodrigmatrix.weatheryou.domain.usecase.GetWidgetTemperatureUseCase
+import com.rodrigmatrix.weatheryou.domain.usecase.UpdateWidgetTemperatureUseCase
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -41,24 +48,35 @@ class CurrentWeatherSmallWidget: GlanceAppWidget(), KoinComponent {
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         provideContent {
-            val state by getWidgetTemperatureUseCase().collectAsState(initial = null)
+            val size = LocalSize.current
+            val state by getWidgetTemperatureUseCase()
+                .catch {
+                    it
+                }
+                .collectAsState(initial = null)
             GlanceTheme {
-                val size = LocalSize.current
-                state?.let {
+                if (state == null) {
                     when (size) {
-                        smallMode -> SmallWidget(
-                            it,
-                            actionStartActivity<Activity>()
-                        )
+                        smallMode -> Unit
 
-                        mediumMode -> MediumWidget(
-                            it,
-                            actionStartActivity<Activity>()
+                        mediumMode, largeMode -> MediumWidgetLoading(
+                            onWidgetClicked =   actionStartActivity<Activity>()
                         )
-                        largeMode -> MediumWidget(
-                            it,
-                            actionStartActivity<Activity>()
-                        )
+                    }
+                } else {
+                    state?.let { weather ->
+                        when (size) {
+                            smallMode -> SmallWidget(
+                                weather = weather,
+                                onWidgetClicked = actionStartActivity<Activity>()
+                            )
+
+                            mediumMode, largeMode -> MediumWidget(
+                                weather = weather,
+                                showDays = size.height >= largeMode.height,
+                                onWidgetClicked = actionStartActivity<Activity>()
+                            )
+                        }
                     }
                 }
             }

@@ -121,6 +121,8 @@ dependencies {
     implementation(Dependencies.firebaseCrashlytics)
     implementation(Dependencies.firebaseAnalytics)
 
+    implementation(Dependencies.workManager)
+
     implementation(Dependencies.playServicesLocation)
 
     implementation(Dependencies.jodaTime)

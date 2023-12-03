@@ -62,6 +62,9 @@ object Dependencies {
     const val roomCompiler = "androidx.room:room-compiler:2.6.1"
     const val roomKtx = "androidx.room:room-ktx:2.6.1"
 
+    // Work Manager
+    const val workManager = "androidx.work:work-runtime-ktx:2.9.0"
+
     const val jodaTime = "joda-time:joda-time:2.12.5"
 
     const val gson = "com.google.code.gson:gson:2.9.0"

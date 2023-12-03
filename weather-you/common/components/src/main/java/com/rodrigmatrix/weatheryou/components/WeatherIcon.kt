@@ -6,18 +6,20 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import com.airbnb.lottie.compose.*
-import com.rodrigmatrix.weatheryou.domain.model.WeatherIcons
+import com.rodrigmatrix.weatheryou.components.extensions.getAnimatedIcon
+import com.rodrigmatrix.weatheryou.components.extensions.getStaticIcon
+import com.rodrigmatrix.weatheryou.domain.model.WeatherCondition
 
 @Composable
 fun WeatherIcon(
-    weatherIcons: WeatherIcons,
+    weatherCondition: WeatherCondition,
     modifier: Modifier = Modifier,
     alwaysStatic: Boolean = false,
     contentDescription: String? = null
 ) {
-    if ((weatherIcons.animatedIcon != 0) && alwaysStatic.not()) {
+    if (alwaysStatic.not()) {
         val composition by rememberLottieComposition(
-            LottieCompositionSpec.RawRes(weatherIcons.animatedIcon)
+            LottieCompositionSpec.RawRes(weatherCondition.getAnimatedIcon())
         )
         LottieAnimation(
             composition = composition,
@@ -26,7 +28,7 @@ fun WeatherIcon(
         )
     } else {
         Image(
-            painter = painterResource(weatherIcons.staticIcon),
+            painter = painterResource(weatherCondition.getStaticIcon()),
             contentDescription = contentDescription,
             modifier = modifier
         )

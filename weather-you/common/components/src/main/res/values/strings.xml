@@ -99,4 +99,5 @@
     <string name="sunset_x">Sunset: %s</string>
     <string name="generic_error">An error has occurred. Try again later</string>
     <string name="internet_error">It looks like you are not connected to the internet.</string>
+    <string name="condition_sunny">Sunny</string>
 </resources>

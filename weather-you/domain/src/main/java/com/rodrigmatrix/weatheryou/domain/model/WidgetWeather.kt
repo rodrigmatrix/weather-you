@@ -6,8 +6,7 @@ data class WidgetWeather(
     val lat: Double,
     val long: Double,
     val currentWeather: Double,
-    val currentCondition: String,
-    val weatherIcons: WeatherIcons,
+    val currentCondition: WeatherCondition,
     val maxWeather: Double,
     val minWeather: Double,
     val lastUpdate: String,
@@ -17,13 +16,11 @@ data class WidgetWeather(
 
 data class WidgetWeatherHour(
     val weather: Double,
-    val condition: String,
-    val weatherIcons: WeatherIcons,
+    val condition: WeatherCondition,
 )
 
 data class WidgetWeatherDay(
     val maxWeather: Double,
     val minWeather: Double,
-    val condition: String,
-    val weatherIcons: WeatherIcons,
+    val condition: WeatherCondition,
 )

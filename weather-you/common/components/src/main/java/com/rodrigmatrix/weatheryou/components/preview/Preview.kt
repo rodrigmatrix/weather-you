@@ -13,11 +13,7 @@ val PreviewWeatherLocation = WeatherLocation(
     feelsLike = -2.0,
     maxTemperature = 10.0,
     lowestTemperature = 0.0,
-    currentWeatherDescription = "Snow",
-    weatherIcons = WeatherIcons(
-        animatedIcon = 0,
-        staticIcon = R.drawable.ic_weather_partly_shower
-    ),
+    currentCondition = WeatherCondition.SNOW_DAY,
     currentTime = 0,
     timeZone = "",
     precipitationProbability = 60.0,
@@ -44,11 +40,7 @@ val PreviewWeatherList = listOf(
         feelsLike = -2.0,
         maxTemperature = 10.0,
         lowestTemperature = 0.0,
-        currentWeatherDescription = "Snow",
-        weatherIcons = WeatherIcons(
-            animatedIcon = 0,
-            staticIcon = R.drawable.ic_weather_partly_shower
-        ),
+        currentCondition = WeatherCondition.SNOW_DAY,
         currentTime = 0,
         timeZone = "",
         precipitationProbability = 0.0,
@@ -73,11 +65,7 @@ val PreviewWeatherList = listOf(
         feelsLike = -2.0,
         maxTemperature = 10.0,
         lowestTemperature = 0.0,
-        currentWeatherDescription = "Snow",
-        weatherIcons = WeatherIcons(
-            animatedIcon = 0,
-            staticIcon = R.drawable.ic_weather_snow
-        ),
+        currentCondition = WeatherCondition.SNOW_DAY,
         currentTime = 0,
         timeZone = "",
         precipitationProbability = 0.0,
@@ -102,11 +90,7 @@ val PreviewWeatherList = listOf(
         feelsLike = -2.0,
         maxTemperature = 10.0,
         lowestTemperature = 0.0,
-        currentWeatherDescription = "Snow",
-        weatherIcons = WeatherIcons(
-            animatedIcon = 0,
-            staticIcon = R.drawable.ic_weather_storm
-        ),
+        currentCondition = WeatherCondition.SNOW_DAY,
         currentTime = 0,
         timeZone = "",
         precipitationProbability = 0.0,
@@ -131,11 +115,7 @@ val PreviewWeatherList = listOf(
         feelsLike = -2.0,
         maxTemperature = 10.0,
         lowestTemperature = 0.0,
-        currentWeatherDescription = "Snow",
-        weatherIcons = WeatherIcons(
-            animatedIcon = 0,
-            staticIcon = R.drawable.ic_weather_rainynight
-        ),
+        currentCondition = WeatherCondition.SNOW_DAY,
         currentTime = 0,
         timeZone = "",
         precipitationProbability = 0.0,
@@ -160,11 +140,7 @@ val PreviewWeatherList = listOf(
         feelsLike = -2.0,
         maxTemperature = 10.0,
         lowestTemperature = 0.0,
-        currentWeatherDescription = "Snow",
-        weatherIcons = WeatherIcons(
-            animatedIcon = 0,
-            staticIcon = R.drawable.ic_weather_partly_shower
-        ),
+        currentCondition = WeatherCondition.SNOW_DAY,
         currentTime = 0,
         timeZone = "",
         precipitationProbability = 0.0,
@@ -189,11 +165,7 @@ val PreviewWeatherList = listOf(
         feelsLike = -2.0,
         maxTemperature = 10.0,
         lowestTemperature = 0.0,
-        currentWeatherDescription = "Snow",
-        weatherIcons = WeatherIcons(
-            animatedIcon = 0,
-            staticIcon = R.drawable.ic_weather_night
-        ),
+        currentCondition = WeatherCondition.SNOW_DAY,
         currentTime = 0,
         timeZone = "",
         precipitationProbability = 0.0,
@@ -218,11 +190,7 @@ val PreviewWeatherList = listOf(
         feelsLike = -2.0,
         maxTemperature = 10.0,
         lowestTemperature = 0.0,
-        currentWeatherDescription = "Snow",
-        weatherIcons = WeatherIcons(
-            animatedIcon = 0,
-            staticIcon = R.drawable.ic_weather_stormshowersday
-        ),
+        currentCondition = WeatherCondition.SNOW_DAY,
         currentTime = 0,
         timeZone = "",
         precipitationProbability = 0.0,
@@ -247,11 +215,7 @@ val PreviewWeatherList = listOf(
         feelsLike = -2.0,
         maxTemperature = 10.0,
         lowestTemperature = 0.0,
-        currentWeatherDescription = "Snow",
-        weatherIcons = WeatherIcons(
-            animatedIcon = 0,
-            staticIcon = R.drawable.ic_weather_snow_sunny
-        ),
+        currentCondition = WeatherCondition.SNOW_DAY,
         currentTime = 0,
         timeZone = "",
         precipitationProbability = 0.0,
@@ -276,11 +240,7 @@ val PreviewWeatherList = listOf(
         feelsLike = -2.0,
         maxTemperature = 10.0,
         lowestTemperature = 0.0,
-        currentWeatherDescription = "Snow",
-        weatherIcons = WeatherIcons(
-            animatedIcon = 0,
-            staticIcon = R.drawable.ic_weather_snow
-        ),
+        currentCondition = WeatherCondition.SNOW_DAY,
         currentTime = 0,
         timeZone = "",
         precipitationProbability = 0.0,
@@ -300,89 +260,57 @@ val PreviewWeatherList = listOf(
 val PreviewHourlyForecast = listOf(
     WeatherHour(
         temperature = 1.0,
-        weatherIcons = WeatherIcons(
-            animatedIcon = 0,
-            staticIcon = R.drawable.ic_weather_snow_sunny
-        ),
+        weatherCondition = WeatherCondition.SNOW_DAY,
         dateTime = 0,
-        weatherCondition = "wd",
         precipitationProbability = 60.0,
         precipitationType = "snow"
     ),
     WeatherHour(
         temperature = 9.0,
-        weatherIcons = WeatherIcons(
-            animatedIcon = 0,
-            staticIcon = R.drawable.ic_weather_night
-        ),
+        weatherCondition = WeatherCondition.SNOW_DAY,
         dateTime = 0,
-        weatherCondition = "",
         precipitationProbability = 0.0,
         precipitationType = ""
     ),
     WeatherHour(
         temperature = 9.0,
-        weatherIcons = WeatherIcons(
-            animatedIcon = 0,
-            staticIcon = R.drawable.ic_weather_snow
-        ),
+        weatherCondition = WeatherCondition.SNOW_DAY,
         dateTime = 0,
-        weatherCondition = "",
         precipitationProbability = 0.0,
         precipitationType = ""
     ),
     WeatherHour(
         temperature = 8.0,
-        weatherIcons = WeatherIcons(
-            animatedIcon = 0,
-            staticIcon = R.drawable.ic_weather_partly_shower
-        ),
+        weatherCondition = WeatherCondition.SNOW_DAY,
         dateTime = 0,
-        weatherCondition = "",
         precipitationProbability = 0.0,
         precipitationType = ""
     ),
     WeatherHour(
         temperature = 6.0,
-        weatherIcons = WeatherIcons(
-            animatedIcon = 0,
-            staticIcon = R.drawable.ic_weather_partly_shower
-        ),
+        weatherCondition = WeatherCondition.SNOW_DAY,
         dateTime = 0,
-        weatherCondition = "",
         precipitationProbability = 0.0,
         precipitationType = ""
     ),
     WeatherHour(
         temperature = 6.0,
-        weatherIcons = WeatherIcons(
-            animatedIcon = 0,
-            staticIcon = R.drawable.ic_weather_cloudynight
-        ),
+        weatherCondition = WeatherCondition.SNOW_DAY,
         dateTime = 0,
-        weatherCondition = "",
         precipitationProbability = 0.0,
         precipitationType = ""
     ),
     WeatherHour(
         temperature = 5.0,
-        weatherIcons = WeatherIcons(
-            animatedIcon = 0,
-            staticIcon = R.drawable.ic_weather_rainynight
-        ),
+        weatherCondition = WeatherCondition.SNOW_DAY,
         dateTime = 0,
-        weatherCondition = "",
         precipitationProbability = 0.0,
         precipitationType = ""
     ),
     WeatherHour(
         temperature = 2.0,
-        weatherIcons = WeatherIcons(
-            animatedIcon = 0,
-            staticIcon = R.drawable.ic_weather_thunder
-        ),
+        weatherCondition = WeatherCondition.SNOW_DAY,
         dateTime = 0,
-        weatherCondition = "",
         precipitationProbability = 0.0,
         precipitationType = ""
     )
@@ -391,14 +319,10 @@ val PreviewHourlyForecast = listOf(
 val PreviewFutureDaysForecast = listOf(
     WeatherDay(
         dateTime = 0,
-        weatherCondition = "Parcialmente nublado",
+        weatherCondition = WeatherCondition.SNOW_DAY,
         temperature = 10.0,
         maxTemperature = 14.0,
         minTemperature = 1.0,
-        weatherIcons = WeatherIcons(
-            animatedIcon = 0,
-            staticIcon = R.drawable.ic_weather_storm
-        ),
         hours = PreviewHourlyForecast,
         precipitationProbability = 0.0,
         precipitationType = "",
@@ -409,14 +333,10 @@ val PreviewFutureDaysForecast = listOf(
     ),
     WeatherDay(
         dateTime = 0,
-        weatherCondition = "Cloudy",
+        weatherCondition = WeatherCondition.SNOW_DAY,
         temperature = 10.0,
         maxTemperature = 14.0,
         minTemperature = 1.0,
-        weatherIcons = WeatherIcons(
-            animatedIcon = 0,
-            staticIcon = R.drawable.ic_weather_mist
-        ),
         hours = PreviewHourlyForecast,
         precipitationProbability = 80.0,
         precipitationType = "rain",
@@ -427,14 +347,10 @@ val PreviewFutureDaysForecast = listOf(
     ),
     WeatherDay(
         dateTime = 0,
-        weatherCondition = "Cloudy",
+        weatherCondition = WeatherCondition.SNOW_DAY,
         temperature = 10.0,
         maxTemperature = 14.0,
         minTemperature = 1.0,
-        weatherIcons = WeatherIcons(
-            animatedIcon = 0,
-            staticIcon = R.drawable.ic_weather_snow_sunny
-        ),
         hours = PreviewHourlyForecast,
         precipitationProbability = 0.0,
         precipitationType = "",
@@ -445,14 +361,10 @@ val PreviewFutureDaysForecast = listOf(
     ),
     WeatherDay(
         dateTime = 0,
-        weatherCondition = "Cloudy",
+        weatherCondition = WeatherCondition.SNOW_DAY,
         temperature = 10.0,
         maxTemperature = 14.0,
         minTemperature = 1.0,
-        weatherIcons = WeatherIcons(
-            animatedIcon = 0,
-            staticIcon = R.drawable.ic_weather_windy
-        ),
         hours = PreviewHourlyForecast,
         precipitationProbability = 0.0,
         precipitationType = "",
@@ -463,14 +375,10 @@ val PreviewFutureDaysForecast = listOf(
     ),
     WeatherDay(
         dateTime = 0,
-        weatherCondition = "Cloudy",
+        weatherCondition = WeatherCondition.SNOW_DAY,
         temperature = 10.0,
         maxTemperature = 14.0,
         minTemperature = 1.0,
-        weatherIcons = WeatherIcons(
-            animatedIcon = 0,
-            staticIcon = R.drawable.ic_weather_snow
-        ),
         hours = PreviewHourlyForecast,
         precipitationProbability = 0.0,
         precipitationType = "",
@@ -481,14 +389,10 @@ val PreviewFutureDaysForecast = listOf(
     ),
     WeatherDay(
         dateTime = 0,
-        weatherCondition = "Cloudy",
+        weatherCondition = WeatherCondition.SNOW_DAY,
         temperature = 10.0,
         maxTemperature = 14.0,
         minTemperature = 1.0,
-        weatherIcons = WeatherIcons(
-            animatedIcon = 0,
-            staticIcon = R.drawable.ic_weather_snow
-        ),
         hours = PreviewHourlyForecast,
         precipitationProbability = 0.0,
         precipitationType = "",
@@ -499,14 +403,10 @@ val PreviewFutureDaysForecast = listOf(
     ),
     WeatherDay(
         dateTime = 0,
-        weatherCondition = "Cloudy",
+        weatherCondition = WeatherCondition.SNOW_DAY,
         temperature = 10.0,
         maxTemperature = 14.0,
         minTemperature = 1.0,
-        weatherIcons = WeatherIcons(
-            animatedIcon = 0,
-            staticIcon = R.drawable.ic_weather_snow
-        ),
         hours = PreviewHourlyForecast,
         precipitationProbability = 0.0,
         precipitationType = "",

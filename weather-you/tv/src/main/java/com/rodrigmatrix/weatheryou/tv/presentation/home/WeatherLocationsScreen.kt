@@ -47,7 +47,6 @@ import com.google.accompanist.permissions.rememberPermissionState
 import com.rodrigmatrix.weatheryou.components.R
 import com.rodrigmatrix.weatheryou.components.WeatherIcon
 import com.rodrigmatrix.weatheryou.components.WeatherLocationCardContent
-import com.rodrigmatrix.weatheryou.domain.model.WeatherIcons
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.tv.presentation.details.WeatherLocationScreen
 import com.rodrigmatrix.weatheryou.tv.presentation.locations.WeatherLocationsUiState

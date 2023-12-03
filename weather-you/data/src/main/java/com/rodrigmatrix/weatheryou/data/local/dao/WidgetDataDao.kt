@@ -14,5 +14,5 @@ interface WidgetDataDao {
     fun getWidgetLocation(): Flow<WeatherWidgetLocationEntity?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun setWidgetData(weatherWidgetLocationEntity: WeatherWidgetLocationEntity)
+    suspend fun setWidgetData(weatherWidgetLocationEntity: WeatherWidgetLocationEntity)
 }

@@ -5,7 +5,6 @@ import android.content.Context
 import android.location.Geocoder
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
@@ -39,18 +38,17 @@ import com.rodrigmatrix.weatheryou.data.service.ApiNinjasService
 import com.rodrigmatrix.weatheryou.data.service.OpenWeatherService
 import com.rodrigmatrix.weatheryou.data.service.SearchLocationService
 import com.rodrigmatrix.weatheryou.data.service.VisualCrossingService
+import com.rodrigmatrix.weatheryou.data.worker.UpdateWidgetWeatherDataWorker
 import com.rodrigmatrix.weatheryou.domain.repository.RemoteConfigRepository
 import com.rodrigmatrix.weatheryou.domain.repository.SearchRepository
 import com.rodrigmatrix.weatheryou.domain.repository.SettingsRepository
 import com.rodrigmatrix.weatheryou.domain.repository.WeatherRepository
 import com.rodrigmatrix.weatheryou.domain.usecase.*
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidApplication
-import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.loadKoinModules
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
@@ -82,6 +80,7 @@ object WeatherYouDataModules {
         factory { FetchLocationsUseCase(weatherRepository = get()) }
         factory { FetchLocationUseCase(weatherRepository = get()) }
         factory { GetRemoteConfigLongUseCase(remoteConfigRepository = get()) }
+        factory { UpdateWidgetTemperatureUseCase(weatherRepository = get()) }
         factory { GetWidgetTemperatureUseCase(weatherRepository = get()) }
     }
 
@@ -114,12 +113,12 @@ object WeatherYouDataModules {
             if (get<RemoteConfigDataSource>().getString(WEATHER_PROVIDER) == OPEN_WEATHER) {
                 OpenWeatherRemoteDataSourceImpl(
                     openWeatherService = get(),
-                    OpenWeatherRemoteMapper(OpenWeatherIconMapper())
+                    OpenWeatherRemoteMapper(OpenWeatherConditionMapper())
                 )
             } else {
                 VisualCrossingRemoteDataSourceImpl(
                     visualCrossingService = get(),
-                    VisualCrossingRemoteMapper(VisualCrossingWeatherIconMapper())
+                    VisualCrossingRemoteMapper(VisualCrossingWeatherConditionMapper())
                 )
             }
         }

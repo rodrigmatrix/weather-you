@@ -14,7 +14,7 @@ private const val DAY_HOURS = 24
 private const val SECOND_ELEMENT = 1
 
 class VisualCrossingRemoteMapper(
-    private val weatherIconMapper: VisualCrossingWeatherIconMapper
+    private val weatherConditionMapper: VisualCrossingWeatherConditionMapper
 ) {
 
     fun map(source: VisualCrossingWeatherResponse): WeatherLocation {
@@ -27,11 +27,10 @@ class VisualCrossingRemoteMapper(
             longitude = source.longitude ?: 0.0,
             isCurrentLocation = false,
             currentWeather = source.currentConditions?.temp ?: 0.0,
-            currentWeatherDescription = source.currentConditions?.conditions.orEmpty(),
+            currentCondition = weatherConditionMapper.map(source.currentConditions?.icon),
             maxTemperature = source.days?.firstOrNull()?.tempmax ?: 0.0,
             lowestTemperature = source.days?.firstOrNull()?.tempmin ?: 0.0,
             feelsLike = source.currentConditions?.feelslike ?: 0.0,
-            weatherIcons = weatherIconMapper.map(source.currentConditions?.icon.orEmpty()),
             currentTime = source.currentConditions?.datetimeEpoch ?: 0L,
             timeZone = source.timezone.orEmpty(),
             precipitationProbability = source.currentConditions?.precipprob ?: 0.0,
@@ -54,15 +53,10 @@ class VisualCrossingRemoteMapper(
         return this.map {
             WeatherDay(
                 dateTime = it.datetimeEpoch ?: 0L,
-                weatherCondition = it.conditions
-                    .orEmpty()
-                    .split(",")
-                    .take(2)
-                    .joinToString(),
+                weatherCondition = weatherConditionMapper.map(it.icon),
                 temperature = it.temp ?: 0.0,
                 maxTemperature = it.tempmax ?: 0.0,
                 minTemperature = it.tempmin ?: 0.0,
-                weatherIcons = weatherIconMapper.map(it.icon.orEmpty()),
                 hours = it.hours?.mapHoursList().orEmpty(),
                 precipitationProbability = it.precipprob ?: 0.0,
                 precipitationType = it.preciptype?.firstOrNull().orEmpty(),
@@ -80,9 +74,8 @@ class VisualCrossingRemoteMapper(
         return this.map {
             WeatherHour(
                 dateTime = it.datetimeEpoch ?: 0L,
-                weatherCondition = it.conditions.orEmpty(),
+                weatherCondition = weatherConditionMapper.map(it.icon),
                 temperature = it.temp ?: 0.0,
-                weatherIcons = weatherIconMapper.map(it.icon.orEmpty()),
                 precipitationProbability = it.precipprob ?: 0.0,
                 precipitationType = it.preciptype?.firstOrNull().orEmpty()
             )

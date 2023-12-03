@@ -21,5 +21,7 @@ interface WeatherRepository {
 
     fun getSavedLocation(): Flow<SavedLocation?>
 
+    fun updateWidgetWeather(): Flow<WidgetWeather?>
+
     fun getWidgetWeather(): Flow<WidgetWeather?>
 }
