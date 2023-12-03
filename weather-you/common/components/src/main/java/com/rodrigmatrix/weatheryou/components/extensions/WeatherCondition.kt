@@ -1,6 +1,5 @@
 package com.rodrigmatrix.weatheryou.components.extensions
 
-import androidx.annotation.StringRes
 import com.rodrigmatrix.weatheryou.weathericons.R
 import com.rodrigmatrix.weatheryou.components.R as StringsR
 import com.rodrigmatrix.weatheryou.domain.model.WeatherCondition
@@ -39,17 +38,17 @@ fun WeatherCondition.getStaticIcon(): Int = when (this) {
 
 fun WeatherCondition.getString(): Int = when (this) {
     WeatherCondition.SUNNY_DAY -> StringsR.string.condition_sunny
-    WeatherCondition.CLEAR_NIGHT -> StringsR.string.condition_sunny
-    WeatherCondition.PARTLY_CLOUDY_DAY -> StringsR.string.condition_sunny
-    WeatherCondition.PARTLY_CLOUDY_NIGHT -> StringsR.string.condition_sunny
-    WeatherCondition.CLOUDY -> StringsR.string.condition_sunny
-    WeatherCondition.WINDY -> StringsR.string.condition_sunny
-    WeatherCondition.SNOW_DAY -> StringsR.string.condition_sunny
-    WeatherCondition.SNOW_NIGHT -> StringsR.string.condition_sunny
-    WeatherCondition.MIST -> StringsR.string.condition_sunny
-    WeatherCondition.STORM_RAIN_DAY -> StringsR.string.condition_sunny
-    WeatherCondition.STORM_RAIN_NIGHT -> StringsR.string.condition_sunny
-    WeatherCondition.RAIN_DAY -> StringsR.string.condition_sunny
-    WeatherCondition.RAIN_NIGHT -> StringsR.string.condition_sunny
+    WeatherCondition.CLEAR_NIGHT -> StringsR.string.condition_clear
+    WeatherCondition.PARTLY_CLOUDY_DAY -> StringsR.string.condition_partly_cloudy
+    WeatherCondition.PARTLY_CLOUDY_NIGHT -> StringsR.string.condition_partly_cloudy
+    WeatherCondition.CLOUDY -> StringsR.string.condition_cloudy
+    WeatherCondition.WINDY -> StringsR.string.condition_windy
+    WeatherCondition.SNOW_DAY -> StringsR.string.condition_snow
+    WeatherCondition.SNOW_NIGHT -> StringsR.string.condition_snow
+    WeatherCondition.MIST -> StringsR.string.condition_mist
+    WeatherCondition.STORM_RAIN_DAY -> StringsR.string.condition_thunderstorm
+    WeatherCondition.STORM_RAIN_NIGHT -> StringsR.string.condition_thunderstorm
+    WeatherCondition.RAIN_DAY -> StringsR.string.condition_rain
+    WeatherCondition.RAIN_NIGHT -> StringsR.string.condition_rain
 }
     

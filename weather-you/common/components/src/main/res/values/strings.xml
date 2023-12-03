@@ -100,4 +100,14 @@
     <string name="generic_error">An error has occurred. Try again later</string>
     <string name="internet_error">It looks like you are not connected to the internet.</string>
     <string name="condition_sunny">Sunny</string>
+    <string name="condition_clear">Clear</string>
+    <string name="condition_partly_cloudy">Partly Cloudy</string>
+    <string name="condition_cloudy">Cloudy</string>
+    <string name="condition_windy">Windy</string>
+    <string name="condition_snow">Snow</string>
+    <string name="condition_mist">Mist</string>
+    <string name="condition_rain">Rain</string>
+    <string name="condition_thunderstorm">Rain</string>
+    <string name="weather_widget_disclaimer">Please select the location you want displayed on the weather widget. If you want a different location, open the app and add it and come back here. If you want to always display the current location, please select it</string>
+    <string name="widget_location">Widget Location</string>
 </resources>

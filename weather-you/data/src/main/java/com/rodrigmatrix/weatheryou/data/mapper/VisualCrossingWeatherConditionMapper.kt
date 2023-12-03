@@ -14,7 +14,7 @@ class VisualCrossingWeatherConditionMapper {
 
             "wind" -> WeatherCondition.WINDY
 
-            "clear-day"-> WeatherCondition.CLEAR_NIGHT
+            "clear-day"-> WeatherCondition.SUNNY_DAY
 
             "clear-night" -> WeatherCondition.CLEAR_NIGHT
 

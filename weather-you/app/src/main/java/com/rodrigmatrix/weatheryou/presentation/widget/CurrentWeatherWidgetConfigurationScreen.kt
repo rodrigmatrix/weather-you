@@ -104,7 +104,7 @@ private fun CurrentWeatherWidgetConfigurationScreen(
 ) {
     Column(modifier = modifier) {
         SmallScreenTopAppBar(
-            title = stringResource(com.rodrigmatrix.weatheryou.R.string.widget_location),
+            title = stringResource(R.string.widget_location),
             onCloseClick = onCloseClick,
             onDeleteButtonClick = { },
             showDeleteButton = false,
@@ -141,7 +141,7 @@ private fun CurrentWeatherWidgetConfigurationContent(
     Column(modifier = modifier) {
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = stringResource(com.rodrigmatrix.weatheryou.R.string.weather_widget_disclaimer),
+            text = stringResource(R.string.weather_widget_disclaimer),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.padding(horizontal = 24.dp),
