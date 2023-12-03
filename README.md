@@ -44,6 +44,13 @@ The architecture was based upon Clean Architecture and the presentation layer is
     <img width="200" src="https://user-images.githubusercontent.com/7853887/162599760-43e6edf8-2d54-4719-819d-02bdb08f7fb0.png">
 </p>
 
+## Widgets Screenshots
+<p float="center">
+    <img width="200" src="https://github.com/rodrigmatrix/weather-you/assets/7853887/84c0a70b-329e-40a8-8509-90432fc4aa58">
+    <img width="200" src="https://github.com/rodrigmatrix/weather-you/assets/7853887/9875f1b4-152e-4b67-a78c-f253b9639e04">
+
+</p>
+
 ## WearOS Screenshots
 <p float="center">
     <img width="231" src="https://user-images.githubusercontent.com/7853887/162537675-29ec372f-585c-4c43-9c32-ff6b8dcaf09e.png">
