@@ -1,7 +1,7 @@
 object Dependencies {
 
     // Android
-    const val androidxCore = "androidx.core:core-ktx:1.10.1"
+    const val androidxCore = "androidx.core:core-ktx:1.12.0"
     const val appCompat = "androidx.appcompat:appcompat:1.6.1"
     const val lifecycle = "androidx.lifecycle:lifecycle-runtime-ktx:${Versions.lifecycleVersion}"
     const val lifecycleViewModel = "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.lifecycleVersion}"
@@ -43,7 +43,7 @@ object Dependencies {
     const val koinCompose = "io.insert-koin:koin-androidx-compose:3.4.5"
 
     // Firebase
-    const val firebaseBom = "com.google.firebase:firebase-bom:32.0.0"
+    const val firebaseBom = "com.google.firebase:firebase-bom:32.6.0"
     const val firebaseRemoteConfig = "com.google.firebase:firebase-config-ktx"
     const val firebaseMessaging= "com.google.firebase:firebase-messaging-ktx"
     const val firebaseInAppMessaging = "com.google.firebase:firebase-inappmessaging-display"
@@ -73,5 +73,5 @@ object Dependencies {
 
     const val playServicesLocation = "com.google.android.gms:play-services-location:21.0.1"
 
-    const val lottieCompose = "com.airbnb.android:lottie-compose:6.0.0"
+    const val lottieCompose = "com.airbnb.android:lottie-compose:6.2.0"
 }
