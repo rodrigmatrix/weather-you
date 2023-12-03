@@ -13,11 +13,11 @@ interface WeatherLocalDataSource {
 
     fun deleteLocation(id: Int): Flow<Unit>
 
-    fun getSavedLocation(): Flow<WeatherLocationEntity?>
-
     fun getWidgetLocation(): Flow<WeatherWidgetLocationEntity?>
 
     fun getWidgetWeather(): Flow<WeatherWidgetLocationEntity?>
 
     fun saveWidgetLocation(location: WeatherWidgetLocationEntity): Flow<Unit>
+
+    fun deleteWidgetLocation(): Flow<Unit>
 }

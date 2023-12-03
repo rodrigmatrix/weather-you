@@ -4,7 +4,6 @@ import com.rodrigmatrix.weatheryou.data.local.model.WeatherWidgetLocationEntity
 import com.rodrigmatrix.weatheryou.domain.model.WidgetWeather
 
 fun WidgetWeather.toWeatherWidgetLocationEntity(): WeatherWidgetLocationEntity = WeatherWidgetLocationEntity(
-    id = id,
     name = name,
     latitude = lat,
     longitude = long,

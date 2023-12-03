@@ -5,7 +5,6 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "weatherWidgetLocationCache")
 data class WeatherWidgetLocationEntity(
-    @PrimaryKey var id: Int = 0,
     var name: String,
     var latitude: Double,
     var longitude: Double,
@@ -28,4 +27,6 @@ data class WeatherWidgetLocationEntity(
     var nextTwoDaysMaxWeather: Double,
     var nextTwoDaysMinWeather: Double,
     var nextTwoDaysCondition: String,
-)
+) {
+    @PrimaryKey var id: Int = 0
+}

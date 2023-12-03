@@ -4,6 +4,7 @@ import com.rodrigmatrix.weatheryou.data.local.dao.WeatherDAO
 import com.rodrigmatrix.weatheryou.data.local.dao.WidgetDataDao
 import com.rodrigmatrix.weatheryou.data.local.model.WeatherLocationEntity
 import com.rodrigmatrix.weatheryou.data.local.model.WeatherWidgetLocationEntity
+import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -26,7 +27,8 @@ class WeatherLocalDataSourceImpl(
 
     override fun addLocation(location: WeatherLocationEntity): Flow<Unit> {
         return flow {
-            emit(weatherDAO.addLocation(location))
+            weatherDAO.addLocation(location)
+            emit(Unit)
         }.flowOn(coroutineDispatcher)
     }
 
@@ -41,19 +43,22 @@ class WeatherLocalDataSourceImpl(
             .flowOn(coroutineDispatcher)
     }
 
-    override fun getSavedLocation(): Flow<WeatherLocationEntity?> {
-        return weatherDAO.getSavedWidgetLocation()
-            .flowOn(coroutineDispatcher)
-    }
-
     override fun getWidgetWeather(): Flow<WeatherWidgetLocationEntity?> {
         return widgetDataDao.getWidgetLocation()
             .flowOn(coroutineDispatcher)
     }
 
     override fun saveWidgetLocation(location: WeatherWidgetLocationEntity): Flow<Unit> {
-        return flow<Unit> {
+        return flow {
             widgetDataDao.setWidgetData(location)
+            emit(Unit)
+        }.flowOn(coroutineDispatcher)
+    }
+
+    override fun deleteWidgetLocation(): Flow<Unit> {
+        return flow {
+            widgetDataDao.deleteWidgetData()
+            emit(Unit)
         }.flowOn(coroutineDispatcher)
     }
 }

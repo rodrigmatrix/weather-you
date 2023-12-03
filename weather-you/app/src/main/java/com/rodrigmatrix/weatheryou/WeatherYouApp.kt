@@ -11,12 +11,13 @@ import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import com.rodrigmatrix.weatheryou.addlocation.di.AddLocationModule
 import com.rodrigmatrix.weatheryou.data.di.WeatherYouDataModules
-import com.rodrigmatrix.weatheryou.data.worker.UpdateWidgetWeatherDataWorker
+import com.rodrigmatrix.weatheryou.worker.UpdateWidgetWeatherDataWorker
 import com.rodrigmatrix.weatheryou.home.di.HomeModule
 import com.rodrigmatrix.weatheryou.locationdetails.di.LocationDetailsModule
+import com.rodrigmatrix.weatheryou.presentation.di.WeatherYouAppModules
 import com.rodrigmatrix.weatheryou.settings.di.SettingsModule
 import com.rodrigmatrix.weatheryou.settings.utils.AppThemeManager
-import com.rodrigmatrix.weatheryou.widgets.weather.CurrentWeatherSmallWidget
+import com.rodrigmatrix.weatheryou.widgets.weather.CurrentWeatherWidget
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -38,11 +39,12 @@ class WeatherYouApp: Application() {
             AddLocationModule.loadModules()
             LocationDetailsModule.loadModules()
             SettingsModule.loadModules()
+            WeatherYouAppModules.loadModules()
         }
         initRemoteConfig()
         setAppTheme()
         initWidgetWorker()
-        CurrentWeatherSmallWidget().updateWidget()
+        CurrentWeatherWidget().updateWidget(this)
     }
 
     private fun initRemoteConfig() {

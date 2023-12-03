@@ -1,6 +1,7 @@
 package com.rodrigmatrix.weatheryou.data.local.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -15,4 +16,7 @@ interface WidgetDataDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun setWidgetData(weatherWidgetLocationEntity: WeatherWidgetLocationEntity)
+
+    @Query("DELETE FROM weatherWidgetLocationCache WHERE id LIKE 0")
+    suspend fun deleteWidgetData()
 }

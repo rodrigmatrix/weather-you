@@ -38,7 +38,6 @@ import com.rodrigmatrix.weatheryou.data.service.ApiNinjasService
 import com.rodrigmatrix.weatheryou.data.service.OpenWeatherService
 import com.rodrigmatrix.weatheryou.data.service.SearchLocationService
 import com.rodrigmatrix.weatheryou.data.service.VisualCrossingService
-import com.rodrigmatrix.weatheryou.data.worker.UpdateWidgetWeatherDataWorker
 import com.rodrigmatrix.weatheryou.domain.repository.RemoteConfigRepository
 import com.rodrigmatrix.weatheryou.domain.repository.SearchRepository
 import com.rodrigmatrix.weatheryou.domain.repository.SettingsRepository
@@ -82,6 +81,8 @@ object WeatherYouDataModules {
         factory { GetRemoteConfigLongUseCase(remoteConfigRepository = get()) }
         factory { UpdateWidgetTemperatureUseCase(weatherRepository = get()) }
         factory { GetWidgetTemperatureUseCase(weatherRepository = get()) }
+        factory { SetWidgetLocationUseCase(weatherRepository = get()) }
+        factory { DeleteWidgetLocationUseCase(weatherRepository = get()) }
     }
 
     private val repositoryModule = module {
@@ -92,7 +93,6 @@ object WeatherYouDataModules {
                 userLocationDataSource = get(),
                 settingsRepository = get(),
                 weatherLocationDomainToEntityMapper = WeatherLocationDomainToEntityMapper(),
-                weatherLocationEntityToSavedLocationMapper = WeatherLocationEntityToSavedLocationMapper(),
             )
         }
         factory<SearchRepository> {

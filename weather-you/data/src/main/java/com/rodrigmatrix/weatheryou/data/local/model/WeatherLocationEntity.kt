@@ -10,6 +10,4 @@ data class WeatherLocationEntity(
     val latitude: Double,
     val longitude: Double,
     val name: String,
-    val isCurrentLocation: Int,
-    val isWidgetLocation: Int,
 )

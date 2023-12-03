@@ -13,11 +13,8 @@ interface WeatherDAO {
     fun getAllLocations(): Flow<List<WeatherLocationEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun addLocation(weatherLocation: WeatherLocationEntity)
+    suspend fun addLocation(weatherLocation: WeatherLocationEntity)
 
     @Query("DELETE FROM locations WHERE id LIKE :id")
     fun deleteLocation(id: Int)
-
-    @Query("SELECT * FROM locations WHERE isWidgetLocation LIKE 1")
-    fun getSavedWidgetLocation(): Flow<WeatherLocationEntity?>
 }

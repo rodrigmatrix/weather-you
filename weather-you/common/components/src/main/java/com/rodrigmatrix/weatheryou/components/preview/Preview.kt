@@ -78,7 +78,7 @@ val PreviewWeatherList = listOf(
         sunrise = 0,
         sunset = 0,
         visibility = 0.0,
-        pressure = 0.0
+        pressure = 0.0,
     ),
     WeatherLocation(
         id = 0,
@@ -103,7 +103,7 @@ val PreviewWeatherList = listOf(
         sunrise = 0,
         sunset = 0,
         visibility = 0.0,
-        pressure = 0.0
+        pressure = 0.0,
     ),
     WeatherLocation(
         id = 0,
@@ -128,7 +128,7 @@ val PreviewWeatherList = listOf(
         sunrise = 0,
         sunset = 0,
         visibility = 0.0,
-        pressure = 0.0
+        pressure = 0.0,
     ),
     WeatherLocation(
         id = 0,
@@ -153,7 +153,7 @@ val PreviewWeatherList = listOf(
         sunrise = 0,
         sunset = 0,
         visibility = 0.0,
-        pressure = 0.0
+        pressure = 0.0,
     ),
     WeatherLocation(
         id = 0,
@@ -178,7 +178,7 @@ val PreviewWeatherList = listOf(
         sunrise = 0,
         sunset = 0,
         visibility = 0.0,
-        pressure = 0.0
+        pressure = 0.0,
     ),
     WeatherLocation(
         id = 0,
@@ -203,7 +203,7 @@ val PreviewWeatherList = listOf(
         sunrise = 0,
         sunset = 0,
         visibility = 0.0,
-        pressure = 0.0
+        pressure = 0.0,
     ),
     WeatherLocation(
         id = 0,
@@ -228,7 +228,7 @@ val PreviewWeatherList = listOf(
         sunrise = 0,
         sunset = 0,
         visibility = 0.0,
-        pressure = 0.0
+        pressure = 0.0,
     ),
     WeatherLocation(
         id = 0,
@@ -253,7 +253,7 @@ val PreviewWeatherList = listOf(
         sunrise = 0,
         sunset = 0,
         visibility = 0.0,
-        pressure = 0.0
+        pressure = 0.0,
     )
 )
 

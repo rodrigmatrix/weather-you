@@ -1,34 +1,28 @@
 package com.rodrigmatrix.weatheryou.widgets.weather
 
-import android.app.Activity
 import android.content.Context
+import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.glance.GlanceId
 import androidx.glance.GlanceTheme
 import androidx.glance.LocalSize
-import androidx.glance.action.actionStartActivity
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.provideContent
 import androidx.glance.appwidget.updateAll
 import com.rodrigmatrix.weatheryou.domain.usecase.GetWidgetTemperatureUseCase
-import com.rodrigmatrix.weatheryou.domain.usecase.UpdateWidgetTemperatureUseCase
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.onCompletion
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-class CurrentWeatherSmallWidget: GlanceAppWidget(), KoinComponent {
+class CurrentWeatherWidget: GlanceAppWidget(), KoinComponent {
 
     companion object {
         private val smallMode = DpSize(260.dp, 184.dp)
@@ -39,8 +33,6 @@ class CurrentWeatherSmallWidget: GlanceAppWidget(), KoinComponent {
     override val sizeMode: SizeMode = SizeMode.Responsive(
         setOf(smallMode, mediumMode, largeMode)
     )
-
-    private val context by inject<Context>()
 
     private val getWidgetTemperatureUseCase by inject<GetWidgetTemperatureUseCase>()
 
@@ -56,25 +48,21 @@ class CurrentWeatherSmallWidget: GlanceAppWidget(), KoinComponent {
                 .collectAsState(initial = null)
             GlanceTheme {
                 if (state == null) {
-                    when (size) {
-                        smallMode -> Unit
-
-                        mediumMode, largeMode -> MediumWidgetLoading(
-                            onWidgetClicked =   actionStartActivity<Activity>()
-                        )
-                    }
+                    MediumLargeLoading(
+                        onWidgetClicked = { openMainActivity(context) },
+                    )
                 } else {
                     state?.let { weather ->
                         when (size) {
                             smallMode -> SmallWidget(
                                 weather = weather,
-                                onWidgetClicked = actionStartActivity<Activity>()
+                                onWidgetClicked = { openMainActivity(context) },
                             )
 
-                            mediumMode, largeMode -> MediumWidget(
+                            mediumMode, largeMode -> MediumLargeWidget(
                                 weather = weather,
                                 showDays = size.height >= largeMode.height,
-                                onWidgetClicked = actionStartActivity<Activity>()
+                                onWidgetClicked = { openMainActivity(context) },
                             )
                         }
                     }
@@ -83,7 +71,14 @@ class CurrentWeatherSmallWidget: GlanceAppWidget(), KoinComponent {
         }
     }
 
-    fun updateWidget() {
+    private fun openMainActivity(context: Context) {
+        Intent("action.weatheryou.open").setPackage(context.packageName).apply {
+            flags = FLAG_ACTIVITY_NEW_TASK
+            context.startActivity(this)
+        }
+    }
+
+    fun updateWidget(context: Context) {
         mainScope.launch {
             updateAll(context)
         }

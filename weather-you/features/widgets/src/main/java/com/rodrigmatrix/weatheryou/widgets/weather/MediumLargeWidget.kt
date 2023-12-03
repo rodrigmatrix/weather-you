@@ -2,8 +2,6 @@ package com.rodrigmatrix.weatheryou.widgets.weather
 
 import android.text.format.DateFormat
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -15,7 +13,6 @@ import androidx.glance.LocalContext
 import androidx.glance.action.Action
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.lazy.LazyColumn
-import androidx.glance.appwidget.lazy.items
 import androidx.glance.appwidget.lazy.itemsIndexed
 import androidx.glance.background
 import androidx.glance.layout.Alignment
@@ -39,14 +36,13 @@ import com.rodrigmatrix.weatheryou.domain.model.WidgetWeather
 import com.rodrigmatrix.weatheryou.domain.model.WidgetWeatherDay
 import com.rodrigmatrix.weatheryou.domain.model.WidgetWeatherHour
 import com.rodrigmatrix.weatheryou.widgets.R
-import java.text.SimpleDateFormat
 import java.util.Calendar
 
 
 @Composable
-fun MediumWidget(
+fun MediumLargeWidget(
     weather: WidgetWeather,
-    onWidgetClicked: Action,
+    onWidgetClicked: () -> Unit,
     showDays: Boolean,
     glanceModifier: GlanceModifier = GlanceModifier,
 ) {
@@ -55,7 +51,7 @@ fun MediumWidget(
         modifier = glanceModifier
             .background(ImageProvider(R.drawable.weather_outside_shape_widget))
             .fillMaxSize()
-            .clickable(onClick = onWidgetClicked)
+            .clickable(block = onWidgetClicked)
     ) {
         Spacer(GlanceModifier.height(8.dp))
         MediumWidgetHeader(weather)
@@ -287,8 +283,8 @@ private fun DayRow(
 }
 
 @Composable
-fun MediumWidgetLoading(
-    onWidgetClicked: Action,
+fun MediumLargeLoading(
+    onWidgetClicked: () -> Unit,
     modifier: GlanceModifier = GlanceModifier
 ) {
     Column(
@@ -297,7 +293,7 @@ fun MediumWidgetLoading(
         modifier = modifier
             .background(ImageProvider(R.drawable.weather_outside_shape_widget))
             .fillMaxSize()
-            .clickable(onClick = onWidgetClicked)
+            .clickable(block = onWidgetClicked)
     ) {
         Text(
             text = "Loading Data...",
@@ -313,9 +309,9 @@ fun MediumWidgetLoading(
 @Preview
 @Composable
 private fun MediumWidgetPreview() {
-    MediumWidget(
+    MediumLargeWidget(
         weather = PreviewWidgetWeather,
-        onWidgetClicked = FakeAction,
+        onWidgetClicked = { },
         showDays = true,
     )
 }

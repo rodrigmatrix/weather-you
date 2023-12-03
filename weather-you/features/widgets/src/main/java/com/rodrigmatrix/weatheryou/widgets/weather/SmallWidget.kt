@@ -33,7 +33,7 @@ private const val MAX_WIDTH = 186
 @Composable
 fun SmallWidget(
     weather: WidgetWeather,
-    onWidgetClicked: Action,
+    onWidgetClicked: () -> Unit,
     glanceModifier: GlanceModifier = GlanceModifier,
 ) {
     Column(
@@ -41,7 +41,7 @@ fun SmallWidget(
         modifier = glanceModifier
             .background(ImageProvider(R.drawable.weather_outside_shape_widget))
             .size(width = MAX_WIDTH.dp, height = 184.dp)
-            .clickable(onClick = onWidgetClicked)
+            .clickable(block = onWidgetClicked)
     ) {
         Spacer(GlanceModifier.height(8.dp))
         Row(
@@ -108,11 +108,9 @@ fun SmallWidget(
 private fun SmallWidgetPreview() {
     SmallWidget(
         weather = PreviewWidgetWeather,
-        onWidgetClicked = FakeAction,
+        onWidgetClicked = { },
     )
 }
-
-object FakeAction: Action
 
 val PreviewWidgetWeather = WidgetWeather(
     id = 0,

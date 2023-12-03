@@ -37,7 +37,7 @@ class OpenWeatherRemoteMapper(
             visibility = (source.current?.visibility ?: 0.0) / 1000.0,
             pressure = source.current?.pressure?.toDouble() ?: 0.0,
             days = source.daily?.mapDaysList().orEmpty(),
-            hours = source.getTodayHoursList()
+            hours = source.getTodayHoursList(),
         )
     }
 

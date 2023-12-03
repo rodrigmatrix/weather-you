@@ -4,11 +4,9 @@ import com.rodrigmatrix.weatheryou.core.extensions.catch
 import com.rodrigmatrix.weatheryou.data.local.UserLocationDataSource
 import com.rodrigmatrix.weatheryou.data.local.WeatherLocalDataSource
 import com.rodrigmatrix.weatheryou.data.mapper.WeatherLocationDomainToEntityMapper
-import com.rodrigmatrix.weatheryou.data.mapper.WeatherLocationEntityToSavedLocationMapper
 import com.rodrigmatrix.weatheryou.data.mapper.toWeatherWidgetLocationEntity
 import com.rodrigmatrix.weatheryou.data.mapper.toWidgetWeather
 import com.rodrigmatrix.weatheryou.data.remote.WeatherYouRemoteDataSource
-import com.rodrigmatrix.weatheryou.domain.model.SavedLocation
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.domain.model.WidgetWeather
 import com.rodrigmatrix.weatheryou.domain.repository.SettingsRepository
@@ -25,7 +23,6 @@ class WeatherRepositoryImpl(
     private val userLocationDataSource: UserLocationDataSource,
     private val settingsRepository: SettingsRepository,
     private val weatherLocationDomainToEntityMapper: WeatherLocationDomainToEntityMapper,
-    private val weatherLocationEntityToSavedLocationMapper: WeatherLocationEntityToSavedLocationMapper,
 ) : WeatherRepository {
 
     override fun addLocation(name: String, latitude: Double, longitude: Double): Flow<Unit> {
@@ -90,17 +87,12 @@ class WeatherRepositoryImpl(
         return weatherLocalDataSource.getAllLocations().map { locationsList -> locationsList.size }
     }
 
-    override fun getSavedLocation(): Flow<SavedLocation?> {
-        return weatherLocalDataSource.getSavedLocation()
-            .map(weatherLocationEntityToSavedLocationMapper::map)
-    }
-
     override fun updateWidgetWeather(): Flow<WidgetWeather?> {
-        return getSavedLocation().flatMapLatest { savedLocation ->
+        return getWidgetWeather().flatMapLatest { savedLocation ->
             if (savedLocation != null) {
                 fetchLocation(
-                    latitude = savedLocation.latitude,
-                    longitude = savedLocation.longitude
+                    latitude = savedLocation.lat,
+                    longitude = savedLocation.long
                 ).mapLatest {
                     it.toWidgetWeather().copy(name = savedLocation.name)
                 }
@@ -130,6 +122,16 @@ class WeatherRepositoryImpl(
                     .firstOrNull()
             }
         }
+    }
+
+    override fun setSavedLocation(weatherLocation: WeatherLocation): Flow<Unit> {
+        return weatherLocalDataSource.saveWidgetLocation(
+            weatherLocation.toWidgetWeather().toWeatherWidgetLocationEntity()
+        )
+    }
+
+    override fun deleteWidgetWeather(): Flow<Unit> {
+        return weatherLocalDataSource.deleteWidgetLocation()
     }
 
     override fun getWidgetWeather(): Flow<WidgetWeather?> {
