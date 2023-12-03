@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rodrigmatrix.weatheryou.components.R
 import com.rodrigmatrix.weatheryou.components.WeatherIcon
+import com.rodrigmatrix.weatheryou.components.extensions.getString
 import com.rodrigmatrix.weatheryou.components.preview.PreviewWeatherLocation
 import com.rodrigmatrix.weatheryou.core.extensions.getTimeZoneHourAndMinutes
 import com.rodrigmatrix.weatheryou.core.extensions.percentageString
@@ -113,13 +114,13 @@ fun CurrentWeatherContent(
                     verticalArrangement = Arrangement.SpaceBetween
                 ) {
                     WeatherIcon(
-                        weatherIcons = weatherLocation.weatherIcons,
+                        weatherCondition = weatherLocation.currentCondition,
                         modifier = Modifier
                             .padding(bottom = 10.dp)
                             .size(100.dp)
                     )
                     Text(
-                        text = weatherLocation.currentWeatherDescription.capitalize(Locale.getDefault()),
+                        text = stringResource(id = weatherLocation.currentCondition.getString()),
                         style = MaterialTheme.typography.titleSmall,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis

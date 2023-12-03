@@ -3,13 +3,12 @@ package com.rodrigmatrix.weatheryou.data.mapper
 import com.rodrigmatrix.weatheryou.data.model.openweather.OpenWeatherDaily
 import com.rodrigmatrix.weatheryou.data.model.openweather.OpenWeatherHourly
 import com.rodrigmatrix.weatheryou.data.model.openweather.OpenWeatherLocationResponse
-import com.rodrigmatrix.weatheryou.data.model.openweather.OpenWeatherMinutely
 import com.rodrigmatrix.weatheryou.domain.model.WeatherDay
 import com.rodrigmatrix.weatheryou.domain.model.WeatherHour
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 
 class OpenWeatherRemoteMapper(
-    private val weatherIconMapper: OpenWeatherIconMapper
+    private val weatherConditionMapper: OpenWeatherConditionMapper
 ) {
 
     fun map(source: OpenWeatherLocationResponse): WeatherLocation {
@@ -20,11 +19,10 @@ class OpenWeatherRemoteMapper(
             longitude = source.lon ?: 0.0,
             isCurrentLocation = false,
             currentWeather = source.current?.temp ?: 0.0,
-            currentWeatherDescription = source.current?.weather?.first()?.description.orEmpty(),
+            currentCondition = weatherConditionMapper.map(source.current?.weather?.first()?.description),
             maxTemperature = source.daily?.firstOrNull()?.temp?.max ?: 0.0,
             lowestTemperature = source.daily?.firstOrNull()?.temp?.min ?: 0.0,
             feelsLike = source.current?.feelsLike ?: 0.0,
-            weatherIcons = weatherIconMapper.map(source.current?.weather?.firstOrNull()),
             currentTime = source.current?.datetime ?: 0L,
             timeZone = source.timezone.orEmpty(),
             precipitationProbability = source.hourly.toChanceOfPrecipitation(),
@@ -39,7 +37,7 @@ class OpenWeatherRemoteMapper(
             visibility = (source.current?.visibility ?: 0.0) / 1000.0,
             pressure = source.current?.pressure?.toDouble() ?: 0.0,
             days = source.daily?.mapDaysList().orEmpty(),
-            hours = source.getTodayHoursList()
+            hours = source.getTodayHoursList(),
         )
     }
 
@@ -47,11 +45,10 @@ class OpenWeatherRemoteMapper(
         return this.map {
             WeatherDay(
                 dateTime = it.datetime ?: 0L,
-                weatherCondition = it.weather?.firstOrNull()?.main.orEmpty(),
+                weatherCondition = weatherConditionMapper.map(it.weather?.firstOrNull()?.main),
                 temperature = it.temp?.day ?: 0.0,
                 maxTemperature = it.temp?.max ?: 0.0,
                 minTemperature = it.temp?.min ?: 0.0,
-                weatherIcons = weatherIconMapper.map(it.weather?.first()),
                 precipitationProbability = it.pop.calculatePrecipitation(),
                 precipitationType = it.weather?.firstOrNull()?.main.orEmpty(),
                 windSpeed = it.windSpeed ?: 0.0,
@@ -67,9 +64,8 @@ class OpenWeatherRemoteMapper(
         return this.map {
             WeatherHour(
                 dateTime = it.datetime ?: 0L,
-                weatherCondition = it.weather?.first()?.description.orEmpty(),
+                weatherCondition = weatherConditionMapper.map(it.weather?.first()?.description),
                 temperature = it.temp ?: 0.0,
-                weatherIcons = weatherIconMapper.map(it.weather?.firstOrNull()),
                 precipitationProbability = it.pop.calculatePrecipitation(),
                 precipitationType = it.weather?.firstOrNull()?.main.orEmpty()
             )

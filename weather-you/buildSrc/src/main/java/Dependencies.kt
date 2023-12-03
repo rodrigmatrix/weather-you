@@ -1,7 +1,7 @@
 object Dependencies {
 
     // Android
-    const val androidxCore = "androidx.core:core-ktx:1.10.1"
+    const val androidxCore = "androidx.core:core-ktx:1.12.0"
     const val appCompat = "androidx.appcompat:appcompat:1.6.1"
     const val lifecycle = "androidx.lifecycle:lifecycle-runtime-ktx:${Versions.lifecycleVersion}"
     const val lifecycleViewModel = "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.lifecycleVersion}"
@@ -35,14 +35,15 @@ object Dependencies {
     const val material3 = "com.google.android.material:material:1.9.0"
 
     // Glance
-    const val glanceAppWidget = "androidx.glance:glance-appwidget:1.0.0-beta01"
+    const val glanceAppWidget = "androidx.glance:glance-appwidget:1.0.0"
+    const val glanceMaterial3 = "androidx.glance:glance-material3:1.0.0"
 
     // Koin
     const val koinAndroid = "io.insert-koin:koin-android:3.4.2"
     const val koinCompose = "io.insert-koin:koin-androidx-compose:3.4.5"
 
     // Firebase
-    const val firebaseBom = "com.google.firebase:firebase-bom:32.0.0"
+    const val firebaseBom = "com.google.firebase:firebase-bom:32.6.0"
     const val firebaseRemoteConfig = "com.google.firebase:firebase-config-ktx"
     const val firebaseMessaging= "com.google.firebase:firebase-messaging-ktx"
     const val firebaseInAppMessaging = "com.google.firebase:firebase-inappmessaging-display"
@@ -57,9 +58,12 @@ object Dependencies {
     const val okHttpLoggingInterceptor = "com.squareup.okhttp3:logging-interceptor"
 
     // Room
-    const val roomRuntime = "androidx.room:room-runtime:2.5.1"
-    const val roomCompiler = "androidx.room:room-compiler:2.5.1"
-    const val roomKtx = "androidx.room:room-ktx:2.5.1"
+    const val roomRuntime = "androidx.room:room-runtime:2.6.1"
+    const val roomCompiler = "androidx.room:room-compiler:2.6.1"
+    const val roomKtx = "androidx.room:room-ktx:2.6.1"
+
+    // Work Manager
+    const val workManager = "androidx.work:work-runtime-ktx:2.9.0"
 
     const val jodaTime = "joda-time:joda-time:2.12.5"
 
@@ -69,5 +73,5 @@ object Dependencies {
 
     const val playServicesLocation = "com.google.android.gms:play-services-location:21.0.1"
 
-    const val lottieCompose = "com.airbnb.android:lottie-compose:6.0.0"
+    const val lottieCompose = "com.airbnb.android:lottie-compose:6.2.0"
 }

@@ -1,6 +1,7 @@
 package com.rodrigmatrix.weatheryou.domain.repository
 
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
+import com.rodrigmatrix.weatheryou.domain.model.WidgetWeather
 import kotlinx.coroutines.flow.Flow
 
 interface WeatherRepository {
@@ -16,4 +17,12 @@ interface WeatherRepository {
     fun getLocalWeather(): Flow<WeatherLocation>
 
     fun getLocationsSize(): Flow<Int>
+
+    fun updateWidgetWeather(): Flow<WidgetWeather?>
+
+    fun setSavedLocation(weatherLocation: WeatherLocation): Flow<Unit>
+
+    fun deleteWidgetWeather(): Flow<Unit>
+
+    fun getWidgetWeather(): Flow<WidgetWeather?>
 }

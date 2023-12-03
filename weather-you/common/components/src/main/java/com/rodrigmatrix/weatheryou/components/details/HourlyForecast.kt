@@ -81,7 +81,7 @@ fun HourRow(hour: WeatherHour) {
             )
         }
         WeatherIcon(
-            weatherIcons = hour.weatherIcons,
+            weatherCondition = hour.weatherCondition,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(bottom = 10.dp)

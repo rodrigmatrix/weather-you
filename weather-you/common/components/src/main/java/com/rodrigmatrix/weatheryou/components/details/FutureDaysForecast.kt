@@ -20,6 +20,7 @@ import com.rodrigmatrix.weatheryou.components.WeatherYouDivider
 import com.rodrigmatrix.weatheryou.core.extensions.*
 import com.rodrigmatrix.weatheryou.domain.model.WeatherDay
 import com.rodrigmatrix.weatheryou.components.R
+import com.rodrigmatrix.weatheryou.components.extensions.getString
 
 private const val TODAY_INDEX = 0
 private const val TOMORROW_INDEX = 1
@@ -96,7 +97,7 @@ fun DayRow(day: WeatherDay, index: Int) {
                 style = MaterialTheme.typography.bodyMedium
             )
             Text(
-                text = day.weatherCondition,
+                text = stringResource(id = day.weatherCondition.getString()),
                 modifier = Modifier.padding(bottom = 10.dp),
                 style = MaterialTheme.typography.bodyMedium
             )
@@ -104,7 +105,7 @@ fun DayRow(day: WeatherDay, index: Int) {
         Row {
             Column {
                 WeatherIcon(
-                    weatherIcons = day.weatherIcons,
+                    weatherCondition = day.weatherCondition,
                     modifier = Modifier.size(42.dp)
                 )
                 if (day.precipitationType.isNotEmpty()) {

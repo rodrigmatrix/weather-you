@@ -2,7 +2,6 @@ package com.rodrigmatrix.weatheryou.domain.stub
 
 import com.rodrigmatrix.weatheryou.domain.model.WeatherDay
 import com.rodrigmatrix.weatheryou.domain.model.WeatherHour
-import com.rodrigmatrix.weatheryou.domain.model.WeatherIcons
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 
 internal fun createWeatherLocation(

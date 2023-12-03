@@ -50,6 +50,7 @@ dependencies {
 
     implementation(Dependencies.composeUi)
     implementation(Dependencies.glanceAppWidget)
+    implementation(Dependencies.glanceMaterial3)
     implementation(Dependencies.composePreview)
     implementation(Dependencies.composeNavigation)
 

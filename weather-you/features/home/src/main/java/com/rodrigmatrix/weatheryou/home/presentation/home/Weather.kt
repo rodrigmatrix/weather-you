@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -21,8 +20,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.components.WeatherLocationCardContent
 import com.rodrigmatrix.weatheryou.components.WeatherYouCard
+import com.rodrigmatrix.weatheryou.components.preview.PreviewWeatherList
+import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
-import com.rodrigmatrix.weatheryou.home.presentation.preview.PreviewWeatherList
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -88,7 +88,7 @@ fun WeatherLocation(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun WeatherLocationPreview() {
-    MaterialTheme {
+    WeatherYouTheme {
         WeatherLocationList(
             weatherLocationList = PreviewWeatherList,
             selectedLocation = null,

@@ -52,9 +52,10 @@ import com.rodrigmatrix.weatheryou.components.R
 import com.rodrigmatrix.weatheryou.components.ScreenContentType
 import com.rodrigmatrix.weatheryou.components.ScreenNavigationType
 import com.rodrigmatrix.weatheryou.components.WeatherIcon
-import com.rodrigmatrix.weatheryou.domain.model.WeatherIcons
+import com.rodrigmatrix.weatheryou.components.preview.PreviewWeatherList
+import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
+import com.rodrigmatrix.weatheryou.domain.model.WeatherCondition
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
-import com.rodrigmatrix.weatheryou.home.presentation.preview.PreviewWeatherList
 import com.rodrigmatrix.weatheryou.locationdetails.presentaion.details.WeatherDetailsScreen
 
 @OptIn(ExperimentalPermissionsApi::class)
@@ -254,10 +255,7 @@ fun WeatherLocationsEmptyState(
             .padding(start = 16.dp, end = 16.dp, bottom = 200.dp)
     ) {
         WeatherIcon(
-            weatherIcons = WeatherIcons(
-                com.rodrigmatrix.weatheryou.weathericons.R.raw.weather_cloudynight,
-                com.rodrigmatrix.weatheryou.weathericons.R.drawable.ic_weather_cloudynight
-            ),
+            weatherCondition = WeatherCondition.PARTLY_CLOUDY_NIGHT,
             modifier = Modifier
                 .size(120.dp)
                 .padding(10.dp)
@@ -376,7 +374,7 @@ fun SearchLocationBar(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun HomeScreenPreview() {
-    MaterialTheme {
+    WeatherYouTheme {
         HomeScreen(
             homeUiState = HomeUiState(
                 locationsList = PreviewWeatherList,
@@ -400,7 +398,7 @@ fun HomeScreenPreview() {
 @Preview(device = Devices.PIXEL_C, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun HomeScreenWithLocationPreview() {
-    MaterialTheme {
+    WeatherYouTheme {
         HomeScreen(
             homeUiState = HomeUiState(
                 locationsList = PreviewWeatherList,

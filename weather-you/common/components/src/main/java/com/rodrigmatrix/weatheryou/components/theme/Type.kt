@@ -1,4 +1,4 @@
-package com.rodrigmatrix.weatheryou.presentation.theme
+package com.rodrigmatrix.weatheryou.components.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

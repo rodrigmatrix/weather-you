@@ -2,7 +2,6 @@ package com.rodrigmatrix.weatheryou.tv.presentation.home
 
 import com.rodrigmatrix.weatheryou.domain.model.WeatherDay
 import com.rodrigmatrix.weatheryou.domain.model.WeatherHour
-import com.rodrigmatrix.weatheryou.domain.model.WeatherIcons
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.weathericons.R
 

@@ -24,6 +24,7 @@ import com.rodrigmatrix.weatheryou.components.WeatherYouLargeAppBar
 import com.rodrigmatrix.weatheryou.components.WeatherYouSmallAppBar
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.components.R
+import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.locationdetails.presentaion.preview.PreviewFutureDaysForecast
 import com.rodrigmatrix.weatheryou.locationdetails.presentaion.preview.PreviewHourlyForecast
 import com.rodrigmatrix.weatheryou.locationdetails.presentaion.preview.PreviewWeatherLocation
@@ -35,7 +36,7 @@ fun WeatherDetailsScreen(
     onCloseClick: () -> Unit,
     isFullScreen: Boolean,
     onDeleteLocationClicked: () -> Unit,
-    viewModel: WeatherDetailsViewModel = getViewModel()
+    viewModel: WeatherDetailsViewModel = getViewModel(),
 ) {
     val viewState by viewModel.viewState.collectAsState()
     viewModel.setWeatherLocation(weatherLocation)
@@ -241,12 +242,12 @@ fun ExpandedTopAppBar(
 @Preview(uiMode = UI_MODE_NIGHT_YES)
 @Composable
 fun WeatherDetailsScreenPreview() {
-    MaterialTheme {
+    WeatherYouTheme {
         WeatherDetailsScreen(
             viewState = WeatherDetailsViewState(
                 weatherLocation = PreviewWeatherLocation,
                 todayWeatherHoursList = PreviewHourlyForecast,
-                futureDaysList = PreviewFutureDaysForecast
+                futureDaysList = PreviewFutureDaysForecast,
             ),
             isFullScreen = false,
             onExpandedButtonClick = { },
@@ -260,7 +261,7 @@ fun WeatherDetailsScreenPreview() {
 @Preview(device = Devices.PIXEL_C, uiMode = UI_MODE_NIGHT_YES)
 @Composable
 fun WeatherDetailsScreenTabletPreview() {
-    MaterialTheme {
+    WeatherYouTheme {
         WeatherDetailsScreen(
             viewState = WeatherDetailsViewState(
                 weatherLocation = PreviewWeatherLocation,

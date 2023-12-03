@@ -18,7 +18,7 @@ android {
         minSdk Sdk.phoneMinSdk
         targetSdk Sdk.targetSdk
         versionCode Sdk.versionCode
-        versionName "2.1.1"
+        versionName "2.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -120,6 +120,8 @@ dependencies {
     implementation(Dependencies.firebaseInAppMessaging)
     implementation(Dependencies.firebaseCrashlytics)
     implementation(Dependencies.firebaseAnalytics)
+
+    implementation(Dependencies.workManager)
 
     implementation(Dependencies.playServicesLocation)
 

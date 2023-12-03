@@ -30,6 +30,7 @@ import androidx.compose.ui.tooling.preview.Devices.PIXEL_C
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.about.R
+import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.components.R as Strings
 import com.rodrigmatrix.weatheryou.presentation.about.model.SocialNetwork
 
@@ -120,7 +121,7 @@ private fun SocialNetwork(socialNetwork: SocialNetwork) {
 @Preview(name = "Tablet", uiMode = Configuration.UI_MODE_NIGHT_YES, device = PIXEL_C)
 @Composable
 fun AboutScreenPreview() {
-    MaterialTheme {
+    WeatherYouTheme {
         AboutScreen()
     }
 }
