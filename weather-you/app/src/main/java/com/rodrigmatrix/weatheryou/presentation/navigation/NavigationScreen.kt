@@ -133,7 +133,8 @@ fun HomeNavigationScreen(
             viewModel.deleteLocation(
                 navigationType = navigationType
             )
-        }
+        },
+        onPermissionGranted = viewModel::onPermissionGranted,
     )
 }
 
@@ -151,6 +152,7 @@ private fun ScreenNavigationWrapper(
     onDeleteLocationClicked: () -> Unit,
     onSwipeRefresh: () -> Unit,
     onAddLocation: () -> Unit,
+    onPermissionGranted: () -> Unit,
     onDeleteLocationConfirmButtonClicked: () -> Unit,
 ) {
     val navigationActions = remember(navController) {
@@ -171,6 +173,7 @@ private fun ScreenNavigationWrapper(
         onLocationSelected = onLocationSelected,
         onAddLocation = onAddLocation,
         navigateToTopLevelDestination = navigationActions::navigateTo,
+        onPermissionGranted = onPermissionGranted,
         onDeleteLocationConfirmButtonClicked = onDeleteLocationConfirmButtonClicked,
     )
 }
@@ -191,6 +194,7 @@ fun ScreenAppContent(
     onDeleteLocationClicked: () -> Unit,
     onDeleteLocationConfirmButtonClicked: () -> Unit,
     onAddLocation: () -> Unit,
+    onPermissionGranted: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(modifier = modifier.fillMaxSize()) {
@@ -218,6 +222,7 @@ fun ScreenAppContent(
                 onLocationSelected = onLocationSelected,
                 onAddLocation = onAddLocation,
                 onDeleteLocationConfirmButtonClicked = onDeleteLocationConfirmButtonClicked,
+                onPermissionGranted = onPermissionGranted,
                 navController = navController,
                 modifier = Modifier.weight(1f),
             )

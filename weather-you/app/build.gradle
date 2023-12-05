@@ -18,7 +18,7 @@ android {
         minSdk Sdk.phoneMinSdk
         targetSdk Sdk.targetSdk
         versionCode Sdk.versionCode
-        versionName "2.2"
+        versionName "2.2.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -37,7 +37,10 @@ android {
     buildTypes {
         release {
             minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
         debug {
             minifyEnabled false
@@ -60,6 +63,7 @@ android {
     }
     buildFeatures {
         compose true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion Versions.composeCompilerVersion
