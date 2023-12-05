@@ -14,6 +14,8 @@ object Dependencies {
     const val kotlinSerialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1"
     const val coroutinesPlayServices = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:${Versions.coroutinesVersion}"
 
+    const val multidex = "androidx.multidex:multidex:2.0.1"
+
     // Compose
     const val composeUi = "androidx.compose.ui:ui:${Versions.composeVersion}"
     const val composeRuntime = "androidx.compose.runtime:runtime:${Versions.composeVersion}"

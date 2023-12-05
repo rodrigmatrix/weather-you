@@ -10,7 +10,7 @@ class SearchLocationUseCase(
 ) {
 
     operator fun invoke(query: String): Flow<List<SearchAutocompleteLocation>> {
-        if (query.length <= 3) {
+        if (query.length < 3) {
             return flowOf(emptyList())
         }
         return searchRepository.searchLocation(query)

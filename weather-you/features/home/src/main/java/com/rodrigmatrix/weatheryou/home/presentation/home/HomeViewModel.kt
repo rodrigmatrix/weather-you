@@ -27,6 +27,8 @@ class HomeViewModel(
         loadLocations()
     }
 
+    private var hasRefreshedLocations: Boolean = false
+
     fun loadLocations() {
         viewModelScope.launch {
             fetchLocationsUseCase()
@@ -109,6 +111,13 @@ class HomeViewModel(
             null
         } else {
             weatherLocation
+        }
+    }
+
+    fun onPermissionGranted() {
+        if (!hasRefreshedLocations) {
+            loadLocations()
+            hasRefreshedLocations = true
         }
     }
 

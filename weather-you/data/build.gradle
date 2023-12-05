@@ -11,6 +11,10 @@ android {
     namespace 'com.rodrigmatrix.weatheryou.data'
     compileSdk Sdk.compileSdk
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     defaultConfig {
         minSdk Sdk.phoneMinSdk
         targetSdk Sdk.targetSdk

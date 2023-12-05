@@ -4,10 +4,10 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class NinjasCityResponse(
-    val country: String?,
-    val is_capital: Boolean?,
-    val latitude: Double?,
-    val longitude: Double?,
-    val name: String?,
-    val population: Int?
+    val country: String? = null,
+    val is_capital: Boolean? = null,
+    val latitude: Double? = null,
+    val longitude: Double? = null,
+    val name: String? = null,
+    val population: Int? = null,
 )
