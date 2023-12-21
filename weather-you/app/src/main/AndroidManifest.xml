@@ -17,8 +17,9 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/Theme.WeatherYou"
-        tools:targetApi="31"
-        android:name=".WeatherYouApp">
+        android:name=".WeatherYouApp"
+        android:localeConfig="@xml/locales_config"
+        tools:targetApi="tiramisu">
         <activity
             android:name=".presentation.navigation.MainActivity"
             android:exported="true">

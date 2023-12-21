@@ -146,20 +146,6 @@ fun LocationSelectList(
         itemsIndexed(locationsList) { index, item ->
             LocationItem(item, index, scrollState, onLocationClick)
         }
-        if (locationsList.isNotEmpty()) {
-            item {
-                Column(Modifier.fillMaxWidth()) {
-                    Image(
-                        painter = painterResource(R.drawable.powered_by_google),
-                        contentDescription = stringResource(Strings.string.powered_by_google),
-                        modifier = Modifier
-                            .padding(start = 20.dp, end = 20.dp, top = 10.dp)
-                            .size(width = 130.dp, height = 50.dp)
-                            .align(Alignment.End)
-                    )
-                }
-            }
-        }
     }
 }
 

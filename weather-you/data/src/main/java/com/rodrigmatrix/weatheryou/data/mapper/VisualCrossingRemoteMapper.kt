@@ -68,7 +68,7 @@ class VisualCrossingRemoteMapper(
         }
     }
 
-    fun String.hasLetters() = any { it.isLetter() }
+    private fun String.hasLetters() = any { it.isLetter() }
 
     private fun List<HourResponse>.mapHoursList(): List<WeatherHour> {
         return this.map {

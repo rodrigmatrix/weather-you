@@ -27,7 +27,7 @@ fun String.getTimeZoneHourAndMinutes(context: Context): String {
 
 fun Long.getLocalTime(): LocalTime {
     return try {
-        return DateTime(this.toUnixTimestamp()).toLocalTime()
+        return DateTime(this).toLocalTime()
     } catch (e: Exception) {
         LocalTime()
     }
@@ -43,7 +43,7 @@ fun Long.getHoursAndMinutesDiff(second: Long): Pair<Int, Int> {
 
 fun Long.getHourWithMinutesString(context: Context): String {
     return try {
-        val localTime = LocalTime(this.toUnixTimestamp())
+        val localTime = LocalTime(this)
         val pattern = if (DateFormat.is24HourFormat(context)) {
             "HH:mm"
         } else {
@@ -57,7 +57,7 @@ fun Long.getHourWithMinutesString(context: Context): String {
 
 fun Long.getHourString(context: Context): String {
     return try {
-        val localTime = LocalTime(this.toUnixTimestamp())
+        val localTime = LocalTime(this)
         val pattern = if (DateFormat.is24HourFormat(context)) {
             "HH:mm"
         } else {
@@ -71,11 +71,9 @@ fun Long.getHourString(context: Context): String {
 
 fun Long.getDateWithMonth(): String {
     return try {
-        val date = DateTime(this.toUnixTimestamp()).toDate()
+        val date = DateTime(this).toDate()
         SimpleDateFormat("EEEE, MMM dd", Locale.getDefault()).format(date)
     } catch (e: Exception) {
         ""
     }
 }
-
-private fun Long.toUnixTimestamp(): Long = this * 1000L
