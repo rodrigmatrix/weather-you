@@ -24,6 +24,8 @@ import com.rodrigmatrix.weatheryou.core.extensions.getHourWithMinutesString
 import com.rodrigmatrix.weatheryou.core.extensions.getHoursAndMinutesDiff
 import com.rodrigmatrix.weatheryou.core.extensions.getLocalTime
 import com.rodrigmatrix.weatheryou.components.R
+import com.rodrigmatrix.weatheryou.components.WeatherYouCard
+import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 
 @Composable
 fun SunriseSunsetCardContent(
@@ -33,6 +35,8 @@ fun SunriseSunsetCardContent(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
+    val sunriseHourInt = sunriseHour.getLocalTime().hourOfDay
+    val sunsetHourInt = sunsetHour.getLocalTime().hourOfDay
     Column(
         verticalArrangement = Arrangement.SpaceBetween,
         modifier = modifier.padding(
@@ -57,8 +61,16 @@ fun SunriseSunsetCardContent(
         }
         Box {
             SunriseSunsetVisualizer(
-                sunriseHour = sunriseHour.getLocalTime().hourOfDay,
-                sunsetHour = sunsetHour.getLocalTime().hourOfDay,
+                sunriseHour = if (sunriseHourInt > sunsetHourInt) {
+                    sunsetHourInt
+                } else {
+                    sunriseHourInt
+                },
+                sunsetHour = if (sunsetHourInt < sunriseHourInt) {
+                    sunriseHourInt
+                } else {
+                    sunsetHourInt
+                },
                 currentHour = currentTime.getLocalTime().hourOfDay,
                 modifier = Modifier.height(140.dp)
             )
@@ -211,23 +223,31 @@ private fun SunriseSunsetVisualizer(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun SunriseSunsetCardPreview() {
-    MaterialTheme {
+    WeatherYouTheme {
         Column {
-            SunriseSunsetCardContent(
-                sunriseHour = 0,
-                sunsetHour = 0,
-                currentTime = 0
-            )
-            SunriseSunsetCardContent(
-                sunriseHour = 0,
-                sunsetHour = 0,
-                currentTime = 0
-            )
-            SunriseSunsetCardContent(
-                sunriseHour = 0,
-                sunsetHour = 0,
-                currentTime = 0
-            )
+            WeatherYouCard {
+                SunriseSunsetCardContent(
+                    sunriseHour = 0,
+                    sunsetHour = 0,
+                    currentTime = 0
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            WeatherYouCard {
+                SunriseSunsetCardContent(
+                    sunriseHour = 0,
+                    sunsetHour = 0,
+                    currentTime = 0
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            WeatherYouCard {
+                SunriseSunsetCardContent(
+                    sunriseHour = 0,
+                    sunsetHour = 0,
+                    currentTime = 0
+                )
+            }
         }
     }
 }
