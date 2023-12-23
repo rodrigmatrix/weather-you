@@ -61,16 +61,8 @@ fun SunriseSunsetCardContent(
         }
         Box {
             SunriseSunsetVisualizer(
-                sunriseHour = if (sunriseHourInt > sunsetHourInt) {
-                    sunsetHourInt
-                } else {
-                    sunriseHourInt
-                },
-                sunsetHour = if (sunsetHourInt < sunriseHourInt) {
-                    sunriseHourInt
-                } else {
-                    sunsetHourInt
-                },
+                sunriseHour = sunriseHourInt,
+                sunsetHour = sunsetHourInt,
                 currentHour = currentTime.getLocalTime().hourOfDay,
                 modifier = Modifier.height(140.dp)
             )
