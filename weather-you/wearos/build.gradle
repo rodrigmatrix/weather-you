@@ -1,5 +1,3 @@
-import Dependencies
-
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
@@ -53,33 +51,34 @@ dependencies {
     implementation project(LocalModules.data)
     implementation project(LocalModules.core)
 
-    implementation(Dependencies.androidxCore)
-    implementation(Dependencies.lifecycle)
-    implementation(Dependencies.splashScreen)
+    implementation(libs.androidx.ktx)
+    implementation(libs.androidx.lifecycle)
+    implementation(libs.androidx.splash.screen)
 
-    implementation(Dependencies.composeUi)
-    implementation(WearOsDependencies.composeMaterial)
-    implementation(WearOsDependencies.composeFoundation)
-    implementation(Dependencies.composeMaterial2)
-    implementation(Dependencies.composePreview)
-    implementation(Dependencies.composeActivity)
-    implementation(Dependencies.accompanistPermissions)
-    implementation(Dependencies.composeConstraintLayout)
+     implementation platform(libs.compose.bom)
+    implementation(libs.compose.ui)
+    implementation(libs.compose.wearable.material)
+    implementation(libs.compose.wearable.foundation)
+    implementation(libs.android.material)
+    implementation(libs.compose.preview)
+    implementation(libs.compose.activity)
+    implementation(libs.accompanist.permissions)
+    implementation(libs.compose.constraint.layout)
 
-    implementation platform(Dependencies.firebaseBom)
-    implementation(Dependencies.firebaseRemoteConfig)
-    implementation(Dependencies.firebaseCrashlytics)
-    implementation(Dependencies.firebaseAnalytics)
+    implementation platform(libs.firebase.bom)
+    implementation(libs.firebase.remote.config)
+    implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.analytics)
 
-    implementation(Dependencies.lottieCompose)
+    implementation(libs.lottie.compose)
 
-    implementation(Dependencies.koinAndroid)
-    implementation(Dependencies.koinCompose)
+    implementation(libs.koin.android)
+    implementation(libs.koin.compose)
 
-    implementation(WearOsDependencies.playServicesWearable)
+    implementation(libs.playServices.wearable)
 
-    debugImplementation(TestDependencies.composeUiTooling)
-    debugImplementation(TestDependencies.composeTestManifest)
+    debugImplementation(libs.composeUiTooling)
+    debugImplementation(libs.composeTestManifest)
 
-    androidTestImplementation(TestDependencies.composeUiTestJunit)
+    androidTestImplementation(libs.composeUiTestJunit)
 }

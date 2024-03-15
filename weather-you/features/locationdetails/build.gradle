@@ -1,4 +1,4 @@
-import Dependencies
+
 
 plugins {
     id("com.android.library")
@@ -23,14 +23,14 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-    kotlin.sourceSets.all {
+    kotlin.sourceSets.configureEach {
         languageSettings.optIn("kotlin.RequiresOptIn")
     }
     buildFeatures {
         compose true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion Versions.composeCompilerVersion
+        kotlinCompilerExtensionVersion libs.versions.composeCompilerVersion.get()
     }
 }
 
@@ -40,39 +40,43 @@ dependencies {
     implementation project(LocalModules.components)
     implementation project(LocalModules.weatherIcons)
 
-    implementation(Dependencies.androidxCore)
-    implementation(Dependencies.lifecycle)
-    implementation(Dependencies.androidxWindow)
+    implementation(libs.androidx.ktx)
+    implementation(libs.androidx.lifecycle)
+    implementation(libs.androidx.window)
 
-    implementation(Dependencies.kotlinStdlib)
-    implementation(Dependencies.kotlinCoroutinesAndroid)
-    implementation(Dependencies.kotlinSerialization)
+    implementation(libs.kotlin.stdlib)
+    implementation(libs.kotlin.coroutines.android)
+    implementation(libs.kotlin.serialization)
 
-    implementation(Dependencies.composeUi)
-    implementation(Dependencies.composeRuntime)
-    implementation(Dependencies.composeMaterial3)
-    implementation(Dependencies.composeMaterial2)
-    implementation(Dependencies.composePreview)
-    implementation(Dependencies.composeActivity)
-    implementation(Dependencies.composeNavigation)
-    implementation(Dependencies.composeConstraintLayout)
-    implementation(Dependencies.accompanistNavigation)
-    implementation(Dependencies.accompanistPermissions)
+    implementation platform(libs.compose.bom)
+    implementation(libs.compose.ui)
+    implementation(libs.compose.runtime)
+    implementation(libs.compose.material3)
+    implementation(libs.compose.material)
+    implementation(libs.compose.preview)
+    implementation(libs.compose.activity)
+    implementation(libs.compose.navigation)
+    implementation(libs.compose.constraint.layout)
+    implementation(libs.compose.navigation)
+    implementation(libs.compose.window.size)
+    implementation(libs.accompanist.permissions)
+    implementation(libs.accompanist.navigation)
+    implementation(libs.accompanist.adaptive)
 
-    implementation(Dependencies.koinAndroid)
-    implementation(Dependencies.koinCompose)
+    implementation(libs.koin.android)
+    implementation(libs.koin.compose)
 
-    implementation(Dependencies.jodaTime)
+    implementation(libs.jodaTime)
 
-    implementation(Dependencies.coil)
+    implementation(libs.coil)
 
-    implementation(Dependencies.lottieCompose)
+    implementation(libs.lottie.compose)
 
-    debugImplementation(TestDependencies.composeUiTooling)
-    debugImplementation(TestDependencies.composeTestManifest)
+    debugImplementation(libs.composeUiTooling)
+    debugImplementation(libs.composeTestManifest)
 
-    testImplementation(TestDependencies.junit)
-    androidTestImplementation(TestDependencies.testExtJunit)
-    androidTestImplementation(TestDependencies.espressoCore)
-    androidTestImplementation(TestDependencies.composeUiTestJunit)
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.testExtJunit)
+    androidTestImplementation(libs.espresso.core)
+    androidTestImplementation(libs.composeUiTestJunit)
 }

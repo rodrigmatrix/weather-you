@@ -1,0 +1,144 @@
+[versions]
+firebaseCrashlyticsGradle = "2.9.9"
+googleServices = "4.4.1"
+gradle = "8.3.0"
+ktx = "1.12.0"
+composeCompilerVersion = "1.5.10"
+kotlinVersion = "1.9.22"
+coroutinesVersion = "1.8.0"
+composeBomVersion = "2024.02.02"
+composeTvVersion = "1.0.0-alpha10"
+accompanistNavigation = "0.16.1"
+accompanistPermissions = "0.24.0-alpha"
+accompanistAdaptive = "0.31.1-alpha"
+appCompat = "1.6.1"
+lifecycle = "2.7.0"
+androidxWindow = "1.2.0"
+splashScreen = "1.0.1"
+multidex = "2.0.1"
+kotlinSerialization = "1.5.1"
+koinAndroid = "3.4.2"
+koinCompose = "3.4.5"
+glanceAppWidget = "1.0.0"
+firebaseBom = "32.7.4"
+retrofit = "2.9.0"
+okHttp = "4.11.0"
+retrofitKotlinx = "1.0.0"
+room = "2.6.1"
+workManager = "2.9.0"
+jodaTime = "2.12.5"
+gson = "2.10.1"
+coil = "2.3.0"
+playServicesLocation = "21.2.0"
+lottieCompose = "6.2.0"
+composeConstraintLayout = "1.0.1"
+material = "1.11.0"
+junit = "4.13.2"
+testExtJunit = "1.1.5"
+composeJunit4 = "1.6.3"
+espressoCore = "3.5.1"
+mockk = "1.13.10"
+turbine = "1.1.0"
+playServicesWearable = "18.1.0"
+composeWearOS = "1.3.0"
+
+[libraries]
+# Android
+firebase-crashlytics-gradle = { module = "com.google.firebase:firebase-crashlytics-gradle", version.ref = "firebaseCrashlyticsGradle" }
+google-services = { module = "com.google.gms:google-services", version.ref = "googleServices" }
+gradle = { module = "com.android.tools.build:gradle", version.ref = "gradle" }
+androidx-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "ktx" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appCompat" }
+androidx-lifecycle = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
+androidx-lifecycle-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
+androidx-window = { group = "androidx.window", name = "window", version.ref = "androidxWindow" }
+androidx-splash-screen = { group = "androidx.core", name = "core-splashscreen", version.ref = "splashScreen" }
+androidx-multidex = { group = "androidx.multidex", name = "multidex", version.ref = "multidex" }
+android-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+
+# Compose
+compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBomVersion" }
+compose-ui = { group = "androidx.compose.ui", name = "ui" }
+compose-runtime = { group = "androidx.compose.runtime", name = "runtime" }
+compose-material3 = { group = "androidx.compose.material3", name = "material3" }
+compose-material = { group = "androidx.compose.material", name = "material" }
+compose-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+compose-activity = { group = "androidx.activity", name = "activity-compose" }
+compose-navigation = { group = "androidx.navigation", name = "navigation-compose" }
+compose-constraint-layout = { group = "androidx.constraintlayout", name = "constraintlayout-compose", version.ref = "composeConstraintLayout" }
+compose-window-size = { group = "androidx.compose.material3", name = "material3-window-size-class" }
+compose-compiler = { module = "androidx.compose.compiler:compiler", version.ref = "composeCompilerVersion" }
+
+# Compose TV
+compose-tv-foundation = { group = "androidx.tv", name = "tv-foundation", version.ref = "composeTvVersion" }
+compose-tv-material = { group = "androidx.tv", name = "tv-material", version.ref = "composeTvVersion" }
+
+# Glance App Widget
+glanceAppWidget = { group = "androidx.glance", name = "glance-appwidget", version.ref = "glanceAppWidget" }
+glanceAppWidget-material3 = { group = "androidx.glance", name = "glance-material3", version.ref = "glanceAppWidget" }
+
+# Accompanist
+accompanist-navigation = { group = "com.google.accompanist", name = "accompanist-navigation-animation", version.ref = "accompanistNavigation" }
+accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanistPermissions" }
+accompanist-adaptive = { group = "com.google.accompanist", name = "accompanist-adaptive", version.ref = "accompanistAdaptive" }
+
+# Kotlin
+jetbrains-kotlin-serialization = { module = "org.jetbrains.kotlin:kotlin-serialization", version.ref = "kotlinVersion" }
+kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlinVersion" }
+kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk8", version.ref = "kotlinVersion" }
+kotlin-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutinesVersion" }
+kotlin-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinSerialization" }
+coroutines-playServices = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-play-services", version.ref = "coroutinesVersion" }
+
+# Koin
+koin-android = { group = "io.insert-koin", name = "koin-android", version.ref = "koinAndroid" }
+koin-compose = { group = "io.insert-koin", name = "koin-androidx-compose", version.ref = "koinCompose" }
+
+# Firebase
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
+firebase-remote-config = { group = "com.google.firebase", name = "firebase-config-ktx" }
+firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging-ktx" }
+firebase-inAppMessaging = { group = "com.google.firebase", name = "firebase-inappmessaging-display" }
+firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics-ktx" }
+firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics-ktx" }
+firebase-database = { group = "com.google.firebase", name = "firebase-database-ktx" }
+
+# Retrofit
+retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+okHttp = { group = "com.squareup.okhttp3", name = "okhttp-bom", version.ref = "okHttp" }
+retrofit-kotlinx-converter = { group = "com.jakewharton.retrofit", name = "retrofit2-kotlinx-serialization-converter", version.ref = "retrofitKotlinx" }
+okHttp-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor" }
+
+# Room
+room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+
+# Wear
+playServices-wearable = { group = "com.google.android.gms", name = "play-services-wearable", version.ref = "playServicesWearable" }
+compose-wearable-material = { group = "androidx.wear.compose", name = "compose-material", version.ref = "composeWearOS" }
+compose-wearable-foundation = { group = "androidx.wear.compose", name = "compose-foundation", version.ref = "composeWearOS" }
+
+workManager = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workManager" }
+
+jodaTime = { group = "joda-time", name = "joda-time", version.ref = "jodaTime" }
+
+gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
+
+coil = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
+
+playServices-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
+
+lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottieCompose" }
+
+# Test Dependencies
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+testExtJunit = { group = "androidx.test.ext", name = "junit", version.ref = "testExtJunit" }
+espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+composeUiTestJunit = { group = "androidx.compose.ui", name = "ui-test-junit4", version.ref = "composeJunit4" }
+composeUiTooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+composeTestManifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
+
+[plugins]

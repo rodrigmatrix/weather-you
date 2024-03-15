@@ -1,5 +1,3 @@
-import Dependencies
-
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
@@ -51,7 +49,7 @@ android {
     kotlinOptions {
         jvmTarget = '17'
     }
-    kotlin.sourceSets.all {
+    kotlin.sourceSets.configureEach {
         languageSettings.optIn("kotlin.RequiresOptIn")
     }
 }
@@ -61,38 +59,38 @@ dependencies {
     implementation project(LocalModules.domain)
     implementation project(LocalModules.weatherIcons)
 
-    implementation(Dependencies.androidxCore)
-    implementation(Dependencies.lifecycle)
-    implementation(Dependencies.androidxWindow)
+    implementation(libs.androidx.ktx)
+    implementation(libs.androidx.lifecycle)
+    implementation(libs.androidx.window)
 
-    implementation(Dependencies.kotlinStdlib)
-    implementation(Dependencies.kotlinCoroutinesAndroid)
-    implementation(Dependencies.kotlinSerialization)
-    implementation(Dependencies.coroutinesPlayServices)
+    implementation(libs.kotlin.stdlib)
+    implementation(libs.kotlin.coroutines.android)
+    implementation(libs.kotlin.serialization)
+    implementation(libs.coroutines.playServices)
 
-    implementation platform(Dependencies.firebaseBom)
-    implementation(Dependencies.firebaseRemoteConfig)
-    implementation(Dependencies.firebaseAnalytics)
-    implementation(Dependencies.firebaseDatabase)
+    implementation platform(libs.firebase.bom)
+    implementation(libs.firebase.remote.config)
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.database)
 
-    implementation(Dependencies.roomRuntime)
-    kapt(Dependencies.roomCompiler)
-    implementation(Dependencies.roomKtx)
+    implementation(libs.room.runtime)
+    kapt(libs.room.compiler)
+    implementation(libs.room.ktx)
 
-    implementation(Dependencies.workManager)
+    implementation(libs.workManager)
 
-    implementation(Dependencies.retrofit)
-    implementation(platform(Dependencies.okHttp))
-    implementation(Dependencies.retrofitKotlinx)
-    implementation(Dependencies.okHttpLoggingInterceptor)
+    implementation(libs.retrofit)
+    implementation(platform(libs.okHttp))
+    implementation(libs.retrofit.kotlinx.converter)
+    implementation(libs.okHttp.interceptor)
 
-    implementation(Dependencies.koinAndroid)
+    implementation(libs.koin.android)
 
-    implementation(Dependencies.jodaTime)
+    implementation(libs.jodaTime)
 
-    implementation(Dependencies.playServicesLocation)
+    implementation(libs.playServices.location)
 
-    testImplementation(TestDependencies.junit)
-    testImplementation(TestDependencies.mockk)
-    testImplementation(TestDependencies.turbine)
+    testImplementation(libs.junit)
+    testImplementation(libs.mockk)
+    testImplementation(libs.turbine)
 }

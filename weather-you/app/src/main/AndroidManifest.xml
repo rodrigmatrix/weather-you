@@ -19,9 +19,11 @@
         android:theme="@style/Theme.WeatherYou"
         android:name=".WeatherYouApp"
         android:localeConfig="@xml/locales_config"
+        android:enableOnBackInvokedCallback="true"
         tools:targetApi="tiramisu">
         <activity
             android:name=".presentation.navigation.MainActivity"
+            android:enableOnBackInvokedCallback="true"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

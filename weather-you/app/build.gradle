@@ -1,5 +1,3 @@
-import Dependencies
-
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
@@ -66,7 +64,7 @@ android {
         buildConfig = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion Versions.composeCompilerVersion
+       kotlinCompilerExtensionVersion libs.versions.composeCompilerVersion.get()
     }
     packagingOptions {
         resources {
@@ -90,58 +88,60 @@ dependencies {
     implementation project(LocalModules.locationDetails)
     implementation project(LocalModules.widgets)
 
-    implementation(Dependencies.material3)
+    implementation(libs.android.material)
 
-    implementation(Dependencies.androidxCore)
-    implementation(Dependencies.lifecycle)
-    implementation(Dependencies.androidxWindow)
+    implementation(libs.androidx.ktx)
+    implementation(libs.androidx.lifecycle)
+    implementation(libs.androidx.window)
 
-    implementation(Dependencies.kotlinStdlib)
-    implementation(Dependencies.kotlinCoroutinesAndroid)
-    implementation(Dependencies.kotlinSerialization)
+    implementation(libs.kotlin.stdlib)
+    implementation(libs.kotlin.coroutines.android)
+    implementation(libs.kotlin.serialization)
 
-    implementation(Dependencies.composeUi)
-    implementation(Dependencies.composeRuntime)
-    implementation(Dependencies.composeMaterial3)
-    implementation(Dependencies.composeMaterial2)
-    implementation(Dependencies.composePreview)
-    implementation(Dependencies.composeActivity)
-    implementation(Dependencies.composeNavigation)
-    implementation(Dependencies.composeConstraintLayout)
-    implementation(Dependencies.accompanistNavigation)
-    implementation(Dependencies.accompanistPermissions)
-    implementation(Dependencies.composeWindowSizeClass)
-    implementation(Dependencies.accompanistAdaptive)
+    implementation platform(libs.compose.bom)
+    implementation(libs.compose.ui)
+    implementation(libs.compose.runtime)
+    implementation(libs.compose.material3)
+    implementation(libs.compose.material)
+    implementation(libs.compose.preview)
+    implementation(libs.compose.activity)
+    implementation(libs.compose.navigation)
+    implementation(libs.compose.constraint.layout)
+    implementation(libs.compose.navigation)
+    implementation(libs.compose.window.size)
+    implementation(libs.accompanist.permissions)
+    implementation(libs.accompanist.navigation)
+    implementation(libs.accompanist.adaptive)
 
-    implementation(Dependencies.glanceAppWidget)
+    implementation(libs.glanceAppWidget)
 
-    implementation(Dependencies.koinAndroid)
-    implementation(Dependencies.koinCompose)
+    implementation(libs.koin.android)
+    implementation(libs.koin.compose)
 
-    implementation platform(Dependencies.firebaseBom)
-    implementation(Dependencies.firebaseRemoteConfig)
-    implementation(Dependencies.firebaseMessaging)
-    implementation(Dependencies.firebaseInAppMessaging)
-    implementation(Dependencies.firebaseCrashlytics)
-    implementation(Dependencies.firebaseAnalytics)
+    implementation platform(libs.firebase.bom)
+    implementation(libs.firebase.remote.config)
+    implementation(libs.firebase.messaging)
+    implementation(libs.firebase.inAppMessaging)
+    implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.analytics)
 
-    implementation(Dependencies.workManager)
+    implementation(libs.workManager)
 
-    implementation(Dependencies.playServicesLocation)
+    implementation(libs.playServices.location)
 
-    implementation(Dependencies.jodaTime)
+    implementation(libs.jodaTime)
 
-    implementation(Dependencies.gson)
+    implementation(libs.gson)
 
-    implementation(Dependencies.coil)
+    implementation(libs.coil)
 
-    implementation(Dependencies.lottieCompose)
+    implementation(libs.lottie.compose)
 
-    debugImplementation(TestDependencies.composeUiTooling)
-    debugImplementation(TestDependencies.composeTestManifest)
+    debugImplementation(libs.composeUiTooling)
+    debugImplementation(libs.composeTestManifest)
 
-    testImplementation(TestDependencies.junit)
-    androidTestImplementation(TestDependencies.testExtJunit)
-    androidTestImplementation(TestDependencies.espressoCore)
-    androidTestImplementation(TestDependencies.composeUiTestJunit)
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.testExtJunit)
+    androidTestImplementation(libs.espresso.core)
+    androidTestImplementation(libs.composeUiTestJunit)
 }

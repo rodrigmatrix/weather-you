@@ -1,5 +1,3 @@
-import Dependencies
-
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
@@ -34,18 +32,19 @@ android {
         compose true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion Versions.composeCompilerVersion
+      kotlinCompilerExtensionVersion libs.versions.composeCompilerVersion.get()
     }
 }
 
 dependencies {
-    implementation(Dependencies.androidxCore)
-    implementation(Dependencies.lifecycleViewModel)
+    implementation(libs.androidx.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel)
 
-    implementation(Dependencies.jodaTime)
+    implementation(libs.jodaTime)
 
-    implementation(Dependencies.kotlinStdlib)
-    implementation(Dependencies.kotlinCoroutinesAndroid)
+    implementation(libs.kotlin.stdlib)
+    implementation(libs.kotlin.coroutines.android)
 
-    implementation(Dependencies.composeUi)
+    implementation platform(libs.compose.bom)
+    implementation(libs.compose.ui)
 }

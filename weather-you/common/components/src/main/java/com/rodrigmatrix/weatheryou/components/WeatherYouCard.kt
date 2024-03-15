@@ -7,17 +7,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.DismissDirection
-import androidx.compose.material3.DismissState
-import androidx.compose.material3.DismissValue
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.SwipeToDismiss
-import androidx.compose.material3.rememberDismissState
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxState
+import androidx.compose.material3.SwipeToDismissBoxValue
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -42,7 +42,7 @@ fun WeatherYouCard(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun WeatherYouCard(
     modifier: Modifier = Modifier,
@@ -54,9 +54,9 @@ fun WeatherYouCard(
     content: @Composable () -> Unit
 ) {
     if (isDismissible) {
-        val dismissState = rememberDismissState(
+        val dismissState = rememberSwipeToDismissBoxState(
             confirmValueChange = {
-                if (it == DismissValue.DismissedToStart) {
+                if (it != SwipeToDismissBoxValue.Settled) {
                     onDismiss()
                     true
                 } else {
@@ -64,16 +64,15 @@ fun WeatherYouCard(
                 }
             },
         )
-        SwipeToDismiss(
+        SwipeToDismissBox(
             state = dismissState,
-            background = {
+            backgroundContent = {
                 SwipeBackground(
                     shape = shape,
                     dismissState = dismissState,
                 )
             },
-            directions = setOf(DismissDirection.EndToStart),
-            dismissContent = {
+            content = {
                 Surface(
                     color = color,
                     shape = shape,
@@ -100,10 +99,10 @@ fun WeatherYouCard(
 @Composable
 fun SwipeBackground(
     shape: RoundedCornerShape,
-    dismissState: DismissState
+    dismissState: SwipeToDismissBoxState
 ) {
     val scale by animateFloatAsState(
-        if (dismissState.targetValue == DismissValue.Default) 0.75f else 1f,
+        if (dismissState.targetValue == SwipeToDismissBoxValue.StartToEnd) 0.75f else 1f,
         label = ""
     )
 
