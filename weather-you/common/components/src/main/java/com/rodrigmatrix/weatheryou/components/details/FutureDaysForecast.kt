@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.components.ExpandButton
 import com.rodrigmatrix.weatheryou.components.WeatherIcon
@@ -20,10 +21,29 @@ import com.rodrigmatrix.weatheryou.components.WeatherYouDivider
 import com.rodrigmatrix.weatheryou.core.extensions.*
 import com.rodrigmatrix.weatheryou.domain.model.WeatherDay
 import com.rodrigmatrix.weatheryou.components.R
+import com.rodrigmatrix.weatheryou.components.WeatherYouCard
 import com.rodrigmatrix.weatheryou.components.extensions.getString
+import com.rodrigmatrix.weatheryou.components.preview.PreviewFutureDaysForecast
+import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 
 private const val TODAY_INDEX = 0
 private const val TOMORROW_INDEX = 1
+
+@Composable
+fun FutureDaysForecast(
+    futureDaysList: List<WeatherDay>,
+    isExpanded: Boolean,
+    onExpandedButtonClick: (Boolean) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    WeatherYouCard(modifier = modifier) {
+        FutureDaysForecastContent(
+            futureDaysList = futureDaysList,
+            isExpanded = isExpanded,
+            onExpandedButtonClick = onExpandedButtonClick,
+        )
+    }
+}
 
 @Composable
 fun FutureDaysForecastContent(
@@ -34,28 +54,26 @@ fun FutureDaysForecastContent(
 ) {
     Column(modifier.fillMaxWidth()) {
         Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    vertical = 10.dp,
+                    horizontal = 16.dp,
+                )
         ) {
             Text(
                 text = stringResource(R.string.next_x_days_forecast, futureDaysList.size),
-                modifier = Modifier
-                    .padding(
-                        start = 16.dp,
-                        end = 16.dp,
-                        bottom = 20.dp,
-                        top = 10.dp
-                    ),
-                style = MaterialTheme.typography.headlineSmall
+                style = MaterialTheme.typography.headlineSmall,
+                modifier = Modifier.weight(1f),
             )
+            Spacer(modifier = Modifier.width(8.dp))
             ExpandButton(
                 isExpanded = isExpanded,
                 contentDescription = stringResource(R.string.show_all_days_forecast),
                 onExpandButtonClick = {
                     onExpandedButtonClick(it)
                 },
-                modifier = Modifier.padding(start = 16.dp, end = 16.dp)
             )
         }
         futureDaysList.forEachIndexed { index, day ->
@@ -185,3 +203,18 @@ fun ExpandedCardContent(
         }
     }
 }
+
+
+@Preview
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+fun FutureDaysForecastPreview() {
+    MaterialTheme {
+        FutureDaysForecast(
+            PreviewFutureDaysForecast,
+            isExpanded = false,
+            {}
+        )
+    }
+}
+

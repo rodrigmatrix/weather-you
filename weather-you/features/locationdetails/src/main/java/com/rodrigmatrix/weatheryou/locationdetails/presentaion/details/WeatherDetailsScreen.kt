@@ -20,11 +20,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.components.WeatherYouLargeAppBar
 import com.rodrigmatrix.weatheryou.components.WeatherYouSmallAppBar
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.components.R
+import com.rodrigmatrix.weatheryou.components.details.FutureDaysForecast
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.core.extensions.getLocalTimeFromTimezone
 import com.rodrigmatrix.weatheryou.core.extensions.getTimeZoneHourAndMinutes
@@ -241,8 +244,8 @@ fun ExpandedTopAppBar(
     )
 }
 
-@Preview
-@Preview(uiMode = UI_MODE_NIGHT_YES)
+@PreviewLightDark
+@PreviewScreenSizes
 @Composable
 fun WeatherDetailsScreenPreview() {
     WeatherYouTheme {
@@ -253,25 +256,6 @@ fun WeatherDetailsScreenPreview() {
                 futureDaysList = PreviewFutureDaysForecast,
             ),
             isFullScreen = false,
-            onExpandedButtonClick = { },
-            onCloseClick = {},
-            onDeleteClick = {}
-        )
-    }
-}
-
-@Preview(device = Devices.PIXEL_C)
-@Preview(device = Devices.PIXEL_C, uiMode = UI_MODE_NIGHT_YES)
-@Composable
-fun WeatherDetailsScreenTabletPreview() {
-    WeatherYouTheme {
-        WeatherDetailsScreen(
-            viewState = WeatherDetailsViewState(
-                weatherLocation = PreviewWeatherLocation,
-                todayWeatherHoursList = PreviewHourlyForecast,
-                futureDaysList = PreviewFutureDaysForecast
-            ),
-            isFullScreen = true,
             onExpandedButtonClick = { },
             onCloseClick = {},
             onDeleteClick = {}

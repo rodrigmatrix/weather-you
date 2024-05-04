@@ -1,5 +1,6 @@
 package com.rodrigmatrix.weatheryou.data.local
 
+import com.rodrigmatrix.weatheryou.core.utils.UnitLocale
 import com.rodrigmatrix.weatheryou.domain.model.AppThemePreference
 import com.rodrigmatrix.weatheryou.domain.model.TemperaturePreference
 import kotlinx.coroutines.flow.Flow
@@ -9,13 +10,17 @@ private const val TEMPERATURE_KEY = "temperature_pref"
 private const val THEME_KEY = "theme_pref"
 
 class SettingsLocalDataSourceImpl(
-    private val sharedPreferencesDataSource: SharedPreferencesDataSource
+    private val sharedPreferencesDataSource: SharedPreferencesDataSource,
+    private val unitLocale: UnitLocale,
 ) : SettingsLocalDataSource {
 
     override fun getTemperaturePreference(): Flow<TemperaturePreference> {
         return sharedPreferencesDataSource.getString(
             key = TEMPERATURE_KEY,
-            defaultValue = TemperaturePreference.METRIC.name
+            defaultValue = when (unitLocale.getDefault()) {
+                UnitLocale.Type.Metric -> TemperaturePreference.METRIC.name
+                UnitLocale.Type.Imperial -> TemperaturePreference.IMPERIAL.name
+            },
         ).map {
                 when (it) {
                     TemperaturePreference.METRIC.name -> TemperaturePreference.METRIC

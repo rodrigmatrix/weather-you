@@ -42,7 +42,7 @@ fun HomeNavigationRail(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            HomeEntry.values().forEach { screen ->
+            HomeEntry.entries.forEach { screen ->
                 NavigationRailItem(
                     icon = { Icon(painterResource(screen.icon), contentDescription = null) },
                     label = { Text(stringResource(screen.stringRes)) },

@@ -26,31 +26,3 @@ import com.rodrigmatrix.weatheryou.components.details.FutureDaysForecastContent
 import com.rodrigmatrix.weatheryou.locationdetails.presentaion.preview.PreviewFutureDaysForecast
 
 
-@Composable
-fun FutureDaysForecast(
-    futureDaysList: List<WeatherDay>,
-    isExpanded: Boolean,
-    onExpandedButtonClick: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    WeatherYouCard(modifier = modifier) {
-        FutureDaysForecastContent(
-            futureDaysList = futureDaysList,
-            isExpanded = isExpanded,
-            onExpandedButtonClick = onExpandedButtonClick,
-        )
-    }
-}
-
-@Preview
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable
-fun FutureDaysForecastPreview() {
-    MaterialTheme {
-        FutureDaysForecast(
-            PreviewFutureDaysForecast,
-            isExpanded = false,
-            {}
-        )
-    }
-}
