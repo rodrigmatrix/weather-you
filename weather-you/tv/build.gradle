@@ -1,5 +1,3 @@
-import Dependencies
-
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
@@ -45,14 +43,14 @@ android {
     kotlinOptions {
         jvmTarget = '17'
     }
-    kotlin.sourceSets.all {
+    kotlin.sourceSets.configureEach {
         languageSettings.optIn("kotlin.RequiresOptIn")
     }
     buildFeatures {
         compose true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion Versions.composeCompilerVersion
+        kotlinCompilerExtensionVersion libs.versions.composeCompilerVersion.get()
     }
     packagingOptions {
         resources {
@@ -68,42 +66,44 @@ dependencies {
 
     implementation project(LocalModules.components)
 
-    implementation(Dependencies.appCompat)
-    implementation(Dependencies.androidxCore)
-    implementation(Dependencies.lifecycle)
-    implementation(Dependencies.androidxWindow)
-    implementation(Dependencies.material3)
+    implementation(libs.android.material)
 
-    implementation(Dependencies.kotlinStdlib)
-    implementation(Dependencies.kotlinCoroutinesAndroid)
-    implementation(Dependencies.kotlinSerialization)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.ktx)
+    implementation(libs.androidx.lifecycle)
+    implementation(libs.androidx.window)
 
-    implementation(Dependencies.composeUi)
-    implementation(Dependencies.composeRuntime)
-    implementation(Dependencies.composePreview)
-    implementation(Dependencies.composeActivity)
-    implementation(Dependencies.composeNavigation)
-    implementation(Dependencies.accompanistPermissions)
-    implementation(Dependencies.composeTvFoundation)
-    implementation(Dependencies.composeTvMaterial)
-    implementation(Dependencies.composeMaterial3)
-    implementation(Dependencies.composeMaterial2)
+    implementation(libs.kotlin.stdlib)
+    implementation(libs.kotlin.coroutines.android)
+    implementation(libs.kotlin.serialization)
 
-    implementation(Dependencies.koinAndroid)
-    implementation(Dependencies.koinCompose)
+     implementation platform(libs.compose.bom)
+    implementation(libs.compose.ui)
+    implementation(libs.compose.runtime)
+    implementation(libs.compose.preview)
+    implementation(libs.compose.activity)
+    implementation(libs.compose.navigation)
+    implementation(libs.accompanist.permissions)
+    implementation(libs.compose.tv.foundation)
+    implementation(libs.compose.tv.material)
+    implementation(libs.compose.material3)
+    implementation(libs.compose.material)
 
-    implementation(Dependencies.coil)
+    implementation(libs.koin.android)
+    implementation(libs.koin.compose)
 
-    implementation platform(Dependencies.firebaseBom)
-    implementation(Dependencies.firebaseRemoteConfig)
-    implementation(Dependencies.firebaseCrashlytics)
-    implementation(Dependencies.firebaseAnalytics)
+    implementation(libs.coil)
 
-    debugImplementation(TestDependencies.composeUiTooling)
-    debugImplementation(TestDependencies.composeTestManifest)
+    implementation platform(libs.firebase.bom)
+    implementation(libs.firebase.remote.config)
+    implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.analytics)
 
-    testImplementation(TestDependencies.junit)
-    androidTestImplementation(TestDependencies.testExtJunit)
-    androidTestImplementation(TestDependencies.espressoCore)
-    androidTestImplementation(TestDependencies.composeUiTestJunit)
+    debugImplementation(libs.composeUiTooling)
+    debugImplementation(libs.composeTestManifest)
+
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.testExtJunit)
+    androidTestImplementation(libs.espresso.core)
+    androidTestImplementation(libs.composeUiTestJunit)
 }

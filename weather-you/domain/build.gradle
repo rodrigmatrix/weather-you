@@ -1,5 +1,3 @@
-import Dependencies
-
 plugins {
     id 'com.android.library'
     id 'kotlin-android'
@@ -36,10 +34,10 @@ android {
 }
 
 dependencies {
-    implementation(Dependencies.kotlinStdlib)
-    implementation(Dependencies.kotlinCoroutinesAndroid)
+    implementation(libs.kotlin.stdlib)
+    implementation(libs.kotlin.coroutines.android)
 
-    testImplementation(TestDependencies.junit)
-    testImplementation(TestDependencies.mockk)
-    testImplementation(TestDependencies.turbine)
+    testImplementation(libs.junit)
+    testImplementation(libs.mockk)
+    testImplementation(libs.turbine)
 }
