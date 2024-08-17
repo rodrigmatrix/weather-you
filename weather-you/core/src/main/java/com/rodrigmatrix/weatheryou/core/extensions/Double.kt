@@ -1,5 +1,6 @@
 package com.rodrigmatrix.weatheryou.core.extensions
 
+import com.rodrigmatrix.weatheryou.domain.model.TemperaturePreference
 import java.lang.Exception
 import kotlin.math.roundToInt
 
@@ -19,10 +20,14 @@ fun Double.percentageString(): String {
     }
 }
 
-fun Double.speedString(): String {
+fun Double.speedString(unit: TemperaturePreference): String {
     return try {
-        this.roundToInt().toString() + "km/h"
+        val unitString = when (unit) {
+            TemperaturePreference.METRIC -> "km/h"
+            TemperaturePreference.IMPERIAL -> "mph"
+        }
+        this.roundToInt().toString() + " " + unitString
     } catch (e: Exception) {
-        "${this}km/h"
+        ""
     }
 }

@@ -41,11 +41,7 @@ class CurrentWeatherWidget: GlanceAppWidget(), KoinComponent {
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         provideContent {
             val size = LocalSize.current
-            val state by getWidgetTemperatureUseCase()
-                .catch {
-                    it
-                }
-                .collectAsState(initial = null)
+            val state by getWidgetTemperatureUseCase().collectAsState(null)
             GlanceTheme {
                 if (state == null) {
                     MediumLargeLoading(

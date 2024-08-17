@@ -88,6 +88,7 @@ dependencies {
     implementation(libs.compose.tv.material)
     implementation(libs.compose.material3)
     implementation(libs.compose.material)
+    implementation(libs.jodaTime)
 
     implementation(libs.koin.android)
     implementation(libs.koin.compose)

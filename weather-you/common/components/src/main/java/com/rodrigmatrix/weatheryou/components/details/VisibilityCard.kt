@@ -15,11 +15,13 @@ import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.components.R
 import com.rodrigmatrix.weatheryou.components.WeatherYouCard
 import com.rodrigmatrix.weatheryou.core.extensions.speedString
+import com.rodrigmatrix.weatheryou.domain.model.TemperaturePreference
 import com.rodrigmatrix.weatheryou.locationdetails.presentaion.extensions.visibilityConditionsStringRes
 
 @Composable
 fun VisibilityCardContent(
     visibility: Double,
+    unit: TemperaturePreference,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -48,7 +50,7 @@ fun VisibilityCardContent(
                 )
             }
             Text(
-                text = visibility.speedString(),
+                text = visibility.speedString(unit),
                 style = MaterialTheme.typography.titleLarge
             )
         }
@@ -66,6 +68,7 @@ fun VisibilityCardPreview() {
     MaterialTheme {
         VisibilityCardContent(
             visibility = 80.0,
+            unit = TemperaturePreference.METRIC,
         )
     }
 }

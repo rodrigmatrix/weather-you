@@ -1,21 +1,16 @@
 package com.rodrigmatrix.weatheryou.tv.presentation.details
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.tv.foundation.lazy.list.TvLazyColumn
-import androidx.tv.material3.Border
-import androidx.tv.material3.ClickableSurfaceDefaults
-import androidx.tv.material3.ExperimentalTvMaterial3Api
-import androidx.tv.material3.MaterialTheme
-import androidx.tv.material3.Surface
 import com.rodrigmatrix.weatheryou.components.details.CurrentWeatherContent
 import com.rodrigmatrix.weatheryou.components.details.FutureDaysForecastContent
 import com.rodrigmatrix.weatheryou.components.details.HourlyForecastContent
@@ -25,16 +20,20 @@ import com.rodrigmatrix.weatheryou.components.details.UvIndexCardContent
 import com.rodrigmatrix.weatheryou.components.details.VisibilityCardContent
 import com.rodrigmatrix.weatheryou.components.details.WindCardContent
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
+import com.rodrigmatrix.weatheryou.tv.components.TvCard
 
 @Composable
-fun WeatherLocationScreen(
+fun TvWeatherLocationScreen(
     weatherLocation: WeatherLocation,
     modifier: Modifier = Modifier,
 ) {
-    TvLazyColumn(
-        verticalArrangement = Arrangement.spacedBy(10.dp),
+    LazyColumn(
         modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
+        item {
+            Spacer(Modifier.height(4.dp))
+        }
         item {
             WeatherInfoCard(modifier = Modifier.padding(horizontal = 16.dp)) {
                 CurrentWeatherContent(
@@ -43,7 +42,7 @@ fun WeatherLocationScreen(
             }
         }
         item {
-            WeatherInfoCard( modifier = Modifier.padding(horizontal = 16.dp)) {
+            WeatherInfoCard(modifier = Modifier.padding(horizontal = 16.dp)) {
                 HourlyForecastContent(hoursList = weatherLocation.hours)
             }
         }
@@ -63,6 +62,7 @@ fun WeatherLocationScreen(
                         WindCardContent(
                             weatherLocation.windSpeed,
                             weatherLocation.windDirection,
+                            weatherLocation.unit,
                         )
                     }
 
@@ -81,9 +81,11 @@ fun WeatherLocationScreen(
             Row {
                 Column(Modifier.weight(1f)) {
                     WeatherInfoCard(modifier = Modifier.padding(start = 16.dp, end = 8.dp)) {
-                        VisibilityCardContent(weatherLocation.visibility)
+                        VisibilityCardContent(
+                            weatherLocation.visibility,
+                            weatherLocation.unit,
+                        )
                     }
-
                 }
                 Column(Modifier.weight(1f)) {
                     WeatherInfoCard(modifier = Modifier.padding(start = 8.dp, end = 16.dp)) {
@@ -95,44 +97,24 @@ fun WeatherLocationScreen(
         item {
             WeatherInfoCard(modifier = Modifier.padding(horizontal = 16.dp)) {
                 SunriseSunsetCardContent(
-                    sunriseHour = weatherLocation.sunrise,
-                    sunsetHour = weatherLocation.sunset,
+                    sunrise = weatherLocation.sunrise,
+                    sunset = weatherLocation.sunset,
                     currentTime = weatherLocation.currentTime,
                 )
             }
+            Spacer(Modifier.height(4.dp))
         }
     }
 }
 
-@OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
 private fun WeatherInfoCard(
     modifier: Modifier = Modifier,
-    content: @Composable () -> Unit,
+    content: @Composable ColumnScope.() -> Unit
 ) {
-    val cardShape = CircleShape.copy(CornerSize(20.dp))
-    Surface(
+    TvCard(
         onClick = { },
-        colors = ClickableSurfaceDefaults.colors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-            focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-            pressedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-        ),
-        border = ClickableSurfaceDefaults.border(
-            focusedBorder = Border(
-                border = BorderStroke(
-                    width = 3.dp,
-                    color = MaterialTheme.colorScheme.onSurface,
-                ),
-                shape = cardShape,
-            )
-        ),
-        scale = ClickableSurfaceDefaults.scale(
-            scale = 1f,
-            focusedScale = 1f,
-        ),
         modifier = modifier,
-    ) {
-        content()
-    }
+        content = content,
+    )
 }

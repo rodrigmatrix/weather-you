@@ -9,10 +9,14 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
@@ -30,25 +34,25 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.tv.foundation.lazy.list.TvLazyColumn
-import androidx.tv.foundation.lazy.list.items
 import androidx.tv.material3.Border
 import androidx.tv.material3.Button
 import androidx.tv.material3.ClickableSurfaceDefaults
-import androidx.tv.material3.ExperimentalTvMaterial3Api
 import androidx.tv.material3.Icon
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
-import androidx.tv.material3.ToggleableSurfaceDefaults
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.rememberPermissionState
+import com.rodrigmatrix.weatheryou.components.DeleteLocationDialog
 import com.rodrigmatrix.weatheryou.components.R
+import com.rodrigmatrix.weatheryou.components.ScreenNavigationType
 import com.rodrigmatrix.weatheryou.components.WeatherIcon
 import com.rodrigmatrix.weatheryou.components.WeatherLocationCardContent
+import com.rodrigmatrix.weatheryou.domain.model.WeatherCondition
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
-import com.rodrigmatrix.weatheryou.tv.presentation.details.WeatherLocationScreen
+import com.rodrigmatrix.weatheryou.tv.components.TvCard
+import com.rodrigmatrix.weatheryou.tv.presentation.details.TvWeatherLocationScreen
 import com.rodrigmatrix.weatheryou.tv.presentation.locations.WeatherLocationsUiState
 import com.rodrigmatrix.weatheryou.tv.presentation.locations.WeatherLocationsViewModel
 import com.rodrigmatrix.weatheryou.tv.presentation.navigation.WeatherYouTvRoutes
@@ -56,7 +60,7 @@ import org.koin.androidx.compose.getViewModel
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-internal fun WeatherLocationsScreen(
+internal fun TvWeatherLocationsScreen(
     modifier: Modifier = Modifier,
     viewModel: WeatherLocationsViewModel = getViewModel(),
     locationPermissionState: PermissionState = rememberPermissionState(Manifest.permission.ACCESS_COARSE_LOCATION),
@@ -65,12 +69,14 @@ internal fun WeatherLocationsScreen(
     val uiState by viewModel.viewState.collectAsState()
 
     if (uiState.deleteLocationDialogVisible) {
-//        DeleteLocationDialog(
-//            onDismiss = onDismissLocationDialogClicked,
-//            onDeleteLocationClicked = onDeleteLocationConfirmButtonClicked,
-//        )
+        DeleteLocationDialog(
+            onConfirmButtonClick = {
+                viewModel.deleteLocation(ScreenNavigationType.NAVIGATION_RAIL)
+            },
+            onDismissButtonClick = viewModel::hideDeleteLocationDialog,
+        )
     }
-    WeatherLocationsScreen(
+    TvWeatherLocationsScreen(
         uiState = uiState,
         showLocationPermissionRequest = uiState.showLocationPermissionRequest(locationPermissionState),
         onSearchLocationClick = {
@@ -83,7 +89,7 @@ internal fun WeatherLocationsScreen(
 }
 
 @Composable
-private fun WeatherLocationsScreen(
+private fun TvWeatherLocationsScreen(
     uiState: WeatherLocationsUiState,
     showLocationPermissionRequest: Boolean,
     onSearchLocationClick: () -> Unit,
@@ -110,7 +116,7 @@ private fun WeatherLocationsScreen(
             }
 
             else -> {
-                WeatherLocationsContent(
+                TvWeatherLocationsContent(
                     locationsList = uiState.locationsList,
                     currentLocation = uiState.selectedWeatherLocation,
                     onWeatherLocationClicked = onWeatherLocationClicked,
@@ -122,13 +128,13 @@ private fun WeatherLocationsScreen(
 }
 
 @Composable
-private fun WeatherLocationsContent(
+private fun TvWeatherLocationsContent(
     locationsList: List<WeatherLocation>,
     currentLocation: WeatherLocation?,
     onWeatherLocationClicked: (WeatherLocation) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Row(modifier.padding(vertical = 16.dp)) {
+    Row(modifier.padding(vertical = 8.dp)) {
         WeatherLocationsList(
             weatherLocationsList = locationsList,
             currentLocation = currentLocation,
@@ -142,7 +148,7 @@ private fun WeatherLocationsContent(
             modifier = Modifier.weight(1f)
         ) {
             currentLocation?.let { selectedLocation ->
-                WeatherLocationScreen(
+                TvWeatherLocationScreen(
                     weatherLocation = selectedLocation,
                     modifier = Modifier.weight(1f)
                 )
@@ -151,7 +157,6 @@ private fun WeatherLocationsContent(
     }
 }
 
-@OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
 fun RequestLocationPermission(
     onRequestPermission: () -> Unit,
@@ -194,7 +199,6 @@ fun RequestLocationPermission(
     }
 }
 
-@OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
 fun SearchLocationBar(
     onSearchLocationClick: () -> Unit,
@@ -222,7 +226,7 @@ fun SearchLocationBar(
         ),
         modifier = modifier
             .fillMaxWidth()
-            .padding(top = 24.dp, bottom = 4.dp, start = 16.dp, end = 16.dp),
+            .padding(top = 16.dp, start = 16.dp, end = 16.dp),
         onClick = onSearchLocationClick,
     ) {
         Row(
@@ -260,10 +264,7 @@ fun WeatherLocationsEmptyState(
             .padding(start = 16.dp, end = 16.dp, bottom = 200.dp)
     ) {
         WeatherIcon(
-            weatherIcons = WeatherIcons(
-                com.rodrigmatrix.weatheryou.weathericons.R.raw.weather_cloudynight,
-                com.rodrigmatrix.weatheryou.weathericons.R.drawable.ic_weather_cloudynight
-            ),
+            weatherCondition = WeatherCondition.CLOUDY,
             modifier = Modifier
                 .size(120.dp)
                 .padding(10.dp)
@@ -277,7 +278,6 @@ fun WeatherLocationsEmptyState(
     }
 }
 
-@OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
 private fun WeatherLocationsList(
     weatherLocationsList: List<WeatherLocation>,
@@ -285,37 +285,16 @@ private fun WeatherLocationsList(
     onWeatherLocationClicked: (WeatherLocation) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val cardShape = CircleShape.copy(CornerSize(20.dp))
-    TvLazyColumn(
+    LazyColumn(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier.fillMaxSize(),
     ) {
+        item {
+            Spacer(Modifier.height(4.dp))
+        }
         items(weatherLocationsList) { weatherLocation ->
-            Surface(
-                checked = currentLocation == weatherLocation,
-                shape = ToggleableSurfaceDefaults.shape(cardShape),
-                onCheckedChange = {
-                    onWeatherLocationClicked(weatherLocation)
-                },
-                colors = ToggleableSurfaceDefaults.colors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    selectedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                    focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                    pressedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                ),
-                border = ToggleableSurfaceDefaults.border(
-                    focusedBorder = Border(
-                        border = BorderStroke(
-                            width = 3.dp,
-                            color = MaterialTheme.colorScheme.onSurface,
-                        ),
-                        shape = cardShape,
-                    )
-                ),
-                scale = ToggleableSurfaceDefaults.scale(
-                    scale = 1f,
-                    focusedScale = 1.02f,
-                ),
+            TvCard(
+                onClick = { onWeatherLocationClicked(weatherLocation) },
                 modifier = Modifier.padding(horizontal = 16.dp)
             ) {
                 WeatherLocationCardContent(weatherLocation = weatherLocation)

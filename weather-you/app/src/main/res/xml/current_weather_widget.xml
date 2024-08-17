@@ -8,6 +8,7 @@
     android:description="@string/current_weather_small_widget_description"
     android:resizeMode="horizontal|vertical"
     android:widgetCategory="home_screen"
+    android:initialLayout="@layout/glance_default_loading_layout"
     android:widgetFeatures="reconfigurable|configuration_optional"
     android:configure="com.rodrigmatrix.weatheryou.presentation.widget.CurrentWeatherWidgetConfigurationActivity"
     tools:targetApi="s">

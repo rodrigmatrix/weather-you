@@ -1,15 +1,14 @@
 package com.rodrigmatrix.weatheryou.widgets.weather
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
-import androidx.glance.action.Action
 import androidx.glance.action.clickable
+import androidx.glance.appwidget.components.Scaffold
 import androidx.glance.background
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Column
@@ -19,6 +18,8 @@ import androidx.glance.layout.height
 import androidx.glance.layout.padding
 import androidx.glance.layout.size
 import androidx.glance.layout.width
+import androidx.glance.preview.ExperimentalGlancePreviewApi
+import androidx.glance.preview.Preview
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
@@ -26,6 +27,8 @@ import com.rodrigmatrix.weatheryou.components.extensions.getStaticIcon
 import com.rodrigmatrix.weatheryou.core.extensions.temperatureString
 import com.rodrigmatrix.weatheryou.domain.model.WeatherCondition
 import com.rodrigmatrix.weatheryou.domain.model.WidgetWeather
+import com.rodrigmatrix.weatheryou.domain.model.WidgetWeatherDay
+import com.rodrigmatrix.weatheryou.domain.model.WidgetWeatherHour
 import com.rodrigmatrix.weatheryou.widgets.R
 
 private const val MAX_WIDTH = 186
@@ -103,13 +106,16 @@ fun SmallWidget(
     }
 }
 
-@Preview
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview(widthDp = 200, heightDp = 200)
 @Composable
 private fun SmallWidgetPreview() {
-    SmallWidget(
-        weather = PreviewWidgetWeather,
-        onWidgetClicked = { },
-    )
+    GlanceTheme {
+        SmallWidget(
+            weather = PreviewWidgetWeather,
+            onWidgetClicked = { },
+        )
+    }
 }
 
 val PreviewWidgetWeather = WidgetWeather(
@@ -117,11 +123,50 @@ val PreviewWidgetWeather = WidgetWeather(
     name = "São Paulo",
     lat = 0.0,
     long = 0.0,
-    currentCondition = WeatherCondition.SNOW_DAY,
-    currentWeather = 20.0,
-    maxWeather = 21.0,
+    currentCondition = WeatherCondition.MIST,
+    currentWeather = 11.0,
+    maxWeather = 15.0,
     minWeather = 8.0,
     lastUpdate = "",
-    hours = emptyList(),
-    days = emptyList(),
+    hours = listOf(
+        WidgetWeatherHour(
+            weather = 10.0,
+            condition = WeatherCondition.MIST,
+        ),
+        WidgetWeatherHour(
+            weather = 10.0,
+            condition = WeatherCondition.CLOUDY,
+        ),
+        WidgetWeatherHour(
+            weather = 9.0,
+            condition = WeatherCondition.PARTLY_CLOUDY_NIGHT,
+        ),
+        WidgetWeatherHour(
+            weather = 8.0,
+            condition = WeatherCondition.PARTLY_CLOUDY_NIGHT,
+        )
+    ),
+    days = listOf(
+        WidgetWeatherDay(
+            maxWeather = -2.0,
+            minWeather = 8.0,
+            condition = WeatherCondition.SNOW_DAY,
+        ),
+        WidgetWeatherDay(
+            maxWeather = 3.0,
+            minWeather = 5.0,
+            condition = WeatherCondition.MIST,
+        ),
+        WidgetWeatherDay(
+            maxWeather = 10.0,
+            minWeather = 8.0,
+            condition = WeatherCondition.SUNNY_DAY,
+        ),
+        WidgetWeatherDay(
+            maxWeather = 7.0,
+            minWeather = 4.0,
+            condition = WeatherCondition.RAIN_DAY,
+        )
+    ),
+
 )

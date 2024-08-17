@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
@@ -26,17 +27,17 @@ import com.rodrigmatrix.weatheryou.core.extensions.getLocalTime
 import com.rodrigmatrix.weatheryou.components.R
 import com.rodrigmatrix.weatheryou.components.WeatherYouCard
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
+import org.joda.time.DateTime
+import org.joda.time.LocalTime
 
 @Composable
 fun SunriseSunsetCardContent(
-    sunriseHour: Long,
-    sunsetHour: Long,
-    currentTime: Long,
-    modifier: Modifier = Modifier
+    sunrise: DateTime,
+    sunset: DateTime,
+    currentTime: DateTime,
+    modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
-    val sunriseHourInt = sunriseHour.getLocalTime().hourOfDay
-    val sunsetHourInt = sunsetHour.getLocalTime().hourOfDay
     Column(
         verticalArrangement = Arrangement.SpaceBetween,
         modifier = modifier.padding(
@@ -61,8 +62,8 @@ fun SunriseSunsetCardContent(
         }
         Box {
             SunriseSunsetVisualizer(
-                sunriseHour = sunriseHourInt,
-                sunsetHour = sunsetHourInt,
+                sunriseHour = sunrise.hourOfDay,
+                sunsetHour = sunset.hourOfDay,
                 currentHour = currentTime.getLocalTime().hourOfDay,
                 modifier = Modifier.height(140.dp)
             )
@@ -77,7 +78,7 @@ fun SunriseSunsetCardContent(
                     style = MaterialTheme.typography.bodySmall
                 )
                 Text(
-                    text = sunriseHour.getHourWithMinutesString(context),
+                    text = sunrise.getHourWithMinutesString(context),
                     style = MaterialTheme.typography.titleMedium
                 )
             }
@@ -92,12 +93,12 @@ fun SunriseSunsetCardContent(
                     style = MaterialTheme.typography.bodySmall
                 )
                 Text(
-                    text = sunsetHour.getHourWithMinutesString(context),
+                    text = sunset.getHourWithMinutesString(context),
                     style = MaterialTheme.typography.titleMedium
                 )
             }
         }
-        val (dayLengthHours, dayLengthMinutes) = sunriseHour.getHoursAndMinutesDiff(sunsetHour)
+        val (dayLengthHours, dayLengthMinutes) = sunrise.getHoursAndMinutesDiff(sunset)
         if (dayLengthHours > 0 || dayLengthMinutes > 0) {
             val dayLengthString = if (dayLengthHours > 0) {
                 stringResource(
@@ -113,7 +114,7 @@ fun SunriseSunsetCardContent(
                 style = MaterialTheme.typography.bodyMedium
             )
         }
-        val (remainingHours, remainingMinutes) = currentTime.getHoursAndMinutesDiff(sunsetHour)
+        val (remainingHours, remainingMinutes) = currentTime.getHoursAndMinutesDiff(sunset)
         if (remainingHours > 0 || remainingMinutes > 0) {
             val remainingDaylightString = if (remainingHours > 0) {
                 stringResource(R.string.hours_minutes_x_y, remainingHours, remainingMinutes)
@@ -155,6 +156,23 @@ private fun SunriseSunsetVisualizer(
         interval *= 24f * scaleX
         interval2 *= 24f * scaleX
         start *= 24f * scaleX
+        // sun
+        if (currentHour in sunriseHour..sunsetHour) {
+            val daylightHalf = (sunsetHour - sunriseHour)
+            val sunScaleY = if (currentHour >= daylightHalf) {
+                scaleY - (currentHour - sunsetHour)
+            } else {
+                scaleY + (currentHour / 24) * 2
+            }
+            drawCircle(
+                color = Color.Yellow,
+                radius = 30f,
+                center = Offset(
+                    x = scaleX * currentHour,
+                    y = sunScaleY / 2,
+                )
+            )
+        }
         // horizon line
         drawLine(
             color = colorPrimary,
@@ -162,23 +180,7 @@ private fun SunriseSunsetVisualizer(
             end = Offset(canvasWidth, canvasHeight / 2),
             strokeWidth = 1f
         )
-//        // sun
-//        if (currentHour in sunriseHour..sunsetHour) {
-//            val daylightHalf = (sunsetHour - sunriseHour)
-//            val sunScaleY = if (currentHour >= daylightHalf) {
-//                scaleY - (currentHour - sunsetHour)
-//            } else {
-//                scaleY + (currentHour / 24) * 2
-//            }
-//            drawCircle(
-//                color = Color.Yellow,
-//                radius = 16f,
-//                center = Offset(
-//                    x = scaleX * currentHour,
-//                    y = sunScaleY
-//                )
-//            )
-//        }
+
         drawIntoCanvas {
             val canvas = it.nativeCanvas
             val sunrisePaint = Paint().apply {
@@ -219,25 +221,17 @@ fun SunriseSunsetCardPreview() {
         Column {
             WeatherYouCard {
                 SunriseSunsetCardContent(
-                    sunriseHour = 0,
-                    sunsetHour = 0,
-                    currentTime = 0
+                    sunset = LocalTime(6, 30).toDateTimeToday(),
+                    sunrise = LocalTime(17, 30).toDateTimeToday(),
+                    currentTime = LocalTime(17, 30).toDateTimeToday()
                 )
             }
             Spacer(modifier = Modifier.height(8.dp))
             WeatherYouCard {
-                SunriseSunsetCardContent(
-                    sunriseHour = 0,
-                    sunsetHour = 0,
-                    currentTime = 0
-                )
-            }
-            Spacer(modifier = Modifier.height(8.dp))
-            WeatherYouCard {
-                SunriseSunsetCardContent(
-                    sunriseHour = 0,
-                    sunsetHour = 0,
-                    currentTime = 0
+                SunriseSunsetVisualizer(
+                    sunriseHour = 5,
+                    sunsetHour = 17,
+                    currentHour = 5,
                 )
             }
         }

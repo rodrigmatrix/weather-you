@@ -1,0 +1,52 @@
+package com.rodrigmatrix.weatheryou.tv.components
+
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.tv.material3.Card
+import androidx.tv.material3.CardBorder
+import androidx.tv.material3.CardColors
+import androidx.tv.material3.CardDefaults
+import androidx.tv.material3.CardGlow
+import androidx.tv.material3.CardScale
+import androidx.tv.material3.CardShape
+import androidx.tv.material3.Glow
+import androidx.tv.material3.MaterialTheme
+
+@Composable
+fun TvCard(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    onLongClick: (() -> Unit)? = null,
+    shape: CardShape = CardDefaults.shape(),
+    colors: CardColors = CardDefaults.colors(
+        containerColor = MaterialTheme.colorScheme.primaryContainer,
+    ),
+    scale: CardScale = CardDefaults.scale(
+        focusedScale = 1.01f,
+    ),
+    border: CardBorder = CardDefaults.border(),
+    glow: CardGlow = CardDefaults.glow(
+        focusedGlow = Glow(
+            elevationColor = MaterialTheme.colorScheme.tertiary,
+            elevation = 4.dp,
+        )
+    ),
+    interactionSource: MutableInteractionSource? = null,
+    content: @Composable ColumnScope.() -> Unit
+) {
+    Card(
+        onClick = onClick,
+        modifier = modifier,
+        onLongClick = onLongClick,
+        shape = shape,
+        colors = colors,
+        scale = scale,
+        border = border,
+        glow = glow,
+        interactionSource = interactionSource,
+        content = content,
+    )
+}

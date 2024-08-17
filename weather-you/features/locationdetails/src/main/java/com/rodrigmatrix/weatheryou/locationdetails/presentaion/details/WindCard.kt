@@ -7,17 +7,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.rodrigmatrix.weatheryou.components.WeatherYouCard
 import com.rodrigmatrix.weatheryou.components.details.WindCardContent
+import com.rodrigmatrix.weatheryou.domain.model.TemperaturePreference
 
 @Composable
 fun WindCard(
     windSpeed: Double,
     windDirection: Double,
+    unit: TemperaturePreference,
     modifier: Modifier = Modifier
 ) {
     WeatherYouCard(modifier) {
         WindCardContent(
             windSpeed = windSpeed,
             windDirection = windDirection,
+            unit = unit,
         )
     }
 }
@@ -29,7 +32,8 @@ fun WindCardPreview() {
     MaterialTheme {
         WindCard(
             windSpeed = 10.0,
-            windDirection = 251.0
+            windDirection = 251.0,
+            unit = TemperaturePreference.METRIC,
         )
     }
 }

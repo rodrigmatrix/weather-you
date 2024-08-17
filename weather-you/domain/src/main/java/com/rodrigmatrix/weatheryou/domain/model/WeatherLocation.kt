@@ -1,5 +1,7 @@
 package com.rodrigmatrix.weatheryou.domain.model
 
+import org.joda.time.DateTime
+
 data class WeatherLocation(
     val id: Int,
     val name: String,
@@ -11,7 +13,7 @@ data class WeatherLocation(
     val maxTemperature: Double,
     val lowestTemperature: Double,
     val feelsLike: Double,
-    val currentTime: Long,
+    val currentTime: DateTime,
     val timeZone: String,
     val precipitationProbability: Double,
     val precipitationType: String,
@@ -20,10 +22,11 @@ data class WeatherLocation(
     val windSpeed: Double,
     val windDirection: Double,
     val uvIndex: Double,
-    val sunrise: Long,
-    val sunset: Long,
+    val sunrise: DateTime,
+    val sunset: DateTime,
     val visibility: Double,
     val pressure: Double,
     val days: List<WeatherDay> = emptyList(),
-    val hours: List<WeatherHour> = emptyList()
+    val hours: List<WeatherHour> = emptyList(),
+    val unit: TemperaturePreference,
 )

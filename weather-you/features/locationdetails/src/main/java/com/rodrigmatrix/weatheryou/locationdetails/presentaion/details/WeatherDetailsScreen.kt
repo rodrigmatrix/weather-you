@@ -28,12 +28,11 @@ import com.rodrigmatrix.weatheryou.components.WeatherYouSmallAppBar
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.components.R
 import com.rodrigmatrix.weatheryou.components.details.FutureDaysForecast
+import com.rodrigmatrix.weatheryou.components.preview.PreviewFutureDaysForecast
+import com.rodrigmatrix.weatheryou.components.preview.PreviewHourlyForecast
+import com.rodrigmatrix.weatheryou.components.preview.PreviewWeatherLocation
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
-import com.rodrigmatrix.weatheryou.core.extensions.getLocalTimeFromTimezone
-import com.rodrigmatrix.weatheryou.core.extensions.getTimeZoneHourAndMinutes
-import com.rodrigmatrix.weatheryou.locationdetails.presentaion.preview.PreviewFutureDaysForecast
-import com.rodrigmatrix.weatheryou.locationdetails.presentaion.preview.PreviewHourlyForecast
-import com.rodrigmatrix.weatheryou.locationdetails.presentaion.preview.PreviewWeatherLocation
+import com.rodrigmatrix.weatheryou.domain.model.TemperaturePreference
 import org.koin.androidx.compose.getViewModel
 
 @Composable
@@ -120,6 +119,7 @@ fun WeatherDetailsScreen(
                         WindCard(
                             viewState.weatherLocation?.windSpeed ?: 0.0,
                             viewState.weatherLocation?.windDirection ?: 0.0,
+                            unit = viewState.weatherLocation?.unit ?: TemperaturePreference.METRIC,
                             modifier = Modifier.padding(start = 16.dp, end = 8.dp),
                         )
                     }
@@ -137,6 +137,7 @@ fun WeatherDetailsScreen(
                     Column(Modifier.weight(1f)) {
                         VisibilityCard(
                             viewState.weatherLocation?.visibility ?: 0.0,
+                            unit = viewState.weatherLocation?.unit ?: TemperaturePreference.METRIC,
                             modifier = Modifier.padding(start = 16.dp, end = 8.dp),
                         )
                     }
@@ -151,8 +152,8 @@ fun WeatherDetailsScreen(
             item {
                 viewState.weatherLocation?.let { weatherLocation ->
                     SunriseSunsetCard(
-                        sunriseHour = weatherLocation.sunrise,
-                        sunsetHour = weatherLocation.sunset,
+                        sunrise = weatherLocation.sunrise,
+                        sunset = weatherLocation.sunset,
                         currentTime = weatherLocation.currentTime,
                         modifier = Modifier.padding(horizontal = 16.dp),
                     )

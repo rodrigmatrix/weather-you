@@ -40,6 +40,8 @@ dependencies {
     implementation(libs.androidx.ktx)
     implementation(libs.androidx.lifecycle.viewmodel)
 
+    implementation project(LocalModules.domain)
+
     implementation(libs.jodaTime)
 
     implementation(libs.kotlin.stdlib)

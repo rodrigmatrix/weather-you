@@ -9,14 +9,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.components.WeatherYouCard
 import com.rodrigmatrix.weatheryou.components.details.VisibilityCardContent
+import com.rodrigmatrix.weatheryou.domain.model.TemperaturePreference
 
 @Composable
 fun VisibilityCard(
     visibility: Double,
+    unit: TemperaturePreference,
     modifier: Modifier = Modifier
 ) {
     WeatherYouCard(modifier) {
-        VisibilityCardContent(visibility = visibility)
+        VisibilityCardContent(
+            visibility = visibility,
+            unit = unit,
+        )
     }
 }
 
@@ -27,6 +32,7 @@ fun VisibilityCardPreview() {
     MaterialTheme {
         VisibilityCard(
             visibility = 80.0,
+            unit = TemperaturePreference.METRIC,
         )
     }
 }

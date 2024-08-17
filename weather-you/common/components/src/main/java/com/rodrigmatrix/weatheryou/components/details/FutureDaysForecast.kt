@@ -25,6 +25,7 @@ import com.rodrigmatrix.weatheryou.components.WeatherYouCard
 import com.rodrigmatrix.weatheryou.components.extensions.getString
 import com.rodrigmatrix.weatheryou.components.preview.PreviewFutureDaysForecast
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
+import com.rodrigmatrix.weatheryou.domain.model.TemperaturePreference
 
 private const val TODAY_INDEX = 0
 private const val TOMORROW_INDEX = 1
@@ -191,7 +192,7 @@ fun ExpandedCardContent(
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp)
             )
             Text(
-                text = stringResource(R.string.wind_x, day.windSpeed.speedString()),
+                text = stringResource(R.string.wind_x, day.windSpeed.speedString(day.unit)),
                 style = MaterialTheme.typography.titleSmall,
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp)
             )

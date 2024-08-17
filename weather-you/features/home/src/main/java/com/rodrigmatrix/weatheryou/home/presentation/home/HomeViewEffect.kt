@@ -6,4 +6,6 @@ import com.rodrigmatrix.weatheryou.core.viewmodel.ViewEffect
 sealed class HomeViewEffect : ViewEffect {
 
     data class Error(@StringRes val stringRes: Int): HomeViewEffect()
+
+    data object ShowInAppReview : HomeViewEffect()
 }

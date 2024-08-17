@@ -51,6 +51,8 @@ dependencies {
     implementation(libs.compose.ui)
     implementation(libs.glanceAppWidget)
     implementation(libs.glanceAppWidget.material3)
+    implementation(libs.glance.preview)
+    implementation(libs.glanceAppWidget.preview)
     implementation(libs.compose.preview)
     implementation(libs.compose.navigation)
 

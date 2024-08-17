@@ -33,7 +33,7 @@ class OpenWeatherRemoteDataSourceImpl(
                     language = Locale.getDefault().toString(),
                 )
             )
-        }.map(openWeatherRemoteMapper::map)
+        }.map { openWeatherRemoteMapper.map(it, unit) }
     }
 
     override fun getWeather(name: String, unit: TemperaturePreference): Flow<WeatherLocation> {
@@ -45,7 +45,7 @@ class OpenWeatherRemoteDataSourceImpl(
                     language = Locale.getDefault().toString(),
                 )
             )
-        }.map(openWeatherRemoteMapper::map)
+        }.map { openWeatherRemoteMapper.map(it, unit) }
     }
 
     private fun getUnit(unit: TemperaturePreference): String {

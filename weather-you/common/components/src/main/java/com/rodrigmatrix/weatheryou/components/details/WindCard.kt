@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -36,6 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.components.R
 import com.rodrigmatrix.weatheryou.core.extensions.speedString
+import com.rodrigmatrix.weatheryou.domain.model.TemperaturePreference
 import java.lang.Math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -44,11 +46,13 @@ import kotlin.math.sin
 fun WindCardContent(
     windSpeed: Double,
     windDirection: Double,
+    unit: TemperaturePreference,
     modifier: Modifier = Modifier
 ) {
     Column(
         verticalArrangement = Arrangement.SpaceBetween,
         modifier = modifier
+            .fillMaxWidth()
             .height(200.dp)
             .padding(
                 start = 16.dp,
@@ -70,7 +74,7 @@ fun WindCardContent(
                 )
             }
             Text(
-                text = windSpeed.speedString(),
+                text = windSpeed.speedString(unit),
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier
             )
@@ -187,7 +191,8 @@ fun WindCardPreview() {
     MaterialTheme {
         WindCardContent(
             windSpeed = 10.0,
-            windDirection = 251.0
+            windDirection = 251.0,
+            unit = TemperaturePreference.METRIC,
         )
     }
 }

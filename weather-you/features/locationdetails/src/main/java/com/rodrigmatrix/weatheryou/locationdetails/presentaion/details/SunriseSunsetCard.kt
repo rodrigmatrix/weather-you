@@ -8,18 +8,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.rodrigmatrix.weatheryou.components.WeatherYouCard
 import com.rodrigmatrix.weatheryou.components.details.SunriseSunsetCardContent
+import org.joda.time.DateTime
 
 @Composable
 fun SunriseSunsetCard(
-    sunriseHour: Long,
-    sunsetHour: Long,
-    currentTime: Long,
+    sunrise: DateTime,
+    sunset: DateTime,
+    currentTime: DateTime,
     modifier: Modifier = Modifier
 ) {
     WeatherYouCard(modifier) {
         SunriseSunsetCardContent(
-            sunriseHour = sunriseHour,
-            sunsetHour = sunsetHour,
+            sunrise = sunrise,
+            sunset = sunset,
             currentTime = currentTime,
         )
     }
@@ -32,19 +33,19 @@ fun SunriseSunsetCardPreview() {
     MaterialTheme {
         Column {
             SunriseSunsetCard(
-                sunriseHour = 0,
-                sunsetHour = 0,
-                currentTime = 0
+                sunrise = DateTime(),
+                sunset = DateTime(),
+                currentTime = DateTime(),
             )
             SunriseSunsetCard(
-                sunriseHour = 0,
-                sunsetHour = 0,
-                currentTime = 0
+                sunrise = DateTime(),
+                sunset = DateTime(),
+                currentTime = DateTime(),
             )
             SunriseSunsetCard(
-                sunriseHour = 0,
-                sunsetHour = 0,
-                currentTime = 0
+                sunrise = DateTime(),
+                sunset = DateTime(),
+                currentTime = DateTime(),
             )
         }
     }

@@ -6,7 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.rodrigmatrix.weatheryou.tv.presentation.home.WeatherLocationsScreen
+import com.rodrigmatrix.weatheryou.tv.presentation.home.TvWeatherLocationsScreen
 import com.rodrigmatrix.weatheryou.tv.presentation.search.SearchLocationScreen
 
 @OptIn(ExperimentalPermissionsApi::class)
@@ -20,9 +20,8 @@ fun WeatherYouTvNavHost(
         startDestination = WeatherYouTvRoutes.HOME_SCREEN,
         modifier = modifier,
     ) {
-
         composable(WeatherYouTvRoutes.HOME_SCREEN) {
-            WeatherLocationsScreen(
+            TvWeatherLocationsScreen(
                 navController = navController
             )
         }

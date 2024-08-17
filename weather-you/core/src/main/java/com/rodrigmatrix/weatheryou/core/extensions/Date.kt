@@ -2,10 +2,12 @@ package com.rodrigmatrix.weatheryou.core.extensions
 
 import android.content.Context
 import android.text.format.DateFormat
+import androidx.compose.ui.text.capitalize
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.joda.time.LocalTime
 import org.joda.time.Period
+import org.joda.time.format.DateTimeFormat
 import java.text.SimpleDateFormat
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -25,29 +27,25 @@ fun String.getTimeZoneHourAndMinutes(context: Context): String {
     }
 }
 
-fun String.getLocalTimeFromTimezone(): Long {
-    return LocalTime(DateTimeZone.forID(this)).toDateTimeToday().millis
-}
-
-fun Long.getLocalTime(): LocalTime {
+fun DateTime.getLocalTime(): LocalTime {
     return try {
-        return DateTime(this.toUnixTimestamp()).toLocalTime()
+        return this.toLocalTime()
     } catch (e: Exception) {
         LocalTime()
     }
 }
 
-fun Long.getHoursAndMinutesDiff(second: Long): Pair<Int, Int> {
+fun DateTime.getHoursAndMinutesDiff(second: DateTime): Pair<Int, Int> {
     val timeLeft = Period(
         this.getLocalTime(),
-        second.getLocalTime()
+        second.getLocalTime(),
     )
     return Pair(timeLeft.hours, timeLeft.minutes)
 }
 
-fun Long.getHourWithMinutesString(context: Context): String {
+fun DateTime.getHourWithMinutesString(context: Context): String {
     return try {
-        val localTime = LocalTime(this.toUnixTimestamp())
+        val localTime = this.toLocalTime()
         val pattern = if (DateFormat.is24HourFormat(context)) {
             "HH:mm"
         } else {
@@ -59,9 +57,9 @@ fun Long.getHourWithMinutesString(context: Context): String {
     }
 }
 
-fun Long.getHourString(context: Context): String {
+fun DateTime.getHourString(context: Context): String {
     return try {
-        val localTime = LocalTime(this.toUnixTimestamp())
+        val localTime = this.toLocalTime()
         val pattern = if (DateFormat.is24HourFormat(context)) {
             "HH:mm"
         } else {
@@ -73,13 +71,11 @@ fun Long.getHourString(context: Context): String {
     }
 }
 
-fun Long.getDateWithMonth(): String {
+fun DateTime.getDateWithMonth(): String {
     return try {
-        val date = DateTime(this.toUnixTimestamp()).toDate()
-        SimpleDateFormat("EEEE, MMM dd", Locale.getDefault()).format(date)
+        val pattern = DateTimeFormat.forPattern("EEEE, MMM dd")
+        pattern.print(this).replaceFirstChar { it.uppercase() }
     } catch (e: Exception) {
         ""
     }
 }
-
-private fun Long.toUnixTimestamp(): Long = this * 1000L
