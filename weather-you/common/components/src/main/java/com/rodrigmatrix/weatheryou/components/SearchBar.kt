@@ -7,7 +7,9 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ButtonDefaults.IconSize
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.ArrowBack
+import androidx.compose.material.icons.outlined.Clear
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -20,6 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 
 @Composable
 fun SearchBar(
@@ -29,10 +32,11 @@ fun SearchBar(
     onClearQuery: () -> Unit,
     searching: Boolean,
     modifier: Modifier = Modifier,
+    showBackButton: Boolean = true,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
 ) {
     Surface(
-        color = MaterialTheme.colorScheme.secondaryContainer,
+        color = WeatherYouTheme.colorScheme.secondaryContainer,
         shape = RoundedCornerShape(48.dp),
         modifier = modifier
             .fillMaxWidth()
@@ -58,27 +62,44 @@ fun SearchBar(
                     .fillMaxSize()
                     .wrapContentHeight()
             ) {
-                IconButton(onClick = onClearQuery) {
-                    Icon(
-                        imageVector = Icons.Outlined.ArrowBack,
-                        tint = MaterialTheme.colorScheme.primary,
-                        contentDescription = stringResource(R.string.back)
-                    )
+                val icon = if (query.isNotEmpty()) {
+                    Icons.Outlined.Clear
+                } else {
+                    Icons.AutoMirrored.Outlined.ArrowBack
+                }
+                if (showBackButton) {
+                    IconButton(onClick = onClearQuery) {
+                        Icon(
+                            icon,
+                            tint = WeatherYouTheme.colorScheme.primary,
+                            contentDescription = stringResource(R.string.back)
+                        )
+                    }
+                } else if (query.isNotEmpty()) {
+                    IconButton(onClick = onClearQuery) {
+                        Icon(
+                            imageVector =  Icons.Outlined.Clear,
+                            tint = WeatherYouTheme.colorScheme.primary,
+                            contentDescription = stringResource(R.string.back)
+                        )
+                    }
+                } else {
+                    Spacer(Modifier.size(24.dp))
                 }
                 BasicTextField(
                     value = query,
                     onValueChange = onQueryChange,
-                    textStyle = MaterialTheme.typography.bodyMedium
-                        .copy(color = MaterialTheme.colorScheme.onSurface),
+                    textStyle = WeatherYouTheme.typography.bodyMedium
+                        .copy(color = WeatherYouTheme.colorScheme.onSurface),
                     keyboardOptions = KeyboardOptions(KeyboardCapitalization.Words),
                     keyboardActions = keyboardActions,
-                    cursorBrush = SolidColor(MaterialTheme.colorScheme.onSurface),
+                    cursorBrush = SolidColor(WeatherYouTheme.colorScheme.onSurface),
                     singleLine = true,
                     modifier = Modifier.weight(1f)
                 )
                 if (searching) {
                     CircularProgressIndicator(
-                        color = MaterialTheme.colorScheme.primary,
+                        color = WeatherYouTheme.colorScheme.primary,
                         modifier = Modifier
                             .padding(horizontal = 6.dp)
                             .size(36.dp)
@@ -101,12 +122,13 @@ private fun SearchHint() {
     ) {
         Icon(
             imageVector = Icons.Outlined.Search,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            tint = WeatherYouTheme.colorScheme.onSurfaceVariant,
             contentDescription = stringResource(R.string.label_search)
         )
         Spacer(Modifier.width(8.dp))
         Text(
-            text = stringResource(R.string.search_location)
+            text = stringResource(R.string.search_location),
+            color = WeatherYouTheme.colorScheme.onSecondaryContainer,
         )
     }
 }

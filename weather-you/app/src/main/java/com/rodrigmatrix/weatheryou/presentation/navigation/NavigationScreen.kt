@@ -7,7 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
+import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
@@ -234,9 +234,7 @@ fun ScreenAppContent(
             )
         }
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.inverseOnSurface)
+            modifier = Modifier.fillMaxSize()
         ) {
             WeatherHomeNavHost(
                 contentType = contentType,

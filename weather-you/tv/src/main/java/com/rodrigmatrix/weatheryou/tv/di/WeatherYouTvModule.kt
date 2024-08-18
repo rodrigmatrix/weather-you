@@ -2,6 +2,7 @@ package com.rodrigmatrix.weatheryou.tv.di
 
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
+import com.rodrigmatrix.weatheryou.settings.di.SettingsModule
 import com.rodrigmatrix.weatheryou.tv.presentation.locations.WeatherLocationsViewModel
 import com.rodrigmatrix.weatheryou.tv.presentation.search.SearchLocationViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -12,6 +13,7 @@ object WeatherYouTvModule {
 
     fun loadModules() {
         loadKoinModules(presentationModule)
+        SettingsModule.loadModules()
     }
 
     private val presentationModule = module {

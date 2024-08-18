@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
+import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -38,17 +38,20 @@ fun WeatherLocationCardContent(
         Column(Modifier.weight(1f)) {
             Text(
                 text = weatherLocation.currentWeather.temperatureString(),
-                style = MaterialTheme.typography.headlineLarge,
+                style = WeatherYouTheme.typography.headlineLarge,
+                color = WeatherYouTheme.colorScheme.onSecondaryContainer,
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp)
             )
             Text(
                 text = weatherLocation.timeZone.getTimeZoneHourAndMinutes(context),
-                style = MaterialTheme.typography.bodyMedium,
+                style = WeatherYouTheme.typography.bodyMedium,
+                color = WeatherYouTheme.colorScheme.onSecondaryContainer,
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp)
             )
             Text(
                 text = weatherLocation.name,
-                style = MaterialTheme.typography.headlineMedium,
+                style = WeatherYouTheme.typography.headlineMedium,
+                color = WeatherYouTheme.colorScheme.onSecondaryContainer,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp)
@@ -68,7 +71,7 @@ fun WeatherLocationCardContent(
             if (weatherLocation.isCurrentLocation) {
                 Icon(
                     painter = painterResource(R.drawable.ic_my_location),
-                    tint = MaterialTheme.colorScheme.primary,
+                    tint = WeatherYouTheme.colorScheme.onSecondaryContainer,
                     contentDescription = stringResource(R.string.current_location),
                     modifier = Modifier.align(Alignment.TopEnd)
                 )

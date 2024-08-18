@@ -13,16 +13,16 @@ import androidx.tv.material3.CardGlow
 import androidx.tv.material3.CardScale
 import androidx.tv.material3.CardShape
 import androidx.tv.material3.Glow
-import androidx.tv.material3.MaterialTheme
+import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 
 @Composable
 fun TvCard(
-    onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    onClick: () -> Unit = { },
     onLongClick: (() -> Unit)? = null,
     shape: CardShape = CardDefaults.shape(),
     colors: CardColors = CardDefaults.colors(
-        containerColor = MaterialTheme.colorScheme.primaryContainer,
+        containerColor = WeatherYouTheme.colorScheme.secondaryContainer,
     ),
     scale: CardScale = CardDefaults.scale(
         focusedScale = 1.01f,
@@ -30,7 +30,7 @@ fun TvCard(
     border: CardBorder = CardDefaults.border(),
     glow: CardGlow = CardDefaults.glow(
         focusedGlow = Glow(
-            elevationColor = MaterialTheme.colorScheme.tertiary,
+            elevationColor = WeatherYouTheme.colorScheme.tertiary,
             elevation = 4.dp,
         )
     ),

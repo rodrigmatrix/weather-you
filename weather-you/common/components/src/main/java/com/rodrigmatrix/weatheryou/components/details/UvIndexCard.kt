@@ -8,7 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
+import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -57,26 +57,31 @@ fun UvIndexCardContent(
                 Icon(
                     painter = painterResource(com.rodrigmatrix.weatheryou.weathericons.R.drawable.ic_sunny),
                     contentDescription = stringResource(R.string.uv_index),
+                    tint = WeatherYouTheme.colorScheme.onSecondaryContainer,
                     modifier = Modifier.padding(end = 4.dp)
                 )
                 Text(
                     text = stringResource(R.string.uv_index),
-                    style = MaterialTheme.typography.titleMedium,
+                    color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                    style = WeatherYouTheme.typography.titleMedium,
                 )
             }
             Text(
                 text = uvIndex.toInt().toString(),
-                style = MaterialTheme.typography.titleMedium
+                color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                style = WeatherYouTheme.typography.titleMedium
             )
             Text(
                 text = stringResource(uvIndex.toInt().uvIndexStringRes()),
-                style = MaterialTheme.typography.titleMedium
+                color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                style = WeatherYouTheme.typography.titleMedium
             )
         }
         UvIndexBar(uvIndex)
         Text(
             text = stringResource(uvIndex.toInt().uvIndexAlertStringRes()),
-            style = MaterialTheme.typography.bodyMedium
+            color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+            style = WeatherYouTheme.typography.bodyMedium
         )
     }
 }
@@ -151,7 +156,7 @@ private fun UvIndexBar(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun UvIndexCardPreview() {
-    MaterialTheme {
+    WeatherYouTheme {
         UvIndexCardContent(
             uvIndex = 5.0,
         )

@@ -1,20 +1,21 @@
 package com.rodrigmatrix.weatheryou.tv.presentation.search
 
 import android.content.res.Configuration
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -24,20 +25,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
-import androidx.tv.foundation.lazy.grid.TvGridCells
-import androidx.tv.foundation.lazy.grid.TvLazyVerticalGrid
-import androidx.tv.foundation.lazy.grid.itemsIndexed
-import androidx.tv.foundation.lazy.grid.rememberTvLazyGridState
-import androidx.tv.material3.ClickableSurfaceDefaults
-import androidx.tv.material3.ClickableSurfaceScale
+import androidx.tv.material3.CardDefaults
 import androidx.tv.material3.ExperimentalTvMaterial3Api
-import androidx.tv.material3.Glow
-import androidx.tv.material3.MaterialTheme
-import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
 import coil.compose.AsyncImage
 import com.rodrigmatrix.weatheryou.components.R
+import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.domain.model.City
+import com.rodrigmatrix.weatheryou.tv.components.TvCard
 import kotlin.math.max
 
 
@@ -45,7 +40,6 @@ private val MinImageSize = 134.dp
 private val CategoryShape = RoundedCornerShape(10.dp)
 private const val CategoryTextProportion = 0.55f
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalTvMaterial3Api::class)
 @Composable
 fun LocationSuggestions(
     suggestions: List<City>,
@@ -54,30 +48,30 @@ fun LocationSuggestions(
     Column {
         Text(
             text = stringResource(R.string.famous_cities),
-            style = MaterialTheme.typography.headlineMedium,
+            style = WeatherYouTheme.typography.headlineMedium,
+            color = WeatherYouTheme.colorScheme.onSurface,
             modifier = Modifier
                 .heightIn(min = 56.dp)
                 .padding(horizontal = 24.dp, vertical = 4.dp)
                 .wrapContentHeight()
         )
-        TvLazyVerticalGrid(
-            columns = TvGridCells.Fixed(2),
-            modifier = Modifier.padding(horizontal = 16.dp)
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier.padding(horizontal = 16.dp),
         ) {
             itemsIndexed(suggestions) { index, location ->
                 LocationRow(
                     location = location,
-                    gradient = listOf(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.primaryContainer),
+                    gradient = listOf(WeatherYouTheme.colorScheme.primary, WeatherYouTheme.colorScheme.primaryContainer),
                     onLocationClick = onLocationClick,
-                    modifier = Modifier
-                        .padding(8.dp)
                 )
             }
         }
     }
 }
 
-@OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
 fun LocationRow(
     location: City,
@@ -85,15 +79,8 @@ fun LocationRow(
     onLocationClick: (City) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Surface(
-        shape = ClickableSurfaceDefaults.shape(CategoryShape),
-        colors = ClickableSurfaceDefaults.colors(),
-        scale = ClickableSurfaceDefaults.scale(
-            focusedScale = 1.01f
-        ),
-        glow = ClickableSurfaceDefaults.glow(
-            glow = Glow(elevationColor = gradient.first(), elevation = 4.dp)
-        ),
+    TvCard(
+        shape = CardDefaults.shape(CategoryShape),
         onClick = { onLocationClick(location) },
     ) {
         Layout(
@@ -103,9 +90,9 @@ fun LocationRow(
             content = {
                 Text(
                     text = stringResource(location.name),
-                    style = MaterialTheme.typography.titleSmall,
+                    style = WeatherYouTheme.typography.titleSmall,
                     overflow = TextOverflow.Ellipsis,
-                    color = MaterialTheme.colorScheme.secondaryContainer,
+                    color = WeatherYouTheme.colorScheme.secondaryContainer,
                     modifier = Modifier
                         .padding(4.dp)
                         .padding(start = 8.dp),
@@ -154,7 +141,7 @@ fun LocationRow(
 @Preview("large font", fontScale = 2f)
 @Composable
 private fun LocationSuggestionsPreview() {
-    MaterialTheme {
+    WeatherYouTheme {
         LocationSuggestions(
             PreviewFamousCities,
             { }

@@ -1,7 +1,6 @@
 package com.rodrigmatrix.weatheryou.locationdetails.presentaion.details
 
 import android.annotation.SuppressLint
-import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -15,11 +14,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Devices
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
@@ -83,7 +79,8 @@ fun WeatherDetailsScreen(
                     viewState.weatherLocation?.isCurrentLocation?.not() == true
                 )
             }
-        }
+        },
+        containerColor = WeatherYouTheme.colorScheme.background,
     ) { paddingValues ->
         val scrollState = rememberLazyListState()
         LazyColumn(
@@ -164,6 +161,7 @@ fun WeatherDetailsScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SmallScreenTopAppBar(
     title: String,
@@ -177,14 +175,15 @@ fun SmallScreenTopAppBar(
                 text = title,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.bodyLarge
+                style = WeatherYouTheme.typography.bodyLarge,
+                color = WeatherYouTheme.colorScheme.onBackground,
             )
         },
         navigationIcon = {
             IconButton(onClick = onCloseClick) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
-                    tint = MaterialTheme.colorScheme.primary,
+                    tint = WeatherYouTheme.colorScheme.primary,
                     contentDescription = stringResource(R.string.back)
                 )
             }
@@ -194,13 +193,13 @@ fun SmallScreenTopAppBar(
                 IconButton(onClick = onDeleteButtonClick) {
                     Icon(
                         imageVector = Icons.Outlined.Delete,
-                        tint = MaterialTheme.colorScheme.primary,
+                        tint = WeatherYouTheme.colorScheme.primary,
                         modifier = Modifier.size(24.dp),
                         contentDescription = stringResource(R.string.delete_location)
                     )
                 }
             }
-        }
+        },
     )
 }
 
@@ -217,14 +216,14 @@ fun ExpandedTopAppBar(
                 text = title,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.bodyLarge
+                style = WeatherYouTheme.typography.bodyLarge
             )
         },
         navigationIcon = {
             IconButton(onClick = onCloseClick) {
                 Icon(
                     imageVector = Icons.Filled.Close,
-                    tint = MaterialTheme.colorScheme.primary,
+                    tint = WeatherYouTheme.colorScheme.primary,
                     contentDescription = stringResource(R.string.back)
                 )
             }
@@ -234,7 +233,7 @@ fun ExpandedTopAppBar(
                 IconButton(onClick = onDeleteButtonClick) {
                     Icon(
                         imageVector = Icons.Outlined.Delete,
-                        tint = MaterialTheme.colorScheme.primary,
+                        tint = WeatherYouTheme.colorScheme.primary,
                         modifier = Modifier.size(24.dp),
                         contentDescription = stringResource(R.string.delete_location)
                     )

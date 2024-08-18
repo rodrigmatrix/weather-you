@@ -6,7 +6,6 @@ import android.graphics.Path
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -52,11 +51,13 @@ fun SunriseSunsetCardContent(
                 Icon(
                     painter = painterResource(com.rodrigmatrix.weatheryou.weathericons.R.drawable.ic_sunny),
                     contentDescription = stringResource(R.string.sunrise_sunset),
+                    tint = WeatherYouTheme.colorScheme.onSecondaryContainer,
                     modifier = Modifier.padding(end = 4.dp)
                 )
                 Text(
                     text = stringResource(R.string.sunrise_sunset),
-                    style = MaterialTheme.typography.titleMedium,
+                    color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                    style = WeatherYouTheme.typography.titleMedium,
                 )
             }
         }
@@ -75,11 +76,13 @@ fun SunriseSunsetCardContent(
             ) {
                 Text(
                     text = stringResource(R.string.sunrise),
-                    style = MaterialTheme.typography.bodySmall
+                    color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                    style = WeatherYouTheme.typography.bodySmall
                 )
                 Text(
                     text = sunrise.getHourWithMinutesString(context),
-                    style = MaterialTheme.typography.titleMedium
+                    color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                    style = WeatherYouTheme.typography.titleMedium
                 )
             }
             Column(
@@ -90,11 +93,13 @@ fun SunriseSunsetCardContent(
             ) {
                 Text(
                     text = stringResource(R.string.sunset),
-                    style = MaterialTheme.typography.bodySmall
+                    color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                    style = WeatherYouTheme.typography.bodySmall
                 )
                 Text(
                     text = sunset.getHourWithMinutesString(context),
-                    style = MaterialTheme.typography.titleMedium
+                    color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                    style = WeatherYouTheme.typography.titleMedium
                 )
             }
         }
@@ -111,7 +116,8 @@ fun SunriseSunsetCardContent(
             }
             Text(
                 text = stringResource(R.string.length_of_day) + dayLengthString,
-                style = MaterialTheme.typography.bodyMedium
+                color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                style = WeatherYouTheme.typography.bodyMedium
             )
         }
         val (remainingHours, remainingMinutes) = currentTime.getHoursAndMinutesDiff(sunset)
@@ -123,7 +129,8 @@ fun SunriseSunsetCardContent(
             }
             Text(
                 text = stringResource(R.string.remaining_daylight_x) + remainingDaylightString,
-                style = MaterialTheme.typography.bodyMedium
+                color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                style = WeatherYouTheme.typography.bodyMedium
             )
         }
     }
@@ -136,9 +143,9 @@ private fun SunriseSunsetVisualizer(
     currentHour: Int,
     modifier: Modifier = Modifier
 ) {
-    val colorPrimary = MaterialTheme.colorScheme.primary
-    val secondaryColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.7f)
-    val tertiaryPrimary = MaterialTheme.colorScheme.tertiary
+    val colorPrimary = WeatherYouTheme.colorScheme.primary
+    val secondaryColor = WeatherYouTheme.colorScheme.secondary.copy(alpha = 0.7f)
+    val tertiaryPrimary = WeatherYouTheme.colorScheme.tertiary
     Canvas(
         modifier = modifier
             .fillMaxWidth()

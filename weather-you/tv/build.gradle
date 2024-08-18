@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'com.google.gms.google-services'
+    id 'kotlinx-serialization'
     id 'com.google.firebase.crashlytics'
 }
 
@@ -35,6 +36,11 @@ android {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+        debug {
+            minifyEnabled false
+            applicationIdSuffix ".debug"
+            debuggable true
+        }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
@@ -65,6 +71,9 @@ dependencies {
     implementation project(LocalModules.core)
 
     implementation project(LocalModules.components)
+    implementation project(LocalModules.locationDetails)
+    implementation project(LocalModules.settings)
+    implementation project(LocalModules.about)
 
     implementation(libs.android.material)
 

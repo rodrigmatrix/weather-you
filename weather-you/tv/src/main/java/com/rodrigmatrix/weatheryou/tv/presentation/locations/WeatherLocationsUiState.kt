@@ -5,7 +5,7 @@ import com.google.accompanist.permissions.PermissionState
 import com.rodrigmatrix.weatheryou.core.viewmodel.ViewState
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 
-internal data class WeatherLocationsUiState(
+data class WeatherLocationsUiState(
     val isLoading: Boolean = false,
     val locationsList: List<WeatherLocation> = emptyList(),
     val selectedWeatherLocation: WeatherLocation? = null,

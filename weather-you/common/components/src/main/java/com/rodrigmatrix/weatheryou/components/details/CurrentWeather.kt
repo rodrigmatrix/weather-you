@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
+import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -50,21 +50,23 @@ fun CurrentWeatherContent(
                         R.string.day_x,
                         weatherLocation.maxTemperature.temperatureString()
                     ) + " ",
-                    style = MaterialTheme.typography.titleSmall
+                    color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                    style = WeatherYouTheme.typography.titleSmall
                 )
                 Text(
                     text = stringResource(
                         R.string.night_x,
                         weatherLocation.lowestTemperature.temperatureString()
                     ),
-                    style = MaterialTheme.typography.titleSmall
+                    color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                    style = WeatherYouTheme.typography.titleSmall
                 )
             }
 
             if (weatherLocation.isCurrentLocation) {
                 Icon(
                     painter = painterResource(R.drawable.ic_my_location),
-                    tint = MaterialTheme.colorScheme.primary,
+                    tint = WeatherYouTheme.colorScheme.onSecondaryContainer,
                     contentDescription = stringResource(R.string.current_location),
                     modifier = Modifier
                 )
@@ -77,17 +79,20 @@ fun CurrentWeatherContent(
             Column(Modifier.weight(1f)) {
                 Text(
                     text = weatherLocation.name,
-                    style = MaterialTheme.typography.titleMedium,
+                    style = WeatherYouTheme.typography.titleMedium,
                     maxLines = 2,
+                    color = WeatherYouTheme.colorScheme.onSecondaryContainer,
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
                     text = weatherLocation.timeZone.getTimeZoneHourAndMinutes(context),
-                    style = MaterialTheme.typography.titleSmall
+                    color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                    style = WeatherYouTheme.typography.titleSmall
                 )
                 Text(
                     text = weatherLocation.currentWeather.temperatureString(),
-                    style = MaterialTheme.typography.headlineLarge,
+                    color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                    style = WeatherYouTheme.typography.headlineLarge,
                     fontSize = 80.sp
                 )
                 Text(
@@ -95,7 +100,8 @@ fun CurrentWeatherContent(
                         R.string.feels_like_x,
                         weatherLocation.feelsLike.temperatureString()
                     ),
-                    style = MaterialTheme.typography.titleSmall
+                    color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                    style = WeatherYouTheme.typography.titleSmall
                 )
                 if (weatherLocation.precipitationType.isNotEmpty()) {
                     Text(
@@ -103,7 +109,8 @@ fun CurrentWeatherContent(
                             R.string.chance_of_precipitation,
                             weatherLocation.precipitationProbability.percentageString()
                         ),
-                        style = MaterialTheme.typography.titleSmall
+                        color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                        style = WeatherYouTheme.typography.titleSmall
                     )
                 }
             }
@@ -120,8 +127,9 @@ fun CurrentWeatherContent(
                     )
                     Text(
                         text = stringResource(id = weatherLocation.currentCondition.getString()),
-                        style = MaterialTheme.typography.titleSmall,
+                        style = WeatherYouTheme.typography.titleSmall,
                         maxLines = 2,
+                        color = WeatherYouTheme.colorScheme.onSecondaryContainer,
                         overflow = TextOverflow.Ellipsis
                     )
                 }
@@ -135,7 +143,7 @@ fun CurrentWeatherContent(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun CurrentWeatherPreview() {
-    MaterialTheme {
+    WeatherYouTheme {
         CurrentWeatherContent(
             weatherLocation = PreviewWeatherLocation
         )

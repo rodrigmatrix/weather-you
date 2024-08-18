@@ -32,21 +32,21 @@ fun CurrentConditions(
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = weatherLocation.currentWeather.temperatureString(),
-                color = MaterialTheme.colors.primary,
-                style = MaterialTheme.typography.display3
+                color = WeatherYouTheme.colors.primary,
+                style = WeatherYouTheme.typography.display3
             )
             Spacer(Modifier.padding(end = 4.dp))
             Column {
                 Text(
                     text = weatherLocation.currentWeatherDescription,
-                    color = MaterialTheme.colors.primary,
-                    style = MaterialTheme.typography.caption1,
+                    color = WeatherYouTheme.colors.primary,
+                    style = WeatherYouTheme.typography.caption1,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
                     text = weatherLocation.name,
-                    style = MaterialTheme.typography.caption2,
+                    style = WeatherYouTheme.typography.caption2,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -55,7 +55,7 @@ fun CurrentConditions(
         Spacer(Modifier.padding(bottom = 4.dp))
         Text(
             text = stringResource(R.string.feels_like, weatherLocation.feelsLike.temperatureString()),
-            style = MaterialTheme.typography.body2,
+            style = WeatherYouTheme.typography.body2,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )

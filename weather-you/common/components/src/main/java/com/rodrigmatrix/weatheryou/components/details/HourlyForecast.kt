@@ -1,9 +1,10 @@
 package com.rodrigmatrix.weatheryou.components.details
 
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.MaterialTheme
+import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -32,7 +33,8 @@ fun HourlyForecastContent(
                     bottom = 10.dp,
                     top = 10.dp
                 ),
-            style = MaterialTheme.typography.headlineSmall
+            style = WeatherYouTheme.typography.headlineSmall,
+            color = WeatherYouTheme.colorScheme.onSecondaryContainer,
         )
         WeatherYouDivider(
             Modifier
@@ -63,7 +65,8 @@ fun HourRow(hour: WeatherHour) {
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(bottom = 4.dp),
-            style = MaterialTheme.typography.bodySmall
+            color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+            style = WeatherYouTheme.typography.bodySmall
         )
         if (hour.precipitationType.isNotEmpty()) {
             Text(
@@ -71,7 +74,8 @@ fun HourRow(hour: WeatherHour) {
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .padding(bottom = 4.dp),
-                style = MaterialTheme.typography.bodySmall
+                color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                style = WeatherYouTheme.typography.bodySmall
             )
         } else {
             Spacer(
@@ -90,7 +94,8 @@ fun HourRow(hour: WeatherHour) {
         Text(
             text = hour.dateTime.getHourString(LocalContext.current),
             modifier = Modifier.align(Alignment.CenterHorizontally),
-            style = MaterialTheme.typography.bodySmall
+            color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+            style = WeatherYouTheme.typography.bodySmall
         )
     }
 }

@@ -3,6 +3,12 @@ package com.rodrigmatrix.weatheryou.data.di
 import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Geocoder
+import androidx.datastore.core.DataMigration
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
+import androidx.datastore.preferences.preferencesDataStoreFile
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.ktx.Firebase
@@ -46,10 +52,13 @@ import com.rodrigmatrix.weatheryou.domain.repository.SearchRepository
 import com.rodrigmatrix.weatheryou.domain.repository.SettingsRepository
 import com.rodrigmatrix.weatheryou.domain.repository.WeatherRepository
 import com.rodrigmatrix.weatheryou.domain.usecase.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import okio.Path.Companion.toPath
 import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.loadKoinModules
@@ -153,15 +162,11 @@ object WeatherYouDataModules {
         factory<SearchLocalDataSource> {
             SearchLocalDataSourceImpl(context = androidContext())
         }
-        factory<SharedPreferencesDataSource> {
-            SharedPreferencesDataSourceImpl(
-                sharedPreferences = androidApplication()
-                    .getSharedPreferences(WEATHER_YOU_SHARED_PREFERENCES, Context.MODE_PRIVATE)
-            )
-        }
-        factory<SettingsLocalDataSource> {
+        single<SettingsLocalDataSource> {
             SettingsLocalDataSourceImpl(
-                sharedPreferencesDataSource = get(),
+                dataStore = PreferenceDataStoreFactory.create {
+                    androidApplication().preferencesDataStoreFile("weather_you_data_store")
+                },
                 unitLocale = UnitLocale(Locale.getDefault()),
             )
         }

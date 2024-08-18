@@ -12,7 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
+import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxState
@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.dp
 fun WeatherYouCard(
     modifier: Modifier = Modifier,
     shape: RoundedCornerShape = RoundedCornerShape(24.dp),
-    color: Color = MaterialTheme.colorScheme.secondaryContainer,
+    color: Color = WeatherYouTheme.colorScheme.secondaryContainer,
     content: @Composable () -> Unit
 ) {
     Surface(
@@ -42,7 +42,7 @@ fun WeatherYouCard(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WeatherYouCard(
     modifier: Modifier = Modifier,
@@ -50,7 +50,7 @@ fun WeatherYouCard(
     onClick: () -> Unit,
     onDismiss: () -> Unit,
     shape: RoundedCornerShape = RoundedCornerShape(24.dp),
-    color: Color = MaterialTheme.colorScheme.secondaryContainer,
+    color: Color = WeatherYouTheme.colorScheme.secondaryContainer,
     content: @Composable () -> Unit
 ) {
     if (isDismissible) {
@@ -108,7 +108,7 @@ fun SwipeBackground(
 
     Surface(
         shape = shape,
-        color = MaterialTheme.colorScheme.errorContainer,
+        color = WeatherYouTheme.colorScheme.errorContainer,
         modifier = Modifier
             .padding(horizontal = 16.dp)
             .fillMaxSize(),
@@ -119,7 +119,7 @@ fun SwipeBackground(
         ) {
             Icon(
                 Icons.Default.Delete,
-                tint = MaterialTheme.colorScheme.onBackground,
+                tint = WeatherYouTheme.colorScheme.onBackground,
                 contentDescription = null,
                 modifier = Modifier
                     .scale(scale)

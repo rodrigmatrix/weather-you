@@ -109,4 +109,9 @@
     <string name="condition_thunderstorm">Rain</string>
     <string name="weather_widget_disclaimer">Please select the location you want displayed on the weather widget. If you want a different location, open the app and add it and come back here. If you want to always display the current location, please select it</string>
     <string name="widget_location">Widget Location</string>
+    <string name="dynamic">Dynamic</string>
+    <string name="default_app_color">Default</string>
+    <string name="mosque">Mosque</string>
+    <string name="dark_fern">Dark Fern</string>
+    <string name="fresh_eggplant">Fresh Eggplant</string>
 </resources>

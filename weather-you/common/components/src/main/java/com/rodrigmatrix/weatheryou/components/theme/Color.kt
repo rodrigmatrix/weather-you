@@ -7,7 +7,6 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
-
 val md_theme_light_primary = Color(0xFF4159a9)
 val md_theme_light_onPrimary = Color(0xFFffffff)
 val md_theme_light_primaryContainer = Color(0xFFdbe1ff)
@@ -156,7 +155,7 @@ data class WeatherYouColors(
     val surfaceContainerLowest: Color,
 )
 
-val WeatherYouColorScheme = staticCompositionLocalOf {
+val LocalWeatherYouColorScheme = staticCompositionLocalOf {
     WeatherYouColors(
         primary = Color.Unspecified,
         onPrimary = Color.Unspecified,

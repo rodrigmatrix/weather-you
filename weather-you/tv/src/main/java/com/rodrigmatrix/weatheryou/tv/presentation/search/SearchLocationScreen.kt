@@ -2,13 +2,16 @@ package com.rodrigmatrix.weatheryou.tv.presentation.search
 
 import android.content.Context
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -27,20 +30,17 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.tv.foundation.lazy.list.TvLazyColumn
-import androidx.tv.foundation.lazy.list.TvLazyListState
-import androidx.tv.foundation.lazy.list.itemsIndexed
-import androidx.tv.foundation.lazy.list.rememberTvLazyListState
-import androidx.tv.material3.ExperimentalTvMaterial3Api
+import androidx.tv.material3.CardDefaults
 import androidx.tv.material3.Icon
-import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import com.rodrigmatrix.weatheryou.components.R
 import com.rodrigmatrix.weatheryou.components.SearchBar
+import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.core.compose.LaunchViewEffect
 import com.rodrigmatrix.weatheryou.core.extensions.toast
 import com.rodrigmatrix.weatheryou.domain.model.City
 import com.rodrigmatrix.weatheryou.domain.model.SearchAutocompleteLocation
+import com.rodrigmatrix.weatheryou.tv.components.TvCard
 import org.koin.androidx.compose.getViewModel
 
 @Composable
@@ -77,9 +77,6 @@ internal fun SearchLocationScreen(
         onClearQuery = {
             if (viewState.searchText.isNotEmpty()) {
                 viewModel.onSearch("")
-            } else {
-                keyboardController?.hide()
-                navController.navigateUp()
             }
         },
         onFamousLocationClicked = viewModel::addFamousLocation
@@ -108,6 +105,7 @@ private fun SearchLocationScreen(
             onClearQuery = onClearQuery,
             searching = uiState.isLoading,
             modifier = Modifier.padding(bottom = 8.dp),
+            showBackButton = false,
             keyboardActions = KeyboardActions(
                 onDone = {
                     onLocationClick(uiState.locationsList.firstOrNull())
@@ -124,7 +122,8 @@ private fun SearchLocationScreen(
             } else {
                 Text(
                     text = stringResource(R.string.no_results_found),
-                    style = MaterialTheme.typography.titleLarge,
+                    style = WeatherYouTheme.typography.titleLarge,
+                    color = WeatherYouTheme.colorScheme.onSurface,
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
                         .padding(bottom = 20.dp)
@@ -146,51 +145,57 @@ private fun LocationSelectList(
     onLocationClick: (SearchAutocompleteLocation) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val scrollState = rememberTvLazyListState()
-    TvLazyColumn(modifier, state = scrollState) {
+    val scrollState = rememberLazyListState()
+    LazyColumn(modifier, state = scrollState) {
         itemsIndexed(locationsList) { index, item ->
             LocationItem(item, index, scrollState, onLocationClick)
         }
     }
 }
 
-@OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
 private fun LocationItem(
     location: SearchAutocompleteLocation,
     index: Int,
-    scrollState: TvLazyListState,
+    scrollState: LazyListState,
     onLocationClick: (SearchAutocompleteLocation) -> Unit
 ) {
-    Row(
-        Modifier
+    TvCard(
+        onClick = {
+            onLocationClick(location)
+        },
+        colors = CardDefaults.colors(
+            containerColor = WeatherYouTheme.colorScheme.surface,
+    ),
+        modifier = Modifier
             .padding(start = 32.dp, end = 32.dp, bottom = 10.dp)
-            .fillMaxWidth()
-            .clickable {
-                onLocationClick(location)
-            },
-        horizontalArrangement = Arrangement.SpaceAround,
-        verticalAlignment = Alignment.CenterVertically
+            .fillMaxWidth(),
     ) {
-        Column(Modifier.weight(1f)) {
-            Text(
-                text = location.name,
-                style = MaterialTheme.typography.headlineSmall
+        Row(
+            horizontalArrangement = Arrangement.SpaceAround,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(Modifier.weight(1f)) {
+                Text(
+                    text = location.name,
+                    color = WeatherYouTheme.colorScheme.onSurface,
+                    style = WeatherYouTheme.typography.headlineSmall,
+                )
+            }
+            Icon(
+                imageVector = Icons.Default.Add,
+                tint = WeatherYouTheme.colorScheme.onSurface,
+                contentDescription = stringResource(R.string.add_x_location, location),
+                modifier = Modifier.size(34.dp)
             )
         }
-        Icon(
-            imageVector = Icons.Default.Add,
-            contentDescription = stringResource(R.string.add_x_location, location),
-            modifier = Modifier.size(34.dp)
-        )
     }
 }
 
-@OptIn(ExperimentalTvMaterial3Api::class)
 @Preview(device = Devices.TV_1080p)
 @Composable
 fun AddLocationScreenPreview() {
-    MaterialTheme {
+    WeatherYouTheme {
         SearchLocationScreen(
             uiState = SearchLocationUiState(
                 famousLocationsList = PreviewFamousCities

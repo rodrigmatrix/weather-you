@@ -11,7 +11,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
+import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -45,7 +45,8 @@ fun LocationSuggestions(
     Column {
         Text(
             text = stringResource(R.string.famous_cities),
-            style = MaterialTheme.typography.headlineMedium,
+            color = WeatherYouTheme.colorScheme.onBackground,
+            style = WeatherYouTheme.typography.headlineMedium,
             modifier = Modifier
                 .heightIn(min = 56.dp)
                 .padding(horizontal = 24.dp, vertical = 4.dp)
@@ -60,7 +61,7 @@ fun LocationSuggestions(
             itemsIndexed(suggestions) { index, location ->
                 LocationRow(
                     location = location,
-                    gradient = listOf(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.primaryContainer),
+                    gradient = listOf(WeatherYouTheme.colorScheme.primary, WeatherYouTheme.colorScheme.primaryContainer),
                     onLocationClick = onLocationClick,
                     modifier = Modifier
                         .padding(8.dp)
@@ -87,9 +88,9 @@ fun LocationRow(
         content = {
             Text(
                 text = stringResource(location.name),
-                style = MaterialTheme.typography.titleSmall,
+                style = WeatherYouTheme.typography.titleSmall,
                 overflow = TextOverflow.Ellipsis,
-                color = MaterialTheme.colorScheme.secondaryContainer,
+                color = WeatherYouTheme.colorScheme.onPrimary,
                 modifier = Modifier
                     .padding(4.dp)
                     .padding(start = 8.dp)
@@ -136,7 +137,7 @@ fun LocationRow(
 @Preview("large font", fontScale = 2f)
 @Composable
 private fun LocationSuggestionsPreview() {
-    MaterialTheme {
+    WeatherYouTheme {
         LocationSuggestions(
             PreviewFamousCities,
             { }

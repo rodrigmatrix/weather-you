@@ -14,7 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
+import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -66,16 +66,19 @@ fun WindCardContent(
                 Icon(
                     painter = painterResource(com.rodrigmatrix.weatheryou.weathericons.R.drawable.ic_air),
                     contentDescription = stringResource(R.string.wind),
+                    tint = WeatherYouTheme.colorScheme.onSecondaryContainer,
                     modifier = Modifier.padding(end = 4.dp)
                 )
                 Text(
                     text = stringResource(R.string.wind),
-                    style = MaterialTheme.typography.titleMedium,
+                    color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                    style = WeatherYouTheme.typography.titleMedium,
                 )
             }
             Text(
                 text = windSpeed.speedString(unit),
-                style = MaterialTheme.typography.titleLarge,
+                style = WeatherYouTheme.typography.titleLarge,
+                color = WeatherYouTheme.colorScheme.onSecondaryContainer,
                 modifier = Modifier
             )
         }
@@ -100,8 +103,8 @@ fun WindDirectionsVisualizer(
         ),
         label = "",
     )
-    val primaryColor = MaterialTheme.colorScheme.primary
-    val ternaryColor = MaterialTheme.colorScheme.tertiary
+    val primaryColor = WeatherYouTheme.colorScheme.primary
+    val ternaryColor = WeatherYouTheme.colorScheme.tertiary
     val northString = stringResource(R.string.north_char)
     val southString = stringResource(R.string.south_char)
     val eastString = stringResource(R.string.east_char)
@@ -161,8 +164,8 @@ internal fun Marker(
     drawMarker: Boolean,
     modifier: Modifier = Modifier
 ) {
-    val primaryColor = MaterialTheme.colorScheme.primary
-    val ternaryColor = MaterialTheme.colorScheme.tertiary
+    val primaryColor = WeatherYouTheme.colorScheme.primary
+    val ternaryColor = WeatherYouTheme.colorScheme.tertiary
     Box(
         modifier
             .size(130.dp)
@@ -188,7 +191,7 @@ internal fun Marker(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun WindCardPreview() {
-    MaterialTheme {
+    WeatherYouTheme {
         WindCardContent(
             windSpeed = 10.0,
             windDirection = 251.0,

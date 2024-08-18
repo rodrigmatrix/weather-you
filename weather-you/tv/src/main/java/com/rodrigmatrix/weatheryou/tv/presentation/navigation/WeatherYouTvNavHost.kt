@@ -1,33 +1,49 @@
 package com.rodrigmatrix.weatheryou.tv.presentation.navigation
 
+import androidx.compose.foundation.background
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
+import com.rodrigmatrix.weatheryou.presentation.about.AboutScreen
 import com.rodrigmatrix.weatheryou.tv.presentation.home.TvWeatherLocationsScreen
+import com.rodrigmatrix.weatheryou.tv.presentation.locations.WeatherLocationsViewModel
 import com.rodrigmatrix.weatheryou.tv.presentation.search.SearchLocationScreen
+import com.rodrigmatrix.weatheryou.tv.presentation.settings.TvSettingsScreen
+import org.koin.androidx.compose.getViewModel
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun WeatherYouTvNavHost(
+    navController: NavHostController,
     modifier: Modifier = Modifier,
+    weatherLocationsViewModel: WeatherLocationsViewModel = getViewModel(),
 ) {
-    val navController = rememberNavController()
     NavHost(
         navController,
-        startDestination = WeatherYouTvRoutes.HOME_SCREEN,
-        modifier = modifier,
+        startDestination = TvRoutes.Home,
+        modifier = modifier.background(WeatherYouTheme.colorScheme.surface),
     ) {
-        composable(WeatherYouTvRoutes.HOME_SCREEN) {
+        composable<TvRoutes.Home> {
             TvWeatherLocationsScreen(
+                viewModel = weatherLocationsViewModel,
                 navController = navController
             )
         }
 
-        composable(WeatherYouTvRoutes.ADD_LOCATION_SCREEN) {
+        composable<TvRoutes.Search> {
             SearchLocationScreen(navController = navController)
+        }
+
+        composable<TvRoutes.Settings> {
+            TvSettingsScreen()
+        }
+
+        composable<TvRoutes.About> {
+            AboutScreen()
         }
     }
 }

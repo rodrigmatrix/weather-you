@@ -28,6 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.rodrigmatrix.weatheryou.addlocation.preview.PreviewFamousCities
+import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.core.compose.LaunchViewEffect
 import com.rodrigmatrix.weatheryou.core.extensions.toast
 import com.rodrigmatrix.weatheryou.domain.model.City
@@ -107,7 +108,8 @@ fun AddLocationScreen(
                     }
                 )
             )
-        }
+        },
+        containerColor = WeatherYouTheme.colorScheme.background,
     ) { paddingValues ->
         Column(Modifier.padding(paddingValues)) {
             if (viewState.isLocationsListVisible()) {
@@ -119,7 +121,8 @@ fun AddLocationScreen(
             } else {
                 Text(
                     text = stringResource(Strings.string.no_results_found),
-                    style = MaterialTheme.typography.titleLarge,
+                    color = WeatherYouTheme.colorScheme.onBackground,
+                    style = WeatherYouTheme.typography.titleLarge,
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
                         .padding(bottom = 20.dp)
@@ -169,11 +172,13 @@ fun LocationItem(
         Column(Modifier.weight(1f)) {
             Text(
                 text = location.name,
-                style = MaterialTheme.typography.headlineSmall
+                color = WeatherYouTheme.colorScheme.onBackground,
+                style = WeatherYouTheme.typography.headlineSmall
             )
         }
         Icon(
             imageVector = Icons.Default.Add,
+            tint = WeatherYouTheme.colorScheme.onBackground,
             contentDescription = stringResource(Strings.string.add_x_location, location),
             modifier = Modifier.size(34.dp)
         )
@@ -186,7 +191,7 @@ fun LocationItem(
 @Preview(device = Devices.PIXEL_C, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun AddLocationScreenPreview() {
-    MaterialTheme {
+    WeatherYouTheme {
         AddLocationScreen(
             viewState = AddLocationViewState(
                 famousLocationsList = PreviewFamousCities

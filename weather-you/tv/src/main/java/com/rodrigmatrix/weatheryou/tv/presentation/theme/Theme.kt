@@ -13,8 +13,42 @@ import androidx.core.view.WindowCompat
 import androidx.tv.material3.ColorScheme
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.darkColorScheme
-import com.rodrigmatrix.weatheryou.components.theme.WeatherYouColorScheme
+import androidx.tv.material3.lightColorScheme
+import com.rodrigmatrix.weatheryou.components.theme.ColorMode
+import com.rodrigmatrix.weatheryou.components.theme.LocalWeatherYouColorMode
+import com.rodrigmatrix.weatheryou.components.theme.LocalWeatherYouColorScheme
+import com.rodrigmatrix.weatheryou.components.theme.LocalWeatherYouThemeMode
+import com.rodrigmatrix.weatheryou.components.theme.LocalWeatherYouTypography
+import com.rodrigmatrix.weatheryou.components.theme.ThemeMode
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouColors
+import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTypography
+
+private val TvLightColorScheme = lightColorScheme(
+    primary = md_theme_light_primary,
+    onPrimary = md_theme_light_onPrimary,
+    primaryContainer = md_theme_light_primaryContainer,
+    onPrimaryContainer = md_theme_light_onPrimaryContainer,
+    secondary = md_theme_light_secondary,
+    onSecondary = md_theme_light_onSecondary,
+    secondaryContainer = md_theme_light_secondaryContainer,
+    onSecondaryContainer = md_theme_light_onSecondaryContainer,
+    tertiary = md_theme_light_tertiary,
+    onTertiary = md_theme_light_onTertiary,
+    tertiaryContainer = md_theme_light_tertiaryContainer,
+    onTertiaryContainer = md_theme_light_onTertiaryContainer,
+    error = md_theme_light_error,
+    errorContainer = md_theme_light_errorContainer,
+    onError = md_theme_light_onError,
+    onErrorContainer = md_theme_light_onErrorContainer,
+    background = md_theme_light_background,
+    onBackground = md_theme_light_onBackground,
+    surface = md_theme_light_surface,
+    onSurface = md_theme_light_onSurface,
+    surfaceVariant = md_theme_light_surfaceVariant,
+    onSurfaceVariant = md_theme_light_onSurfaceVariant,
+    inverseOnSurface = md_theme_light_inverseOnSurface,
+    inverseSurface = md_theme_light_inverseSurface,
+)
 
 private val TvDarkColorScheme = darkColorScheme(
     primary = md_theme_dark_primary,
@@ -82,17 +116,47 @@ fun ColorScheme.toWeatherYouColors() = WeatherYouColors(
     surfaceContainerLowest = Color.Unspecified,
 )
 
-
 @SuppressLint("NewApi")
 @Composable
 fun WeatherYouTvTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    themeMode: ThemeMode = ThemeMode.Dark,
+    colorMode: ColorMode = ColorMode.Default,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        darkTheme -> TvDarkColorScheme.toWeatherYouColors()
-        else -> TvDarkColorScheme.toWeatherYouColors()
+    val darkTheme = themeMode == ThemeMode.Dark
+    val colorScheme = when (colorMode) {
+        ColorMode.Dynamic -> when {
+            darkTheme -> TvDarkColorScheme
+            else -> TvLightColorScheme
+        }
+        ColorMode.Default -> when {
+            darkTheme -> TvDarkColorScheme
+            else -> TvLightColorScheme
+        }
+        ColorMode.Mosque -> when {
+            darkTheme -> mosqueDarkScheme
+            else -> mosqueLightScheme
+        }
+        ColorMode.DarkFern -> TODO()
+        ColorMode.FreshEggplant -> TODO()
     }
+    val typography = WeatherYouTypography(
+        displayLarge = MaterialTheme.typography.displayLarge,
+        displayMedium = MaterialTheme.typography.displayMedium,
+        displaySmall = MaterialTheme.typography.displaySmall,
+        headlineLarge = MaterialTheme.typography.headlineLarge,
+        headlineMedium = MaterialTheme.typography.headlineMedium,
+        headlineSmall = MaterialTheme.typography.headlineSmall,
+        titleLarge = MaterialTheme.typography.titleLarge,
+        titleMedium = MaterialTheme.typography.titleMedium,
+        titleSmall = MaterialTheme.typography.titleSmall,
+        bodyLarge = MaterialTheme.typography.bodyLarge,
+        bodyMedium = MaterialTheme.typography.bodyMedium,
+        bodySmall = MaterialTheme.typography.bodySmall,
+        labelLarge = MaterialTheme.typography.labelLarge,
+        labelMedium = MaterialTheme.typography.labelMedium,
+        labelSmall = MaterialTheme.typography.labelSmall,
+    )
     val view = LocalView.current
     if (!view.isInEditMode) {
         val currentWindow = (view.context as? Activity)?.window
@@ -104,9 +168,15 @@ fun WeatherYouTvTheme(
             }
         }
     }
-    CompositionLocalProvider(WeatherYouColorScheme provides colorScheme) {
+    CompositionLocalProvider(
+        LocalWeatherYouColorScheme provides colorScheme.toWeatherYouColors(),
+        LocalWeatherYouTypography provides typography,
+        LocalWeatherYouThemeMode provides themeMode,
+        LocalWeatherYouColorMode provides colorMode,
+    ) {
         MaterialTheme(
-            content = content
+            colorScheme = colorScheme,
+            content = content,
         )
     }
 }

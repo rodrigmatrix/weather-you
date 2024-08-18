@@ -20,8 +20,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -127,7 +125,7 @@ private fun Loading() {
         contentAlignment = Alignment.Center,
         modifier = Modifier.fillMaxSize()
     ) {
-        CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+        CircularProgressIndicator(color = WeatherYouTheme.colorScheme.primary)
     }
 }
 
@@ -142,8 +140,8 @@ private fun CurrentWeatherWidgetConfigurationContent(
         Spacer(modifier = Modifier.height(16.dp))
         Text(
             text = stringResource(R.string.weather_widget_disclaimer),
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.primary,
+            style = WeatherYouTheme.typography.bodyLarge,
+            color = WeatherYouTheme.colorScheme.primary,
             modifier = Modifier.padding(horizontal = 24.dp),
         )
         Spacer(modifier = Modifier.height(16.dp))
@@ -173,9 +171,9 @@ private fun LocationRow(
     Surface(
         checked = isSelectedLocation,
         shape = RoundedCornerShape(24.dp),
-        color = MaterialTheme.colorScheme.secondaryContainer,
+        color = WeatherYouTheme.colorScheme.secondaryContainer,
         border = if (isSelectedLocation)
-            BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
+            BorderStroke(2.dp, WeatherYouTheme.colorScheme.primary)
         else null,
         onCheckedChange = { onLocationClicked(weatherLocation) },
         modifier = modifier
@@ -191,17 +189,17 @@ private fun LocationRow(
             Column(Modifier.weight(1f)) {
                 Text(
                     text = weatherLocation.currentWeather.temperatureString(),
-                    style = MaterialTheme.typography.headlineLarge,
+                    style = WeatherYouTheme.typography.headlineLarge,
                     modifier = Modifier.padding(start = 16.dp, end = 16.dp)
                 )
                 Text(
                     text = weatherLocation.timeZone.getTimeZoneHourAndMinutes(context),
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = WeatherYouTheme.typography.bodyMedium,
                     modifier = Modifier.padding(start = 16.dp, end = 16.dp)
                 )
                 Text(
                     text = weatherLocation.name,
-                    style = MaterialTheme.typography.headlineMedium,
+                    style = WeatherYouTheme.typography.headlineMedium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.padding(start = 16.dp, end = 16.dp)
@@ -221,14 +219,14 @@ private fun LocationRow(
                 if (weatherLocation.isCurrentLocation) {
                     Icon(
                         painter = painterResource(R.drawable.ic_my_location),
-                        tint = MaterialTheme.colorScheme.primary,
+                        tint = WeatherYouTheme.colorScheme.primary,
                         contentDescription = stringResource(R.string.current_location),
                         modifier = Modifier.align(Alignment.TopEnd)
                     )
                 }
                 if (isSelectedLocation) {
                     Surface(
-                        color = MaterialTheme.colorScheme.secondary,
+                        color = WeatherYouTheme.colorScheme.secondary,
                         shape = CircleShape,
                         modifier = Modifier
                             .padding(end = 5.dp)
@@ -237,7 +235,7 @@ private fun LocationRow(
                     ) {
                         Icon(
                             painter = painterResource(id = com.rodrigmatrix.weatheryou.R.drawable.ic_check),
-                            tint = MaterialTheme.colorScheme.onSecondary,
+                            tint = WeatherYouTheme.colorScheme.onSecondary,
                             contentDescription = null,
                             modifier = Modifier
                                 .size(18.dp),

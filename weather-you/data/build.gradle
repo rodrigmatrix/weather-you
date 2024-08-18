@@ -79,6 +79,9 @@ dependencies {
 
     implementation(libs.workManager)
 
+    implementation(libs.datastore.core)
+    implementation(libs.datastore.preferences)
+
     implementation(libs.retrofit)
     implementation(platform(libs.okHttp))
     implementation(libs.retrofit.kotlinx.converter)

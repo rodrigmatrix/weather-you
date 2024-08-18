@@ -3,7 +3,6 @@ package com.rodrigmatrix.weatheryou.components.details
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -13,6 +12,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.components.R
+import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.weathericons.R as WeatherIcons
 import com.rodrigmatrix.weatheryou.core.extensions.percentageString
 import com.rodrigmatrix.weatheryou.core.extensions.temperatureString
@@ -39,21 +39,25 @@ fun HumidityCardContent(
                 Icon(
                     painter = painterResource(WeatherIcons.drawable.ic_water_drop),
                     contentDescription = stringResource(R.string.humidity),
+                    tint = WeatherYouTheme.colorScheme.onSecondaryContainer,
                     modifier = Modifier.padding(end = 4.dp)
                 )
                 Text(
                     text = stringResource(R.string.humidity),
-                    style = MaterialTheme.typography.titleMedium,
+                    color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                    style = WeatherYouTheme.typography.titleMedium,
                 )
             }
             Text(
                 text = humidity.percentageString(),
-                style = MaterialTheme.typography.titleLarge
+                color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                style = WeatherYouTheme.typography.titleLarge
             )
         }
         Text(
             text = stringResource(R.string.the_dew_point_is_x, dewPoint.temperatureString()),
-            style = MaterialTheme.typography.bodyLarge
+            color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+            style = WeatherYouTheme.typography.bodyLarge
         )
     }
 }
@@ -62,7 +66,7 @@ fun HumidityCardContent(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun HumidityCardPreview() {
-    MaterialTheme {
+    WeatherYouTheme {
         HumidityCardContent(
             humidity = 80.0,
             dewPoint = 22.0

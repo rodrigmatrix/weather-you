@@ -14,7 +14,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
+import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -42,13 +42,9 @@ fun SettingsScreen(
         viewState,
         onEditUnits = viewModel::onEditUnit,
         onEditTheme = viewModel::onEditTheme,
-        onNewUnit = {
-            viewModel.onNewUnit(it)
-        },
-        onNewTheme = {
-            viewModel.onNewTheme(it)
-        },
-        onDismissDialog = viewModel::hideDialogs
+        onNewUnit = viewModel::onNewUnit,
+        onNewTheme = viewModel::onNewTheme,
+        onDismissDialog = viewModel::hideDialogs,
     )
 }
 
@@ -61,24 +57,23 @@ fun SettingsScreen(
     onNewTheme: (AppThemePreferenceOption) -> Unit,
     onDismissDialog: () -> Unit
 ) {
-    if (viewState.unitsDialogVisible) {
-        UnitsDialog(
-            selected = viewState.selectedTemperature,
-            onNewUnit = onNewUnit,
-            onDismissRequest = onDismissDialog
-        )
-    }
-    if (viewState.themeDialogVisible) {
-        ThemeDialog(
+    when (viewState.dialogState) {
+        SettingsDialogState.HIDDEN -> Unit
+        SettingsDialogState.THEME -> ThemeDialog(
             selected = viewState.selectedAppTheme,
             onNewTheme = onNewTheme,
+            onDismissRequest = onDismissDialog
+        )
+        SettingsDialogState.UNITS -> UnitsDialog(
+            selected = viewState.selectedTemperature,
+            onNewUnit = onNewUnit,
             onDismissRequest = onDismissDialog
         )
     }
     Column(
         Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(WeatherYouTheme.colorScheme.background)
     ) {
         Spacer(Modifier.height(10.dp))
         SettingTitle(stringResource(R.string.units))
@@ -107,8 +102,8 @@ fun SettingTitle(
 ) {
     Text(
         text = title,
-        style = MaterialTheme.typography.titleLarge,
-        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
+        style = WeatherYouTheme.typography.titleLarge,
+        color = WeatherYouTheme.colorScheme.primary.copy(alpha = 0.7f),
         modifier = Modifier.padding(start = 16.dp, end = 16.dp)
     )
 }
@@ -123,7 +118,7 @@ fun UnitsDialog(
         onDismissRequest = onDismissRequest
     ) {
         Surface(
-            color = MaterialTheme.colorScheme.secondaryContainer,
+            color = WeatherYouTheme.colorScheme.secondaryContainer,
             tonalElevation = 8.dp,
             shape = RoundedCornerShape(16.dp),
             modifier = Modifier
@@ -133,10 +128,10 @@ fun UnitsDialog(
             ) {
                 Text(
                     text = stringResource(R.string.units),
-                    style = MaterialTheme.typography.headlineSmall
+                    style = WeatherYouTheme.typography.headlineSmall
                 )
                 LazyColumn(modifier = Modifier.padding(top = 16.dp)) {
-                    items(TemperaturePreferenceOption.values()) {
+                    items(TemperaturePreferenceOption.entries.toTypedArray()) {
                         UnitChoiceItem(
                             option = it,
                             selected = it == selected,
@@ -159,7 +154,7 @@ fun ThemeDialog(
         onDismissRequest = onDismissRequest
     ) {
         Surface(
-            color = MaterialTheme.colorScheme.secondaryContainer,
+            color = WeatherYouTheme.colorScheme.secondaryContainer,
             tonalElevation = 8.dp,
             shape = RoundedCornerShape(16.dp),
             modifier = Modifier
@@ -169,10 +164,10 @@ fun ThemeDialog(
             ) {
                 Text(
                     text = stringResource(R.string.app_theme),
-                    style = MaterialTheme.typography.headlineSmall
+                    style = WeatherYouTheme.typography.headlineSmall
                 )
                 LazyColumn(modifier = Modifier.padding(top = 16.dp)) {
-                    items(AppThemePreferenceOption.values()) {
+                    items(AppThemePreferenceOption.entries.toTypedArray()) {
                         ThemeChoiceItem(
                             option = it,
                             selected = it == selected,
@@ -204,7 +199,7 @@ fun UnitChoiceItem(
     ) {
         Text(
             text = stringResource(option.title),
-            style = MaterialTheme.typography.titleMedium,
+            style = WeatherYouTheme.typography.titleMedium,
             modifier = Modifier
                 .padding(start = 16.dp)
                 .align(Alignment.CenterVertically)
@@ -238,7 +233,7 @@ fun ThemeChoiceItem(
     ) {
         Text(
             text = stringResource(option.title),
-            style = MaterialTheme.typography.titleMedium,
+            style = WeatherYouTheme.typography.titleMedium,
             modifier = Modifier
                 .padding(start = 16.dp)
                 .align(Alignment.CenterVertically)
@@ -257,7 +252,7 @@ fun ThemeChoiceItem(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun UvIndexCardPreview() {
-    MaterialTheme {
+    WeatherYouTheme {
         SettingsScreen(
             viewState = SettingsViewState(),
             onEditUnits = { },

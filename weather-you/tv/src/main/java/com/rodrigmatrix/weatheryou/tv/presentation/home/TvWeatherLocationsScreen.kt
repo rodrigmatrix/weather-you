@@ -38,7 +38,6 @@ import androidx.tv.material3.Border
 import androidx.tv.material3.Button
 import androidx.tv.material3.ClickableSurfaceDefaults
 import androidx.tv.material3.Icon
-import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -49,20 +48,19 @@ import com.rodrigmatrix.weatheryou.components.R
 import com.rodrigmatrix.weatheryou.components.ScreenNavigationType
 import com.rodrigmatrix.weatheryou.components.WeatherIcon
 import com.rodrigmatrix.weatheryou.components.WeatherLocationCardContent
+import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.domain.model.WeatherCondition
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.tv.components.TvCard
 import com.rodrigmatrix.weatheryou.tv.presentation.details.TvWeatherLocationScreen
 import com.rodrigmatrix.weatheryou.tv.presentation.locations.WeatherLocationsUiState
 import com.rodrigmatrix.weatheryou.tv.presentation.locations.WeatherLocationsViewModel
-import com.rodrigmatrix.weatheryou.tv.presentation.navigation.WeatherYouTvRoutes
-import org.koin.androidx.compose.getViewModel
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 internal fun TvWeatherLocationsScreen(
     modifier: Modifier = Modifier,
-    viewModel: WeatherLocationsViewModel = getViewModel(),
+    viewModel: WeatherLocationsViewModel,
     locationPermissionState: PermissionState = rememberPermissionState(Manifest.permission.ACCESS_COARSE_LOCATION),
     navController: NavController,
 ) {
@@ -79,11 +77,9 @@ internal fun TvWeatherLocationsScreen(
     TvWeatherLocationsScreen(
         uiState = uiState,
         showLocationPermissionRequest = uiState.showLocationPermissionRequest(locationPermissionState),
-        onSearchLocationClick = {
-            navController.navigate(WeatherYouTvRoutes.ADD_LOCATION_SCREEN)
-        },
         onRequestPermission = locationPermissionState::launchPermissionRequest,
         onWeatherLocationClicked = viewModel::selectLocation,
+        onExpandedButtonClick = viewModel::onFutureWeatherButtonClick,
         modifier = modifier,
     )
 }
@@ -92,15 +88,12 @@ internal fun TvWeatherLocationsScreen(
 private fun TvWeatherLocationsScreen(
     uiState: WeatherLocationsUiState,
     showLocationPermissionRequest: Boolean,
-    onSearchLocationClick: () -> Unit,
     onRequestPermission: () -> Unit,
     onWeatherLocationClicked: (WeatherLocation) -> Unit,
+    onExpandedButtonClick: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
-        SearchLocationBar(
-            onSearchLocationClick = onSearchLocationClick,
-        )
         when {
             showLocationPermissionRequest -> {
                 RequestLocationPermission(
@@ -120,6 +113,7 @@ private fun TvWeatherLocationsScreen(
                     locationsList = uiState.locationsList,
                     currentLocation = uiState.selectedWeatherLocation,
                     onWeatherLocationClicked = onWeatherLocationClicked,
+                    onExpandedButtonClick = onExpandedButtonClick,
                     modifier = Modifier,
                 )
             }
@@ -132,6 +126,7 @@ private fun TvWeatherLocationsContent(
     locationsList: List<WeatherLocation>,
     currentLocation: WeatherLocation?,
     onWeatherLocationClicked: (WeatherLocation) -> Unit,
+    onExpandedButtonClick: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(modifier.padding(vertical = 8.dp)) {
@@ -150,6 +145,7 @@ private fun TvWeatherLocationsContent(
             currentLocation?.let { selectedLocation ->
                 TvWeatherLocationScreen(
                     weatherLocation = selectedLocation,
+                    onExpandedButtonClick = onExpandedButtonClick,
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -176,17 +172,17 @@ fun RequestLocationPermission(
             modifier = Modifier
                 .size(120.dp)
                 .padding(10.dp),
-            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
+            colorFilter = ColorFilter.tint(WeatherYouTheme.colorScheme.primary)
         )
         Text(
             text = stringResource(R.string.enable_location),
-            style = MaterialTheme.typography.headlineSmall,
+            style = WeatherYouTheme.typography.headlineSmall,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(10.dp)
         )
         Text(
             text = stringResource(R.string.enable_location_description),
-            style = MaterialTheme.typography.titleSmall,
+            style = WeatherYouTheme.typography.titleSmall,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(16.dp)
         )
@@ -208,8 +204,8 @@ fun SearchLocationBar(
     Surface(
         shape = ClickableSurfaceDefaults.shape(shape = CircleShape),
         colors = ClickableSurfaceDefaults.colors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer,
-            focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+            containerColor = WeatherYouTheme.colorScheme.secondaryContainer,
+            focusedContainerColor = WeatherYouTheme.colorScheme.secondaryContainer,
         ),
         scale = ClickableSurfaceDefaults.scale(
             scale = 1f,
@@ -219,7 +215,7 @@ fun SearchLocationBar(
             focusedBorder = Border(
                 border = BorderStroke(
                     width = 3.dp,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    color = WeatherYouTheme.colorScheme.onSurface,
                 ),
                 shape = cardShape,
             )
@@ -236,7 +232,7 @@ fun SearchLocationBar(
                 imageVector = Icons.Default.Search,
                 contentDescription = null,
                 modifier = Modifier.padding(start = 16.dp),
-                tint = MaterialTheme.colorScheme.primary,
+                tint = WeatherYouTheme.colorScheme.primary,
             )
 
             Text(
@@ -244,8 +240,8 @@ fun SearchLocationBar(
                 modifier = Modifier
                     .weight(1f)
                     .padding(16.dp),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface,
+                style = WeatherYouTheme.typography.bodyMedium,
+                color = WeatherYouTheme.colorScheme.onSurface,
             )
         }
     }
@@ -271,7 +267,7 @@ fun WeatherLocationsEmptyState(
         )
         Text(
             text = stringResource(R.string.empty_locations),
-            style = MaterialTheme.typography.headlineSmall,
+            style = WeatherYouTheme.typography.headlineSmall,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(10.dp)
         )
@@ -302,4 +298,3 @@ private fun WeatherLocationsList(
         }
     }
 }
-

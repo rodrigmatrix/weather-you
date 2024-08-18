@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import java.io.IOException
 
-internal class WeatherLocationsViewModel(
+class WeatherLocationsViewModel(
     private val fetchLocationsUseCase: FetchLocationsUseCase,
     private val deleteLocationUseCase: DeleteLocationUseCase,
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO,
@@ -101,6 +101,15 @@ internal class WeatherLocationsViewModel(
         setState {
             it.copy(selectedWeatherLocation = getSelectedLocation(weatherLocation))
         }
+    }
+
+    fun onFutureWeatherButtonClick(isExpanded: Boolean) {
+//        setState {
+//            it.copy(
+//                futureDaysList = it.futureDaysList.getFutureDaysList(isExpanded),
+//                isFutureWeatherExpanded = isExpanded
+//            )
+//        }
     }
 
     private fun getSelectedLocation(weatherLocation: WeatherLocation?): WeatherLocation? {
