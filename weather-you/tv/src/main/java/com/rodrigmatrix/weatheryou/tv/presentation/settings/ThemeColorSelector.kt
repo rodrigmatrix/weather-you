@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -39,16 +40,34 @@ import androidx.tv.material3.RadioButtonDefaults
 import androidx.tv.material3.Surface
 import androidx.tv.material3.SurfaceDefaults
 import androidx.tv.material3.Text
+import com.rodrigmatrix.weatheryou.components.theme.ColorMode
 import com.rodrigmatrix.weatheryou.components.theme.ThemeMode
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.settings.presentation.settings.model.AppColorPreferenceOption
 import com.rodrigmatrix.weatheryou.settings.presentation.settings.model.AppThemePreferenceOption
 import com.rodrigmatrix.weatheryou.tv.presentation.theme.mosqueDarkScheme
 import com.rodrigmatrix.weatheryou.tv.presentation.theme.mosqueLightScheme
+import com.rodrigmatrix.weatheryou.components.R
+import com.rodrigmatrix.weatheryou.tv.presentation.theme.TvDarkColorScheme
+import com.rodrigmatrix.weatheryou.tv.presentation.theme.TvLightColorScheme
+import com.rodrigmatrix.weatheryou.tv.presentation.theme.carmineDarkScheme
+import com.rodrigmatrix.weatheryou.tv.presentation.theme.carmineLightScheme
+import com.rodrigmatrix.weatheryou.tv.presentation.theme.cinnamonDarkScheme
+import com.rodrigmatrix.weatheryou.tv.presentation.theme.cinnamonLightScheme
+import com.rodrigmatrix.weatheryou.tv.presentation.theme.darkFernDarkScheme
+import com.rodrigmatrix.weatheryou.tv.presentation.theme.darkFernLightScheme
+import com.rodrigmatrix.weatheryou.tv.presentation.theme.freshEggplantDarkScheme
+import com.rodrigmatrix.weatheryou.tv.presentation.theme.freshEggplantLightScheme
+import com.rodrigmatrix.weatheryou.tv.presentation.theme.gigasDarkScheme
+import com.rodrigmatrix.weatheryou.tv.presentation.theme.gigasLightScheme
+import com.rodrigmatrix.weatheryou.tv.presentation.theme.peruTanDarkScheme
+import com.rodrigmatrix.weatheryou.tv.presentation.theme.peruTanLightScheme
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun TvThemeAndColorModeSelector(
+    themeMode: ThemeMode,
+    colorMode: ColorMode,
     onClose: () -> Unit,
     onColorChange: (AppColorPreferenceOption) -> Unit,
     onThemeModeChange: (AppThemePreferenceOption) -> Unit,
@@ -60,7 +79,13 @@ fun TvThemeAndColorModeSelector(
         val dialogWindowProvider = LocalView.current.parent as DialogWindowProvider
         dialogWindowProvider.window.setGravity(Gravity.END)
         Column(
-            modifier = Modifier
+            modifier = Modifier.onKeyEvent { keyEvent ->
+                if (keyEvent.nativeKeyEvent.keyCode == android.view.KeyEvent.KEYCODE_DPAD_LEFT) {
+                    onClose()
+                    return@onKeyEvent true
+                }
+                return@onKeyEvent false
+            },
         ) {
             Surface(
                 colors = SurfaceDefaults.colors(
@@ -86,7 +111,7 @@ fun TvThemeAndColorModeSelector(
                 ) {
                     item {
                         Text(
-                            text = "Theme & color mode",
+                            text = stringResource(R.string.theme_and_color_mode),
                             color = WeatherYouTheme.colorScheme.onSurface,
                             style = MaterialTheme.typography.titleMedium,
                             modifier = Modifier.padding(20.dp),
@@ -97,7 +122,7 @@ fun TvThemeAndColorModeSelector(
                     item {
                         Column {
                             Text(
-                                text = "THEME",
+                                text = stringResource(R.string.app_theme),
                                 color = WeatherYouTheme.colorScheme.onSurface,
                                 style = MaterialTheme.typography.titleMedium,
                                 modifier = Modifier.padding(
@@ -111,7 +136,7 @@ fun TvThemeAndColorModeSelector(
                                 Modifier.selectableGroup()
                             ) {
                                 AppThemePreferenceOption.entries.drop(1).forEach {
-                                    val isSelected = it.option == WeatherYouTheme.themeMode
+                                    val isSelected = it.option == themeMode
                                     ListItem(
                                         selected = isSelected,
                                         onClick = { onThemeModeChange(it) },
@@ -122,23 +147,22 @@ fun TvThemeAndColorModeSelector(
                                         leadingContent = {
                                             Icon(
                                                 painter = painterResource(it.icon),
-                                                tint = WeatherYouTheme.colorScheme.onSurface,
                                                 contentDescription = null
                                             )
                                         },
                                         trailingContent = {
                                             RadioButton(
                                                 selected = isSelected,
-                                                onClick = { },
                                                 colors = RadioButtonDefaults.colors(
-                                                    selectedColor = WeatherYouTheme.colorScheme.secondary,
-                                                )
+                                                    selectedColor = WeatherYouTheme.colorScheme.primary,
+                                                    unselectedColor = WeatherYouTheme.colorScheme.secondary,
+                                                ),
+                                                onClick = { },
                                             )
                                         },
                                         headlineContent = {
                                             Text(
                                                 text = stringResource(it.title),
-                                                color = WeatherYouTheme.colorScheme.onSurface,
                                                 style = MaterialTheme.typography.bodyMedium,
                                             )
                                         }
@@ -155,8 +179,7 @@ fun TvThemeAndColorModeSelector(
                     item {
                         Column {
                             Text(
-                                text = "COLOR MODE",
-                                color = WeatherYouTheme.colorScheme.onSurface,
+                                text = stringResource(R.string.color_mode),
                                 style = MaterialTheme.typography.titleMedium,
                                 modifier = Modifier.padding(
                                     horizontal = 16.dp,
@@ -169,7 +192,7 @@ fun TvThemeAndColorModeSelector(
                                 Modifier.selectableGroup()
                             ) {
                                 AppColorPreferenceOption.entries.drop(1).forEach {
-                                    val isSelected = WeatherYouTheme.colorMode.name == it.name
+                                    val isSelected = colorMode == it.option
                                     ListItem(
                                         selected = isSelected,
                                         onClick = { onColorChange(it) },
@@ -178,23 +201,22 @@ fun TvThemeAndColorModeSelector(
                                             Box(
                                                 modifier = Modifier
                                                     .size(15.dp)
-                                                    .background(it.color(), CircleShape)
+                                                    .background(it.colorScheme().primaryContainer, CircleShape)
                                             )
                                         },
                                         trailingContent = {
                                             RadioButton(
                                                 selected = isSelected,
-                                                onClick = { },
                                                 colors = RadioButtonDefaults.colors(
-                                                    selectedColor = WeatherYouTheme.colorScheme.secondary,
-
-                                                    )
+                                                    selectedColor = it.colorScheme().primaryContainer,
+                                                    unselectedColor = it.colorScheme().primaryContainer
+                                                ),
+                                                onClick = { },
                                             )
                                         },
                                         headlineContent = {
                                             Text(
                                                 text = stringResource(it.title),
-                                                color = WeatherYouTheme.colorScheme.onSurface,
                                                 style = MaterialTheme.typography.bodyMedium,
                                             )
                                         }
@@ -210,25 +232,41 @@ fun TvThemeAndColorModeSelector(
 }
 
 @Composable
-private fun AppColorPreferenceOption.color() = when (this) {
+private fun AppColorPreferenceOption.colorScheme() = when (this) {
     AppColorPreferenceOption.DYNAMIC -> when {
-        WeatherYouTheme.themeMode == ThemeMode.Dark -> WeatherYouTheme.colorScheme.primary
-        else -> WeatherYouTheme.colorScheme.primary
+        WeatherYouTheme.themeMode == ThemeMode.Dark -> TvDarkColorScheme
+        else -> TvLightColorScheme
     }
     AppColorPreferenceOption.DEFAULT -> when {
-        WeatherYouTheme.themeMode == ThemeMode.Dark -> WeatherYouTheme.colorScheme.primary
-        else -> WeatherYouTheme.colorScheme.primary
+        WeatherYouTheme.themeMode == ThemeMode.Dark -> TvDarkColorScheme
+        else -> TvLightColorScheme
     }
     AppColorPreferenceOption.MOSQUE -> when {
-        WeatherYouTheme.themeMode == ThemeMode.Dark -> mosqueLightScheme.primary
-        else -> mosqueDarkScheme.primary
+        WeatherYouTheme.themeMode == ThemeMode.Dark -> mosqueLightScheme
+        else -> mosqueDarkScheme
     }
     AppColorPreferenceOption.DARK_FERN -> when {
-        WeatherYouTheme.themeMode == ThemeMode.Dark -> WeatherYouTheme.colorScheme.primary
-        else -> WeatherYouTheme.colorScheme.primary
+        WeatherYouTheme.themeMode == ThemeMode.Dark -> darkFernDarkScheme
+        else -> darkFernLightScheme
     }
     AppColorPreferenceOption.FRESH_EGGPLANT -> when {
-        WeatherYouTheme.themeMode == ThemeMode.Dark -> WeatherYouTheme.colorScheme.primary
-        else -> WeatherYouTheme.colorScheme.primary
+        WeatherYouTheme.themeMode == ThemeMode.Dark -> freshEggplantDarkScheme
+        else -> freshEggplantLightScheme
+    }
+    AppColorPreferenceOption.CARMINE -> when {
+        WeatherYouTheme.themeMode == ThemeMode.Dark -> carmineDarkScheme
+        else -> carmineLightScheme
+    }
+    AppColorPreferenceOption.CINNAMON -> when {
+        WeatherYouTheme.themeMode == ThemeMode.Dark -> cinnamonDarkScheme
+        else -> cinnamonLightScheme
+    }
+    AppColorPreferenceOption.PERU_TAN -> when {
+        WeatherYouTheme.themeMode == ThemeMode.Dark -> peruTanDarkScheme
+        else -> peruTanLightScheme
+    }
+    AppColorPreferenceOption.GIGAS -> when {
+        WeatherYouTheme.themeMode == ThemeMode.Dark -> gigasDarkScheme
+        else -> gigasLightScheme
     }
 }

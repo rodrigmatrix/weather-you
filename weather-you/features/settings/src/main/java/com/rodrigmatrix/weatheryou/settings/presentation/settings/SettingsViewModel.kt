@@ -70,21 +70,15 @@ class SettingsViewModel(
             setTemperaturePreferenceUseCase(newUnit.option)
                 .flowOn(coroutineDispatcher)
                 .catch()
-                .onCompletion {
-                    loadPreferences()
-                }
                 .collect()
         }
     }
 
     fun onNewColorTheme(newColor: AppColorPreferenceOption) {
         viewModelScope.launch {
-            setAppColorPreferenceUseCase(newColor.option)
+            setAppColorPreferenceUseCase(newColor.option.toPreference())
                 .flowOn(coroutineDispatcher)
                 .catch()
-                .onCompletion {
-                    loadPreferences()
-                }
                 .collect()
         }
     }
@@ -94,10 +88,6 @@ class SettingsViewModel(
             setAppThemePreferenceUseCase(newTheme.option.toPreference())
                 .flowOn(coroutineDispatcher)
                 .catch()
-                .onCompletion {
-                    loadPreferences()
-                    appThemeManager.setAppTheme()
-                }
                 .collect()
         }
     }
@@ -116,7 +106,7 @@ class SettingsViewModel(
 
     private fun AppColorPreference.toOption(): AppColorPreferenceOption {
         return AppColorPreferenceOption.entries.find {
-            it.option == this
+            it.option.toPreference() == this
         } ?: AppColorPreferenceOption.DEFAULT
     }
 

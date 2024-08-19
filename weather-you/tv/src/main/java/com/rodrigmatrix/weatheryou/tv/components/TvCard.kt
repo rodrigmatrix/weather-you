@@ -24,9 +24,7 @@ fun TvCard(
     colors: CardColors = CardDefaults.colors(
         containerColor = WeatherYouTheme.colorScheme.secondaryContainer,
     ),
-    scale: CardScale = CardDefaults.scale(
-        focusedScale = 1.01f,
-    ),
+    scale: CardScale = CardDefaults.scale(),
     border: CardBorder = CardDefaults.border(),
     glow: CardGlow = CardDefaults.glow(
         focusedGlow = Glow(

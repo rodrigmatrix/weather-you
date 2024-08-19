@@ -1,0 +1,6 @@
+-dontwarn java.lang.invoke.StringConcatFactory
+-keep class com.rodrigmatrix.weatheryou.core.compose** { *; }
+-keep class com.rodrigmatrix.weatheryou.core.map** { *; }
+-keep class com.rodrigmatrix.weatheryou.core.utils** { *; }
+-keep class com.rodrigmatrix.weatheryou.core.viewmodel** { *; }
+-keep class com.rodrigmatrix.weatheryou.core.extensions** { *; }

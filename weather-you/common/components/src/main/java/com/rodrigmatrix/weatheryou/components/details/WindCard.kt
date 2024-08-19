@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import androidx.compose.material3.Text
@@ -52,7 +53,7 @@ fun WindCardContent(
     Column(
         verticalArrangement = Arrangement.SpaceBetween,
         modifier = modifier
-            .fillMaxWidth()
+            .width(200.dp)
             .height(200.dp)
             .padding(
                 start = 16.dp,

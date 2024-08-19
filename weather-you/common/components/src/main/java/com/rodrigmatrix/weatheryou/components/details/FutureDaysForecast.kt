@@ -57,6 +57,15 @@ fun FutureDaysForecastContent(
             day = day,
         )
     },
+    expandButton: @Composable () -> Unit = {
+        ExpandButton(
+            isExpanded = isExpanded,
+            contentDescription = stringResource(R.string.show_all_days_forecast),
+            onExpandButtonClick = {
+                onExpandedButtonClick(it)
+            },
+        )
+    },
 ) {
     Column(modifier.fillMaxWidth()) {
         Row(
@@ -75,13 +84,7 @@ fun FutureDaysForecastContent(
                 modifier = Modifier.weight(1f),
             )
             Spacer(modifier = Modifier.width(8.dp))
-            ExpandButton(
-                isExpanded = isExpanded,
-                contentDescription = stringResource(R.string.show_all_days_forecast),
-                onExpandButtonClick = {
-                    onExpandedButtonClick(it)
-                },
-            )
+            expandButton()
         }
         futureDaysList.forEachIndexed { index, day ->
             dayItem(index, day)

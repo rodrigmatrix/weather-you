@@ -16,6 +16,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,6 +38,7 @@ import com.rodrigmatrix.weatheryou.domain.model.AppColorPreference
 import com.rodrigmatrix.weatheryou.domain.model.AppThemePreference
 import com.rodrigmatrix.weatheryou.domain.usecase.GetAppColorPreferenceUseCase
 import com.rodrigmatrix.weatheryou.domain.usecase.GetAppThemePreferenceUseCase
+import com.rodrigmatrix.weatheryou.settings.utils.AppThemeManager
 import com.rodrigmatrix.weatheryou.tv.presentation.theme.WeatherYouTvTheme
 import org.koin.android.ext.android.inject
 
@@ -44,11 +46,12 @@ class MainActivity : AppCompatActivity() {
 
     private val getAppColorPreferenceUseCase: GetAppColorPreferenceUseCase by inject()
     private val getAppThemePreferenceUseCase: GetAppThemePreferenceUseCase by inject()
+    private val appThemeManager: AppThemeManager by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            var colorMode by remember { mutableStateOf(ColorMode.Dynamic) }
+            var colorMode by remember { mutableStateOf(ColorMode.Default) }
             var themeMode by remember { mutableStateOf(ThemeMode.Dark) }
             LaunchedEffect(Unit) {
                 getAppColorPreferenceUseCase().collect {
@@ -58,14 +61,21 @@ class MainActivity : AppCompatActivity() {
                         AppColorPreference.MOSQUE -> ColorMode.Mosque
                         AppColorPreference.DARK_FERN -> ColorMode.DarkFern
                         AppColorPreference.FRESH_EGGPLANT -> ColorMode.FreshEggplant
+                        AppColorPreference.CARMINE -> ColorMode.Carmine
+                        AppColorPreference.CINNAMON -> ColorMode.Cinnamon
+                        AppColorPreference.PERU_TAN -> ColorMode.PeruTan
+                        AppColorPreference.GIGAS -> ColorMode.Gigas
                     }
                 }
+            }
+            LaunchedEffect(Unit) {
                 getAppThemePreferenceUseCase().collect {
                     themeMode = when (it) {
-                        AppThemePreference.SYSTEM_DEFAULT -> ThemeMode.System
+                        AppThemePreference.SYSTEM_DEFAULT -> ThemeMode.Dark
                         AppThemePreference.LIGHT -> ThemeMode.Light
                         AppThemePreference.DARK -> ThemeMode.Dark
                     }
+                    appThemeManager.setAppTheme(enableFollowSystem = false)
                 }
             }
             WeatherYouTvTheme(
@@ -97,7 +107,6 @@ class MainActivity : AppCompatActivity() {
                                 Text(
                                     text = stringResource(id = R.string.app_name),
                                     style = WeatherYouTheme.typography.headlineSmall,
-                                    color = WeatherYouTheme.colorScheme.onSurface,
                                 )
                             }
                             Column(
@@ -108,15 +117,15 @@ class MainActivity : AppCompatActivity() {
                                 modifier = Modifier.fillMaxHeight(),
                             ) {
                                 TvScreenEntry.entries.forEach { entry ->
+                                    val route = entry.route.javaClass.canonicalName
                                     NavigationDrawerItem(
-                                        selected = navController.currentDestination?.route == entry.route.toString(),
+                                        selected = navController.currentDestination?.route == route,
                                         onClick = {
                                             navController.navigate(entry.route)
                                         },
                                         leadingContent = {
                                             Icon(
                                                 imageVector = entry.icon,
-                                                tint = WeatherYouTheme.colorScheme.onSurface,
                                                 contentDescription = null,
                                             )
                                         },
@@ -125,7 +134,6 @@ class MainActivity : AppCompatActivity() {
                                         Text(
                                             text = stringResource(entry.stringRes),
                                             style = WeatherYouTheme.typography.titleMedium,
-                                            color = WeatherYouTheme.colorScheme.onSurface,
                                         )
                                     }
                                 }

@@ -17,11 +17,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.CardDefaults
 import androidx.tv.material3.ClickableSurfaceDefaults
 import androidx.tv.material3.Glow
 import androidx.tv.material3.Surface
+import com.rodrigmatrix.weatheryou.components.R
 import com.rodrigmatrix.weatheryou.components.WeatherYouDivider
 import com.rodrigmatrix.weatheryou.components.details.CurrentWeatherContent
 import com.rodrigmatrix.weatheryou.components.details.DayContent
@@ -40,12 +42,12 @@ import com.rodrigmatrix.weatheryou.tv.components.TvCard
 @Composable
 fun TvWeatherLocationScreen(
     weatherLocation: WeatherLocation,
-    onExpandedButtonClick: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    var is15DaysVisible by remember { mutableStateOf(false) }
     LazyColumn(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(10.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         item {
             Spacer(Modifier.height(4.dp))
@@ -58,8 +60,28 @@ fun TvWeatherLocationScreen(
             }
         }
         item {
-            TvCard(modifier = Modifier.padding(horizontal = 16.dp)) {
-                HourlyForecastContent(hoursList = weatherLocation.hours)
+            TvCard(
+                modifier = Modifier
+                    .focusable(enabled = false)
+                    .focusProperties {
+                        canFocus = false
+                    }
+                    .clickable(enabled = false, onClick = { })
+                    .padding(horizontal = 16.dp)
+            ) {
+                HourlyForecastContent(
+                    hoursList = weatherLocation.hours,
+                    hourItemWrapper = { content ->
+                        TvCard(
+                            onClick = { },
+                            scale = CardDefaults.scale(
+                                focusedScale = 1.005f,
+                            ),
+                        ) {
+                            content()
+                        }
+                    }
+                )
             }
         }
         item {
@@ -72,11 +94,14 @@ fun TvWeatherLocationScreen(
                     }
                     .clickable(enabled = false, onClick = { })
             ) {
-                var isExpanded by remember { mutableStateOf(false) }
                 FutureDaysForecastContent(
-                    futureDaysList = weatherLocation.days,
-                    isExpanded = isExpanded,
-                    onExpandedButtonClick = onExpandedButtonClick,
+                    futureDaysList = if (is15DaysVisible) {
+                        weatherLocation.days
+                    } else {
+                        weatherLocation.days.take(7)
+                    },
+                    isExpanded = is15DaysVisible,
+                    onExpandedButtonClick = { is15DaysVisible = !is15DaysVisible },
                     dayItem = { index, day ->
                         var isDayExpanded by remember { mutableStateOf(false) }
                         Column {
@@ -120,8 +145,16 @@ fun TvWeatherLocationScreen(
                                 }
                             )
                         }
-
                     },
+                    expandButton = {
+                        TvExpandButton(
+                            isExpanded = is15DaysVisible,
+                            contentDescription = stringResource(R.string.show_all_days_forecast),
+                            onExpandButtonClick = {
+                                is15DaysVisible = !is15DaysVisible
+                            },
+                        )
+                    }
                 )
             }
         }
@@ -172,7 +205,7 @@ fun TvWeatherLocationScreen(
                     currentTime = weatherLocation.currentTime,
                 )
             }
-            Spacer(Modifier.height(4.dp))
+            Spacer(Modifier.height(16.dp))
         }
     }
 }

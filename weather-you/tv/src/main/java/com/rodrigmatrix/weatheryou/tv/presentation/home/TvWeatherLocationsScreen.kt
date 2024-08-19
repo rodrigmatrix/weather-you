@@ -1,75 +1,78 @@
 package com.rodrigmatrix.weatheryou.tv.presentation.home
 
 import android.Manifest
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Place
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
-import androidx.tv.material3.Border
 import androidx.tv.material3.Button
-import androidx.tv.material3.ClickableSurfaceDefaults
-import androidx.tv.material3.Icon
-import androidx.tv.material3.Surface
+import androidx.tv.material3.ButtonDefaults
+import androidx.tv.material3.ListItem
 import androidx.tv.material3.Text
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.rememberPermissionState
-import com.rodrigmatrix.weatheryou.components.DeleteLocationDialog
 import com.rodrigmatrix.weatheryou.components.R
-import com.rodrigmatrix.weatheryou.components.ScreenNavigationType
 import com.rodrigmatrix.weatheryou.components.WeatherIcon
 import com.rodrigmatrix.weatheryou.components.WeatherLocationCardContent
+import com.rodrigmatrix.weatheryou.components.extensions.shimmerLoadingAnimation
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.domain.model.WeatherCondition
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.tv.components.TvCard
 import com.rodrigmatrix.weatheryou.tv.presentation.details.TvWeatherLocationScreen
-import com.rodrigmatrix.weatheryou.tv.presentation.locations.WeatherLocationsUiState
-import com.rodrigmatrix.weatheryou.tv.presentation.locations.WeatherLocationsViewModel
+import com.rodrigmatrix.weatheryou.tv.presentation.locations.TvWeatherLocationsUiState
+import com.rodrigmatrix.weatheryou.tv.presentation.locations.TVWeatherLocationsViewModel
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 internal fun TvWeatherLocationsScreen(
     modifier: Modifier = Modifier,
-    viewModel: WeatherLocationsViewModel,
+    viewModel: TVWeatherLocationsViewModel,
     locationPermissionState: PermissionState = rememberPermissionState(Manifest.permission.ACCESS_COARSE_LOCATION),
     navController: NavController,
 ) {
     val uiState by viewModel.viewState.collectAsState()
+    var locationToDelete: WeatherLocation? by remember { mutableStateOf(null) }
 
     if (uiState.deleteLocationDialogVisible) {
         DeleteLocationDialog(
             onConfirmButtonClick = {
-                viewModel.deleteLocation(ScreenNavigationType.NAVIGATION_RAIL)
+                locationToDelete?.let { viewModel.deleteLocation(it) }
             },
             onDismissButtonClick = viewModel::hideDeleteLocationDialog,
         )
@@ -79,18 +82,21 @@ internal fun TvWeatherLocationsScreen(
         showLocationPermissionRequest = uiState.showLocationPermissionRequest(locationPermissionState),
         onRequestPermission = locationPermissionState::launchPermissionRequest,
         onWeatherLocationClicked = viewModel::selectLocation,
-        onExpandedButtonClick = viewModel::onFutureWeatherButtonClick,
+        onDeleteLocation = {
+            locationToDelete = it
+            viewModel.showDeleteLocationDialog()
+        },
         modifier = modifier,
     )
 }
 
 @Composable
 private fun TvWeatherLocationsScreen(
-    uiState: WeatherLocationsUiState,
+    uiState: TvWeatherLocationsUiState,
     showLocationPermissionRequest: Boolean,
     onRequestPermission: () -> Unit,
     onWeatherLocationClicked: (WeatherLocation) -> Unit,
-    onExpandedButtonClick: (Boolean) -> Unit,
+    onDeleteLocation: (WeatherLocation) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
@@ -109,13 +115,86 @@ private fun TvWeatherLocationsScreen(
             }
 
             else -> {
-                TvWeatherLocationsContent(
-                    locationsList = uiState.locationsList,
-                    currentLocation = uiState.selectedWeatherLocation,
-                    onWeatherLocationClicked = onWeatherLocationClicked,
-                    onExpandedButtonClick = onExpandedButtonClick,
-                    modifier = Modifier,
-                )
+                if (uiState.locationsList.isEmpty()) {
+                    WeatherLocationsLoadingState(
+                        size = uiState.locationsSize
+                    )
+                } else {
+                    TvWeatherLocationsContent(
+                        locationsList = uiState.locationsList,
+                        currentLocation = uiState.selectedWeatherLocation,
+                        onWeatherLocationClicked = onWeatherLocationClicked,
+                        onDeleteLocation = onDeleteLocation,
+                        modifier = Modifier,
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun WeatherLocationsLoadingState(
+    size: Int,
+    modifier: Modifier = Modifier,
+) {
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = modifier.fillMaxSize(),
+    ) {
+        item {
+            Spacer(Modifier.height(4.dp))
+        }
+        items(size) {
+            TvCard(
+                onClick = { },
+                onLongClick = { },
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .fillMaxWidth()
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = modifier
+                        .padding(top = 10.dp, bottom = 10.dp)
+                        .fillMaxHeight()
+                ) {
+                    Column(Modifier.weight(1f)) {
+                        Box(
+                            modifier = Modifier
+                                .width(200.dp)
+                                .height(40.dp)
+                                .padding(bottom = 8.dp)
+                                .padding(horizontal = 16.dp)
+                                .shimmerLoadingAnimation()
+                        )
+                        Box(
+                            modifier = Modifier
+                                .width(200.dp)
+                                .height(20.dp)
+                                .padding(bottom = 8.dp)
+                                .padding(horizontal = 16.dp)
+                                .shimmerLoadingAnimation()
+                        )
+                        Box(
+                            modifier = Modifier
+                                .width(200.dp)
+                                .height(40.dp)
+                                .padding(horizontal = 16.dp)
+                                .shimmerLoadingAnimation()
+                        )
+
+                    }
+                    Box(
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .size(60.dp)
+                            .clip(CircleShape)
+
+                            .align(Alignment.CenterVertically)
+                            .shimmerLoadingAnimation()
+                    )
+                }
             }
         }
     }
@@ -126,29 +205,27 @@ private fun TvWeatherLocationsContent(
     locationsList: List<WeatherLocation>,
     currentLocation: WeatherLocation?,
     onWeatherLocationClicked: (WeatherLocation) -> Unit,
-    onExpandedButtonClick: (Boolean) -> Unit,
+    onDeleteLocation: (WeatherLocation) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Row(modifier.padding(vertical = 8.dp)) {
+    Row(
+        modifier.padding(
+            horizontal = 16.dp,
+            vertical = 8.dp
+        )
+    ) {
         WeatherLocationsList(
             weatherLocationsList = locationsList,
             currentLocation = currentLocation,
             onWeatherLocationClicked = onWeatherLocationClicked,
+            onDeleteLocation = onDeleteLocation,
             modifier = Modifier.weight(1f)
         )
-        AnimatedVisibility(
-            visible = currentLocation != null,
-            enter = fadeIn(),
-            exit = fadeOut(),
-            modifier = Modifier.weight(1f)
-        ) {
-            currentLocation?.let { selectedLocation ->
-                TvWeatherLocationScreen(
-                    weatherLocation = selectedLocation,
-                    onExpandedButtonClick = onExpandedButtonClick,
-                    modifier = Modifier.weight(1f)
-                )
-            }
+        currentLocation?.let { selectedLocation ->
+            TvWeatherLocationScreen(
+                weatherLocation = selectedLocation,
+                modifier = Modifier.weight(1f)
+            )
         }
     }
 }
@@ -176,6 +253,7 @@ fun RequestLocationPermission(
         )
         Text(
             text = stringResource(R.string.enable_location),
+            color = WeatherYouTheme.colorScheme.onSurface,
             style = WeatherYouTheme.typography.headlineSmall,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(10.dp)
@@ -183,65 +261,19 @@ fun RequestLocationPermission(
         Text(
             text = stringResource(R.string.enable_location_description),
             style = WeatherYouTheme.typography.titleSmall,
+            color = WeatherYouTheme.colorScheme.onSurface,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(16.dp)
         )
         Button(
             onClick = onRequestPermission,
+            colors = ButtonDefaults.colors(
+                containerColor = WeatherYouTheme.colorScheme.secondaryContainer
+            ),
             modifier = Modifier
         ) {
-            Text(stringResource(R.string.grant_location_permission))
-        }
-    }
-}
-
-@Composable
-fun SearchLocationBar(
-    onSearchLocationClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val cardShape = CircleShape.copy(CornerSize(20.dp))
-    Surface(
-        shape = ClickableSurfaceDefaults.shape(shape = CircleShape),
-        colors = ClickableSurfaceDefaults.colors(
-            containerColor = WeatherYouTheme.colorScheme.secondaryContainer,
-            focusedContainerColor = WeatherYouTheme.colorScheme.secondaryContainer,
-        ),
-        scale = ClickableSurfaceDefaults.scale(
-            scale = 1f,
-            focusedScale = 1.01f
-        ),
-        border = ClickableSurfaceDefaults.border(
-            focusedBorder = Border(
-                border = BorderStroke(
-                    width = 3.dp,
-                    color = WeatherYouTheme.colorScheme.onSurface,
-                ),
-                shape = cardShape,
-            )
-        ),
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(top = 16.dp, start = 16.dp, end = 16.dp),
-        onClick = onSearchLocationClick,
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                imageVector = Icons.Default.Search,
-                contentDescription = null,
-                modifier = Modifier.padding(start = 16.dp),
-                tint = WeatherYouTheme.colorScheme.primary,
-            )
-
             Text(
-                text = stringResource(id = R.string.search_location),
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(16.dp),
-                style = WeatherYouTheme.typography.bodyMedium,
-                color = WeatherYouTheme.colorScheme.onSurface,
+                text = stringResource(R.string.grant_location_permission),
             )
         }
     }
@@ -268,6 +300,7 @@ fun WeatherLocationsEmptyState(
         Text(
             text = stringResource(R.string.empty_locations),
             style = WeatherYouTheme.typography.headlineSmall,
+            color = WeatherYouTheme.colorScheme.onSurface,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(10.dp)
         )
@@ -279,11 +312,14 @@ private fun WeatherLocationsList(
     weatherLocationsList: List<WeatherLocation>,
     currentLocation: WeatherLocation?,
     onWeatherLocationClicked: (WeatherLocation) -> Unit,
+    onDeleteLocation: (WeatherLocation) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .padding(8.dp)
+            .fillMaxSize(),
     ) {
         item {
             Spacer(Modifier.height(4.dp))
@@ -291,10 +327,65 @@ private fun WeatherLocationsList(
         items(weatherLocationsList) { weatherLocation ->
             TvCard(
                 onClick = { onWeatherLocationClicked(weatherLocation) },
+                onLongClick = {
+                    if (!weatherLocation.isCurrentLocation) {
+                        onDeleteLocation(weatherLocation)
+                    }
+                },
                 modifier = Modifier.padding(horizontal = 16.dp)
             ) {
                 WeatherLocationCardContent(weatherLocation = weatherLocation)
             }
+        }
+    }
+}
+
+
+@Composable
+fun DeleteLocationDialog(
+    onConfirmButtonClick: () -> Unit,
+    onDismissButtonClick: () -> Unit
+) {
+    Dialog(onDismissRequest = onDismissButtonClick) {
+        Column(
+            modifier = Modifier
+                .clip(RoundedCornerShape(16.dp))
+                .background(WeatherYouTheme.colorScheme.secondaryContainer)
+                .padding(24.dp),
+        ) {
+            Text(
+                text = stringResource(R.string.delete_location_title),
+                color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                style = WeatherYouTheme.typography.titleMedium,
+                modifier = Modifier.focusable(enabled = true),
+            )
+            Spacer(Modifier.height(16.dp))
+            ListItem(
+                selected = false,
+                onClick = onConfirmButtonClick,
+                headlineContent = {
+
+                },
+                leadingContent = {
+                    Text(
+                        text = stringResource(R.string.delete),
+                        style = WeatherYouTheme.typography.titleMedium,
+                    )
+                }
+            )
+            ListItem(
+                selected = false,
+                onClick = onDismissButtonClick,
+                leadingContent = {
+                    Text(
+                        text = stringResource(R.string.cancel),
+                        style = WeatherYouTheme.typography.titleMedium,
+                    )
+                },
+                headlineContent = {
+
+                },
+            )
         }
     }
 }

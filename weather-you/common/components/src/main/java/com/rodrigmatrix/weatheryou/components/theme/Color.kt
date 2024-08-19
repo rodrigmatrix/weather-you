@@ -3,7 +3,7 @@ package com.rodrigmatrix.weatheryou.components.theme
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
-import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
@@ -115,7 +115,7 @@ val DarkColorScheme = darkColorScheme(
     inverseSurface = md_theme_dark_inverseSurface,
 )
 
-@Immutable
+@Stable
 data class WeatherYouColors(
     val primary: Color,
     val onPrimary: Color,

@@ -7,6 +7,7 @@ import com.rodrigmatrix.weatheryou.core.viewmodel.ViewModel
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.domain.usecase.DeleteLocationUseCase
 import com.rodrigmatrix.weatheryou.domain.usecase.FetchLocationsUseCase
+import com.rodrigmatrix.weatheryou.domain.usecase.GetLocationSizeUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
@@ -16,14 +17,26 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import java.io.IOException
 
-class WeatherLocationsViewModel(
+class TVWeatherLocationsViewModel(
     private val fetchLocationsUseCase: FetchLocationsUseCase,
     private val deleteLocationUseCase: DeleteLocationUseCase,
+    private val getLocationSizeUseCase: GetLocationSizeUseCase,
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO,
-): ViewModel<WeatherLocationsUiState, WeatherLocationsUiAction>(WeatherLocationsUiState()) {
+): ViewModel<TvWeatherLocationsUiState, TvWeatherLocationsUiAction>(TvWeatherLocationsUiState()) {
 
     init {
         loadLocations()
+        observeLocationSize()
+    }
+
+    private fun observeLocationSize() {
+        viewModelScope.launch {
+            getLocationSizeUseCase()
+                .flowOn(coroutineDispatcher)
+                .collect { size ->
+                    setState { it.copy(locationsSize = size) }
+                }
+        }
     }
 
     fun loadLocations() {
@@ -67,6 +80,10 @@ class WeatherLocationsViewModel(
         }
     }
 
+    fun deleteLocation(location: WeatherLocation) {
+        deleteLocation(location, ScreenNavigationType.NAVIGATION_RAIL)
+    }
+
     fun deleteLocation(location: WeatherLocation, navigationType: ScreenNavigationType) {
         viewModelScope.launch {
             hideDeleteLocationDialog()
@@ -103,15 +120,6 @@ class WeatherLocationsViewModel(
         }
     }
 
-    fun onFutureWeatherButtonClick(isExpanded: Boolean) {
-//        setState {
-//            it.copy(
-//                futureDaysList = it.futureDaysList.getFutureDaysList(isExpanded),
-//                isFutureWeatherExpanded = isExpanded
-//            )
-//        }
-    }
-
     private fun getSelectedLocation(weatherLocation: WeatherLocation?): WeatherLocation? {
         return if (weatherLocation == viewState.value.selectedWeatherLocation) {
             null
@@ -129,6 +137,6 @@ class WeatherLocationsViewModel(
             is IOException -> R.string.internet_error
             else -> R.string.generic_error
         }
-        setEffect { WeatherLocationsUiAction.Error(error) }
+        setEffect { TvWeatherLocationsUiAction.Error(error) }
     }
 }

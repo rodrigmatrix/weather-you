@@ -13,12 +13,16 @@ class AppThemeManagerImpl(
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.Main
 ) : AppThemeManager {
 
-    override suspend fun setAppTheme() {
+    override suspend fun setAppTheme(enableFollowSystem: Boolean) {
         withContext(coroutineDispatcher) {
             when (getAppThemePreferenceUseCase().firstOrNull()) {
                 AppThemePreference.DARK -> setDefaultNightMode(MODE_NIGHT_YES)
                 AppThemePreference.LIGHT -> setDefaultNightMode(MODE_NIGHT_NO)
-                else -> setDefaultNightMode(MODE_NIGHT_FOLLOW_SYSTEM)
+                else -> if (enableFollowSystem) {
+                    setDefaultNightMode(MODE_NIGHT_FOLLOW_SYSTEM)
+                } else {
+                    setDefaultNightMode(MODE_NIGHT_YES)
+                }
             }
         }
     }

@@ -58,7 +58,7 @@ fun WeatherHomeNavHost(
             )
         }
         composable(HomeEntry.Settings.route) {
-            SettingsScreen()
+            SettingsScreen(navigationType)
         }
         composable(HomeEntry.About.route) {
             AboutScreen()

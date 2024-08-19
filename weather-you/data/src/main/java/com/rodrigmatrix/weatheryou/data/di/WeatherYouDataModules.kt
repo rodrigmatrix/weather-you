@@ -96,6 +96,7 @@ object WeatherYouDataModules {
         factory { GetWidgetTemperatureUseCase(weatherRepository = get()) }
         factory { SetWidgetLocationUseCase(weatherRepository = get()) }
         factory { DeleteWidgetLocationUseCase(weatherRepository = get()) }
+        factory { GetLocationSizeUseCase(weatherRepository = get()) }
     }
 
     private val repositoryModule = module {

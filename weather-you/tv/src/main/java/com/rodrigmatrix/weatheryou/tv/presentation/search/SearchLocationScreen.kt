@@ -33,6 +33,9 @@ import androidx.navigation.NavController
 import androidx.tv.material3.CardDefaults
 import androidx.tv.material3.Icon
 import androidx.tv.material3.Text
+import com.rodrigmatrix.weatheryou.addlocation.AddLocationViewEffect
+import com.rodrigmatrix.weatheryou.addlocation.AddLocationViewModel
+import com.rodrigmatrix.weatheryou.addlocation.AddLocationViewState
 import com.rodrigmatrix.weatheryou.components.R
 import com.rodrigmatrix.weatheryou.components.SearchBar
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
@@ -46,7 +49,7 @@ import org.koin.androidx.compose.getViewModel
 @Composable
 internal fun SearchLocationScreen(
     navController: NavController,
-    viewModel: SearchLocationViewModel = getViewModel(),
+    viewModel: AddLocationViewModel = getViewModel(),
 ) {
     val viewState by viewModel.viewState.collectAsState()
     val context = LocalContext.current
@@ -57,15 +60,15 @@ internal fun SearchLocationScreen(
     }
     LaunchViewEffect(viewModel) { viewEffect ->
         when (viewEffect) {
-            SearchLocationUiAction.LocationAdded -> {
+            AddLocationViewEffect.LocationAdded -> {
                 keyboardController?.hide()
                 navController.navigateUp()
             }
-            is SearchLocationUiAction.ShowError -> {
+            is AddLocationViewEffect.ShowError -> {
                 context.toast(viewEffect.string)
             }
 
-            is SearchLocationUiAction.ShowErrorString -> {
+            is AddLocationViewEffect.ShowErrorString -> {
                 context.toast(viewEffect.string)
             }
         }
@@ -85,7 +88,7 @@ internal fun SearchLocationScreen(
 
 @Composable
 private fun SearchLocationScreen(
-    uiState: SearchLocationUiState,
+    uiState: AddLocationViewState,
     onQueryChanged: (String) -> Unit,
     onLocationClick: (SearchAutocompleteLocation?) -> Unit,
     onFamousLocationClicked: (City, Context) -> Unit,
@@ -197,7 +200,7 @@ private fun LocationItem(
 fun AddLocationScreenPreview() {
     WeatherYouTheme {
         SearchLocationScreen(
-            uiState = SearchLocationUiState(
+            uiState = AddLocationViewState(
                 famousLocationsList = PreviewFamousCities
             ),
             { },

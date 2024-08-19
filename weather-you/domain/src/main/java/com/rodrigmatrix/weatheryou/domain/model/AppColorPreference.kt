@@ -6,4 +6,8 @@ enum class AppColorPreference {
     MOSQUE,
     DARK_FERN,
     FRESH_EGGPLANT,
+    CARMINE,
+    CINNAMON,
+    PERU_TAN,
+    GIGAS,
 }

@@ -9,4 +9,8 @@ fun ColorMode.toPreference() = when (this) {
     ColorMode.Mosque -> AppColorPreference.MOSQUE
     ColorMode.DarkFern -> AppColorPreference.DARK_FERN
     ColorMode.FreshEggplant -> AppColorPreference.FRESH_EGGPLANT
+    ColorMode.Carmine -> AppColorPreference.CARMINE
+    ColorMode.Cinnamon -> AppColorPreference.CINNAMON
+    ColorMode.PeruTan -> AppColorPreference.PERU_TAN
+    ColorMode.Gigas -> AppColorPreference.GIGAS
 }

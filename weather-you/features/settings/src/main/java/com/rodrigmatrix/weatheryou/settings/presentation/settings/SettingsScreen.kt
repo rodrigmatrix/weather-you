@@ -28,12 +28,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.rodrigmatrix.weatheryou.components.R
+import com.rodrigmatrix.weatheryou.components.ScreenNavigationType
+import com.rodrigmatrix.weatheryou.settings.presentation.settings.model.AppColorPreferenceOption
 import com.rodrigmatrix.weatheryou.settings.presentation.settings.model.AppThemePreferenceOption
 import com.rodrigmatrix.weatheryou.settings.presentation.settings.model.TemperaturePreferenceOption
 import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun SettingsScreen(
+    navigationType: ScreenNavigationType,
     viewModel: SettingsViewModel = getViewModel()
 ) {
     val viewState by viewModel.viewState.collectAsState()
@@ -43,8 +46,10 @@ fun SettingsScreen(
         onEditUnits = viewModel::onEditUnit,
         onEditTheme = viewModel::onEditTheme,
         onNewUnit = viewModel::onNewUnit,
+        onNewColor = viewModel::onNewColorTheme,
         onNewTheme = viewModel::onNewTheme,
         onDismissDialog = viewModel::hideDialogs,
+        navigationType = navigationType,
     )
 }
 
@@ -55,14 +60,19 @@ fun SettingsScreen(
     onEditTheme: () -> Unit,
     onNewUnit: (TemperaturePreferenceOption) -> Unit,
     onNewTheme: (AppThemePreferenceOption) -> Unit,
-    onDismissDialog: () -> Unit
+    onNewColor: (AppColorPreferenceOption) -> Unit,
+    onDismissDialog: () -> Unit,
+    navigationType: ScreenNavigationType,
 ) {
     when (viewState.dialogState) {
         SettingsDialogState.HIDDEN -> Unit
-        SettingsDialogState.THEME -> ThemeDialog(
-            selected = viewState.selectedAppTheme,
-            onNewTheme = onNewTheme,
-            onDismissRequest = onDismissDialog
+        SettingsDialogState.THEME -> ThemeAndColorModeSelector(
+            themeMode = viewState.selectedAppTheme.option,
+            colorMode = viewState.selectedColor.option,
+            onThemeModeChange = onNewTheme,
+            onColorChange = onNewColor,
+            onClose = onDismissDialog,
+            navigationType = navigationType,
         )
         SettingsDialogState.UNITS -> UnitsDialog(
             selected = viewState.selectedTemperature,
@@ -259,7 +269,9 @@ fun UvIndexCardPreview() {
             onEditTheme = { },
             onNewUnit = { },
             onNewTheme = { },
-            onDismissDialog = { }
+            onNewColor = { },
+            onDismissDialog = { },
+            navigationType = ScreenNavigationType.BOTTOM_NAVIGATION
         )
     }
 }

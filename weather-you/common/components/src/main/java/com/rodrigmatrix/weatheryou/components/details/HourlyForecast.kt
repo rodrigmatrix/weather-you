@@ -1,6 +1,5 @@
 package com.rodrigmatrix.weatheryou.components.details
 
-import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -21,7 +20,10 @@ import com.rodrigmatrix.weatheryou.domain.model.WeatherHour
 @Composable
 fun HourlyForecastContent(
     hoursList: List<WeatherHour>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    hourItemWrapper: @Composable (content: @Composable () -> Unit) -> Unit = { content ->
+        content()
+    },
 ) {
     Column(modifier = modifier) {
         Text(
@@ -43,7 +45,9 @@ fun HourlyForecastContent(
         )
         LazyRow(Modifier.padding(start = 16.dp, end = 16.dp)) {
             items(hoursList) { item  ->
-                HourRow(item)
+                hourItemWrapper {
+                    HourRow(item)
+                }
             }
         }
     }

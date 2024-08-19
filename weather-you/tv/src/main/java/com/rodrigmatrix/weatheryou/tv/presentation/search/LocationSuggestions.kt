@@ -51,7 +51,7 @@ fun LocationSuggestions(
             style = WeatherYouTheme.typography.headlineMedium,
             color = WeatherYouTheme.colorScheme.onSurface,
             modifier = Modifier
-                .heightIn(min = 56.dp)
+                .heightIn(min = 30.dp)
                 .padding(horizontal = 24.dp, vertical = 4.dp)
                 .wrapContentHeight()
         )
@@ -59,7 +59,9 @@ fun LocationSuggestions(
             columns = GridCells.Fixed(2),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = Modifier.padding(horizontal = 16.dp),
+            modifier = Modifier
+                .padding(16.dp)
+                .padding(horizontal = 16.dp),
         ) {
             itemsIndexed(suggestions) { index, location ->
                 LocationRow(

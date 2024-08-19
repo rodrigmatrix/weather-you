@@ -1,9 +1,10 @@
 package com.rodrigmatrix.weatheryou.components.theme
 
-import android.annotation.SuppressLint
 import android.app.Activity
-import android.os.Build
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.dynamicDarkColorScheme
@@ -12,39 +13,61 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
-@SuppressLint("NewApi")
 @Composable
 fun WeatherYouTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = Build.VERSION.SDK_INT >= 31,
+    themeMode: ThemeMode = ThemeMode.System,
     colorMode: ColorMode = ColorMode.Dynamic,
     content: @Composable () -> Unit
 ) {
-    val themeMode = if (darkTheme) {
-        ThemeMode.Dark
-    } else {
-        ThemeMode.Light
+    val darkTheme = when (themeMode) {
+        ThemeMode.System -> isSystemInDarkTheme()
+        ThemeMode.Light -> false
+        ThemeMode.Dark -> true
     }
-    val colorScheme = when {
-        dynamicColor -> {
-            val context = LocalContext.current
-            if (themeMode == ThemeMode.Dark) {
-                dynamicDarkColorScheme(context)
-            } else {
-                dynamicLightColorScheme(context)
-            }
+    val context = LocalContext.current
+    val colorScheme = when (colorMode) {
+        ColorMode.Dynamic -> when {
+            darkTheme -> dynamicDarkColorScheme(context)
+            else -> dynamicLightColorScheme(context)
         }
-        colorMode == ColorMode.Mosque -> when {
-            darkTheme -> mosqueDarkScheme
-            else -> mosqueLightScheme
+        ColorMode.Default -> when {
+            darkTheme -> DarkColorScheme.switch()
+            else -> LightColorScheme.switch()
         }
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
+        ColorMode.Mosque -> when {
+            darkTheme -> mosqueDarkScheme.switch()
+            else -> mosqueLightScheme.switch()
+        }
+        ColorMode.DarkFern -> when {
+            darkTheme -> darkFernDarkScheme.switch()
+            else -> darkFernLightScheme.switch()
+        }
+        ColorMode.FreshEggplant -> when {
+            darkTheme -> freshEggplantDarkScheme.switch()
+            else -> freshEggplantLightScheme.switch()
+        }
+        ColorMode.Carmine -> when {
+            darkTheme -> carmineDarkScheme.switch()
+            else -> carmineLightScheme.switch()
+        }
+        ColorMode.Cinnamon -> when {
+            darkTheme -> cinnamonDarkScheme.switch()
+            else -> cinnamonLightScheme.switch()
+        }
+        ColorMode.PeruTan -> when {
+            darkTheme -> peruTanDarkScheme.switch()
+            else -> peruTanLightScheme.switch()
+        }
+        ColorMode.Gigas -> when {
+            darkTheme -> gigasDarkScheme.switch()
+            else -> gigasLightScheme.switch()
+        }
     }
     val typography = WeatherYouTypography(
         displayLarge = MaterialTheme.typography.displayLarge,
@@ -99,6 +122,10 @@ enum class ColorMode {
     Mosque,
     DarkFern,
     FreshEggplant,
+    Carmine,
+    Cinnamon,
+    PeruTan,
+    Gigas,
 }
 
 val LocalWeatherYouThemeMode = compositionLocalOf {
@@ -131,3 +158,51 @@ object WeatherYouTheme {
         @Composable
         get() = MaterialTheme.shapes
 }
+
+
+@Composable
+private fun animateColor(targetValue: Color) =
+    animateColorAsState(
+        targetValue = targetValue,
+        animationSpec = tween(durationMillis = 2000),
+    ).value
+
+@Composable
+fun ColorScheme.switch(): ColorScheme = copy(
+    primary = animateColor(primary),
+    onPrimary = animateColor(onPrimary),
+    primaryContainer = animateColor(primaryContainer),
+    onPrimaryContainer = animateColor(onPrimaryContainer),
+    secondary = animateColor(secondary),
+    onSecondary = animateColor(onSecondary),
+    secondaryContainer = animateColor(secondaryContainer),
+    onSecondaryContainer = animateColor(onSecondaryContainer),
+    tertiary = animateColor(tertiary),
+    onTertiary = animateColor(onTertiary),
+    tertiaryContainer = animateColor(tertiaryContainer),
+    onTertiaryContainer = animateColor(onTertiaryContainer),
+    background = animateColor(background),
+    onBackground = animateColor(onBackground),
+    surface = animateColor(surface),
+    onSurface = animateColor(onSurface),
+    surfaceVariant = animateColor(surfaceVariant),
+    onSurfaceVariant = animateColor(onSurfaceVariant),
+    surfaceTint = animateColor(surfaceTint),
+    inverseSurface = animateColor(inverseSurface),
+    inverseOnSurface = animateColor(inverseOnSurface),
+    error = animateColor(error),
+    onError = animateColor(onError),
+    errorContainer = animateColor(errorContainer),
+    onErrorContainer = animateColor(onErrorContainer),
+    outline = animateColor(outline),
+    outlineVariant = animateColor(outlineVariant),
+    scrim = animateColor(scrim),
+    inversePrimary = animateColor(inversePrimary),
+    surfaceBright = animateColor(surfaceBright),
+    surfaceDim = animateColor(surfaceDim),
+    surfaceContainer = animateColor(surfaceContainer),
+    surfaceContainerHigh = animateColor(surfaceContainerHigh),
+    surfaceContainerHighest = animateColor(surfaceContainerHighest),
+    surfaceContainerLow = animateColor(surfaceContainerLow),
+    surfaceContainerLowest = animateColor(surfaceContainerLowest),
+)

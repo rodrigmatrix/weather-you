@@ -84,6 +84,10 @@ class SettingsLocalDataSourceImpl(
                 AppColorPreference.MOSQUE.name -> AppColorPreference.MOSQUE
                 AppColorPreference.DARK_FERN.name -> AppColorPreference.DARK_FERN
                 AppColorPreference.FRESH_EGGPLANT.name -> AppColorPreference.FRESH_EGGPLANT
+                AppColorPreference.CARMINE.name -> AppColorPreference.CARMINE
+                AppColorPreference.CINNAMON.name -> AppColorPreference.CINNAMON
+                AppColorPreference.PERU_TAN.name -> AppColorPreference.PERU_TAN
+                AppColorPreference.GIGAS.name -> AppColorPreference.GIGAS
                 else -> AppColorPreference.DEFAULT
             }
         }

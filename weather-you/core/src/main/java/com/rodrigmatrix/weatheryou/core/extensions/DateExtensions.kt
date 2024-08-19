@@ -2,16 +2,11 @@ package com.rodrigmatrix.weatheryou.core.extensions
 
 import android.content.Context
 import android.text.format.DateFormat
-import androidx.compose.ui.text.capitalize
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.joda.time.LocalTime
 import org.joda.time.Period
 import org.joda.time.format.DateTimeFormat
-import java.text.SimpleDateFormat
-import java.time.ZoneId
-import java.time.ZonedDateTime
-import java.util.*
 
 fun String.getTimeZoneHourAndMinutes(context: Context): String {
     return try {
