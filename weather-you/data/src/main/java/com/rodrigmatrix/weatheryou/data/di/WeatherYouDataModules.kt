@@ -5,6 +5,7 @@ import android.content.Context
 import android.location.Geocoder
 import androidx.datastore.core.DataMigration
 import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.SharedPreferencesMigration
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
@@ -163,11 +164,21 @@ object WeatherYouDataModules {
         factory<SearchLocalDataSource> {
             SearchLocalDataSourceImpl(context = androidContext())
         }
-        single<SettingsLocalDataSource> {
+        single {
+            PreferenceDataStoreFactory.create(
+                migrations = listOf(
+                    SharedPreferencesMigration(
+                        context = androidApplication(),
+                        sharedPreferencesName = WEATHER_YOU_SHARED_PREFERENCES,
+                    ),
+                )
+            ) {
+                androidApplication().preferencesDataStoreFile("weather_you_data_store")
+            }
+        }
+        factory<SettingsLocalDataSource> {
             SettingsLocalDataSourceImpl(
-                dataStore = PreferenceDataStoreFactory.create {
-                    androidApplication().preferencesDataStoreFile("weather_you_data_store")
-                },
+                dataStore = get(),
                 unitLocale = UnitLocale(Locale.getDefault()),
             )
         }

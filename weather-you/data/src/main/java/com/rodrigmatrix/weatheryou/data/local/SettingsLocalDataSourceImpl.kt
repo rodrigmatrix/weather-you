@@ -12,9 +12,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 
-private const val TEMPERATURE_KEY = "temperature_pref"
-private const val THEME_KEY = "theme_pref"
-private const val COLOR_KEY = "color_pref"
+internal const val TEMPERATURE_KEY = "temperature_pref"
+internal const val THEME_KEY = "theme_pref"
+internal const val COLOR_KEY = "color_pref"
 
 class SettingsLocalDataSourceImpl(
     private val dataStore: DataStore<Preferences>,
