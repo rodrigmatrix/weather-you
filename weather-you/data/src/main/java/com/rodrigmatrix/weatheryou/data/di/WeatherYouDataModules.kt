@@ -3,11 +3,19 @@ package com.rodrigmatrix.weatheryou.data.di
 import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Geocoder
+import androidx.datastore.core.DataMigration
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.SharedPreferencesMigration
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
+import androidx.datastore.preferences.preferencesDataStoreFile
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import com.rodrigmatrix.weatheryou.core.utils.UnitLocale
 import com.rodrigmatrix.weatheryou.data.BuildConfig
 import com.rodrigmatrix.weatheryou.data.analytics.WeatherYouAnalytics
 import com.rodrigmatrix.weatheryou.data.analytics.WeatherYouAnalyticsImpl
@@ -27,6 +35,8 @@ import com.rodrigmatrix.weatheryou.data.remote.remoteconfig.WeatherYouRemoteConf
 import com.rodrigmatrix.weatheryou.data.remote.remoteconfig.WeatherYouRemoteConfigKeys.OPEN_WEATHER_API_KEY
 import com.rodrigmatrix.weatheryou.data.remote.remoteconfig.WeatherYouRemoteConfigKeys.VISUAL_CROSSING_API_KEY
 import com.rodrigmatrix.weatheryou.data.remote.remoteconfig.WeatherYouRemoteConfigKeys.WEATHER_PROVIDER
+import com.rodrigmatrix.weatheryou.data.remote.search.SearchLocalDataSource
+import com.rodrigmatrix.weatheryou.data.remote.search.SearchLocalDataSourceImpl
 import com.rodrigmatrix.weatheryou.data.remote.search.SearchRemoteDataSource
 import com.rodrigmatrix.weatheryou.data.remote.search.SearchRemoteDataSourceImpl
 import com.rodrigmatrix.weatheryou.data.remote.visualcrossing.VisualCrossingRemoteDataSourceImpl
@@ -43,11 +53,15 @@ import com.rodrigmatrix.weatheryou.domain.repository.SearchRepository
 import com.rodrigmatrix.weatheryou.domain.repository.SettingsRepository
 import com.rodrigmatrix.weatheryou.domain.repository.WeatherRepository
 import com.rodrigmatrix.weatheryou.domain.usecase.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import okio.Path.Companion.toPath
 import org.koin.android.ext.koin.androidApplication
+import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.loadKoinModules
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
@@ -83,6 +97,7 @@ object WeatherYouDataModules {
         factory { GetWidgetTemperatureUseCase(weatherRepository = get()) }
         factory { SetWidgetLocationUseCase(weatherRepository = get()) }
         factory { DeleteWidgetLocationUseCase(weatherRepository = get()) }
+        factory { GetLocationSizeUseCase(weatherRepository = get()) }
     }
 
     private val repositoryModule = module {
@@ -97,8 +112,8 @@ object WeatherYouDataModules {
         }
         factory<SearchRepository> {
             SearchRepositoryImpl(
-                searchRemoteDataSource = get(),
-                famousCitiesMapper = FamousCitiesMapper()
+                searchLocalDataSource = get(),
+                famousCitiesMapper = FamousCitiesMapper(),
             )
         }
         factory<SettingsRepository> { SettingsRepositoryImpl(settingsLocalDataSource = get()) }
@@ -146,14 +161,26 @@ object WeatherYouDataModules {
                 searchLocationRemoteMapper = SearchLocationRemoteMapper(),
             )
         }
-        factory<SharedPreferencesDataSource> {
-            SharedPreferencesDataSourceImpl(
-                sharedPreferences = androidApplication()
-                    .getSharedPreferences(WEATHER_YOU_SHARED_PREFERENCES, Context.MODE_PRIVATE)
-            )
+        factory<SearchLocalDataSource> {
+            SearchLocalDataSourceImpl(context = androidContext())
+        }
+        single {
+            PreferenceDataStoreFactory.create(
+                migrations = listOf(
+                    SharedPreferencesMigration(
+                        context = androidApplication(),
+                        sharedPreferencesName = WEATHER_YOU_SHARED_PREFERENCES,
+                    ),
+                )
+            ) {
+                androidApplication().preferencesDataStoreFile("weather_you_data_store")
+            }
         }
         factory<SettingsLocalDataSource> {
-            SettingsLocalDataSourceImpl(sharedPreferencesDataSource = get())
+            SettingsLocalDataSourceImpl(
+                dataStore = get(),
+                unitLocale = UnitLocale(Locale.getDefault()),
+            )
         }
         factory<WeatherYouAnalytics> {
             WeatherYouAnalyticsImpl(

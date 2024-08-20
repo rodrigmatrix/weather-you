@@ -20,3 +20,8 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 -dontwarn java.lang.invoke.StringConcatFactory
+-keep class com.rodrigmatrix.weatheryou.domain.model** { *; }
+-keep class com.rodrigmatrix.weatheryou.domain.usecase** { *; }
+-keep class com.rodrigmatrix.weatheryou.domain.repository** { *; }
+-allowaccessmodification
+-useuniqueclassmembernames

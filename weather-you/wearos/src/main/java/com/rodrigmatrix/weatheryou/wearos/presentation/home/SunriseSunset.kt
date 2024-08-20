@@ -35,7 +35,7 @@ fun SunriseSunset(
         }
         Text(
             text = sunrise.getHourWithMinutesString(context),
-            style = MaterialTheme.typography.title1
+            style = WeatherYouTheme.typography.title1
         )
         Spacer(modifier = Modifier.height(10.dp))
         Row {
@@ -48,7 +48,7 @@ fun SunriseSunset(
         }
         Text(
             text = sunset.getHourWithMinutesString(context),
-            style = MaterialTheme.typography.title1
+            style = WeatherYouTheme.typography.title1
         )
     }
 }

@@ -16,7 +16,7 @@ android {
         minSdk Sdk.phoneMinSdk
         targetSdk Sdk.targetSdk
         versionCode Sdk.versionCode
-        versionName "2.3"
+        versionName "3.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -114,6 +114,9 @@ dependencies {
     implementation(libs.accompanist.adaptive)
 
     implementation(libs.glanceAppWidget)
+    implementation(libs.glanceAppWidget.material3)
+    implementation(libs.glance.preview)
+    implementation(libs.glanceAppWidget.preview)
 
     implementation(libs.koin.android)
     implementation(libs.koin.compose)
@@ -128,6 +131,7 @@ dependencies {
     implementation(libs.workManager)
 
     implementation(libs.playServices.location)
+    implementation(libs.google.play.review)
 
     implementation(libs.jodaTime)
 

@@ -29,7 +29,7 @@ class VisualCrossingRemoteDataSourceImpl(
                     unitGroup = getUnit(unit)
                 )
             )
-        }.map(visualCrossingRemoteMapper::map)
+        }.map { visualCrossingRemoteMapper.map(it, unit) }
     }
 
     override fun getWeather(name: String, unit: TemperaturePreference): Flow<WeatherLocation> {
@@ -40,7 +40,7 @@ class VisualCrossingRemoteDataSourceImpl(
                     unitGroup = getUnit(unit)
                 )
             )
-        }.map(visualCrossingRemoteMapper::map)
+        }.map { visualCrossingRemoteMapper.map(it, unit) }
     }
 
     private fun getUnit(unit: TemperaturePreference): String {

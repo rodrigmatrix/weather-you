@@ -15,12 +15,6 @@ android {
         consumerProguardFiles "consumer-rules.pro"
     }
 
-    buildTypes {
-        release {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
@@ -36,6 +30,8 @@ android {
 dependencies {
     implementation(libs.kotlin.stdlib)
     implementation(libs.kotlin.coroutines.android)
+
+    implementation(libs.jodaTime)
 
     testImplementation(libs.junit)
     testImplementation(libs.mockk)

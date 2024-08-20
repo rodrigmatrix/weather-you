@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
+import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -24,14 +24,15 @@ fun ExpandButton(
     contentDescription: String?,
     onExpandButtonClick: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
-    backgroundColor: Color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.1f)
+    backgroundColor: Color = WeatherYouTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.1f)
 ) {
     val angle: Float by animateFloatAsState(
         targetValue = if (isExpanded) 180F else 0F,
         animationSpec = tween(
             durationMillis = 400,
             easing = FastOutSlowInEasing
-        )
+        ),
+        label = "expand button animation",
     )
     IconButton(
         onClick = {
@@ -45,6 +46,7 @@ fun ExpandButton(
         Icon(
             painter = painterResource(R.drawable.ic_arrow_down),
             contentDescription = contentDescription,
+            tint = WeatherYouTheme.colorScheme.onSecondaryContainer,
             modifier = Modifier.rotate(angle)
         )
     }

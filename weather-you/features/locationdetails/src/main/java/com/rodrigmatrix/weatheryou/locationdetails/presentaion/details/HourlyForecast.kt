@@ -4,7 +4,7 @@ import android.content.res.Configuration
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.MaterialTheme
+import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -18,9 +18,9 @@ import com.rodrigmatrix.weatheryou.components.WeatherIcon
 import com.rodrigmatrix.weatheryou.components.WeatherYouCard
 import com.rodrigmatrix.weatheryou.components.WeatherYouDivider
 import com.rodrigmatrix.weatheryou.components.details.HourlyForecastContent
+import com.rodrigmatrix.weatheryou.components.preview.PreviewHourlyForecast
 import com.rodrigmatrix.weatheryou.core.extensions.*
 import com.rodrigmatrix.weatheryou.domain.model.WeatherHour
-import com.rodrigmatrix.weatheryou.locationdetails.presentaion.preview.PreviewHourlyForecast
 
 @Composable
 fun HourlyForecast(
@@ -36,7 +36,7 @@ fun HourlyForecast(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun WeatherLocationPreview() {
-    MaterialTheme {
+    WeatherYouTheme {
         HourlyForecast(PreviewHourlyForecast)
     }
 }

@@ -46,6 +46,9 @@ class HomeViewModel(
                             isLoading = false
                         )
                     }
+                    if (weatherLocationsList.size >= 2) {
+                        setEffect { HomeViewEffect.ShowInAppReview }
+                    }
                 }
         }
     }

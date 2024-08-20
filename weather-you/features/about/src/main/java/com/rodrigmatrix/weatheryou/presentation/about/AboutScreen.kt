@@ -14,7 +14,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,7 +38,7 @@ fun AboutScreen() {
     Column(
         Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(WeatherYouTheme.colorScheme.background)
             .verticalScroll(rememberScrollState())
             .padding(bottom = 100.dp)
     ) {
@@ -59,8 +58,8 @@ fun AboutScreen() {
         )
         Text(
             text = stringResource(Strings.string.developed_by),
-            style = MaterialTheme.typography.headlineSmall,
-            color = MaterialTheme.colorScheme.onBackground,
+            style = WeatherYouTheme.typography.headlineSmall,
+            color = WeatherYouTheme.colorScheme.onBackground,
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
@@ -68,8 +67,8 @@ fun AboutScreen() {
         )
         Text(
             text = stringResource(Strings.string.about_description),
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onBackground,
+            style = WeatherYouTheme.typography.bodyLarge,
+            color = WeatherYouTheme.colorScheme.onBackground,
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
@@ -81,7 +80,7 @@ fun AboutScreen() {
 @Composable
 private fun SocialCard(modifier: Modifier = Modifier) {
     Surface(
-        color = MaterialTheme.colorScheme.secondaryContainer,
+        color = WeatherYouTheme.colorScheme.secondaryContainer,
         tonalElevation = 8.dp,
         shape = RoundedCornerShape(16.dp),
         modifier = modifier
@@ -102,6 +101,7 @@ private fun SocialNetwork(socialNetwork: SocialNetwork) {
     val context = LocalContext.current
     Icon(
         painter = painterResource(socialNetwork.icon),
+        tint = WeatherYouTheme.colorScheme.onSecondaryContainer,
         contentDescription = null,
         modifier = Modifier
             .size(64.dp)

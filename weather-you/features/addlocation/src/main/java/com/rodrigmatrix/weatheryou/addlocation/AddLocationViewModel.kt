@@ -36,10 +36,7 @@ class AddLocationViewModel(
         viewModelScope.launch {
             querySearch
                 .receiveAsFlow()
-                .onEach { query ->
-                    setState { it.copy(searchText = query, isLoading = true) }
-                }
-                .debounce(600L)
+                .debounce(400L)
                 .collect { query ->
                     searchLocationUseCase(query)
                         .flowOn(coroutineDispatcher)
@@ -99,6 +96,7 @@ class AddLocationViewModel(
     }
 
     fun onSearch(searchText: String) {
+        setState { it.copy(searchText = searchText, isLoading = true) }
         querySearch.trySend(searchText)
     }
 

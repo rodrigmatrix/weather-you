@@ -1,23 +1,29 @@
 package com.rodrigmatrix.weatheryou.presentation.navigation
 
+import android.app.Activity
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
+import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.window.layout.DisplayFeature
 import androidx.window.layout.FoldingFeature
+import com.google.android.play.core.review.ReviewManagerFactory
+import com.google.android.play.core.review.testing.FakeReviewManager
 import com.rodrigmatrix.weatheryou.components.DevicePosture
 import com.rodrigmatrix.weatheryou.components.ScreenContentType
 import com.rodrigmatrix.weatheryou.components.ScreenNavigationContentPosition
@@ -26,6 +32,7 @@ import com.rodrigmatrix.weatheryou.components.isBookPosture
 import com.rodrigmatrix.weatheryou.components.isSeparating
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.home.presentation.home.HomeUiState
+import com.rodrigmatrix.weatheryou.home.presentation.home.HomeViewEffect
 import com.rodrigmatrix.weatheryou.home.presentation.home.HomeViewModel
 import com.rodrigmatrix.weatheryou.home.presentation.navigation.HomeEntry
 import com.rodrigmatrix.weatheryou.home.presentation.navigation.NavigationEntries
@@ -136,6 +143,27 @@ fun HomeNavigationScreen(
         },
         onPermissionGranted = viewModel::onPermissionGranted,
     )
+    val context = LocalContext.current
+    val manager = remember {
+        FakeReviewManager(context)
+    }
+    LaunchedEffect(key1 = Unit) {
+        viewModel.viewEffect.collect { effect ->
+            when (effect) {
+                is HomeViewEffect.Error -> {
+                    Toast.makeText(context, effect.stringRes, Toast.LENGTH_SHORT).show()
+                }
+                HomeViewEffect.ShowInAppReview -> {
+                    manager.requestReviewFlow().addOnSuccessListener {
+                        val flow = manager.launchReviewFlow((context as Activity), it)
+                        flow.addOnSuccessListener {
+                            it
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 @Composable
@@ -206,9 +234,7 @@ fun ScreenAppContent(
             )
         }
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.inverseOnSurface)
+            modifier = Modifier.fillMaxSize()
         ) {
             WeatherHomeNavHost(
                 contentType = contentType,

@@ -1,7 +1,9 @@
 package com.rodrigmatrix.weatheryou.domain.model
 
+import org.joda.time.DateTime
+
 data class WeatherDay(
-    val dateTime: Long,
+    val dateTime: DateTime,
     val weatherCondition: WeatherCondition,
     val temperature: Double,
     val maxTemperature: Double,
@@ -11,6 +13,7 @@ data class WeatherDay(
     val precipitationType: String,
     val windSpeed: Double,
     val humidity: Double,
-    val sunrise: Long,
-    val sunset: Long
+    val sunrise: DateTime,
+    val sunset: DateTime,
+    val unit: TemperaturePreference,
 )

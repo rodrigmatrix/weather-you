@@ -24,7 +24,7 @@ fun WeatherHour(weatherHour: WeatherHour) {
     ) {
         Text(
             text = weatherHour.dateTime.getHourString(context),
-            style = MaterialTheme.typography.caption2
+            style = WeatherYouTheme.typography.caption2
         )
         WeatherIcon(
             weatherIcons = weatherHour.weatherIcons,
@@ -32,7 +32,7 @@ fun WeatherHour(weatherHour: WeatherHour) {
         )
         Text(
             text = weatherHour.temperature.temperatureString(),
-            style = MaterialTheme.typography.caption2
+            style = WeatherYouTheme.typography.caption2
         )
     }
 }

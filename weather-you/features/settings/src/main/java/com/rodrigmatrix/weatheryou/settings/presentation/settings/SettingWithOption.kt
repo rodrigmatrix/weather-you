@@ -4,7 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
+import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -26,13 +26,13 @@ fun SettingWithOption(
     ) {
         Text(
             text = title,
-            color = MaterialTheme.colorScheme.onBackground,
-            style = MaterialTheme.typography.titleMedium
+            color = WeatherYouTheme.colorScheme.onBackground,
+            style = WeatherYouTheme.typography.titleMedium
         )
         Text(
             text = selected,
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onBackground,
+            style = WeatherYouTheme.typography.titleMedium,
+            color = WeatherYouTheme.colorScheme.onBackground,
             modifier = Modifier.alpha(0.7f)
         )
     }

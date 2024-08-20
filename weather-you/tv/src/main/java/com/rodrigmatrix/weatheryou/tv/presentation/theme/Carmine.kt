@@ -1,0 +1,116 @@
+package com.rodrigmatrix.weatheryou.tv.presentation.theme
+
+import androidx.compose.ui.graphics.Color
+import androidx.tv.material3.darkColorScheme
+import androidx.tv.material3.lightColorScheme
+
+private val primaryLight = Color(0xFFA40314)
+private val onPrimaryLight = Color(0xFFFFFFFF)
+private val primaryContainerLight = Color(0xFFD93533)
+private val onPrimaryContainerLight = Color(0xFFFFFFFF)
+private val secondaryLight = Color(0xFF9F3F39)
+private val onSecondaryLight = Color(0xFFFFFFFF)
+private val secondaryContainerLight = Color(0xFFFF9990)
+private val onSecondaryContainerLight = Color(0xFF57090A)
+private val tertiaryLight = Color(0xFF734600)
+private val onTertiaryLight = Color(0xFFFFFFFF)
+private val tertiaryContainerLight = Color(0xFFA46700)
+private val onTertiaryContainerLight = Color(0xFFFFFFFF)
+private val errorLight = Color(0xFFBA1A1A)
+private val onErrorLight = Color(0xFFFFFFFF)
+private val errorContainerLight = Color(0xFFFFDAD6)
+private val onErrorContainerLight = Color(0xFF410002)
+private val backgroundLight = Color(0xFFFFF8F7)
+private val onBackgroundLight = Color(0xFF271816)
+private val surfaceLight = Color(0xFFFFF8F7)
+private val onSurfaceLight = Color(0xFF271816)
+private val surfaceVariantLight = Color(0xFFFFDAD6)
+private val onSurfaceVariantLight = Color(0xFF5B403D)
+private val scrimLight = Color(0xFF000000)
+private val inverseSurfaceLight = Color(0xFF3E2C2A)
+private val inverseOnSurfaceLight = Color(0xFFFFEDEB)
+private val inversePrimaryLight = Color(0xFFFFB3AC)
+private val primaryDark = Color(0xFFFFB3AC)
+private val onPrimaryDark = Color(0xFF680008)
+private val primaryContainerDark = Color(0xFFD93533)
+private val onPrimaryContainerDark = Color(0xFFFFFFFF)
+private val secondaryDark = Color(0xFFFFB3AC)
+private val onSecondaryDark = Color(0xFF611111)
+private val secondaryContainerDark = Color(0xFF741F1C)
+private val onSecondaryContainerDark = Color(0xFFFFC3BD)
+private val tertiaryDark = Color(0xFFFFB962)
+private val onTertiaryDark = Color(0xFF472A00)
+private val tertiaryContainerDark = Color(0xFFA46700)
+private val onTertiaryContainerDark = Color(0xFFFFFFFF)
+private val errorDark = Color(0xFFFFB4AB)
+private val onErrorDark = Color(0xFF690005)
+private val errorContainerDark = Color(0xFF93000A)
+private val onErrorContainerDark = Color(0xFFFFDAD6)
+private val backgroundDark = Color(0xFF1E100E)
+private val onBackgroundDark = Color(0xFFF9DCD9)
+private val surfaceDark = Color(0xFF1E100E)
+private val onSurfaceDark = Color(0xFFF9DCD9)
+private val surfaceVariantDark = Color(0xFF5B403D)
+private val onSurfaceVariantDark = Color(0xFFE4BEBA)
+private val scrimDark = Color(0xFF000000)
+private val inverseSurfaceDark = Color(0xFFF9DCD9)
+private val inverseOnSurfaceDark = Color(0xFF3E2C2A)
+private val inversePrimaryDark = Color(0xFFB91B20)
+
+internal val carmineLightScheme = lightColorScheme(
+    primary = primaryLight,
+    onPrimary = onPrimaryLight,
+    primaryContainer = primaryContainerLight,
+    onPrimaryContainer = onPrimaryContainerLight,
+    secondary = secondaryLight,
+    onSecondary = onSecondaryLight,
+    secondaryContainer = secondaryContainerLight,
+    onSecondaryContainer = onSecondaryContainerLight,
+    tertiary = tertiaryLight,
+    onTertiary = onTertiaryLight,
+    tertiaryContainer = tertiaryContainerLight,
+    onTertiaryContainer = onTertiaryContainerLight,
+    error = errorLight,
+    onError = onErrorLight,
+    errorContainer = errorContainerLight,
+    onErrorContainer = onErrorContainerLight,
+    background = backgroundLight,
+    onBackground = onBackgroundLight,
+    surface = surfaceLight,
+    onSurface = onSurfaceLight,
+    surfaceVariant = surfaceVariantLight,
+    onSurfaceVariant = onSurfaceVariantLight,
+    scrim = scrimLight,
+    inverseSurface = inverseSurfaceLight,
+    inverseOnSurface = inverseOnSurfaceLight,
+    inversePrimary = inversePrimaryLight,
+)
+
+internal val carmineDarkScheme = darkColorScheme(
+    primary = primaryDark,
+    onPrimary = onPrimaryDark,
+    primaryContainer = primaryContainerDark,
+    onPrimaryContainer = onPrimaryContainerDark,
+    secondary = secondaryDark,
+    onSecondary = onSecondaryDark,
+    secondaryContainer = secondaryContainerDark,
+    onSecondaryContainer = onSecondaryContainerDark,
+    tertiary = tertiaryDark,
+    onTertiary = onTertiaryDark,
+    tertiaryContainer = tertiaryContainerDark,
+    onTertiaryContainer = onTertiaryContainerDark,
+    error = errorDark,
+    onError = onErrorDark,
+    errorContainer = errorContainerDark,
+    onErrorContainer = onErrorContainerDark,
+    background = backgroundDark,
+    onBackground = onBackgroundDark,
+    surface = surfaceDark,
+    onSurface = onSurfaceDark,
+    surfaceVariant = surfaceVariantDark,
+    onSurfaceVariant = onSurfaceVariantDark,
+    scrim = scrimDark,
+    inverseSurface = inverseSurfaceDark,
+    inverseOnSurface = inverseOnSurfaceDark,
+    inversePrimary = inversePrimaryDark,
+)

@@ -28,7 +28,6 @@ import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -209,7 +208,8 @@ fun WeatherLocationsListScreen(
             SearchLocationBar(
                 onSearchLocationClick = onSearchLocationClick,
             )
-        }
+        },
+        containerColor = WeatherYouTheme.colorScheme.background,
     ) { paddingValues ->
         when {
             showLocationPermissionRequest -> {
@@ -244,8 +244,8 @@ fun WeatherLocationsListScreen(
                     PullRefreshIndicator(
                         refreshing = uiState.isLoading,
                         state = pullRefreshState,
-                        backgroundColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.secondaryContainer,
+                        backgroundColor = WeatherYouTheme.colorScheme.primary,
+                        contentColor = WeatherYouTheme.colorScheme.secondaryContainer,
                         scale = true,
                         modifier = Modifier.align(Alignment.TopCenter),
                     )
@@ -275,7 +275,7 @@ fun WeatherLocationsEmptyState(
         )
         Text(
             text = stringResource(R.string.empty_locations),
-            style = MaterialTheme.typography.headlineSmall,
+            style = WeatherYouTheme.typography.headlineSmall,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(10.dp)
         )
@@ -301,17 +301,17 @@ fun RequestLocationPermission(
             modifier = Modifier
                 .size(120.dp)
                 .padding(10.dp),
-            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
+            colorFilter = ColorFilter.tint(WeatherYouTheme.colorScheme.primary)
         )
         Text(
             text = stringResource(R.string.enable_location),
-            style = MaterialTheme.typography.headlineSmall,
+            style = WeatherYouTheme.typography.headlineSmall,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(10.dp)
         )
         Text(
             text = stringResource(R.string.enable_location_description),
-            style = MaterialTheme.typography.titleSmall,
+            style = WeatherYouTheme.typography.titleSmall,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(16.dp)
         )
@@ -355,7 +355,7 @@ fun SearchLocationBar(
 ) {
     Surface(
         shape = CircleShape,
-        color = MaterialTheme.colorScheme.secondaryContainer,
+        color = WeatherYouTheme.colorScheme.secondaryContainer,
         modifier = modifier
             .fillMaxWidth()
             .padding(top = 24.dp, bottom = 4.dp, start = 16.dp, end = 16.dp),
@@ -368,7 +368,7 @@ fun SearchLocationBar(
                 imageVector = Icons.Default.Search,
                 contentDescription = null,
                 modifier = Modifier.padding(start = 16.dp),
-                tint = MaterialTheme.colorScheme.primary,
+                tint = WeatherYouTheme.colorScheme.primary,
             )
 
             Text(
@@ -376,8 +376,8 @@ fun SearchLocationBar(
                 modifier = Modifier
                     .weight(1f)
                     .padding(16.dp),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface,
+                style = WeatherYouTheme.typography.bodyMedium,
+                color = WeatherYouTheme.colorScheme.onSurface,
             )
         }
     }

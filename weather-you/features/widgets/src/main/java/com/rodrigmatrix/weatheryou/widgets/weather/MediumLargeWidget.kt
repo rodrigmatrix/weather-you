@@ -2,7 +2,8 @@ package com.rodrigmatrix.weatheryou.widgets.weather
 
 import android.text.format.DateFormat
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.glance.preview.ExperimentalGlancePreviewApi
+import androidx.glance.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceModifier
@@ -10,7 +11,6 @@ import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
-import androidx.glance.action.Action
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.lazy.LazyColumn
 import androidx.glance.appwidget.lazy.itemsIndexed
@@ -306,12 +306,15 @@ fun MediumLargeLoading(
     }
 }
 
-@Preview
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview(widthDp = 400, heightDp = 400)
 @Composable
 private fun MediumWidgetPreview() {
-    MediumLargeWidget(
-        weather = PreviewWidgetWeather,
-        onWidgetClicked = { },
-        showDays = true,
-    )
+    GlanceTheme {
+        MediumLargeWidget(
+            weather = PreviewWidgetWeather,
+            onWidgetClicked = { },
+            showDays = true,
+        )
+    }
 }

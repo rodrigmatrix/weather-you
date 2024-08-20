@@ -1,9 +1,7 @@
 package com.rodrigmatrix.weatheryou.presentation.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -60,7 +58,7 @@ fun WeatherHomeNavHost(
             )
         }
         composable(HomeEntry.Settings.route) {
-            SettingsScreen()
+            SettingsScreen(navigationType)
         }
         composable(HomeEntry.About.route) {
             AboutScreen()

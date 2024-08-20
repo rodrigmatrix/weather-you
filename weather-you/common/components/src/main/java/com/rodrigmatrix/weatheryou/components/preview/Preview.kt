@@ -2,6 +2,7 @@ package com.rodrigmatrix.weatheryou.components.preview
 
 import com.rodrigmatrix.weatheryou.weathericons.R
 import com.rodrigmatrix.weatheryou.domain.model.*
+import org.joda.time.DateTime
 
 val PreviewWeatherLocation = WeatherLocation(
     id = 0,
@@ -14,7 +15,7 @@ val PreviewWeatherLocation = WeatherLocation(
     maxTemperature = 10.0,
     lowestTemperature = 0.0,
     currentCondition = WeatherCondition.SNOW_DAY,
-    currentTime = 0,
+    currentTime = DateTime(),
     timeZone = "",
     precipitationProbability = 60.0,
     precipitationType = "snow",
@@ -23,10 +24,11 @@ val PreviewWeatherLocation = WeatherLocation(
     windSpeed = 0.0,
     windDirection = 0.0,
     uvIndex = 0.0,
-    sunrise = 0,
-    sunset = 0,
+    sunrise = DateTime(),
+    sunset = DateTime(),
     visibility = 0.0,
     pressure = 0.0,
+    unit = TemperaturePreference.METRIC,
 )
 
 val PreviewWeatherList = listOf(
@@ -41,7 +43,7 @@ val PreviewWeatherList = listOf(
         maxTemperature = 10.0,
         lowestTemperature = 0.0,
         currentCondition = WeatherCondition.SNOW_DAY,
-        currentTime = 0,
+        currentTime = DateTime(),
         timeZone = "",
         precipitationProbability = 0.0,
         precipitationType = "",
@@ -50,10 +52,11 @@ val PreviewWeatherList = listOf(
         windSpeed = 0.0,
         windDirection = 0.0,
         uvIndex = 0.0,
-        sunrise = 0,
-        sunset = 0,
+        sunrise = DateTime(),
+        sunset = DateTime(),
         visibility = 0.0,
         pressure = 0.0,
+        unit = TemperaturePreference.METRIC,
     ),
     WeatherLocation(
         id = 0,
@@ -66,7 +69,7 @@ val PreviewWeatherList = listOf(
         maxTemperature = 10.0,
         lowestTemperature = 0.0,
         currentCondition = WeatherCondition.SNOW_DAY,
-        currentTime = 0,
+        currentTime = DateTime(),
         timeZone = "",
         precipitationProbability = 0.0,
         precipitationType = "",
@@ -75,10 +78,11 @@ val PreviewWeatherList = listOf(
         windSpeed = 0.0,
         windDirection = 0.0,
         uvIndex = 0.0,
-        sunrise = 0,
-        sunset = 0,
+        sunrise = DateTime(),
+        sunset = DateTime(),
         visibility = 0.0,
         pressure = 0.0,
+        unit = TemperaturePreference.METRIC,
     ),
     WeatherLocation(
         id = 0,
@@ -91,7 +95,7 @@ val PreviewWeatherList = listOf(
         maxTemperature = 10.0,
         lowestTemperature = 0.0,
         currentCondition = WeatherCondition.SNOW_DAY,
-        currentTime = 0,
+        currentTime = DateTime(),
         timeZone = "",
         precipitationProbability = 0.0,
         precipitationType = "",
@@ -100,10 +104,11 @@ val PreviewWeatherList = listOf(
         windSpeed = 0.0,
         windDirection = 0.0,
         uvIndex = 0.0,
-        sunrise = 0,
-        sunset = 0,
+        sunrise = DateTime(),
+        sunset = DateTime(),
         visibility = 0.0,
         pressure = 0.0,
+        unit = TemperaturePreference.METRIC,
     ),
     WeatherLocation(
         id = 0,
@@ -116,7 +121,7 @@ val PreviewWeatherList = listOf(
         maxTemperature = 10.0,
         lowestTemperature = 0.0,
         currentCondition = WeatherCondition.SNOW_DAY,
-        currentTime = 0,
+        currentTime = DateTime(),
         timeZone = "",
         precipitationProbability = 0.0,
         precipitationType = "",
@@ -125,10 +130,11 @@ val PreviewWeatherList = listOf(
         windSpeed = 0.0,
         windDirection = 0.0,
         uvIndex = 0.0,
-        sunrise = 0,
-        sunset = 0,
+        sunrise = DateTime(),
+        sunset = DateTime(),
         visibility = 0.0,
         pressure = 0.0,
+        unit = TemperaturePreference.METRIC,
     ),
     WeatherLocation(
         id = 0,
@@ -141,7 +147,7 @@ val PreviewWeatherList = listOf(
         maxTemperature = 10.0,
         lowestTemperature = 0.0,
         currentCondition = WeatherCondition.SNOW_DAY,
-        currentTime = 0,
+        currentTime = DateTime(),
         timeZone = "",
         precipitationProbability = 0.0,
         precipitationType = "",
@@ -150,10 +156,11 @@ val PreviewWeatherList = listOf(
         windSpeed = 0.0,
         windDirection = 0.0,
         uvIndex = 0.0,
-        sunrise = 0,
-        sunset = 0,
+        sunrise = DateTime(),
+        sunset = DateTime(),
         visibility = 0.0,
         pressure = 0.0,
+        unit = TemperaturePreference.METRIC,
     ),
     WeatherLocation(
         id = 0,
@@ -166,7 +173,7 @@ val PreviewWeatherList = listOf(
         maxTemperature = 10.0,
         lowestTemperature = 0.0,
         currentCondition = WeatherCondition.SNOW_DAY,
-        currentTime = 0,
+        currentTime = DateTime(),
         timeZone = "",
         precipitationProbability = 0.0,
         precipitationType = "",
@@ -175,10 +182,11 @@ val PreviewWeatherList = listOf(
         windSpeed = 0.0,
         windDirection = 0.0,
         uvIndex = 0.0,
-        sunrise = 0,
-        sunset = 0,
+        sunrise = DateTime(),
+        sunset = DateTime(),
         visibility = 0.0,
         pressure = 0.0,
+        unit = TemperaturePreference.METRIC,
     ),
     WeatherLocation(
         id = 0,
@@ -191,7 +199,7 @@ val PreviewWeatherList = listOf(
         maxTemperature = 10.0,
         lowestTemperature = 0.0,
         currentCondition = WeatherCondition.SNOW_DAY,
-        currentTime = 0,
+        currentTime = DateTime(),
         timeZone = "",
         precipitationProbability = 0.0,
         precipitationType = "",
@@ -200,10 +208,11 @@ val PreviewWeatherList = listOf(
         windSpeed = 0.0,
         windDirection = 0.0,
         uvIndex = 0.0,
-        sunrise = 0,
-        sunset = 0,
+        sunrise = DateTime(),
+        sunset = DateTime(),
         visibility = 0.0,
         pressure = 0.0,
+        unit = TemperaturePreference.METRIC,
     ),
     WeatherLocation(
         id = 0,
@@ -216,7 +225,7 @@ val PreviewWeatherList = listOf(
         maxTemperature = 10.0,
         lowestTemperature = 0.0,
         currentCondition = WeatherCondition.SNOW_DAY,
-        currentTime = 0,
+        currentTime = DateTime(),
         timeZone = "",
         precipitationProbability = 0.0,
         precipitationType = "",
@@ -225,10 +234,11 @@ val PreviewWeatherList = listOf(
         windSpeed = 0.0,
         windDirection = 0.0,
         uvIndex = 0.0,
-        sunrise = 0,
-        sunset = 0,
+        sunrise = DateTime(),
+        sunset = DateTime(),
         visibility = 0.0,
         pressure = 0.0,
+        unit = TemperaturePreference.METRIC,
     ),
     WeatherLocation(
         id = 0,
@@ -241,7 +251,7 @@ val PreviewWeatherList = listOf(
         maxTemperature = 10.0,
         lowestTemperature = 0.0,
         currentCondition = WeatherCondition.SNOW_DAY,
-        currentTime = 0,
+        currentTime = DateTime(),
         timeZone = "",
         precipitationProbability = 0.0,
         precipitationType = "",
@@ -250,10 +260,11 @@ val PreviewWeatherList = listOf(
         windSpeed = 0.0,
         windDirection = 0.0,
         uvIndex = 0.0,
-        sunrise = 0,
-        sunset = 0,
+        sunrise = DateTime(),
+        sunset = DateTime(),
         visibility = 0.0,
         pressure = 0.0,
+        unit = TemperaturePreference.METRIC,
     )
 )
 
@@ -261,56 +272,56 @@ val PreviewHourlyForecast = listOf(
     WeatherHour(
         temperature = 1.0,
         weatherCondition = WeatherCondition.SNOW_DAY,
-        dateTime = 0,
+        dateTime = DateTime(),
         precipitationProbability = 60.0,
         precipitationType = "snow"
     ),
     WeatherHour(
         temperature = 9.0,
         weatherCondition = WeatherCondition.SNOW_DAY,
-        dateTime = 0,
+        dateTime = DateTime(),
         precipitationProbability = 0.0,
         precipitationType = ""
     ),
     WeatherHour(
         temperature = 9.0,
         weatherCondition = WeatherCondition.SNOW_DAY,
-        dateTime = 0,
+        dateTime = DateTime(),
         precipitationProbability = 0.0,
         precipitationType = ""
     ),
     WeatherHour(
         temperature = 8.0,
         weatherCondition = WeatherCondition.SNOW_DAY,
-        dateTime = 0,
+        dateTime = DateTime(),
         precipitationProbability = 0.0,
         precipitationType = ""
     ),
     WeatherHour(
         temperature = 6.0,
         weatherCondition = WeatherCondition.SNOW_DAY,
-        dateTime = 0,
+        dateTime = DateTime(),
         precipitationProbability = 0.0,
         precipitationType = ""
     ),
     WeatherHour(
         temperature = 6.0,
         weatherCondition = WeatherCondition.SNOW_DAY,
-        dateTime = 0,
+        dateTime = DateTime(),
         precipitationProbability = 0.0,
         precipitationType = ""
     ),
     WeatherHour(
         temperature = 5.0,
         weatherCondition = WeatherCondition.SNOW_DAY,
-        dateTime = 0,
+        dateTime = DateTime(),
         precipitationProbability = 0.0,
         precipitationType = ""
     ),
     WeatherHour(
         temperature = 2.0,
         weatherCondition = WeatherCondition.SNOW_DAY,
-        dateTime = 0,
+        dateTime = DateTime(),
         precipitationProbability = 0.0,
         precipitationType = ""
     )
@@ -318,7 +329,7 @@ val PreviewHourlyForecast = listOf(
 
 val PreviewFutureDaysForecast = listOf(
     WeatherDay(
-        dateTime = 0,
+        dateTime = DateTime(),
         weatherCondition = WeatherCondition.SNOW_DAY,
         temperature = 10.0,
         maxTemperature = 14.0,
@@ -328,11 +339,12 @@ val PreviewFutureDaysForecast = listOf(
         precipitationType = "",
         windSpeed = 0.0,
         humidity = 0.0,
-        sunrise = 0,
-        sunset = 0
+        sunrise = DateTime(),
+        sunset = DateTime(),
+        unit = TemperaturePreference.METRIC,
     ),
     WeatherDay(
-        dateTime = 0,
+        dateTime = DateTime(),
         weatherCondition = WeatherCondition.SNOW_DAY,
         temperature = 10.0,
         maxTemperature = 14.0,
@@ -342,11 +354,12 @@ val PreviewFutureDaysForecast = listOf(
         precipitationType = "rain",
         windSpeed = 0.0,
         humidity = 0.0,
-        sunrise = 0,
-        sunset = 0
+        sunrise = DateTime(),
+        sunset = DateTime(),
+        unit = TemperaturePreference.METRIC,
     ),
     WeatherDay(
-        dateTime = 0,
+        dateTime = DateTime(),
         weatherCondition = WeatherCondition.SNOW_DAY,
         temperature = 10.0,
         maxTemperature = 14.0,
@@ -356,11 +369,12 @@ val PreviewFutureDaysForecast = listOf(
         precipitationType = "",
         windSpeed = 0.0,
         humidity = 0.0,
-        sunrise = 0,
-        sunset = 0
+        sunrise = DateTime(),
+        sunset = DateTime(),
+        unit = TemperaturePreference.METRIC,
     ),
     WeatherDay(
-        dateTime = 0,
+        dateTime = DateTime(),
         weatherCondition = WeatherCondition.SNOW_DAY,
         temperature = 10.0,
         maxTemperature = 14.0,
@@ -370,11 +384,12 @@ val PreviewFutureDaysForecast = listOf(
         precipitationType = "",
         windSpeed = 0.0,
         humidity = 0.0,
-        sunrise = 0,
-        sunset = 0
+        sunrise = DateTime(),
+        sunset = DateTime(),
+        unit = TemperaturePreference.METRIC,
     ),
     WeatherDay(
-        dateTime = 0,
+        dateTime = DateTime(),
         weatherCondition = WeatherCondition.SNOW_DAY,
         temperature = 10.0,
         maxTemperature = 14.0,
@@ -384,11 +399,12 @@ val PreviewFutureDaysForecast = listOf(
         precipitationType = "",
         windSpeed = 0.0,
         humidity = 0.0,
-        sunrise = 0,
-        sunset = 0
+        sunrise = DateTime(),
+        sunset = DateTime(),
+        unit = TemperaturePreference.METRIC,
     ),
     WeatherDay(
-        dateTime = 0,
+        dateTime = DateTime(),
         weatherCondition = WeatherCondition.SNOW_DAY,
         temperature = 10.0,
         maxTemperature = 14.0,
@@ -398,11 +414,12 @@ val PreviewFutureDaysForecast = listOf(
         precipitationType = "",
         windSpeed = 0.0,
         humidity = 0.0,
-        sunrise = 0,
-        sunset = 0
+        sunrise = DateTime(),
+        sunset = DateTime(),
+        unit = TemperaturePreference.METRIC,
     ),
     WeatherDay(
-        dateTime = 0,
+        dateTime = DateTime(),
         weatherCondition = WeatherCondition.SNOW_DAY,
         temperature = 10.0,
         maxTemperature = 14.0,
@@ -412,7 +429,8 @@ val PreviewFutureDaysForecast = listOf(
         precipitationType = "",
         windSpeed = 0.0,
         humidity = 0.0,
-        sunrise = 0,
-        sunset = 0
+        sunrise = DateTime(),
+        sunset = DateTime(),
+        unit = TemperaturePreference.METRIC,
     )
 )
