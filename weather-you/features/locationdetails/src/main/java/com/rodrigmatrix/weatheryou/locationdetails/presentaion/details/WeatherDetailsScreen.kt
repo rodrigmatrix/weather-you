@@ -117,6 +117,7 @@ fun WeatherDetailsScreen(
                             viewState.weatherLocation?.windSpeed ?: 0.0,
                             viewState.weatherLocation?.windDirection ?: 0.0,
                             unit = viewState.weatherLocation?.unit ?: TemperaturePreference.METRIC,
+                            modifier = Modifier.padding(start = 16.dp, end = 8.dp),
                         )
                     }
                     Column(Modifier.weight(1f)) {

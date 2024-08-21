@@ -1,6 +1,7 @@
 package com.rodrigmatrix.weatheryou.components.theme
 
 import android.app.Activity
+import android.os.Build
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -32,9 +33,16 @@ fun WeatherYouTheme(
     }
     val context = LocalContext.current
     val colorScheme = when (colorMode) {
-        ColorMode.Dynamic -> when {
-            darkTheme -> dynamicDarkColorScheme(context)
-            else -> dynamicLightColorScheme(context)
+        ColorMode.Dynamic -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            when {
+                darkTheme -> dynamicDarkColorScheme(context)
+                else -> dynamicLightColorScheme(context)
+            }
+        } else {
+            when {
+                darkTheme -> DarkColorScheme.switch()
+                else -> LightColorScheme.switch()
+            }
         }
         ColorMode.Default -> when {
             darkTheme -> DarkColorScheme.switch()
