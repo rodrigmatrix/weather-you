@@ -31,17 +31,18 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import com.rodrigmatrix.weatheryou.components.extensions.getStaticIcon
 import com.rodrigmatrix.weatheryou.components.extensions.getString
+import com.rodrigmatrix.weatheryou.components.preview.PreviewWeatherLocation
 import com.rodrigmatrix.weatheryou.core.extensions.temperatureString
-import com.rodrigmatrix.weatheryou.domain.model.WidgetWeather
-import com.rodrigmatrix.weatheryou.domain.model.WidgetWeatherDay
-import com.rodrigmatrix.weatheryou.domain.model.WidgetWeatherHour
+import com.rodrigmatrix.weatheryou.domain.model.WeatherDay
+import com.rodrigmatrix.weatheryou.domain.model.WeatherHour
+import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.widgets.R
 import java.util.Calendar
 
 
 @Composable
 fun MediumLargeWidget(
-    weather: WidgetWeather,
+    weather: WeatherLocation,
     onWidgetClicked: () -> Unit,
     showDays: Boolean,
     glanceModifier: GlanceModifier = GlanceModifier,
@@ -74,7 +75,7 @@ fun MediumLargeWidget(
 
 @Composable
 private fun MediumWidgetHeader(
-    weather: WidgetWeather
+    weather: WeatherLocation
 ) {
     Row(
         verticalAlignment = Alignment.Vertical.CenterVertically,
@@ -83,7 +84,7 @@ private fun MediumWidgetHeader(
             .padding(horizontal = 16.dp)
     ) {
         Image(
-            provider = ImageProvider(weather.currentCondition.getStaticIcon()),
+            provider = ImageProvider(weather.currentCondition.getStaticIcon(weather.isDaylight)),
             contentDescription = null,
             modifier = GlanceModifier.size(36.dp)
         )
@@ -98,7 +99,7 @@ private fun MediumWidgetHeader(
                 )
             )
             Text(
-                text = LocalContext.current.getString(weather.currentCondition.getString()),
+                text = LocalContext.current.getString(weather.currentCondition.getString(weather.isDaylight)),
                 maxLines = 1,
                 style = TextStyle(
                     color = GlanceTheme.colors.onPrimaryContainer,
@@ -111,7 +112,7 @@ private fun MediumWidgetHeader(
 }
 
 @Composable
-private fun CurrentConditionsContent(weather: WidgetWeather) {
+private fun CurrentConditionsContent(weather: WeatherLocation) {
     Column {
         Text(
             text = weather.currentWeather.temperatureString(),
@@ -128,7 +129,7 @@ private fun CurrentConditionsContent(weather: WidgetWeather) {
                 .padding(horizontal = 16.dp)
         ) {
             Text(
-                text = weather.maxWeather.temperatureString(),
+                text = weather.maxTemperature.temperatureString(),
                 style = TextStyle(
                     color = GlanceTheme.colors.onPrimaryContainer,
                     fontSize = 20.sp,
@@ -137,7 +138,7 @@ private fun CurrentConditionsContent(weather: WidgetWeather) {
             )
             Spacer(modifier = GlanceModifier.width(4.dp))
             Text(
-                text = weather.minWeather.temperatureString(),
+                text = weather.lowestTemperature.temperatureString(),
                 style = TextStyle(
                     color = GlanceTheme.colors.onPrimaryContainer,
                     fontSize = 14.sp,
@@ -149,7 +150,7 @@ private fun CurrentConditionsContent(weather: WidgetWeather) {
 
 @Composable
 private fun HoursList(
-    hoursList: List<WidgetWeatherHour>,
+    hoursList: List<WeatherHour>,
     modifier: GlanceModifier = GlanceModifier,
 ) {
     val context = LocalContext.current
@@ -160,7 +161,7 @@ private fun HoursList(
         "hh aa"
     }
     Row(modifier = modifier) {
-        hoursList.forEach { weatherHour ->
+        hoursList.take(4).forEach { weatherHour ->
             currentTime.add(Calendar.HOUR, 1)
             HourRow(
                 hour = weatherHour,
@@ -175,7 +176,7 @@ private fun HoursList(
 
 @Composable
 private fun HourRow(
-    hour: WidgetWeatherHour,
+    hour: WeatherHour,
     hourString: String,
     modifier: GlanceModifier = GlanceModifier,
 ) {
@@ -184,7 +185,7 @@ private fun HourRow(
         modifier = modifier,
     ) {
         Text(
-            text = hour.weather.temperatureString(),
+            text = hour.temperature.temperatureString(),
             style = TextStyle(
                 color = GlanceTheme.colors.onPrimaryContainer,
                 fontSize = 12.sp,
@@ -192,7 +193,7 @@ private fun HourRow(
             )
         )
         Image(
-            provider = ImageProvider(hour.condition.getStaticIcon()),
+            provider = ImageProvider(hour.weatherCondition.getStaticIcon(hour.isDaylight)),
             contentDescription = null,
             modifier = GlanceModifier.size(36.dp)
         )
@@ -209,7 +210,7 @@ private fun HourRow(
 
 @Composable
 private fun DaysList(
-    daysList: List<WidgetWeatherDay>,
+    daysList: List<WeatherDay>,
     modifier: GlanceModifier = GlanceModifier,
 ) {
     Box(modifier = modifier
@@ -226,7 +227,7 @@ private fun DaysList(
                 )
                 .background(ImageProvider(R.drawable.weather_inside_shape_widget))
         ) {
-            itemsIndexed(daysList) { index, weatherDay ->
+            itemsIndexed(daysList.take(2)) { index, weatherDay ->
                 DayRow(
                     day = weatherDay,
                     index = index,
@@ -238,7 +239,7 @@ private fun DaysList(
 
 @Composable
 private fun DayRow(
-    day: WidgetWeatherDay,
+    day: WeatherDay,
     index: Int,
     modifier: GlanceModifier = GlanceModifier,
 ) {
@@ -257,13 +258,13 @@ private fun DayRow(
         )
         Spacer(modifier = GlanceModifier.defaultWeight())
         Image(
-            provider = ImageProvider(day.condition.getStaticIcon()),
+            provider = ImageProvider(day.weatherCondition.getStaticIcon(isDaylight = true)),
             contentDescription = null,
             modifier = GlanceModifier.size(36.dp)
         )
         Spacer(modifier = GlanceModifier.width(8.dp))
         Text(
-            text = day.maxWeather.temperatureString(),
+            text = day.maxTemperature.temperatureString(),
             style = TextStyle(
                 color = GlanceTheme.colors.onPrimaryContainer,
                 fontSize = 16.sp,
@@ -272,7 +273,7 @@ private fun DayRow(
         )
         Spacer(modifier = GlanceModifier.width(8.dp))
         Text(
-            text = day.minWeather.temperatureString(),
+            text = day.minTemperature.temperatureString(),
             style = TextStyle(
                 color = GlanceTheme.colors.onPrimaryContainer,
                 fontSize = 16.sp,
@@ -312,7 +313,7 @@ fun MediumLargeLoading(
 private fun MediumWidgetPreview() {
     GlanceTheme {
         MediumLargeWidget(
-            weather = PreviewWidgetWeather,
+            weather = PreviewWeatherLocation,
             onWidgetClicked = { },
             showDays = true,
         )

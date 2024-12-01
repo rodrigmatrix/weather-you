@@ -24,6 +24,7 @@ import androidx.core.view.WindowCompat
 fun WeatherYouTheme(
     themeMode: ThemeMode = ThemeMode.System,
     colorMode: ColorMode = ColorMode.Dynamic,
+    themeSettings: ThemeSettings = ThemeSettings(),
     content: @Composable () -> Unit
 ) {
     val darkTheme = when (themeMode) {
@@ -110,6 +111,7 @@ fun WeatherYouTheme(
         LocalWeatherYouTypography provides typography,
         LocalWeatherYouThemeMode provides themeMode,
         LocalWeatherYouColorMode provides colorMode,
+        LocalWeatherYouThemeSettingsEnabled provides themeSettings,
     ) {
         MaterialTheme(
             colorScheme = colorScheme,
@@ -144,7 +146,19 @@ val LocalWeatherYouColorMode = compositionLocalOf {
     ColorMode.Default
 }
 
+val LocalWeatherYouThemeSettingsEnabled = compositionLocalOf {
+    ThemeSettings()
+}
+
 object WeatherYouTheme {
+
+    val isDarkTheme: Boolean
+        @Composable
+        get() = when (themeMode) {
+            ThemeMode.System -> isSystemInDarkTheme()
+            ThemeMode.Light -> false
+            ThemeMode.Dark -> true
+        }
 
     val colorScheme: WeatherYouColors
         @Composable
@@ -165,7 +179,24 @@ object WeatherYouTheme {
     val shapes: Shapes
         @Composable
         get() = MaterialTheme.shapes
+
+    val themeSettings: ThemeSettings
+        @Composable
+        get() = LocalWeatherYouThemeSettingsEnabled.current
+
+    val WeatherYouColors.weatherTextColor: Color
+        @Composable
+        get() = if (themeSettings.showWeatherAnimations) {
+            Color.White
+        } else {
+            onSecondaryContainer
+        }
 }
+
+data class ThemeSettings(
+    val showWeatherAnimations: Boolean = false,
+    val enableThemeColorForWeatherAnimations: Boolean = false,
+)
 
 
 @Composable

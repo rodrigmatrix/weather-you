@@ -12,6 +12,6 @@ class GetLocationWeatherUseCase(
         latitude: Double,
         longitude: Double
     ): Flow<WeatherLocation> {
-        return weatherRepository.fetchLocation(latitude, longitude)
+        return weatherRepository.fetchLocation(latitude, longitude, "", "")
     }
 }

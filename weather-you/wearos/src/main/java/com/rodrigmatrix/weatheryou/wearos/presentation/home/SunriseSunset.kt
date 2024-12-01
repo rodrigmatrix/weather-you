@@ -13,11 +13,12 @@ import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
 import com.rodrigmatrix.weatheryou.core.extensions.getHourWithMinutesString
 import com.rodrigmatrix.weatheryou.wearos.R
+import org.joda.time.DateTime
 
 @Composable
 fun SunriseSunset(
-    sunrise: Long,
-    sunset: Long,
+    sunrise: DateTime,
+    sunset: DateTime,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -35,7 +36,7 @@ fun SunriseSunset(
         }
         Text(
             text = sunrise.getHourWithMinutesString(context),
-            style = WeatherYouTheme.typography.title1
+            style = MaterialTheme.typography.title1
         )
         Spacer(modifier = Modifier.height(10.dp))
         Row {
@@ -48,7 +49,7 @@ fun SunriseSunset(
         }
         Text(
             text = sunset.getHourWithMinutesString(context),
-            style = WeatherYouTheme.typography.title1
+            style = MaterialTheme.typography.title1
         )
     }
 }

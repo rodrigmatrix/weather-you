@@ -44,7 +44,9 @@ import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.ListItem
 import androidx.tv.material3.Text
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.PermissionState
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
 import com.rodrigmatrix.weatheryou.components.R
 import com.rodrigmatrix.weatheryou.components.WeatherIcon
@@ -63,7 +65,15 @@ import com.rodrigmatrix.weatheryou.tv.presentation.locations.TVWeatherLocationsV
 internal fun TvWeatherLocationsScreen(
     modifier: Modifier = Modifier,
     viewModel: TVWeatherLocationsViewModel,
-    locationPermissionState: PermissionState = rememberPermissionState(Manifest.permission.ACCESS_COARSE_LOCATION),
+    locationPermissionState: MultiplePermissionsState = rememberMultiplePermissionsState(
+        permissions = listOf(
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+        ),
+        onPermissionsResult = {
+            viewModel.updateLocations()
+        }
+    ),
     navController: NavController,
 ) {
     val uiState by viewModel.viewState.collectAsState()
@@ -80,7 +90,7 @@ internal fun TvWeatherLocationsScreen(
     TvWeatherLocationsScreen(
         uiState = uiState,
         showLocationPermissionRequest = uiState.showLocationPermissionRequest(locationPermissionState),
-        onRequestPermission = locationPermissionState::launchPermissionRequest,
+        onRequestPermission = locationPermissionState::launchMultiplePermissionRequest,
         onWeatherLocationClicked = viewModel::selectLocation,
         onDeleteLocation = {
             locationToDelete = it
@@ -292,7 +302,8 @@ fun WeatherLocationsEmptyState(
             .padding(start = 16.dp, end = 16.dp, bottom = 200.dp)
     ) {
         WeatherIcon(
-            weatherCondition = WeatherCondition.CLOUDY,
+            weatherCondition = WeatherCondition.Cloudy,
+            isDaylight = true,
             modifier = Modifier
                 .size(120.dp)
                 .padding(10.dp)
@@ -334,7 +345,10 @@ private fun WeatherLocationsList(
                 },
                 modifier = Modifier.padding(horizontal = 16.dp)
             ) {
-                WeatherLocationCardContent(weatherLocation = weatherLocation)
+                WeatherLocationCardContent(
+                    weatherLocation = weatherLocation,
+                    isRefreshingLocations = false,
+                )
             }
         }
     }

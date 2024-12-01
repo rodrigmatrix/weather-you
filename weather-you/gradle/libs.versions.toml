@@ -1,54 +1,73 @@
 [versions]
+desugar_jdk_libs = "2.1.3"
 firebaseCrashlyticsGradle = "3.0.2"
 googleServices = "4.4.2"
-gradle = "8.5.2"
-ktx = "1.13.1"
+gradle = "8.7.2"
+ktx = "1.15.0"
 composeCompilerVersion = "1.5.15"
-kotlinVersion = "1.9.25"
-coroutinesVersion = "1.8.0"
-composeBomVersion = "2024.06.00"
+kotlinVersion = "2.0.20"
+coroutinesVersion = "1.9.0"
+composeBomVersion = "2024.11.00"
 composeTvFoundation = "1.0.0-alpha11"
-composeTvMaterial = "1.0.0-rc02"
+composeTvMaterial = "1.0.0"
 accompanistNavigation = "0.16.1"
-composeNavigation = "2.8.0-beta07"
-accompanistPermissions = "0.24.0-alpha"
+composeNavigation = "2.8.4"
+accompanistPermissions = "0.34.0"
 accompanistAdaptive = "0.31.1-alpha"
 appCompat = "1.7.0"
-lifecycle = "2.8.4"
+lifecycle = "2.8.7"
 androidxWindow = "1.3.0"
+reorderableVersion = "2.4.0"
 splashScreen = "1.0.1"
 multidex = "2.0.1"
 kotlinSerialization = "1.6.3"
 koinAndroid = "3.4.2"
 koinCompose = "3.4.5"
-glanceAppWidget = "1.1.0"
-firebaseBom = "33.1.2"
-retrofit = "2.9.0"
+glanceAppWidget = "1.1.1"
+firebaseBom = "33.6.0"
+retrofit = "2.11.0"
 okHttp = "4.11.0"
 retrofitKotlinx = "1.0.0"
 room = "2.6.1"
-workManager = "2.9.1"
+wearWatchface = "1.3.0-alpha04"
+workManager = "2.10.0"
 jodaTime = "2.12.5"
 gson = "2.10.1"
-coil = "2.5.0"
+coil = "2.7.0"
 playServicesLocation = "21.3.0"
 lottieCompose = "6.2.0"
-composeConstraintLayout = "1.0.1"
+composeConstraintLayout = "1.1.0"
 material = "1.12.0"
 junit = "4.13.2"
 testExtJunit = "1.2.1"
-composeJunit4 = "1.6.8"
+composeJunit4 = "1.7.5"
 espressoCore = "3.6.1"
 mockk = "1.13.10"
 turbine = "1.1.0"
-playServicesWearable = "18.2.0"
-composeWearOS = "1.3.1"
-playReview = "2.0.1"
-adaptiveCompose = "1.0.0-beta04"
+playServicesWearable = "19.0.0"
+composeWearOS = "1.4.0"
+playReview = "2.0.2"
 datastoreVersion = "1.1.1"
+playBilling = "7.1.1"
+googlePlayAds = "23.5.0"
+jwtVersion = "0.12.6"
+material3AdaptiveAndroid = "1.1.0-alpha03"
+reorderable = "2.3.3"
+androidxBrowserVersion = "1.8.0"
 
 [libraries]
 # Android
+androidx-adaptive-navigation-suite = { module = "androidx.compose.material3:material3-adaptive-navigation-suite" }
+androidx-adaptive-navigation = { module = "androidx.compose.material3.adaptive:adaptive-navigation" }
+androidx-adaptive-layout = { module = "androidx.compose.material3.adaptive:adaptive-layout" }
+androidx-adaptive = { module = "androidx.compose.material3.adaptive:adaptive" }
+androidx-adaptive-navigation-suite-android = { module = "androidx.compose.material3:material3-adaptive-navigation-suite-android" }
+androidx-watchface-complications-data-source = { module = "androidx.wear.watchface:watchface-complications-data-source", version.ref = "wearWatchface" }
+androidx-watchface = { module = "androidx.wear.watchface:watchface", version.ref = "wearWatchface" }
+androidx-watchface-complications-rendering = { module = "androidx.wear.watchface:watchface-complications-rendering", version.ref = "wearWatchface" }
+androidx-watchface-editor = { module = "androidx.wear.watchface:watchface-editor", version.ref = "wearWatchface" }
+androidx-watchface-complications-data-source-ktx = { module = "androidx.wear.watchface:watchface-complications-data-source-ktx", version.ref = "wearWatchface" }
+desugar_jdk_libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar_jdk_libs" }
 firebase-crashlytics-gradle = { module = "com.google.firebase:firebase-crashlytics-gradle", version.ref = "firebaseCrashlyticsGradle" }
 google-services = { module = "com.google.gms:google-services", version.ref = "googleServices" }
 gradle = { module = "com.android.tools.build:gradle", version.ref = "gradle" }
@@ -60,9 +79,14 @@ androidx-window = { group = "androidx.window", name = "window", version.ref = "a
 androidx-splash-screen = { group = "androidx.core", name = "core-splashscreen", version.ref = "splashScreen" }
 androidx-multidex = { group = "androidx.multidex", name = "multidex", version.ref = "multidex" }
 android-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
-google-play-review = { group = "com.google.android.play", name = "review-ktx", version.ref = "playReview" }
 datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastoreVersion" }
 datastore-core = { group = "androidx.datastore", name = "datastore-preferences-core", version.ref = "datastoreVersion" }
+androidx-browser = { group = "androidx.browser", name = "browser", version.ref = "androidxBrowserVersion" }
+
+# JWT
+jwt-api = { group = "io.jsonwebtoken", name = "jjwt-api", version.ref = "jwtVersion" }
+jwt-impl = { group = "io.jsonwebtoken", name = "jjwt-impl", version.ref = "jwtVersion" }
+jwt-jackson = { group = "io.jsonwebtoken", name = "jjwt-jackson", version.ref = "jwtVersion" }
 
 # Compose
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBomVersion" }
@@ -77,10 +101,6 @@ compose-constraint-layout = { group = "androidx.constraintlayout", name = "const
 compose-window-size = { group = "androidx.compose.material3", name = "material3-window-size-class" }
 compose-compiler = { module = "androidx.compose.compiler:compiler", version.ref = "composeCompilerVersion" }
 
-# Compose Adaptive Layout
-compose-adaptive = { group = "androidx.compose.material3.adaptive", name = "adaptive", version.ref = "adaptiveCompose" }
-compose-adaptive-layout = { group = "androidx.compose.material3.adaptive", name = "adaptive-layout", version.ref = "adaptiveCompose" }
-compose-adaptive-navigation = { group = "androidx.compose.material3.adaptive", name = "adaptive-navigation", version.ref = "adaptiveCompose" }
 
 # Compose TV
 compose-tv-foundation = { group = "androidx.tv", name = "tv-foundation", version.ref = "composeTvFoundation" }
@@ -129,6 +149,12 @@ room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 
+# Google PLay
+google-play-billing = { group = "com.android.billingclient", name = "billing-ktx", version.ref = "playBilling" }
+google-play-ads = { group = "com.google.android.gms", name = "play-services-ads", version.ref = "googlePlayAds" }
+google-play-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
+google-play-review = { group = "com.google.android.play", name = "review-ktx", version.ref = "playReview" }
+
 # Wear
 playServices-wearable = { group = "com.google.android.gms", name = "play-services-wearable", version.ref = "playServicesWearable" }
 compose-wearable-material = { group = "androidx.wear.compose", name = "compose-material", version.ref = "composeWearOS" }
@@ -142,9 +168,9 @@ gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 
 coil = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 
-playServices-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
-
 lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottieCompose" }
+
+reorderable = { module = "sh.calvin.reorderable:reorderable", version.ref = "reorderable" }
 
 # Test Dependencies
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -157,3 +183,5 @@ mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
 
 [plugins]
+org-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlinVersion" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlinVersion" }

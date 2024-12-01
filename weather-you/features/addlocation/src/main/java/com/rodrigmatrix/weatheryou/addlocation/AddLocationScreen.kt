@@ -1,5 +1,6 @@
 package com.rodrigmatrix.weatheryou.addlocation
 
+import android.app.Activity
 import android.content.Context
 import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
@@ -65,17 +66,22 @@ fun AddLocationScreen(
     }
     AddLocationScreen(
         viewState,
-        onQueryChanged = viewModel::onSearch,
-        onLocationClick = viewModel::addLocation,
+        onQueryChanged = viewModel::onQueryChanged,
+        onLocationClick = { location ->
+            viewModel.addLocation(location, context as Activity, showAds = false)
+        },
         onClearQuery = {
             if (viewState.searchText.isNotEmpty()) {
-                viewModel.onSearch("")
+                viewModel.onQueryChanged("")
             } else {
                 keyboardController?.hide()
                 navController.navigateUp()
             }
         },
-        onFamousLocationClicked = viewModel::addFamousLocation
+        onFamousLocationClicked = { city ->
+            viewModel.addFamousLocation(city, context as Activity, showAds = false)
+        },
+        onSearchButtonClicked = viewModel::search,
     )
 }
 
@@ -84,11 +90,11 @@ fun AddLocationScreen(
     viewState: AddLocationViewState,
     onQueryChanged: (String) -> Unit,
     onLocationClick: (SearchAutocompleteLocation?) -> Unit,
-    onFamousLocationClicked: (City, Context) -> Unit,
-    onClearQuery: () -> Unit
+    onFamousLocationClicked: (City) -> Unit,
+    onClearQuery: () -> Unit,
+    onSearchButtonClicked: () -> Unit,
 ) {
     val focusRequester = remember { FocusRequester() }
-    val context = LocalContext.current
     Scaffold(
         topBar = {
             com.rodrigmatrix.weatheryou.components.SearchBar(
@@ -101,10 +107,11 @@ fun AddLocationScreen(
                 },
                 onClearQuery = onClearQuery,
                 searching = viewState.isLoading,
+                onSearchButtonClicked = onSearchButtonClicked,
                 modifier = Modifier.padding(bottom = 8.dp),
                 keyboardActions = KeyboardActions(
-                    onDone = {
-                        onLocationClick(viewState.locationsList.firstOrNull())
+                    onSearch = {
+                        onSearchButtonClicked()
                     }
                 )
             )
@@ -112,13 +119,27 @@ fun AddLocationScreen(
         containerColor = WeatherYouTheme.colorScheme.background,
     ) { paddingValues ->
         Column(Modifier.padding(paddingValues)) {
-            if (viewState.isLocationsListVisible()) {
-                LocationSelectList(
-                    viewState.locationsList,
-                    onLocationClick,
-                    Modifier.focusRequester(focusRequester)
+            if (viewState.showKeepTyping) {
+                Text(
+                    text = stringResource(Strings.string.keep_typing),
+                    color = WeatherYouTheme.colorScheme.onBackground,
+                    style = WeatherYouTheme.typography.titleLarge,
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(bottom = 20.dp)
                 )
-            } else {
+            }
+            if (viewState.showClickToSearch && viewState.isLoading.not()) {
+                Text(
+                    text = stringResource(Strings.string.click_to_search),
+                    color = WeatherYouTheme.colorScheme.onBackground,
+                    style = WeatherYouTheme.typography.titleLarge,
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(bottom = 20.dp)
+                )
+            }
+            if (viewState.showEmptyState) {
                 Text(
                     text = stringResource(Strings.string.no_results_found),
                     color = WeatherYouTheme.colorScheme.onBackground,
@@ -128,11 +149,16 @@ fun AddLocationScreen(
                         .padding(bottom = 20.dp)
                 )
             }
+            if (viewState.locationsList.isNotEmpty()) {
+                LocationSelectList(
+                    viewState.locationsList,
+                    onLocationClick,
+                    Modifier.focusRequester(focusRequester)
+                )
+            }
             LocationSuggestions(
                 viewState.famousLocationsList,
-                onLocationClick = {
-                    onFamousLocationClicked(it, context)
-                }
+                onLocationClick = onFamousLocationClicked,
             )
         }
     }
@@ -198,8 +224,9 @@ fun AddLocationScreenPreview() {
             ),
             { },
             { },
-            { _, _ -> },
+            { _ -> },
             { },
+            {},
         )
     }
 }

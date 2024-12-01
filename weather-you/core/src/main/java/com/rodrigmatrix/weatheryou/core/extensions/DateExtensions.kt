@@ -74,3 +74,12 @@ fun DateTime.getDateWithMonth(): String {
         ""
     }
 }
+
+fun DateTime.getDayString(): String {
+    return try {
+        val pattern = DateTimeFormat.forPattern("EEE")
+        pattern.print(this).replaceFirstChar { it.uppercase() }
+    } catch (e: Exception) {
+        ""
+    }
+}

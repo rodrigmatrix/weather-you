@@ -1,23 +1,36 @@
 package com.rodrigmatrix.weatheryou.tv.presentation.details
 
+import android.net.Uri
+import androidx.browser.customtabs.CustomTabsIntent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.CardDefaults
 import androidx.tv.material3.ClickableSurfaceDefaults
@@ -100,6 +113,9 @@ fun TvWeatherLocationScreen(
                     } else {
                         weatherLocation.days.take(7)
                     },
+                    minWeekTemperature = weatherLocation.minWeekTemperature,
+                    maxWeekTemperature = weatherLocation.maxWeekTemperature,
+                    currentTemperature = weatherLocation.currentWeather,
                     isExpanded = is15DaysVisible,
                     onExpandedButtonClick = { is15DaysVisible = !is15DaysVisible },
                     dayItem = { index, day ->
@@ -127,6 +143,9 @@ fun TvWeatherLocationScreen(
                             ) {
                                 DayContent(
                                     day = day,
+                                    minWeekTemperature = weatherLocation.minWeekTemperature,
+                                    maxWeekTemperature = weatherLocation.maxWeekTemperature,
+                                    currentTemperature = day.temperature,
                                     index = index,
                                 )
                             }
@@ -165,7 +184,6 @@ fun TvWeatherLocationScreen(
                         WindCardContent(
                             weatherLocation.windSpeed,
                             weatherLocation.windDirection,
-                            weatherLocation.unit,
                         )
                     }
 
@@ -186,7 +204,6 @@ fun TvWeatherLocationScreen(
                     TvCard(modifier = Modifier.padding(start = 16.dp, end = 8.dp)) {
                         VisibilityCardContent(
                             weatherLocation.visibility,
-                            weatherLocation.unit,
                         )
                     }
                 }
@@ -203,9 +220,61 @@ fun TvWeatherLocationScreen(
                     sunrise = weatherLocation.sunrise,
                     sunset = weatherLocation.sunset,
                     currentTime = weatherLocation.currentTime,
+                    isDaylight = weatherLocation.isDaylight,
                 )
             }
             Spacer(Modifier.height(16.dp))
         }
+        item {
+            AppleWeatherAttribution()
+        }
+    }
+}
+
+@Composable
+fun AppleWeatherAttribution(
+    modifier: Modifier = Modifier
+) {
+    val context = LocalContext.current
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier.fillMaxWidth(),
+    ) {
+        Image(
+            painter = painterResource(
+                when {
+                    WeatherYouTheme.themeSettings.showWeatherAnimations -> com.rodrigmatrix.weatheryou.locationdetails.R.drawable.ic_apple_weather_light
+                    WeatherYouTheme.isDarkTheme -> com.rodrigmatrix.weatheryou.locationdetails.R.drawable.ic_apple_weather_light
+                    else -> com.rodrigmatrix.weatheryou.locationdetails.R.drawable.ic_apple_weather_dark
+                }
+            ),
+            contentDescription = "Apple Weather",
+        )
+        Spacer(Modifier.height(10.dp))
+        Text(
+            text = buildAnnotatedString {
+                append("For more information, ")
+                withStyle(
+                    style = SpanStyle(
+                        textDecoration = TextDecoration.Underline
+                    ),
+                ) {
+                    append(
+                        "visit Apple Weather",
+                    )
+                }
+            },
+            style = WeatherYouTheme.typography.bodyMedium,
+            color = WeatherYouTheme.colorScheme.onBackground,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .clickable(onClick = {
+                    val intent = CustomTabsIntent.Builder()
+                        .build()
+                    intent.launchUrl(context, Uri.parse("https://developer.apple.com/weatherkit/data-source-attribution/"))
+                })
+        )
+        Spacer(Modifier.height(16.dp))
     }
 }

@@ -35,7 +35,7 @@ fun MaxAndLowestWeather(
         )
         Text(
             text = max.temperatureString(),
-            style = WeatherYouTheme.typography.caption2,
+            style = MaterialTheme.typography.caption2,
             color = MaxTemperatureColor
         )
         Spacer(Modifier.padding(end = 8.dp))
@@ -47,7 +47,7 @@ fun MaxAndLowestWeather(
         )
         Text(
             text = lowest.temperatureString(),
-            style = WeatherYouTheme.typography.caption2,
+            style = MaterialTheme.typography.caption2,
             color = LowestTemperatureColor
         )
     }

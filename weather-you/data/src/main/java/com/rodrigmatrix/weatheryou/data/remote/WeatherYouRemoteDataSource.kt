@@ -9,11 +9,9 @@ interface WeatherYouRemoteDataSource {
     fun getWeather(
         latitude: Double,
         longitude: Double,
-        unit: TemperaturePreference
+        countryCode: String,
+        timezone: String,
     ): Flow<WeatherLocation>
 
-    fun getWeather(
-        name: String,
-        unit: TemperaturePreference
-    ): Flow<WeatherLocation>
+    fun getWeather(name: String): Flow<WeatherLocation>
 }

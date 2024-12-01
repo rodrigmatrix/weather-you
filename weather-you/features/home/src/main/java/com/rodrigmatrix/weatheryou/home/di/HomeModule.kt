@@ -14,8 +14,11 @@ object HomeModule {
     private val presentationModule = module {
         viewModel {
             HomeViewModel(
-                fetchLocationsUseCase = get(),
-                deleteLocationUseCase = get()
+                updateLocationsUseCase = get(),
+                deleteLocationUseCase = get(),
+                getAppSettingsUseCase = get(),
+                getLocationsUseCase = get(),
+                updateLocationsListOrderUseCase = get(),
             )
         }
     }

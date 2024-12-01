@@ -1,63 +1,96 @@
 package com.rodrigmatrix.weatheryou.data.local
 
+import com.rodrigmatrix.weatheryou.data.local.dao.LocationsDAO
 import com.rodrigmatrix.weatheryou.data.local.dao.WeatherDAO
 import com.rodrigmatrix.weatheryou.data.local.dao.WidgetDataDao
+import com.rodrigmatrix.weatheryou.data.local.model.CurrentLocationEntity
+import com.rodrigmatrix.weatheryou.data.local.model.WeatherEntity
 import com.rodrigmatrix.weatheryou.data.local.model.WeatherLocationEntity
 import com.rodrigmatrix.weatheryou.data.local.model.WeatherWidgetLocationEntity
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.onEach
 
 class WeatherLocalDataSourceImpl(
     private val weatherDAO: WeatherDAO,
     private val widgetDataDao: WidgetDataDao,
+    private val locationsDAO: LocationsDAO,
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : WeatherLocalDataSource {
 
     override fun getAllLocations(): Flow<List<WeatherLocationEntity>> {
-        return weatherDAO.getAllLocations()
+        return locationsDAO.getAllLocations()
             .flowOn(coroutineDispatcher)
     }
 
-    override fun addLocation(location: WeatherLocationEntity): Flow<Unit> {
+    override fun upsertLocation(location: WeatherLocationEntity): Flow<Unit> {
         return flow {
-            weatherDAO.addLocation(location)
-            emit(Unit)
+            emit(locationsDAO.upsertLocation(location))
         }.flowOn(coroutineDispatcher)
     }
 
-    override fun deleteLocation(id: Int): Flow<Unit> {
+    override fun getWidgetLocation(widgetId: String): Flow<WeatherWidgetLocationEntity?> {
+        return widgetDataDao.getWidgetLocation(widgetId)
+    }
+
+    override fun deleteLocation(weatherLocation: WeatherLocation): Flow<Unit> {
         return flow {
-            emit(weatherDAO.deleteLocation(id))
+            weatherDAO.deleteWeather(weatherLocation.latitude, weatherLocation.longitude)
+            emit(locationsDAO.deleteLocation(weatherLocation.id))
         }.flowOn(coroutineDispatcher)
     }
 
-    override fun getWidgetLocation(): Flow<WeatherWidgetLocationEntity?> {
-        return widgetDataDao.getWidgetLocation()
+    override fun getCurrentLocation(): Flow<CurrentLocationEntity?> {
+        return locationsDAO.getCurrentLocation()
             .flowOn(coroutineDispatcher)
     }
 
-    override fun getWidgetWeather(): Flow<WeatherWidgetLocationEntity?> {
-        return widgetDataDao.getWidgetLocation()
+    override fun upsertCurrentWeather(weatherEntity: WeatherEntity): Flow<Unit> {
+        return flow {
+            weatherDAO.deleteCurrentLocationWeather()
+            emit(weatherDAO.upsertWeather(weatherEntity))
+        }.flowOn(coroutineDispatcher)
+    }
+
+    override fun upsertCurrentLocation(currentLocation: CurrentLocationEntity): Flow<Unit> {
+        return flow {
+            emit(locationsDAO.upsertCurrentLocation(currentLocation))
+        }.flowOn(coroutineDispatcher)
+    }
+
+    override fun getWeather(latitude: Double, longitude: Double): Flow<WeatherEntity?> {
+        return weatherDAO.getLocationWeather(latitude, longitude)
+            .flowOn(coroutineDispatcher)
+    }
+
+    override fun getCurrentLocationWeather(): Flow<WeatherEntity?> {
+        return weatherDAO.getCurrentLocationWeather()
+            .flowOn(coroutineDispatcher)
+    }
+
+    override fun upsertWeather(weatherEntity: WeatherEntity): Flow<Unit> {
+        return flow {
+            emit(weatherDAO.upsertWeather(weatherEntity))
+        }.flowOn(coroutineDispatcher)
+    }
+
+    override fun getWidgetWeatherList(): Flow<List<WeatherWidgetLocationEntity>> {
+        return widgetDataDao.getWidgetLocations()
             .flowOn(coroutineDispatcher)
     }
 
     override fun saveWidgetLocation(location: WeatherWidgetLocationEntity): Flow<Unit> {
         return flow {
-            widgetDataDao.setWidgetData(location)
-            emit(Unit)
+            emit(widgetDataDao.setWidgetData(location))
         }.flowOn(coroutineDispatcher)
     }
 
-    override fun deleteWidgetLocation(): Flow<Unit> {
+    override fun deleteWidgetLocation(widgetId: String): Flow<Unit> {
         return flow {
-            widgetDataDao.deleteWidgetData()
+            widgetDataDao.deleteWidgetData(widgetId)
             emit(Unit)
         }.flowOn(coroutineDispatcher)
     }

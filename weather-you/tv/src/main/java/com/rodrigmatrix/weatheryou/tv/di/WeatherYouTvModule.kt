@@ -16,9 +16,9 @@ object WeatherYouTvModule {
     private val presentationModule = module {
         viewModel {
             TVWeatherLocationsViewModel(
-                fetchLocationsUseCase = get(),
+                updateLocationsUseCase = get(),
                 deleteLocationUseCase = get(),
-                getLocationSizeUseCase = get(),
+                getLocationsUseCase = get(),
             )
         }
     }

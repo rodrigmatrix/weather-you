@@ -6,10 +6,12 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import com.google.android.gms.ads.MobileAds
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import com.rodrigmatrix.weatheryou.addlocation.di.AddLocationModule
+import com.rodrigmatrix.weatheryou.ads.di.WeatherYouAdsModule
 import com.rodrigmatrix.weatheryou.data.di.WeatherYouDataModules
 import com.rodrigmatrix.weatheryou.worker.UpdateWidgetWeatherDataWorker
 import com.rodrigmatrix.weatheryou.home.di.HomeModule
@@ -18,7 +20,9 @@ import com.rodrigmatrix.weatheryou.presentation.di.WeatherYouAppModules
 import com.rodrigmatrix.weatheryou.settings.di.SettingsModule
 import com.rodrigmatrix.weatheryou.settings.utils.AppThemeManager
 import com.rodrigmatrix.weatheryou.widgets.weather.CurrentWeatherWidget
+import com.rodrigmatrix.weatheryou.widgets.weather.animated.CurrentAnimatedWeatherWidget
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
@@ -40,11 +44,12 @@ class WeatherYouApp: Application() {
             LocationDetailsModule.loadModules()
             SettingsModule.loadModules()
             WeatherYouAppModules.loadModules()
+            WeatherYouAdsModule.loadModules()
         }
+        startAdMob()
         initRemoteConfig()
         setAppTheme()
         initWidgetWorker()
-        CurrentWeatherWidget().updateWidget(this)
     }
 
     private fun initRemoteConfig() {
@@ -60,17 +65,17 @@ class WeatherYouApp: Application() {
 
     private fun initWidgetWorker() {
         val updateWidgetRequest =
-            PeriodicWorkRequestBuilder<UpdateWidgetWeatherDataWorker>(2, TimeUnit.HOURS)
+            PeriodicWorkRequestBuilder<UpdateWidgetWeatherDataWorker>(1, TimeUnit.HOURS)
                 .setConstraints(
                     Constraints.Builder()
-                        .setRequiresBatteryNotLow(true)
+                        .setRequiresBatteryNotLow(false)
                         .setRequiredNetworkType(NetworkType.CONNECTED)
-                    .build()
+                        .build()
                 )
                 .build()
         WorkManager.getInstance(this).enqueueUniquePeriodicWork(
-            "update_widget_data",
-            ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE,
+            "weather_you_update_widget_data",
+            ExistingPeriodicWorkPolicy.KEEP,
             updateWidgetRequest,
         )
     }
@@ -78,6 +83,12 @@ class WeatherYouApp: Application() {
     private fun setAppTheme() {
         mainScope.launch {
             get<AppThemeManager>().setAppTheme()
+        }
+    }
+
+    private fun startAdMob() {
+        mainScope.launch(Dispatchers.IO) {
+            MobileAds.initialize(this@WeatherYouApp)
         }
     }
 }

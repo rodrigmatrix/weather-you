@@ -14,6 +14,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.components.R
 import com.rodrigmatrix.weatheryou.components.WeatherYouCard
+import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme.weatherTextColor
+import com.rodrigmatrix.weatheryou.core.extensions.distanceString
 import com.rodrigmatrix.weatheryou.core.extensions.speedString
 import com.rodrigmatrix.weatheryou.domain.model.TemperaturePreference
 import com.rodrigmatrix.weatheryou.locationdetails.presentaion.extensions.visibilityConditionsStringRes
@@ -21,7 +23,6 @@ import com.rodrigmatrix.weatheryou.locationdetails.presentaion.extensions.visibi
 @Composable
 fun VisibilityCardContent(
     visibility: Double,
-    unit: TemperaturePreference,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -42,24 +43,24 @@ fun VisibilityCardContent(
                         com.rodrigmatrix.weatheryou.weathericons.R.drawable.ic_visibility
                     ),
                     contentDescription = stringResource(R.string.visibility),
-                    tint = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                    tint = WeatherYouTheme.colorScheme.weatherTextColor,
                     modifier = Modifier.padding(end = 4.dp)
                 )
                 Text(
                     text = stringResource(R.string.visibility),
-                    color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                    color = WeatherYouTheme.colorScheme.weatherTextColor,
                     style = WeatherYouTheme.typography.titleMedium,
                 )
             }
             Text(
-                text = visibility.speedString(unit),
-                color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                text = visibility.distanceString(),
+                color = WeatherYouTheme.colorScheme.weatherTextColor,
                 style = WeatherYouTheme.typography.titleLarge
             )
         }
         Text(
             text = stringResource(visibility.visibilityConditionsStringRes()),
-            color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+            color = WeatherYouTheme.colorScheme.weatherTextColor,
             style = WeatherYouTheme.typography.bodyLarge
         )
     }
@@ -72,7 +73,6 @@ fun VisibilityCardPreview() {
     WeatherYouTheme {
         VisibilityCardContent(
             visibility = 80.0,
-            unit = TemperaturePreference.METRIC,
         )
     }
 }

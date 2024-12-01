@@ -7,4 +7,6 @@ import kotlinx.coroutines.flow.Flow
 interface SearchRemoteDataSource {
 
     fun searchLocation(locationName: String): Flow<List<SearchAutocompleteLocation>>
+
+    fun getTimezone(lat: Double, long: Double): Flow<String>
 }

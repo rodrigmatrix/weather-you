@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'com.google.gms.google-services'
     id 'com.google.firebase.crashlytics'
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
@@ -55,6 +56,8 @@ dependencies {
     implementation project(LocalModules.domain)
     implementation project(LocalModules.data)
     implementation project(LocalModules.core)
+    implementation project(LocalModules.components)
+    implementation project(LocalModules.weatherIcons)
 
     implementation(libs.androidx.ktx)
     implementation(libs.androidx.lifecycle)
@@ -70,10 +73,18 @@ dependencies {
     implementation(libs.accompanist.permissions)
     implementation(libs.compose.constraint.layout)
 
+    implementation(libs.androidx.watchface)
+    implementation(libs.androidx.watchface.complications.data.source)
+    implementation(libs.androidx.watchface.complications.data.source.ktx)
+    implementation(libs.androidx.watchface.complications.rendering)
+    implementation(libs.androidx.watchface.editor)
+
     implementation platform(libs.firebase.bom)
     implementation(libs.firebase.remote.config)
     implementation(libs.firebase.crashlytics)
     implementation(libs.firebase.analytics)
+
+    implementation(libs.jodaTime)
 
     implementation(libs.lottie.compose)
 

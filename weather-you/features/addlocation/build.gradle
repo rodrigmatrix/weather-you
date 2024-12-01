@@ -1,6 +1,7 @@
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
@@ -37,6 +38,7 @@ dependencies {
     implementation project(LocalModules.core)
     implementation project(LocalModules.components)
     implementation project(LocalModules.weatherIcons)
+    implementation project(LocalModules.ads)
 
     implementation(libs.androidx.ktx)
     implementation(libs.androidx.lifecycle)

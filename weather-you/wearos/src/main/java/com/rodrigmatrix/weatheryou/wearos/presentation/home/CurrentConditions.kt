@@ -9,6 +9,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
+import com.rodrigmatrix.weatheryou.components.extensions.getString
 import com.rodrigmatrix.weatheryou.core.extensions.temperatureString
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.wearos.R
@@ -25,28 +26,29 @@ fun CurrentConditions(
             .padding(top = 20.dp, start = 16.dp, end = 16.dp)
     ) {
         WeatherIcon(
-            weatherIcons = weatherLocation.weatherIcons,
+            weatherCondition = weatherLocation.currentCondition,
+            isDaylight = weatherLocation.isDaylight,
             modifier = Modifier.size(40.dp)
         )
         Spacer(Modifier.padding(bottom = 4.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = weatherLocation.currentWeather.temperatureString(),
-                color = WeatherYouTheme.colors.primary,
-                style = WeatherYouTheme.typography.display3
+                color = MaterialTheme.colors.primary,
+                style = MaterialTheme.typography.display3
             )
             Spacer(Modifier.padding(end = 4.dp))
             Column {
                 Text(
-                    text = weatherLocation.currentWeatherDescription,
-                    color = WeatherYouTheme.colors.primary,
-                    style = WeatherYouTheme.typography.caption1,
+                    text = stringResource(weatherLocation.currentCondition.getString(weatherLocation.isDaylight)),
+                    color = MaterialTheme.colors.primary,
+                    style = MaterialTheme.typography.caption1,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
                     text = weatherLocation.name,
-                    style = WeatherYouTheme.typography.caption2,
+                    style = MaterialTheme.typography.caption2,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -55,7 +57,7 @@ fun CurrentConditions(
         Spacer(Modifier.padding(bottom = 4.dp))
         Text(
             text = stringResource(R.string.feels_like, weatherLocation.feelsLike.temperatureString()),
-            style = WeatherYouTheme.typography.body2,
+            style = MaterialTheme.typography.body2,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )

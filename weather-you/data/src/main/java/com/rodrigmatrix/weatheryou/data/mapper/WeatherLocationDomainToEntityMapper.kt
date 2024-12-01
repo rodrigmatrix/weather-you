@@ -11,6 +11,9 @@ class WeatherLocationDomainToEntityMapper {
             latitude = source.latitude,
             longitude = source.longitude,
             name = source.name,
+            countryCode = source.countryCode,
+            timeZone = source.timeZone,
+            orderIndex = source.orderIndex,
         )
     }
 }

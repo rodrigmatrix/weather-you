@@ -29,15 +29,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.rodrigmatrix.weatheryou.components.R
 import com.rodrigmatrix.weatheryou.components.ScreenNavigationType
+import com.rodrigmatrix.weatheryou.settings.presentation.settings.component.SwitchWithDescription
 import com.rodrigmatrix.weatheryou.settings.presentation.settings.model.AppColorPreferenceOption
 import com.rodrigmatrix.weatheryou.settings.presentation.settings.model.AppThemePreferenceOption
 import com.rodrigmatrix.weatheryou.settings.presentation.settings.model.TemperaturePreferenceOption
+import com.rodrigmatrix.weatheryou.settings.presentation.settings.model.toOption
 import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun SettingsScreen(
-    navigationType: ScreenNavigationType,
-    viewModel: SettingsViewModel = getViewModel()
+    viewModel: SettingsViewModel = getViewModel(),
+    onFetchLocations: () -> Unit,
 ) {
     val viewState by viewModel.viewState.collectAsState()
 
@@ -45,11 +47,14 @@ fun SettingsScreen(
         viewState,
         onEditUnits = viewModel::onEditUnit,
         onEditTheme = viewModel::onEditTheme,
-        onNewUnit = viewModel::onNewUnit,
+        onNewUnit = {
+            viewModel.onNewUnit(it)
+            onFetchLocations()
+        },
         onNewColor = viewModel::onNewColorTheme,
         onNewTheme = viewModel::onNewTheme,
+        onWeatherAnimationsChange = viewModel::onWeatherAnimationsChange,
         onDismissDialog = viewModel::hideDialogs,
-        navigationType = navigationType,
     )
 }
 
@@ -61,21 +66,20 @@ fun SettingsScreen(
     onNewUnit: (TemperaturePreferenceOption) -> Unit,
     onNewTheme: (AppThemePreferenceOption) -> Unit,
     onNewColor: (AppColorPreferenceOption) -> Unit,
+    onWeatherAnimationsChange: (Boolean) -> Unit,
     onDismissDialog: () -> Unit,
-    navigationType: ScreenNavigationType,
 ) {
     when (viewState.dialogState) {
         SettingsDialogState.HIDDEN -> Unit
         SettingsDialogState.THEME -> ThemeAndColorModeSelector(
-            themeMode = viewState.selectedAppTheme.option,
-            colorMode = viewState.selectedColor.option,
+            themeMode = viewState.appSettings.appThemePreference.toOption().option,
+            colorMode = viewState.appSettings.appColorPreference.toOption().option,
             onThemeModeChange = onNewTheme,
             onColorChange = onNewColor,
             onClose = onDismissDialog,
-            navigationType = navigationType,
         )
         SettingsDialogState.UNITS -> UnitsDialog(
-            selected = viewState.selectedTemperature,
+            selected = viewState.appSettings.temperaturePreference.toOption(),
             onNewUnit = onNewUnit,
             onDismissRequest = onDismissDialog
         )
@@ -90,7 +94,7 @@ fun SettingsScreen(
         Spacer(Modifier.height(10.dp))
         SettingWithOption(
             title = stringResource(R.string.units),
-            selected = stringResource(viewState.selectedTemperature.title),
+            selected = stringResource(viewState.appSettings.temperaturePreference.toOption().title),
             onClick = onEditUnits,
             modifier = Modifier
         )
@@ -99,10 +103,24 @@ fun SettingsScreen(
         Spacer(Modifier.height(10.dp))
         SettingWithOption(
             title = stringResource(R.string.app_theme),
-            selected = stringResource(viewState.selectedAppTheme.title),
+            selected = stringResource(viewState.appSettings.appThemePreference.toOption().title),
             onClick = onEditTheme,
             modifier = Modifier
         )
+        Spacer(Modifier.height(10.dp))
+        SwitchWithDescription(
+            checked = viewState.appSettings.enableWeatherAnimations,
+            description = stringResource(R.string.enable_weather_animations),
+            onCheckedChange = { onWeatherAnimationsChange(!viewState.appSettings.enableWeatherAnimations) },
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
+//        Spacer(Modifier.height(10.dp))
+//        SwitchWithDescription(
+//            checked = viewState.appSettings.enableThemeColorWithWeatherAnimations,
+//            description = stringResource(R.string.enable_theme_color_inside_weather_animations),
+//            onCheckedChange = { onWeatherAnimationsChange(!viewState.appSettings.enableWeatherAnimations) },
+//            modifier = Modifier.padding(horizontal = 16.dp)
+//        )
     }
 }
 
@@ -271,7 +289,7 @@ fun UvIndexCardPreview() {
             onNewTheme = { },
             onNewColor = { },
             onDismissDialog = { },
-            navigationType = ScreenNavigationType.BOTTOM_NAVIGATION
+            onWeatherAnimationsChange = { },
         )
     }
 }

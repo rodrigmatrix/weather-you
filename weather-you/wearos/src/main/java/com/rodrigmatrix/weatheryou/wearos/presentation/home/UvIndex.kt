@@ -74,7 +74,7 @@ fun UvIndex(
             )
             Text(
                 text = stringResource(R.string.uv_index),
-                style = WeatherYouTheme.typography.title3
+                style = MaterialTheme.typography.title3
             )
         }
         Icon(
@@ -98,7 +98,7 @@ fun UvIndex(
         )
         Text(
             text = stringResource(uvIndex.toInt().uvIndexStringRes()),
-            style = WeatherYouTheme.typography.title3,
+            style = MaterialTheme.typography.title3,
             modifier = Modifier
                 .constrainAs(uvIndexText) {
                     start.linkTo(parent.start)

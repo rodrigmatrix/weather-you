@@ -1,7 +1,10 @@
 package com.rodrigmatrix.weatheryou.presentation.widget
 
 import android.app.Activity
+import android.appwidget.AppWidgetManager
+import android.content.Intent
 import android.content.res.Configuration
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,6 +38,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.glance.appwidget.updateAll
 import androidx.work.Constraints
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
@@ -44,52 +48,48 @@ import com.rodrigmatrix.weatheryou.components.R
 import com.rodrigmatrix.weatheryou.components.WeatherIcon
 import com.rodrigmatrix.weatheryou.components.preview.PreviewWeatherList
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
+import com.rodrigmatrix.weatheryou.core.extensions.getHourWithMinutesString
 import com.rodrigmatrix.weatheryou.core.extensions.getTimeZoneHourAndMinutes
 import com.rodrigmatrix.weatheryou.core.extensions.temperatureString
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.locationdetails.presentaion.details.SmallScreenTopAppBar
 import com.rodrigmatrix.weatheryou.presentation.widget.CurrentWeatherWidgetConfigurationUiAction.OnConfigurationCompleted
 import com.rodrigmatrix.weatheryou.widgets.weather.CurrentWeatherWidget
+import com.rodrigmatrix.weatheryou.widgets.weather.animated.CurrentAnimatedWeatherWidget
 import com.rodrigmatrix.weatheryou.worker.UpdateWidgetWeatherDataWorker
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.onEach
 import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun CurrentWeatherWidgetConfigurationScreen(
+    widgetId: String,
     modifier: Modifier = Modifier,
     viewModel: CurrentWeatherWidgetConfigurationViewModel = getViewModel(),
+    onConfigurationCancelled: () -> Unit,
+    onConfigurationComplete: () -> Unit,
 ) {
     val uiState by viewModel.viewState.collectAsState()
     val context = LocalContext.current
 
     CurrentWeatherWidgetConfigurationScreen(
         uiState = uiState,
-        onLocationClicked = viewModel::setLocation,
-        onCloseClick = {
-            (context as? Activity)?.finish()
-        },
+        onLocationClicked = { viewModel.setLocation(it, widgetId) },
+        onCloseClick = onConfigurationCancelled,
         modifier = modifier,
     )
-
+    BackHandler {
+        onConfigurationCancelled()
+    }
+    LaunchedEffect(Unit) {
+        viewModel.getLocations(widgetId)
+    }
     LaunchedEffect(viewModel) {
-        viewModel.viewEffect.onEach { uiAction ->
+        viewModel.viewEffect.collect { uiAction ->
             when (uiAction) {
                 OnConfigurationCompleted -> {
-                    val updateWidgetRequest =
-                        OneTimeWorkRequestBuilder<UpdateWidgetWeatherDataWorker>()
-                            .setConstraints(
-                                Constraints.Builder()
-                                    .setRequiredNetworkType(NetworkType.CONNECTED)
-                                    .build()
-                            )
-                            .build()
-                    WorkManager.getInstance(context).enqueue(updateWidgetRequest).await()
-                    CurrentWeatherWidget().updateWidget(context.applicationContext)
-                    (context as? Activity)?.finish()
+                    onConfigurationComplete()
                 }
             }
-        }.collect()
+        }
     }
 }
 
@@ -193,7 +193,9 @@ private fun LocationRow(
                     modifier = Modifier.padding(start = 16.dp, end = 16.dp)
                 )
                 Text(
-                    text = weatherLocation.timeZone.getTimeZoneHourAndMinutes(context),
+                    text = weatherLocation.timeZone.getTimeZoneHourAndMinutes(context).ifEmpty {
+                        weatherLocation.currentTime.getHourWithMinutesString(context)
+                    },
                     style = WeatherYouTheme.typography.bodyMedium,
                     modifier = Modifier.padding(start = 16.dp, end = 16.dp)
                 )
@@ -212,6 +214,7 @@ private fun LocationRow(
             ) {
                 WeatherIcon(
                     weatherCondition = weatherLocation.currentCondition,
+                    isDaylight = weatherLocation.isDaylight,
                     modifier = Modifier
                         .size(64.dp)
                         .align(Alignment.Center)

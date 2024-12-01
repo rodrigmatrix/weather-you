@@ -20,34 +20,27 @@ class VisualCrossingRemoteDataSourceImpl(
     override fun getWeather(
         latitude: Double,
         longitude: Double,
-        unit: TemperaturePreference
+        countryCode: String,
+        timezone: String,
     ): Flow<WeatherLocation> {
         return flow {
             emit(
                 visualCrossingService.getWeatherWithCoordinates(
                     coordinates = "$latitude,$longitude",
-                    unitGroup = getUnit(unit)
+                    unitGroup = "metric",
                 )
             )
-        }.map { visualCrossingRemoteMapper.map(it, unit) }
+        }.map { visualCrossingRemoteMapper.map(it) }
     }
 
-    override fun getWeather(name: String, unit: TemperaturePreference): Flow<WeatherLocation> {
+    override fun getWeather(name: String): Flow<WeatherLocation> {
         return flow {
             emit(
                 visualCrossingService.getWeather(
                     location = name,
-                    unitGroup = getUnit(unit)
+                    unitGroup = "metric"
                 )
             )
-        }.map { visualCrossingRemoteMapper.map(it, unit) }
-    }
-
-    private fun getUnit(unit: TemperaturePreference): String {
-        return when (unit) {
-            TemperaturePreference.METRIC -> VisualCrossingUnits.METRIC.unit
-            TemperaturePreference.IMPERIAL -> VisualCrossingUnits.US.unit
-            else -> VisualCrossingUnits.UK.unit
-        }
+        }.map { visualCrossingRemoteMapper.map(it) }
     }
 }

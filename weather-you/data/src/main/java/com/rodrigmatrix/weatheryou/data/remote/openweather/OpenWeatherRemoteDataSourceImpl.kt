@@ -10,10 +10,6 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import java.util.*
 
-private const val METRIC = "metric"
-private const val IMPERIAL = "imperial"
-private const val STANDARD = "standard"
-
 class OpenWeatherRemoteDataSourceImpl(
     private val openWeatherService: OpenWeatherService,
     private val openWeatherRemoteMapper: OpenWeatherRemoteMapper,
@@ -22,37 +18,30 @@ class OpenWeatherRemoteDataSourceImpl(
     override fun getWeather(
         latitude: Double,
         longitude: Double,
-        unit: TemperaturePreference
+        countryCode: String,
+        timezone: String,
     ): Flow<WeatherLocation> {
         return flow {
             emit(
                 openWeatherService.getWeather(
                     latitude = latitude.toString(),
                     longitude = longitude.toString(),
-                    unit = getUnit(unit),
+                    unit = "metric",
                     language = Locale.getDefault().toString(),
                 )
             )
-        }.map { openWeatherRemoteMapper.map(it, unit) }
+        }.map { openWeatherRemoteMapper.map(it) }
     }
 
-    override fun getWeather(name: String, unit: TemperaturePreference): Flow<WeatherLocation> {
+    override fun getWeather(name: String): Flow<WeatherLocation> {
         return flow {
             emit(
                 openWeatherService.getWeather(
                     location = name,
-                    unit = getUnit(unit),
+                    unit = "metric",
                     language = Locale.getDefault().toString(),
                 )
             )
-        }.map { openWeatherRemoteMapper.map(it, unit) }
-    }
-
-    private fun getUnit(unit: TemperaturePreference): String {
-        return when (unit) {
-            TemperaturePreference.METRIC -> METRIC
-            TemperaturePreference.IMPERIAL -> IMPERIAL
-            else -> STANDARD
-        }
+        }.map { openWeatherRemoteMapper.map(it) }
     }
 }

@@ -4,23 +4,21 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.room.migration.Migration
-import androidx.sqlite.db.SupportSQLiteDatabase
+import androidx.room.TypeConverters
 import com.rodrigmatrix.weatheryou.data.local.dao.WeatherDAO
-import com.rodrigmatrix.weatheryou.data.local.dao.WidgetDataDao
-import com.rodrigmatrix.weatheryou.data.local.model.WeatherLocationEntity
-import com.rodrigmatrix.weatheryou.data.local.model.WeatherWidgetLocationEntity
+import com.rodrigmatrix.weatheryou.data.local.model.WeatherEntity
 
 @Database(
-    entities = [WeatherLocationEntity::class, WeatherWidgetLocationEntity::class],
-    version = 2,
-    exportSchema = false,
+    entities = [
+        WeatherEntity::class,
+    ],
+    version = 1,
+    exportSchema = true,
 )
+@TypeConverters(WeatherDatabaseConverters::class)
 abstract class WeatherDatabase : RoomDatabase() {
 
-    abstract fun locationsDao(): WeatherDAO
-
-    abstract fun widgetDataDao(): WidgetDataDao
+    abstract fun weatherDao(): WeatherDAO
 
     companion object {
         @Volatile private var instance: WeatherDatabase? = null
@@ -33,7 +31,7 @@ abstract class WeatherDatabase : RoomDatabase() {
         private fun buildDatabase(context: Context) = Room.databaseBuilder(
             context.applicationContext,
             WeatherDatabase::class.java,
-            "weather_you.db")
+            "weather_you_weather_database.db")
             .fallbackToDestructiveMigration()
             .build()
     }

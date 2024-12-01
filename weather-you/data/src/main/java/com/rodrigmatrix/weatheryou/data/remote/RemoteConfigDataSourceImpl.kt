@@ -13,4 +13,8 @@ class RemoteConfigDataSourceImpl(
     override fun getLong(key: String): Long {
         return remoteConfig.getLong(key)
     }
+
+    override fun getBoolean(key: String): Boolean {
+        return remoteConfig.getBoolean(key)
+    }
 }

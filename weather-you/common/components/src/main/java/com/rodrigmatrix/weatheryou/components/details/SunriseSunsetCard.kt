@@ -26,6 +26,7 @@ import com.rodrigmatrix.weatheryou.core.extensions.getLocalTime
 import com.rodrigmatrix.weatheryou.components.R
 import com.rodrigmatrix.weatheryou.components.WeatherYouCard
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
+import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme.weatherTextColor
 import org.joda.time.DateTime
 import org.joda.time.LocalTime
 
@@ -34,6 +35,7 @@ fun SunriseSunsetCardContent(
     sunrise: DateTime,
     sunset: DateTime,
     currentTime: DateTime,
+    isDaylight: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
@@ -51,12 +53,12 @@ fun SunriseSunsetCardContent(
                 Icon(
                     painter = painterResource(com.rodrigmatrix.weatheryou.weathericons.R.drawable.ic_sunny),
                     contentDescription = stringResource(R.string.sunrise_sunset),
-                    tint = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                    tint = WeatherYouTheme.colorScheme.weatherTextColor,
                     modifier = Modifier.padding(end = 4.dp)
                 )
                 Text(
                     text = stringResource(R.string.sunrise_sunset),
-                    color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                    color = WeatherYouTheme.colorScheme.weatherTextColor,
                     style = WeatherYouTheme.typography.titleMedium,
                 )
             }
@@ -65,6 +67,7 @@ fun SunriseSunsetCardContent(
             SunriseSunsetVisualizer(
                 sunriseHour = sunrise.hourOfDay,
                 sunsetHour = sunset.hourOfDay,
+                isDaylight = isDaylight,
                 currentHour = currentTime.getLocalTime().hourOfDay,
                 modifier = Modifier.height(140.dp)
             )
@@ -76,12 +79,12 @@ fun SunriseSunsetCardContent(
             ) {
                 Text(
                     text = stringResource(R.string.sunrise),
-                    color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                    color = WeatherYouTheme.colorScheme.weatherTextColor,
                     style = WeatherYouTheme.typography.bodySmall
                 )
                 Text(
                     text = sunrise.getHourWithMinutesString(context),
-                    color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                    color = WeatherYouTheme.colorScheme.weatherTextColor,
                     style = WeatherYouTheme.typography.titleMedium
                 )
             }
@@ -93,12 +96,12 @@ fun SunriseSunsetCardContent(
             ) {
                 Text(
                     text = stringResource(R.string.sunset),
-                    color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                    color = WeatherYouTheme.colorScheme.weatherTextColor,
                     style = WeatherYouTheme.typography.bodySmall
                 )
                 Text(
                     text = sunset.getHourWithMinutesString(context),
-                    color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                    color = WeatherYouTheme.colorScheme.weatherTextColor,
                     style = WeatherYouTheme.typography.titleMedium
                 )
             }
@@ -116,7 +119,7 @@ fun SunriseSunsetCardContent(
             }
             Text(
                 text = stringResource(R.string.length_of_day) + dayLengthString,
-                color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                color = WeatherYouTheme.colorScheme.weatherTextColor,
                 style = WeatherYouTheme.typography.bodyMedium
             )
         }
@@ -129,7 +132,7 @@ fun SunriseSunsetCardContent(
             }
             Text(
                 text = stringResource(R.string.remaining_daylight_x) + remainingDaylightString,
-                color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                color = WeatherYouTheme.colorScheme.weatherTextColor,
                 style = WeatherYouTheme.typography.bodyMedium
             )
         }
@@ -141,6 +144,7 @@ private fun SunriseSunsetVisualizer(
     sunriseHour: Int,
     sunsetHour: Int,
     currentHour: Int,
+    isDaylight: Boolean,
     modifier: Modifier = Modifier
 ) {
     val colorPrimary = WeatherYouTheme.colorScheme.primary
@@ -164,7 +168,7 @@ private fun SunriseSunsetVisualizer(
         interval2 *= 24f * scaleX
         start *= 24f * scaleX
         // sun
-        if (currentHour in sunriseHour..sunsetHour) {
+        if (isDaylight) {
             val daylightHalf = (sunsetHour - sunriseHour)
             val sunScaleY = if (currentHour >= daylightHalf) {
                 scaleY - (currentHour - sunsetHour)
@@ -228,9 +232,10 @@ fun SunriseSunsetCardPreview() {
         Column {
             WeatherYouCard {
                 SunriseSunsetCardContent(
-                    sunset = LocalTime(6, 30).toDateTimeToday(),
-                    sunrise = LocalTime(17, 30).toDateTimeToday(),
-                    currentTime = LocalTime(17, 30).toDateTimeToday()
+                    sunrise = LocalTime(6, 30).toDateTimeToday(),
+                    sunset = LocalTime(17, 30).toDateTimeToday(),
+                    currentTime = LocalTime(17, 29).toDateTimeToday(),
+                    isDaylight = true,
                 )
             }
             Spacer(modifier = Modifier.height(8.dp))
@@ -239,6 +244,7 @@ fun SunriseSunsetCardPreview() {
                     sunriseHour = 5,
                     sunsetHour = 17,
                     currentHour = 5,
+                    isDaylight = true,
                 )
             }
         }

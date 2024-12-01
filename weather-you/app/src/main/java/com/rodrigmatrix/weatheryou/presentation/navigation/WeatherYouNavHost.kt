@@ -1,19 +1,20 @@
 package com.rodrigmatrix.weatheryou.presentation.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.window.layout.DisplayFeature
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.rodrigmatrix.weatheryou.addlocation.AddLocationScreen
-import com.rodrigmatrix.weatheryou.components.ScreenContentType
-import com.rodrigmatrix.weatheryou.components.ScreenNavigationType
-import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
+import com.rodrigmatrix.weatheryou.core.extensions.toast
 import com.rodrigmatrix.weatheryou.presentation.about.AboutScreen
 import com.rodrigmatrix.weatheryou.home.presentation.home.HomeScreen
 import com.rodrigmatrix.weatheryou.home.presentation.home.HomeUiState
+import com.rodrigmatrix.weatheryou.home.presentation.home.HomeViewEffect
+import com.rodrigmatrix.weatheryou.home.presentation.home.HomeViewModel
 import com.rodrigmatrix.weatheryou.home.presentation.navigation.HomeEntry
 import com.rodrigmatrix.weatheryou.home.presentation.navigation.NavigationEntries
 import com.rodrigmatrix.weatheryou.settings.presentation.settings.SettingsScreen
@@ -21,19 +22,10 @@ import com.rodrigmatrix.weatheryou.settings.presentation.settings.SettingsScreen
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun WeatherHomeNavHost(
-    contentType: ScreenContentType,
-    displayFeatures: List<DisplayFeature>,
-    homeUiState: HomeUiState,
-    navigationType: ScreenNavigationType,
-    onLocationSelected: (WeatherLocation?) -> Unit,
-    onDismissLocationDialogClicked: () -> Unit,
-    onSwipeRefresh: () -> Unit,
-    onDeleteLocation: (WeatherLocation) -> Unit,
-    onDeleteLocationClicked: () -> Unit,
-    onAddLocation: () -> Unit,
-    onPermissionGranted: () -> Unit,
-    onDeleteLocationConfirmButtonClicked: () -> Unit,
     navController: NavHostController,
+    homeViewModel: HomeViewModel,
+    homeViewState: HomeUiState,
+    onUpdateWidgets: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     NavHost(
@@ -42,23 +34,41 @@ fun WeatherHomeNavHost(
         modifier = modifier,
     ) {
         composable(HomeEntry.Locations.route) {
+            val context = LocalContext.current
             HomeScreen(
-                homeUiState = homeUiState,
-                onAddLocation = onAddLocation,
-                contentType = contentType,
-                displayFeatures = displayFeatures,
-                navigationType = navigationType,
-                onPermissionGranted = onPermissionGranted,
-                onDismissLocationDialogClicked = onDismissLocationDialogClicked,
-                onSwipeRefresh = onSwipeRefresh,
-                onDeleteLocationClicked = onDeleteLocationClicked,
-                onLocationSelected = onLocationSelected,
-                onDeleteLocation = onDeleteLocation,
-                onDeleteLocationConfirmButtonClicked = onDeleteLocationConfirmButtonClicked,
+                navController = navController,
+                homeUiState = homeViewState,
+                onAddLocation = {
+                    navController.navigate(NavigationEntries.ADD_LOCATION_ROUTE)
+                },
+                onPermissionGranted = homeViewModel::updateLocations,
+                onDismissLocationDialogClicked = homeViewModel::hideDeleteLocationDialog,
+                onSwipeRefresh = homeViewModel::loadLocations,
+                onDeleteLocationClicked = homeViewModel::showDeleteLocationDialog,
+                onLocationSelected = homeViewModel::selectLocation,
+                onDeleteLocation = homeViewModel::deleteLocation,
+                onDeleteLocationConfirmButtonClicked = homeViewModel::deleteLocation,
+                onOrderChanged = homeViewModel::orderLocations,
             )
+            LaunchedEffect(homeViewModel) {
+                homeViewModel.viewEffect.collect { viewEffect ->
+                    when (viewEffect) {
+                        is HomeViewEffect.Error -> {
+                            context.toast(viewEffect.stringRes)
+                        }
+
+                        HomeViewEffect.ShowInAppReview -> {
+
+                        }
+                        HomeViewEffect.UpdateWidgets -> {
+                            onUpdateWidgets()
+                        }
+                    }
+                }
+            }
         }
         composable(HomeEntry.Settings.route) {
-            SettingsScreen(navigationType)
+            SettingsScreen(onFetchLocations = {  })
         }
         composable(HomeEntry.About.route) {
             AboutScreen()

@@ -4,5 +4,7 @@ data class City(
     val name: Int,
     val lat: Double,
     val long: Double,
-    val image: String
+    val image: String,
+    val countryCode: String,
+    val timezone: String,
 )

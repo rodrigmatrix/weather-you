@@ -13,6 +13,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.components.R
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
+import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme.weatherTextColor
 import com.rodrigmatrix.weatheryou.weathericons.R as WeatherIcons
 import com.rodrigmatrix.weatheryou.core.extensions.percentageString
 import com.rodrigmatrix.weatheryou.core.extensions.temperatureString
@@ -39,24 +40,24 @@ fun HumidityCardContent(
                 Icon(
                     painter = painterResource(WeatherIcons.drawable.ic_water_drop),
                     contentDescription = stringResource(R.string.humidity),
-                    tint = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                    tint = WeatherYouTheme.colorScheme.weatherTextColor,
                     modifier = Modifier.padding(end = 4.dp)
                 )
                 Text(
                     text = stringResource(R.string.humidity),
-                    color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                    color = WeatherYouTheme.colorScheme.weatherTextColor,
                     style = WeatherYouTheme.typography.titleMedium,
                 )
             }
             Text(
                 text = humidity.percentageString(),
-                color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                color = WeatherYouTheme.colorScheme.weatherTextColor,
                 style = WeatherYouTheme.typography.titleLarge
             )
         }
         Text(
             text = stringResource(R.string.the_dew_point_is_x, dewPoint.temperatureString()),
-            color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+            color = WeatherYouTheme.colorScheme.weatherTextColor,
             style = WeatherYouTheme.typography.bodyLarge
         )
     }

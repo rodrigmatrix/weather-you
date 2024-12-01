@@ -4,6 +4,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,12 +26,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.rodrigmatrix.weatheryou.components.theme.md_theme_dark_secondaryContainer
 
 @Composable
 fun WeatherYouCard(
     modifier: Modifier = Modifier,
     shape: RoundedCornerShape = RoundedCornerShape(24.dp),
-    color: Color = WeatherYouTheme.colorScheme.secondaryContainer,
+    color: Color = if (WeatherYouTheme.themeSettings.showWeatherAnimations) {
+        md_theme_dark_secondaryContainer.copy(alpha = 0.4f)
+    } else {
+        WeatherYouTheme.colorScheme.secondaryContainer
+    },
     content: @Composable () -> Unit
 ) {
     Surface(
@@ -42,7 +48,6 @@ fun WeatherYouCard(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WeatherYouCard(
     modifier: Modifier = Modifier,
@@ -50,7 +55,11 @@ fun WeatherYouCard(
     onClick: () -> Unit,
     onDismiss: () -> Unit,
     shape: RoundedCornerShape = RoundedCornerShape(24.dp),
-    color: Color = WeatherYouTheme.colorScheme.secondaryContainer,
+    color: Color = if (WeatherYouTheme.themeSettings.showWeatherAnimations) {
+        md_theme_dark_secondaryContainer.copy(alpha = 0.4f)
+    } else {
+        WeatherYouTheme.colorScheme.secondaryContainer
+    },
     content: @Composable () -> Unit
 ) {
     if (isDismissible) {

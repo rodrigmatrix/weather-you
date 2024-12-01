@@ -1,28 +1,41 @@
 package com.rodrigmatrix.weatheryou.domain.repository
 
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
-import com.rodrigmatrix.weatheryou.domain.model.WidgetWeather
 import kotlinx.coroutines.flow.Flow
 
 interface WeatherRepository {
 
-    fun addLocation(name: String, latitude: Double, longitude: Double): Flow<Unit>
+    fun addLocation(
+        name: String,
+        latitude: Double,
+        longitude: Double,
+        countryCode: String,
+    ): Flow<Unit>
 
-    fun fetchLocationsList(): Flow<List<WeatherLocation>>
+    fun getLocationsList(): Flow<List<WeatherLocation>>
 
-    fun fetchLocation(latitude: Double, longitude: Double): Flow<WeatherLocation>
+    fun fetchLocationsList(forceUpdate: Boolean): Flow<Unit>
 
-    fun deleteLocation(id: Int): Flow<Unit>
+    fun fetchWidgetLocationsList(forceUpdate: Boolean): Flow<Unit>
+
+    fun updateLocationsListOrder(list: List<WeatherLocation>): Flow<Unit>
+
+    fun fetchLocation(
+        latitude: Double,
+        longitude: Double,
+        countryCode: String,
+        timezone: String,
+    ): Flow<WeatherLocation>
+
+    fun deleteLocation(weatherLocation: WeatherLocation): Flow<Unit>
 
     fun getLocalWeather(): Flow<WeatherLocation>
 
     fun getLocationsSize(): Flow<Int>
 
-    fun updateWidgetWeather(): Flow<WidgetWeather?>
+    fun setSavedLocation(weatherLocation: WeatherLocation, widgetId: String): Flow<Unit>
 
-    fun setSavedLocation(weatherLocation: WeatherLocation): Flow<Unit>
+    fun deleteWidgetWeather(widgetId: String): Flow<Unit>
 
-    fun deleteWidgetWeather(): Flow<Unit>
-
-    fun getWidgetWeather(): Flow<WidgetWeather?>
+    fun getWidgetWeather(widgetId: String): Flow<WeatherLocation?>
 }

@@ -43,7 +43,7 @@ fun AboutScreen() {
             .padding(bottom = 100.dp)
     ) {
         Image(
-            painter = painterResource(R.drawable.image_about),
+            painter = painterResource(R.drawable.ic_about),
             contentDescription = stringResource(Strings.string.image_of_developer),
             contentScale = ContentScale.FillBounds,
             modifier = Modifier

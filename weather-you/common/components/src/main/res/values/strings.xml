@@ -76,6 +76,7 @@
     <string name="minutes_x">%dm</string>
     <string name="current_weather_small_widget_description">Displays the current weather</string>
     <string name="no_results_found">No results found</string>
+    <string name="keep_typing">Keep typing...</string>
     <string name="locations">Locations</string>
     <string name="units">Units</string>
     <string name="metric_preference">Celsius</string>
@@ -101,12 +102,19 @@
     <string name="condition_sunny">Sunny</string>
     <string name="condition_clear">Clear</string>
     <string name="condition_partly_cloudy">Partly Cloudy</string>
+    <string name="condition_mostly_cloudy">Mostly Cloudy</string>
+    <string name="condition_mostly_clear">Mostly Clear</string>
+    <string name="condition_haze">Haze</string>
+    <string name="condition_fog">Fog</string>
     <string name="condition_cloudy">Cloudy</string>
     <string name="condition_windy">Windy</string>
     <string name="condition_snow">Snow</string>
     <string name="condition_mist">Mist</string>
     <string name="condition_rain">Rain</string>
-    <string name="condition_thunderstorm">Rain</string>
+    <string name="condition_hail">Hail</string>
+    <string name="condition_heavy_rain">Heavy Rain</string>
+    <string name="condition_thunderstorm">Thunderstorm</string>
+    <string name="condition_isolated_thunderstorm">Isolated Thunderstorm</string>
     <string name="weather_widget_disclaimer">Please select the location you want displayed on the weather widget. If you want a different location, open the app and add it and come back here. If you want to always display the current location, please select it</string>
     <string name="widget_location">Widget Location</string>
     <string name="dynamic">Dynamic</string>
@@ -121,4 +129,6 @@
 
     <string name="color_mode">Color mode</string>
     <string name="theme_and_color_mode">Theme &amp; color mode</string>
+    <string name="enable_weather_animations">Enable Weather Animations</string>
+    <string name="click_to_search">Click on the search icon to search</string>
 </resources>

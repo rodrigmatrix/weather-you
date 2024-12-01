@@ -1,15 +1,14 @@
 package com.rodrigmatrix.weatheryou.worker
 
 import android.content.Context
+import androidx.glance.appwidget.updateAll
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.rodrigmatrix.weatheryou.domain.usecase.UpdateWidgetTemperatureUseCase
+import com.rodrigmatrix.weatheryou.domain.usecase.UpdateLocationsUseCase
 import com.rodrigmatrix.weatheryou.widgets.weather.CurrentWeatherWidget
-import kotlinx.coroutines.CoroutineDispatcher
+import com.rodrigmatrix.weatheryou.widgets.weather.animated.CurrentAnimatedWeatherWidget
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -19,18 +18,14 @@ class UpdateWidgetWeatherDataWorker(
     params: WorkerParameters,
 ) : CoroutineWorker(appContext, params), KoinComponent {
 
-    private val updateWidgetTemperatureUseCase by inject<UpdateWidgetTemperatureUseCase>()
+    private val updateLocationsUseCase by inject<UpdateLocationsUseCase>()
 
     override suspend fun doWork(): Result {
-        val widgetWeather = updateWidgetTemperatureUseCase()
+        updateLocationsUseCase()
             .flowOn(Dispatchers.IO)
             .firstOrNull()
-
-        return if (widgetWeather != null) {
-            CurrentWeatherWidget().updateWidget(appContext)
-            Result.success()
-        } else {
-            Result.failure()
-        }
+        CurrentWeatherWidget().updateAll(appContext)
+        CurrentAnimatedWeatherWidget().updateAll(appContext)
+        return Result.success()
     }
 }

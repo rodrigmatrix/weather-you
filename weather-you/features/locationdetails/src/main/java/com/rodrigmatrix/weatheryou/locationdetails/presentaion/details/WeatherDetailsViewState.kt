@@ -10,5 +10,7 @@ data class WeatherDetailsViewState(
     val weatherLocation: WeatherLocation? = null,
     val todayWeatherHoursList: List<WeatherHour> = emptyList(),
     val futureDaysList: List<WeatherDay> = emptyList(),
-    val isFutureWeatherExpanded: Boolean = false
+    val isFutureWeatherExpanded: Boolean = false,
+    val enableWeatherAnimations: Boolean = false,
+    val enableThemeColorWithWeatherAnimations: Boolean = false,
 ): ViewState

@@ -11,7 +11,9 @@ class FamousCitiesMapper {
                 name = city.displayName,
                 lat = city.lat,
                 long = city.long,
-                image = city.image
+                image = city.image,
+                countryCode = city.countryCode,
+                timezone = city.timezone,
             )
         }
     }

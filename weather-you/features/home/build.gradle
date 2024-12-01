@@ -1,6 +1,7 @@
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
@@ -57,13 +58,14 @@ dependencies {
     implementation(libs.compose.activity)
     implementation(libs.compose.navigation)
     implementation(libs.compose.constraint.layout)
-    implementation(libs.compose.navigation)
-    implementation(libs.compose.window.size)
-    implementation(libs.compose.adaptive)
-    implementation(libs.compose.adaptive.layout)
-    implementation(libs.compose.adaptive.navigation)
+    implementation(libs.androidx.adaptive)
+    implementation(libs.androidx.adaptive.layout)
+    implementation(libs.androidx.adaptive.navigation)
+    implementation(libs.androidx.adaptive.navigation.suite)
+    implementation(libs.androidx.adaptive.navigation.suite.android)
     implementation(libs.accompanist.permissions)
     implementation(libs.accompanist.navigation)
+    implementation(libs.reorderable)
     implementation(libs.accompanist.adaptive)
     implementation(libs.accompanist.adaptive)
 

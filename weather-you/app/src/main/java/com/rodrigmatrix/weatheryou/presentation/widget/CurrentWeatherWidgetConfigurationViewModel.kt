@@ -1,11 +1,10 @@
 package com.rodrigmatrix.weatheryou.presentation.widget
 
 import androidx.lifecycle.viewModelScope
-import com.rodrigmatrix.weatheryou.core.extensions.catch
 import com.rodrigmatrix.weatheryou.core.viewmodel.ViewModel
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.domain.usecase.DeleteWidgetLocationUseCase
-import com.rodrigmatrix.weatheryou.domain.usecase.FetchLocationsUseCase
+import com.rodrigmatrix.weatheryou.domain.usecase.GetLocationsUseCase
 import com.rodrigmatrix.weatheryou.domain.usecase.GetWidgetTemperatureUseCase
 import com.rodrigmatrix.weatheryou.domain.usecase.SetWidgetLocationUseCase
 import kotlinx.coroutines.CoroutineDispatcher
@@ -17,53 +16,41 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
 class CurrentWeatherWidgetConfigurationViewModel(
-    private val fetchLocationsUseCase: FetchLocationsUseCase,
+    private val getLocationsUseCase: GetLocationsUseCase,
     private val getWidgetTemperatureUseCase: GetWidgetTemperatureUseCase,
     private val setWidgetLocationUseCase: SetWidgetLocationUseCase,
-    private val deleteWidgetLocationUseCase: DeleteWidgetLocationUseCase,
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ViewModel<CurrentWeatherWidgetConfigurationUiState, CurrentWeatherWidgetConfigurationUiAction>(
     CurrentWeatherWidgetConfigurationUiState()
 ) {
 
-    init {
-        getLocations()
-    }
-
-    private fun getLocations() {
+    fun getLocations(widgetId: String) {
         viewModelScope.launch {
-            fetchLocationsUseCase()
+            getLocationsUseCase()
                 .flowOn(coroutineDispatcher)
-                .catch()
                 .onStart { setState { it.copy(isLoading = true) } }
-                .combine(getWidgetTemperatureUseCase()) { weatherLocationsList, savedWeather ->
+                .catch {
+                    it
+                }
+                .combine(getWidgetTemperatureUseCase(widgetId)) { weatherLocationsList, savedWeather ->
                     setState {
                         it.copy(
                             isLoading = false,
                             locationsList = weatherLocationsList,
                             selectedLocation = weatherLocationsList.find { location ->
-                                location.latitude == savedWeather?.lat &&
-                                        location.longitude == savedWeather.long
+                                location.latitude == savedWeather?.latitude &&
+                                        location.longitude == savedWeather.longitude
                             } ?: weatherLocationsList.firstOrNull()
                         )
                     }
                 }
-                .collect { }
+                .collect{ }
         }
     }
 
-    fun setLocation(weatherLocation: WeatherLocation) {
+    fun setLocation(weatherLocation: WeatherLocation, widgetId: String) {
         viewModelScope.launch {
-//            if (weatherLocation.isCurrentLocation) {
-//                deleteWidgetLocationUseCase()
-//                    .flowOn(coroutineDispatcher)
-//                    .onStart { setState { it.copy(isLoading = true) } }
-//                    .collect {
-//                        setEffect { CurrentWeatherWidgetConfigurationUiAction.OnConfigurationCompleted }
-//                    }
-//                return@launch
-//            }
-            setWidgetLocationUseCase(weatherLocation)
+            setWidgetLocationUseCase(weatherLocation, widgetId)
                 .flowOn(coroutineDispatcher)
                 .onStart { setState { it.copy(isLoading = true) } }
                 .collect {

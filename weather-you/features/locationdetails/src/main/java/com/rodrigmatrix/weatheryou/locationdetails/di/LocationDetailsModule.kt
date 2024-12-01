@@ -12,6 +12,6 @@ object LocationDetailsModule {
     }
 
     private val presentationModule = module {
-        viewModel { WeatherDetailsViewModel() }
+        viewModel { WeatherDetailsViewModel(getAppSettingsUseCase = get()) }
     }
 }
