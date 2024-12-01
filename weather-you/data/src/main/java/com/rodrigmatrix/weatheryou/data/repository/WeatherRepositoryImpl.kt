@@ -47,14 +47,14 @@ class WeatherRepositoryImpl(
                     orderIndex = getLocationsSize().firstOrNull() ?: 0,
                     longitude = longitude,
                     name = name,
-                    countryCode = countryCode,
+                    countryCode = countryCode.uppercase(),
                     timeZone = timezone,
                 )
                 getOrUpdateLocation(
                     name = name,
                     latitude = latitude,
                     longitude = longitude,
-                    countryCode = countryCode,
+                    countryCode = countryCode.uppercase(),
                     timeZone = timezone,
                     forceUpdate = true,
                 )
@@ -84,7 +84,10 @@ class WeatherRepositoryImpl(
     override fun fetchLocationsList(forceUpdate: Boolean): Flow<Unit> {
         return weatherLocalDataSource.getAllLocations()
             .map { weatherLocations ->
-                getOrUpdateCurrentLocation(forceUpdate)
+                getOrUpdateCurrentLocation(
+                    forceUpdate = forceUpdate,
+                    hasLocationPermission = hasLocationPermission()
+                )
 
                 val fetchedLocations = weatherLocations.mapNotNull { weatherEntity ->
                     getOrUpdateLocation(
@@ -145,30 +148,53 @@ class WeatherRepositoryImpl(
     }
 
     override fun getWidgetWeather(widgetId: String): Flow<WeatherLocation?> {
-        return weatherLocalDataSource.getWidgetLocation(widgetId).map { weatherWidget ->
-            weatherWidget?.let {
-                if (weatherWidget.isCurrentLocation) {
+        return weatherLocalDataSource.getWidgetLocation(widgetId)
+            .map { weatherWidget ->
+                weatherWidget?.let {
+                    if (weatherWidget.isCurrentLocation) {
+                        getWidgetCurrentLocation(
+                            widgetId = widgetId,
+                            forceUpdate = false,
+                        )
+                    } else {
+                        getOrUpdateLocation(
+                            name = weatherWidget.name,
+                            latitude = weatherWidget.latitude,
+                            longitude = weatherWidget.longitude,
+                            countryCode = weatherWidget.countryCode,
+                            timeZone = weatherWidget.timeZone,
+                            forceUpdate = false,
+                            widgetId = widgetId,
+                        )?.copy(
+                            widgetId = widgetId,
+                            name = weatherWidget.name,
+                        )
+                    }
+                } ?: if (hasLocationPermission()) {
                     getWidgetCurrentLocation(
-                        widgetId = weatherWidget.id,
+                        widgetId = widgetId,
                         forceUpdate = false,
-                    )
+                    )?.also {
+                        setSavedLocation(it, widgetId)
+                    }
                 } else {
-                    getOrUpdateLocation(
-                        name = weatherWidget.name,
-                        latitude = weatherWidget.latitude,
-                        longitude = weatherWidget.longitude,
-                        countryCode = weatherWidget.countryCode,
-                        timeZone = weatherWidget.timeZone,
-                        forceUpdate = false,
-                    )?.copy(
-                        widgetId = weatherWidget.id,
-                        name = weatherWidget.name,
-                    )
+                    getLocationsList().firstOrNull()?.firstOrNull()?.let { location ->
+                        getOrUpdateLocation(
+                            name = location.name,
+                            latitude = location.latitude,
+                            longitude = location.longitude,
+                            countryCode = location.countryCode,
+                            timeZone = location.timeZone,
+                            forceUpdate = false,
+                            widgetId = widgetId,
+                        )?.copy(
+                            widgetId = widgetId,
+                            name = location.name,
+                        )?.also {
+                            setSavedLocation(it, widgetId)
+                        }
+                    }
                 }
-            } ?: getWidgetCurrentLocation(
-                widgetId = widgetId,
-                forceUpdate = true,
-            )
         }
     }
 
@@ -229,13 +255,15 @@ class WeatherRepositoryImpl(
         countryCode: String,
         timeZone: String,
         forceUpdate: Boolean,
+        widgetId: String = "",
     ): WeatherLocation? {
         val location = weatherLocalDataSource.getWeather(
             latitude,
             longitude,
         ).firstOrNull()?.toWeatherLocation(
             id = -1,
-            orderIndex = -1
+            orderIndex = -1,
+            widgetId = widgetId,
         )?.copy(name = name)
         return if (forceUpdate || location == null || location.expirationDate.isBefore(location.timeZone.getCurrentTime())) {
             fetchLocation(
@@ -246,7 +274,10 @@ class WeatherRepositoryImpl(
             )
                 .catch()
                 .firstOrNull()
-                ?.copy(name = name)?.also {
+                ?.copy(
+                    name = name,
+                    widgetId = widgetId,
+                )?.also {
                     weatherLocalDataSource.upsertWeather(it.toWeatherEntity())
                         .firstOrNull()
                 }
@@ -257,7 +288,8 @@ class WeatherRepositoryImpl(
 
     private suspend fun getOrUpdateCurrentLocation(
         forceUpdate: Boolean,
-        hasLocationPermission: Boolean = true,
+        widgetId: String = "",
+        hasLocationPermission: Boolean,
     ): WeatherLocation? {
         val currentLocation = getCurrentLocation(
             forceUpdate = forceUpdate,
@@ -267,6 +299,7 @@ class WeatherRepositoryImpl(
             .firstOrNull()?.toWeatherLocation(
                 id = -1,
                 orderIndex = -1,
+                widgetId = widgetId,
             )
         weatherLocalDataSource.upsertCurrentLocation(currentLocation.toEntity())
             .firstOrNull()
@@ -284,6 +317,7 @@ class WeatherRepositoryImpl(
                     countryCode = currentLocation.countryCode,
                     name = currentLocation.name,
                     isCurrentLocation = true,
+                    widgetId = widgetId,
                 )?.also {
                     weatherLocalDataSource.upsertCurrentWeather(it.toWeatherEntity())
                         .firstOrNull()
@@ -298,22 +332,29 @@ class WeatherRepositoryImpl(
         widgetId: String,
         forceUpdate: Boolean,
     ): WeatherLocation? {
-       return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            val hasLocationPermission = ActivityCompat.checkSelfPermission(applicationContext,
+        return getOrUpdateCurrentLocation(
+            forceUpdate = forceUpdate,
+            widgetId = widgetId,
+            hasLocationPermission = hasBackgroundLocationPermission(),
+        )
+    }
+
+    private fun hasBackgroundLocationPermission(): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            ActivityCompat.checkSelfPermission(applicationContext,
                 android.Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED
-            getOrUpdateCurrentLocation(
-                forceUpdate = forceUpdate,
-                hasLocationPermission = hasLocationPermission,
-            )?.copy(
-                widgetId = widgetId,
-            )
         } else {
-            getOrUpdateCurrentLocation(
-                forceUpdate = forceUpdate,
-                hasLocationPermission = true,
-            )?.copy(
-                widgetId = widgetId,
-            )
+            ActivityCompat.checkSelfPermission(applicationContext,
+                android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+                    ActivityCompat.checkSelfPermission(applicationContext,
+                        android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
         }
+    }
+
+    private fun hasLocationPermission(): Boolean {
+        return ActivityCompat.checkSelfPermission(applicationContext,
+            android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+                ActivityCompat.checkSelfPermission(applicationContext,
+                    android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
     }
 }

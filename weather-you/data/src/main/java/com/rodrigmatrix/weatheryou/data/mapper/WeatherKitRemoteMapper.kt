@@ -20,6 +20,7 @@ class WeatherKitRemoteMapper(
         latitude: Double,
         longitude: Double,
         timezone: String,
+        countryCode: String,
     ): WeatherLocation {
         val daysList = source.forecastDaily?.days?.mapDaysList(
             source.forecastHourly?.hours,
@@ -28,6 +29,7 @@ class WeatherKitRemoteMapper(
         return WeatherLocation(
             id = 0,
             name = "",
+            countryCode = countryCode,
             latitude = latitude,
             longitude = longitude,
             isCurrentLocation = false,

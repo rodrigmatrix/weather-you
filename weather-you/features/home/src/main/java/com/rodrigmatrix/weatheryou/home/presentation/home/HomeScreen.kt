@@ -53,6 +53,7 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
 import com.rodrigmatrix.weatheryou.components.R
 import com.rodrigmatrix.weatheryou.components.WeatherIcon
+import com.rodrigmatrix.weatheryou.components.location.RequestBackgroundLocationDialog
 import com.rodrigmatrix.weatheryou.components.preview.PreviewWeatherList
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.domain.model.WeatherCondition
@@ -65,10 +66,9 @@ fun HomeScreen(
     navController: NavController,
     homeUiState: HomeUiState,
     onLocationSelected: (WeatherLocation?) -> Unit,
-    onDismissLocationDialogClicked: () -> Unit,
+    onDialogStateChanged: (HomeDialogState) -> Unit,
     onSwipeRefresh: () -> Unit,
     onDeleteLocation: (WeatherLocation) -> Unit,
-    onDeleteLocationClicked: () -> Unit,
     onDeleteLocationConfirmButtonClicked: () -> Unit,
     onAddLocation: () -> Unit,
     onPermissionGranted: () -> Unit,
@@ -89,24 +89,45 @@ fun HomeScreen(
             android.Manifest.permission.ACCESS_FINE_LOCATION,
         ),
         onPermissionsResult = {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                backgroundLocationPermissionState.launchPermissionRequest()
+            if (it.all { it.value }) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    onDialogStateChanged(HomeDialogState.BackgroundLocation)
+                } else {
+                    onPermissionGranted()
+                }
             } else {
                 onPermissionGranted()
             }
         }
     ),
 
-) {
+    ) {
     BackHandler(enabled = homeUiState.isLocationSelected()) {
         onLocationSelected(null)
     }
 
-    if (homeUiState.deleteLocationDialogVisible) {
-        DeleteLocationDialog(
-            onDismiss = onDismissLocationDialogClicked,
-            onDeleteLocationClicked = onDeleteLocationConfirmButtonClicked,
-        )
+    when (homeUiState.dialogState) {
+        HomeDialogState.BackgroundLocation -> {
+            RequestBackgroundLocationDialog(
+                onRequestPermissionClicked = {
+                    backgroundLocationPermissionState.launchPermissionRequest()
+                    onDialogStateChanged(HomeDialogState.Hidden)
+                },
+                onDismissRequest = {
+                    onPermissionGranted()
+                    onDialogStateChanged(HomeDialogState.Hidden)
+                },
+            )
+        }
+        HomeDialogState.DeleteLocation -> {
+            DeleteLocationDialog(
+                onDismiss = {
+                    onDialogStateChanged(HomeDialogState.Hidden)
+                },
+                onDeleteLocationClicked = onDeleteLocationConfirmButtonClicked,
+            )
+        }
+        HomeDialogState.Hidden -> Unit
     }
     HomeScreen(
         homeUiState = homeUiState,
@@ -114,7 +135,9 @@ fun HomeScreen(
         onLocationSelected = onLocationSelected,
         onSwipeRefresh = onSwipeRefresh,
         onDeleteLocation = onDeleteLocation,
-        onDeleteLocationClicked = onDeleteLocationClicked,
+        onDeleteLocationClicked = {
+            onDialogStateChanged(HomeDialogState.DeleteLocation)
+        },
         onAddLocation = onAddLocation,
         onRequestPermission = locationPermissionState::launchMultiplePermissionRequest,
         onOrderChanged = onOrderChanged,

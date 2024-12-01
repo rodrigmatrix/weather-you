@@ -42,9 +42,8 @@ fun WeatherHomeNavHost(
                     navController.navigate(NavigationEntries.ADD_LOCATION_ROUTE)
                 },
                 onPermissionGranted = homeViewModel::updateLocations,
-                onDismissLocationDialogClicked = homeViewModel::hideDeleteLocationDialog,
+                onDialogStateChanged = homeViewModel::onDialogStateChanged,
                 onSwipeRefresh = homeViewModel::loadLocations,
-                onDeleteLocationClicked = homeViewModel::showDeleteLocationDialog,
                 onLocationSelected = homeViewModel::selectLocation,
                 onDeleteLocation = homeViewModel::deleteLocation,
                 onDeleteLocationConfirmButtonClicked = homeViewModel::deleteLocation,

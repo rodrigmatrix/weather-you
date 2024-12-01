@@ -111,6 +111,8 @@ fun TvSettingsScreen(
             onNewUnit = onNewUnit,
             onDismissRequest = onDismissDialog
         )
+
+        SettingsDialogState.BackgroundLocation -> Unit
     }
     Column(
         modifier

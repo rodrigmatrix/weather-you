@@ -22,18 +22,19 @@ class WeatherKitRemoteDataSourceImpl(
         timezone: String,
     ): Flow<WeatherLocation> {
         val locale = Locale.getDefault()
+        val countryCode = countryCode.uppercase().ifEmpty { "US" }
         return flow {
             emit(
                 weatherKitService.getWeather(
                     locale = locale.language + "-" + locale.country,
                     latitude = latitude,
                     longitude = longitude,
-                    countryCode = countryCode.uppercase().ifEmpty { "US" },
+                    countryCode = countryCode,
                     timezone = timezone,
                 )
             )
         }.map { response ->
-            weatherKitRemoteMapper.map(response, latitude, longitude, timezone)
+            weatherKitRemoteMapper.map(response, latitude, longitude, timezone, countryCode)
         }
     }
 

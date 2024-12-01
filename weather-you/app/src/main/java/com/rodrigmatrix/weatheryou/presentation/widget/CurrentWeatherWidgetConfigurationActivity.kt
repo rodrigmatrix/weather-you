@@ -37,8 +37,8 @@ class CurrentWeatherWidgetConfigurationActivity : AppCompatActivity() {
                         val resultValue = Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
                         lifecycleScope.launch {
                             runCatching {
-                                CurrentAnimatedWeatherWidget().updateWeather(widgetId.toString())
-                                CurrentWeatherWidget().updateWeather(widgetId.toString())
+                                CurrentAnimatedWeatherWidget().updateAll(this@CurrentWeatherWidgetConfigurationActivity)
+                                CurrentWeatherWidget().updateAll(this@CurrentWeatherWidgetConfigurationActivity)
                             }
                             setResult(RESULT_OK, resultValue)
                             finish()

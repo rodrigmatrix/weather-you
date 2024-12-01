@@ -35,6 +35,16 @@ class SettingsViewModel(
         }
     }
 
+    fun onDialogStateChanged(state: SettingsDialogState) {
+        setState { it.copy(dialogState = state) }
+    }
+
+    fun onPermissionChanged() {
+        setEffect { SettingsViewEffect.OnPermissionChanged }
+    }
+
+
+
     fun onEditUnit() {
         setState { it.copy(dialogState = SettingsDialogState.UNITS) }
     }
@@ -94,6 +104,18 @@ class SettingsViewModel(
     fun hideDialogs() {
         setState {
             it.copy(dialogState = SettingsDialogState.HIDDEN)
+        }
+    }
+
+    fun updateLocationsState(
+        hasLocationPermission: Boolean,
+        hasBackgroundLocationPermission: Boolean,
+    ) {
+        setState {
+            it.copy(
+                hasLocationPermission = hasLocationPermission,
+                hasBackgroundLocationPermission = hasBackgroundLocationPermission,
+            )
         }
     }
 }

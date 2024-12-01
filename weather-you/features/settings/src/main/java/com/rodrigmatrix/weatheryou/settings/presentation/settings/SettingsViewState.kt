@@ -1,5 +1,6 @@
 package com.rodrigmatrix.weatheryou.settings.presentation.settings
 
+import com.rodrigmatrix.weatheryou.core.viewmodel.ViewState
 import com.rodrigmatrix.weatheryou.domain.model.AppColorPreference
 import com.rodrigmatrix.weatheryou.domain.model.AppSettings
 import com.rodrigmatrix.weatheryou.domain.model.AppThemePreference
@@ -17,10 +18,13 @@ data class SettingsViewState(
         enableThemeColorWithWeatherAnimations = false,
     ),
     val dialogState: SettingsDialogState = SettingsDialogState.HIDDEN,
-): com.rodrigmatrix.weatheryou.core.viewmodel.ViewState
+    val hasBackgroundLocationPermission: Boolean = true,
+    val hasLocationPermission: Boolean = true,
+): ViewState
 
 sealed interface SettingsDialogState {
     data object HIDDEN : SettingsDialogState
     data object UNITS : SettingsDialogState
     data object THEME : SettingsDialogState
+    data object BackgroundLocation : SettingsDialogState
 }

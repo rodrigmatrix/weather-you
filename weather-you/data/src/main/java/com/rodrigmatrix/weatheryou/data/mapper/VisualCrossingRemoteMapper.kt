@@ -56,6 +56,7 @@ class VisualCrossingRemoteMapper(
             minWeekTemperature = source.days?.minOf { it.tempmin ?: 0.0 } ?: 0.0,
             maxWeekTemperature = source.days?.maxOf { it.tempmax ?: 0.0 } ?: 0.0,
             cloudCover = 0.0,
+            countryCode = "",
         )
     }
 

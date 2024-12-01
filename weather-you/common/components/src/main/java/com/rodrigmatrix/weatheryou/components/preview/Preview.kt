@@ -34,6 +34,7 @@ val PreviewWeatherLocation = WeatherLocation(
     minWeekTemperature = 0.0,
     maxWeekTemperature = 0.0,
     cloudCover = 0.0,
+    countryCode = "",
 )
 
 val PreviewWeatherList = listOf(
@@ -67,6 +68,7 @@ val PreviewWeatherList = listOf(
         minWeekTemperature = 0.0,
         maxWeekTemperature = 0.0,
         cloudCover = 0.0,
+        countryCode = "",
     ),
     WeatherLocation(
         id = 0,
@@ -98,6 +100,7 @@ val PreviewWeatherList = listOf(
         minWeekTemperature = 0.0,
         maxWeekTemperature = 0.0,
         cloudCover = 0.0,
+        countryCode = "",
     ),
     WeatherLocation(
         id = 0,
@@ -129,6 +132,7 @@ val PreviewWeatherList = listOf(
         minWeekTemperature = 0.0,
         maxWeekTemperature = 0.0,
         cloudCover = 0.0,
+        countryCode = "",
     ),
     WeatherLocation(
         id = 0,
@@ -160,6 +164,7 @@ val PreviewWeatherList = listOf(
         minWeekTemperature = 0.0,
         maxWeekTemperature = 0.0,
         cloudCover = 0.0,
+        countryCode = "",
     ),
     WeatherLocation(
         id = 0,
@@ -191,6 +196,7 @@ val PreviewWeatherList = listOf(
         minWeekTemperature = 0.0,
         maxWeekTemperature = 0.0,
         cloudCover = 0.0,
+        countryCode = "",
     ),
     WeatherLocation(
         id = 0,
@@ -222,6 +228,7 @@ val PreviewWeatherList = listOf(
         minWeekTemperature = 0.0,
         maxWeekTemperature = 0.0,
         cloudCover = 0.0,
+        countryCode = "",
     ),
     WeatherLocation(
         id = 0,
@@ -253,6 +260,7 @@ val PreviewWeatherList = listOf(
         minWeekTemperature = 0.0,
         maxWeekTemperature = 0.0,
         cloudCover = 0.0,
+        countryCode = "",
     ),
     WeatherLocation(
         id = 0,
@@ -284,6 +292,7 @@ val PreviewWeatherList = listOf(
         minWeekTemperature = 0.0,
         maxWeekTemperature = 0.0,
         cloudCover = 0.0,
+        countryCode = "",
     ),
     WeatherLocation(
         id = 0,
@@ -315,6 +324,7 @@ val PreviewWeatherList = listOf(
         minWeekTemperature = 0.0,
         maxWeekTemperature = 0.0,
         cloudCover = 0.0,
+        countryCode = "",
     )
 )
 

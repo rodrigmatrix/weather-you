@@ -10,7 +10,7 @@ data class HomeUiState(
     val isRefreshingLocations: Boolean = false,
     val locationsList: List<WeatherLocation> = emptyList(),
     val selectedWeatherLocation: WeatherLocation? = null,
-    val deleteLocationDialogVisible: Boolean = false,
+    val dialogState: HomeDialogState = HomeDialogState.Hidden,
     val enableWeatherAnimations: Boolean = false,
     val enableThemeColorWithWeatherAnimations: Boolean = false,
 ): ViewState {
@@ -25,4 +25,10 @@ data class HomeUiState(
                 && permissionState.shouldShowRationale.not()
                 && locationsList.isEmpty()
     }
+}
+
+sealed interface HomeDialogState {
+    object Hidden : HomeDialogState
+    object DeleteLocation : HomeDialogState
+    object BackgroundLocation : HomeDialogState
 }

@@ -7,11 +7,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.glance.GlanceId
 import androidx.glance.GlanceTheme
+import androidx.glance.LocalGlanceId
 import androidx.glance.LocalSize
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
@@ -53,11 +55,12 @@ class CurrentAnimatedWeatherWidget: GlanceAppWidget(), KoinComponent {
 
     private val scope = CoroutineScope(SupervisorJob())
 
-    private var widgetState by mutableStateOf<WidgetState>(WidgetState.Loading)
-
     override suspend fun provideGlance(context: Context, id: GlanceId) {
-        val appWidgetId = GlanceAppWidgetManager(context).getAppWidgetId(id).toString()
         provideContent {
+            val appWidgetId = LocalGlanceId.current.toString().filter { it.isDigit() }.toString()
+            var widgetState by remember {
+                mutableStateOf<WidgetState>(WidgetState.Loading)
+            }
             val size = LocalSize.current
             GlanceTheme {
                 when (widgetState) {
@@ -96,8 +99,19 @@ class CurrentAnimatedWeatherWidget: GlanceAppWidget(), KoinComponent {
                         )
                     }
                 }
+                LaunchedEffect(Unit) {
+                    widgetState = WidgetState.Loading
+                    getWidgetTemperatureUseCase(appWidgetId)
+                        .firstOrNull { weather ->
+                            widgetState = if (weather != null) {
+                                WidgetState.Complete(weather)
+                            } else {
+                                WidgetState.Error
+                            }
+                            return@firstOrNull true
+                        }
+                }
             }
-            LaunchedEffect(size) { updateWeather(appWidgetId) }
         }
     }
 
@@ -106,21 +120,6 @@ class CurrentAnimatedWeatherWidget: GlanceAppWidget(), KoinComponent {
         scope.launch {
             deleteWidgetLocationUseCase(widgetId).firstOrNull()
             super.onDelete(context, glanceId)
-        }
-    }
-
-    fun updateWeather(appWidgetId: String) {
-        scope.launch {
-            widgetState = WidgetState.Loading
-            getWidgetTemperatureUseCase(appWidgetId)
-                .firstOrNull { weather ->
-                    widgetState = if (weather != null) {
-                        WidgetState.Complete(weather)
-                    } else {
-                        WidgetState.Error
-                    }
-                    return@firstOrNull true
-                }
         }
     }
 

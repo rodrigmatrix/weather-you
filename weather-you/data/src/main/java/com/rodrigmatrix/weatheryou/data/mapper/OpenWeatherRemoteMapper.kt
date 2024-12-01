@@ -48,6 +48,7 @@ class OpenWeatherRemoteMapper(
             minWeekTemperature = daysList.minOf { it.minTemperature },
             maxWeekTemperature = daysList.maxOf { it.maxTemperature },
             cloudCover = 0.0,
+            countryCode = "",
         )
     }
 

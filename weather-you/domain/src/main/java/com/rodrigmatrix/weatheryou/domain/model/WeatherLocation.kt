@@ -33,7 +33,7 @@ data class WeatherLocation(
     val pressure: Double,
     val days: List<WeatherDay> = emptyList(),
     val hours: List<WeatherHour> = emptyList(),
-    val countryCode: String = "",
+    val countryCode: String,
     val minWeekTemperature: Double,
     val maxWeekTemperature: Double,
 )

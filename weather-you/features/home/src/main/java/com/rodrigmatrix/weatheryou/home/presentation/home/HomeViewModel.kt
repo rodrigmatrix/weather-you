@@ -64,7 +64,7 @@ class HomeViewModel(
                 .catch { exception ->
                     exception.handleError()
                 }
-                .onStart { setState { it.copy(isLoading = it.locationsList.isEmpty()) } }
+                .onStart { setState { it.copy(isLoading = true) } }
                 .collect { weatherLocationsList ->
                     setState {
                         if (weatherLocationsList.size >= 2) {
@@ -90,10 +90,20 @@ class HomeViewModel(
                 updateLocationsUseCase()
                     .flowOn(coroutineDispatcher)
                     .catch {
-                        setState { it.copy(isRefreshingLocations = false) }
+                        setState {
+                            it.copy(
+                                isRefreshingLocations = false,
+                                isLoading = false,
+                            )
+                        }
                     }
                     .firstOrNull().let {
-                        setState { it.copy(isRefreshingLocations = false) }
+                        setState {
+                            it.copy(
+                                isLoading = false,
+                                isRefreshingLocations = false
+                            )
+                        }
                         setEffect { HomeViewEffect.UpdateWidgets }
                     }
                 delay(FIVE_MINUTES_MILLI)
@@ -107,12 +117,8 @@ class HomeViewModel(
         }
     }
 
-    fun showDeleteLocationDialog() {
-        setState { it.copy(deleteLocationDialogVisible = true) }
-    }
-
-    fun hideDeleteLocationDialog() {
-        setState { it.copy(deleteLocationDialogVisible = false) }
+    fun onDialogStateChanged(dialogState: HomeDialogState) {
+        setState { it.copy(dialogState = dialogState) }
     }
 
     fun deleteLocation() {
@@ -132,7 +138,7 @@ class HomeViewModel(
 
     fun deleteLocation(location: WeatherLocation) {
         viewModelScope.launch {
-            hideDeleteLocationDialog()
+            onDialogStateChanged(HomeDialogState.Hidden)
             deleteLocationUseCase(location)
                 .flowOn(coroutineDispatcher)
                 .onStart { setState { it.copy(isLoading = true) } }
