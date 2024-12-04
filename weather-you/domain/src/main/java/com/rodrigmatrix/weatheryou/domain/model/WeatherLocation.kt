@@ -4,6 +4,8 @@ import org.joda.time.DateTime
 
 data class WeatherLocation(
     val id: Int,
+    val widgetId: String = "",
+    val orderIndex: Int = 0,
     val name: String,
     val latitude: Double,
     val longitude: Double,
@@ -14,6 +16,9 @@ data class WeatherLocation(
     val lowestTemperature: Double,
     val feelsLike: Double,
     val currentTime: DateTime,
+    val isDaylight: Boolean = false,
+    val expirationDate: DateTime,
+    val cloudCover: Double,
     val timeZone: String,
     val precipitationProbability: Double,
     val precipitationType: String,
@@ -28,5 +33,7 @@ data class WeatherLocation(
     val pressure: Double,
     val days: List<WeatherDay> = emptyList(),
     val hours: List<WeatherHour> = emptyList(),
-    val unit: TemperaturePreference,
+    val countryCode: String,
+    val minWeekTemperature: Double,
+    val maxWeekTemperature: Double,
 )

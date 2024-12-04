@@ -25,6 +25,8 @@ import com.rodrigmatrix.weatheryou.components.R
 import com.rodrigmatrix.weatheryou.components.WeatherIcon
 import com.rodrigmatrix.weatheryou.components.extensions.getString
 import com.rodrigmatrix.weatheryou.components.preview.PreviewWeatherLocation
+import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme.weatherTextColor
+import com.rodrigmatrix.weatheryou.core.extensions.getHourWithMinutesString
 import com.rodrigmatrix.weatheryou.core.extensions.getTimeZoneHourAndMinutes
 import com.rodrigmatrix.weatheryou.core.extensions.percentageString
 import com.rodrigmatrix.weatheryou.core.extensions.temperatureString
@@ -50,7 +52,7 @@ fun CurrentWeatherContent(
                         R.string.day_x,
                         weatherLocation.maxTemperature.temperatureString()
                     ) + " ",
-                    color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                    color = WeatherYouTheme.colorScheme.weatherTextColor,
                     style = WeatherYouTheme.typography.titleSmall
                 )
                 Text(
@@ -58,7 +60,7 @@ fun CurrentWeatherContent(
                         R.string.night_x,
                         weatherLocation.lowestTemperature.temperatureString()
                     ),
-                    color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                    color = WeatherYouTheme.colorScheme.weatherTextColor,
                     style = WeatherYouTheme.typography.titleSmall
                 )
             }
@@ -81,17 +83,19 @@ fun CurrentWeatherContent(
                     text = weatherLocation.name,
                     style = WeatherYouTheme.typography.titleMedium,
                     maxLines = 2,
-                    color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                    color = WeatherYouTheme.colorScheme.weatherTextColor,
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = weatherLocation.timeZone.getTimeZoneHourAndMinutes(context),
-                    color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                    text = weatherLocation.timeZone.getTimeZoneHourAndMinutes(context).ifEmpty {
+                        weatherLocation.currentTime.getHourWithMinutesString(context)
+                    },
+                    color = WeatherYouTheme.colorScheme.weatherTextColor,
                     style = WeatherYouTheme.typography.titleSmall
                 )
                 Text(
                     text = weatherLocation.currentWeather.temperatureString(),
-                    color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                    color = WeatherYouTheme.colorScheme.weatherTextColor,
                     style = WeatherYouTheme.typography.headlineLarge,
                     fontSize = 80.sp
                 )
@@ -100,7 +104,7 @@ fun CurrentWeatherContent(
                         R.string.feels_like_x,
                         weatherLocation.feelsLike.temperatureString()
                     ),
-                    color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                    color = WeatherYouTheme.colorScheme.weatherTextColor,
                     style = WeatherYouTheme.typography.titleSmall
                 )
                 if (weatherLocation.precipitationType.isNotEmpty()) {
@@ -109,7 +113,7 @@ fun CurrentWeatherContent(
                             R.string.chance_of_precipitation,
                             weatherLocation.precipitationProbability.percentageString()
                         ),
-                        color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                        color = WeatherYouTheme.colorScheme.weatherTextColor,
                         style = WeatherYouTheme.typography.titleSmall
                     )
                 }
@@ -121,15 +125,16 @@ fun CurrentWeatherContent(
                 ) {
                     WeatherIcon(
                         weatherCondition = weatherLocation.currentCondition,
+                        isDaylight = weatherLocation.isDaylight,
                         modifier = Modifier
                             .padding(bottom = 10.dp)
                             .size(100.dp)
                     )
                     Text(
-                        text = stringResource(id = weatherLocation.currentCondition.getString()),
+                        text = stringResource(id = weatherLocation.currentCondition.getString(weatherLocation.isDaylight)),
                         style = WeatherYouTheme.typography.titleSmall,
                         maxLines = 2,
-                        color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                        color = WeatherYouTheme.colorScheme.weatherTextColor,
                         overflow = TextOverflow.Ellipsis
                     )
                 }

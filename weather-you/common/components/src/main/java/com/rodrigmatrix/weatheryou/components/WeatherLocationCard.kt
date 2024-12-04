@@ -19,6 +19,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme.weatherTextColor
+import com.rodrigmatrix.weatheryou.core.extensions.getHourWithMinutesString
 import com.rodrigmatrix.weatheryou.core.extensions.getTimeZoneHourAndMinutes
 import com.rodrigmatrix.weatheryou.core.extensions.temperatureString
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
@@ -26,6 +28,7 @@ import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 @Composable
 fun WeatherLocationCardContent(
     weatherLocation: WeatherLocation,
+    isRefreshingLocations: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
@@ -37,21 +40,27 @@ fun WeatherLocationCardContent(
     ) {
         Column(Modifier.weight(1f)) {
             Text(
-                text = weatherLocation.currentWeather.temperatureString(),
+                text = if (isRefreshingLocations) {
+                    "-----"
+                } else {
+                    weatherLocation.currentWeather.temperatureString()
+                },
                 style = WeatherYouTheme.typography.headlineLarge,
-                color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                color = WeatherYouTheme.colorScheme.weatherTextColor,
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp)
             )
             Text(
-                text = weatherLocation.timeZone.getTimeZoneHourAndMinutes(context),
+                text = weatherLocation.timeZone.getTimeZoneHourAndMinutes(context).ifEmpty {
+                    weatherLocation.currentTime.getHourWithMinutesString(context)
+                },
                 style = WeatherYouTheme.typography.bodyMedium,
-                color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                color = WeatherYouTheme.colorScheme.weatherTextColor,
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp)
             )
             Text(
                 text = weatherLocation.name,
                 style = WeatherYouTheme.typography.headlineMedium,
-                color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                color = WeatherYouTheme.colorScheme.weatherTextColor,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp)
@@ -64,6 +73,7 @@ fun WeatherLocationCardContent(
         ) {
             WeatherIcon(
                 weatherCondition = weatherLocation.currentCondition,
+                isDaylight = weatherLocation.isDaylight,
                 modifier = Modifier
                     .size(64.dp)
                     .align(Alignment.Center)

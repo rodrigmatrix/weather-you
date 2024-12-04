@@ -23,6 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.components.R
 import androidx.constraintlayout.compose.ConstraintLayout
+import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme.weatherTextColor
 import com.rodrigmatrix.weatheryou.locationdetails.presentaion.color.level_10_uv_index_color
 import com.rodrigmatrix.weatheryou.locationdetails.presentaion.color.level_1_uv_index_color
 import com.rodrigmatrix.weatheryou.locationdetails.presentaion.color.level_2_uv_index_color
@@ -57,30 +58,30 @@ fun UvIndexCardContent(
                 Icon(
                     painter = painterResource(com.rodrigmatrix.weatheryou.weathericons.R.drawable.ic_sunny),
                     contentDescription = stringResource(R.string.uv_index),
-                    tint = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                    tint = WeatherYouTheme.colorScheme.weatherTextColor,
                     modifier = Modifier.padding(end = 4.dp)
                 )
                 Text(
                     text = stringResource(R.string.uv_index),
-                    color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                    color = WeatherYouTheme.colorScheme.weatherTextColor,
                     style = WeatherYouTheme.typography.titleMedium,
                 )
             }
             Text(
                 text = uvIndex.toInt().toString(),
-                color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                color = WeatherYouTheme.colorScheme.weatherTextColor,
                 style = WeatherYouTheme.typography.titleMedium
             )
             Text(
                 text = stringResource(uvIndex.toInt().uvIndexStringRes()),
-                color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                color = WeatherYouTheme.colorScheme.weatherTextColor,
                 style = WeatherYouTheme.typography.titleMedium
             )
         }
         UvIndexBar(uvIndex)
         Text(
             text = stringResource(uvIndex.toInt().uvIndexAlertStringRes()),
-            color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+            color = WeatherYouTheme.colorScheme.weatherTextColor,
             style = WeatherYouTheme.typography.bodyMedium
         )
     }

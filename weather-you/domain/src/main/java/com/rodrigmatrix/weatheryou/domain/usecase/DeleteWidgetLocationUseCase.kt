@@ -7,7 +7,7 @@ class DeleteWidgetLocationUseCase(
     private val weatherRepository: WeatherRepository,
 ) {
 
-    operator fun invoke(): Flow<Unit> {
-        return weatherRepository.deleteWidgetWeather()
+    operator fun invoke(widgetId: String): Flow<Unit> {
+        return weatherRepository.deleteWidgetWeather(widgetId)
     }
 }

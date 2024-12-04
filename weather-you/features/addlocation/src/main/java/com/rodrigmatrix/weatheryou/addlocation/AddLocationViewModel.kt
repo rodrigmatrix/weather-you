@@ -1,6 +1,6 @@
 package com.rodrigmatrix.weatheryou.addlocation
 
-import android.content.Context
+import android.app.Activity
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.rodrigmatrix.weatheryou.core.viewmodel.ViewModel
@@ -9,6 +9,7 @@ import com.rodrigmatrix.weatheryou.domain.usecase.GetFamousLocationsUseCase
 import com.rodrigmatrix.weatheryou.domain.usecase.SearchLocationUseCase
 import com.rodrigmatrix.weatheryou.addlocation.AddLocationViewEffect.LocationAdded
 import com.rodrigmatrix.weatheryou.addlocation.AddLocationViewEffect.ShowError
+import com.rodrigmatrix.weatheryou.ads.manager.AdsManager
 import com.rodrigmatrix.weatheryou.domain.exception.LocationLimitException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -26,60 +27,66 @@ class AddLocationViewModel(
     private val getFamousLocationsUseCase: GetFamousLocationsUseCase,
     private val searchLocationUseCase: SearchLocationUseCase,
     private val firebaseCrashlytics: FirebaseCrashlytics,
+    private val adsManager: AdsManager,
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ): ViewModel<AddLocationViewState, AddLocationViewEffect>(AddLocationViewState()) {
 
-    private val querySearch = Channel<String>()
-
     init {
         getFamousLocations()
-        viewModelScope.launch {
-            querySearch
-                .receiveAsFlow()
-                .debounce(400L)
-                .collect { query ->
-                    searchLocationUseCase(query)
-                        .flowOn(coroutineDispatcher)
-                        .catch { exception ->
-                            exception.logError()
-                        }
-                        .collect { locations ->
-                            setState { it.copy(locationsList = locations, isLoading = false) }
-                        }
-            }
-        }
     }
 
-    fun addLocation(location: SearchAutocompleteLocation?) {
-        viewModelScope.launch {
-            if (location != null) {
-                addLocationUseCase(
-                    location.name,
-                    location.lat,
-                    location.long,
-                ).flowOn(coroutineDispatcher)
-                    .onStart { setState { it.copy(isLoading = true) } }
-                    .catch { exception ->
-                        exception.handleError()
+    fun addLocation(
+        location: SearchAutocompleteLocation?,
+        activity: Activity,
+        showAds: Boolean = true,
+    ) {
+        setState { it.copy(isLoading = true) }
+        adsManager.showRewardedInterstitial(
+            activity = activity,
+            showAd = showAds,
+            flagId = "location_added_rewarded_interstitial_ad_id",
+            onRewardGranted = {
+                viewModelScope.launch {
+                    if (location != null) {
+                        addLocationUseCase(
+                            location.name,
+                            location.lat,
+                            location.long,
+                            location.countryCode,
+                        ).flowOn(coroutineDispatcher)
+                            .onStart { setState { it.copy(isLoading = true) } }
+                            .catch { exception ->
+                                exception.handleError()
+                            }
+                            .collect { setEffect { LocationAdded } }
                     }
-                    .collect { setEffect { LocationAdded } }
+                }
             }
-        }
+        )
     }
 
-    fun addFamousLocation(city: City, context: Context) {
-        viewModelScope.launch {
-            addLocationUseCase(
-                context.getString(city.name),
-                city.lat,
-                city.long,
-            ).flowOn(coroutineDispatcher)
-                .onStart { setState { it.copy(isLoading = true) } }
-                .catch { exception ->
-                    exception.handleError()
+    fun addFamousLocation(city: City, activity: Activity, showAds: Boolean = true) {
+        setState { it.copy(isLoading = true) }
+        adsManager.showRewardedInterstitial(
+            activity = activity,
+            showAd = showAds,
+            flagId = "location_added_rewarded_interstitial_ad_id",
+            onRewardGranted = {
+                viewModelScope.launch {
+                    addLocationUseCase(
+                        activity.getString(city.name),
+                        city.lat,
+                        city.long,
+                        city.countryCode,
+                    ).flowOn(coroutineDispatcher)
+                        .onStart { setState { it.copy(isLoading = true) } }
+                        .catch { exception ->
+                            exception.handleError()
+                        }
+                        .collect { setEffect { LocationAdded } }
                 }
-                .collect { setEffect { LocationAdded } }
-        }
+            }
+        )
     }
 
     private fun getFamousLocations() {
@@ -95,9 +102,41 @@ class AddLocationViewModel(
         }
     }
 
-    fun onSearch(searchText: String) {
-        setState { it.copy(searchText = searchText, isLoading = true) }
-        querySearch.trySend(searchText)
+    fun onQueryChanged(searchText: String) {
+        setState {
+            it.copy(
+                searchText = searchText,
+                isLoading = false,
+                showKeepTyping = searchText.length < 3 && searchText.isNotEmpty(),
+                showClickToSearch = searchText.length >= 3,
+                showEmptyState = false,
+            )
+        }
+    }
+
+    fun search() {
+        viewModelScope.launch {
+            searchLocationUseCase(viewState.value.searchText)
+                .flowOn(coroutineDispatcher)
+                .onStart {
+                    setState {
+                        it.copy(isLoading = true)
+                    }
+                }
+                .catch { exception ->
+                    exception.logError()
+                }
+                .collect { locations ->
+                    setState {
+                        it.copy(
+                            locationsList = locations,
+                            showEmptyState = locations.isEmpty(),
+                            showClickToSearch = false,
+                            isLoading = false,
+                        )
+                    }
+                }
+        }
     }
 
     private fun Throwable.handleError() {

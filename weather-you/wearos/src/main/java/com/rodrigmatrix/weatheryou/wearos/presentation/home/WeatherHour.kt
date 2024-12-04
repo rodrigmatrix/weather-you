@@ -24,15 +24,16 @@ fun WeatherHour(weatherHour: WeatherHour) {
     ) {
         Text(
             text = weatherHour.dateTime.getHourString(context),
-            style = WeatherYouTheme.typography.caption2
+            style = MaterialTheme.typography.caption2
         )
         WeatherIcon(
-            weatherIcons = weatherHour.weatherIcons,
+            weatherCondition = weatherHour.weatherCondition,
+            isDaylight = weatherHour.isDaylight,
             modifier = Modifier.size(18.dp)
         )
         Text(
             text = weatherHour.temperature.temperatureString(),
-            style = WeatherYouTheme.typography.caption2
+            style = MaterialTheme.typography.caption2
         )
     }
 }

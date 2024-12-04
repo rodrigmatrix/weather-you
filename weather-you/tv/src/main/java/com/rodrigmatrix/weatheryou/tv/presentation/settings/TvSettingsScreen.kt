@@ -4,6 +4,8 @@ import android.content.res.Configuration
 import android.view.Gravity
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,6 +20,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -29,6 +33,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -42,15 +47,19 @@ import androidx.tv.material3.RadioButton
 import androidx.tv.material3.RadioButtonDefaults
 import androidx.tv.material3.Surface
 import androidx.tv.material3.SurfaceDefaults
+import androidx.tv.material3.Switch
+import androidx.tv.material3.SwitchDefaults
 import androidx.tv.material3.Text
 import com.rodrigmatrix.weatheryou.components.R
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.settings.presentation.settings.SettingsDialogState
 import com.rodrigmatrix.weatheryou.settings.presentation.settings.SettingsViewModel
 import com.rodrigmatrix.weatheryou.settings.presentation.settings.SettingsViewState
+import com.rodrigmatrix.weatheryou.settings.presentation.settings.component.SwitchWithDescription
 import com.rodrigmatrix.weatheryou.settings.presentation.settings.model.AppColorPreferenceOption
 import com.rodrigmatrix.weatheryou.settings.presentation.settings.model.AppThemePreferenceOption
 import com.rodrigmatrix.weatheryou.settings.presentation.settings.model.TemperaturePreferenceOption
+import com.rodrigmatrix.weatheryou.settings.presentation.settings.model.toOption
 import com.rodrigmatrix.weatheryou.tv.presentation.theme.WeatherYouTvTheme
 import org.koin.androidx.compose.getViewModel
 
@@ -70,6 +79,7 @@ fun TvSettingsScreen(
         onEditUnits = viewmodel::onEditUnit,
         onEditTheme = viewmodel::onEditTheme,
         onDismissDialog = viewmodel::hideDialogs,
+        onWeatherAnimationsChange = viewmodel::onWeatherAnimationsChange,
         modifier = modifier,
     )
 }
@@ -81,6 +91,7 @@ fun TvSettingsScreen(
     onColorChange: (AppColorPreferenceOption) -> Unit,
     onNewUnit: (TemperaturePreferenceOption) -> Unit,
     onThemeModeChange: (AppThemePreferenceOption) -> Unit,
+    onWeatherAnimationsChange: (Boolean) -> Unit,
     onEditUnits: () -> Unit,
     onEditTheme: () -> Unit,
     onDismissDialog: () -> Unit,
@@ -89,17 +100,19 @@ fun TvSettingsScreen(
     when (viewState.dialogState) {
         SettingsDialogState.HIDDEN -> Unit
         SettingsDialogState.THEME -> TvThemeAndColorModeSelector(
-            themeMode = viewState.selectedAppTheme.option,
-            colorMode = viewState.selectedColor.option,
+            themeMode = viewState.appSettings.appThemePreference.toOption().option,
+            colorMode = viewState.appSettings.appColorPreference.toOption().option,
             onClose = onClose,
             onColorChange = onColorChange,
             onThemeModeChange = onThemeModeChange,
         )
         SettingsDialogState.UNITS -> UnitsDialog(
-            selected = viewState.selectedTemperature,
+            selected = viewState.appSettings.temperaturePreference.toOption(),
             onNewUnit = onNewUnit,
             onDismissRequest = onDismissDialog
         )
+
+        SettingsDialogState.BackgroundLocation -> Unit
     }
     Column(
         modifier
@@ -112,7 +125,7 @@ fun TvSettingsScreen(
         Spacer(Modifier.height(10.dp))
         SettingWithOption(
             title = stringResource(R.string.units),
-            selected = stringResource(viewState.selectedTemperature.title),
+            selected = stringResource(viewState.appSettings.temperaturePreference.toOption().title),
             onClick = onEditUnits,
             icon = com.rodrigmatrix.weatheryou.settings.R.drawable.ic_square_foot,
             modifier = Modifier
@@ -123,14 +136,65 @@ fun TvSettingsScreen(
         SettingWithOption(
             title = stringResource(R.string.theme_and_color_mode),
             selected = stringResource(R.string.app_theme) + ": " +
-                    stringResource(viewState.selectedAppTheme.title) + " " +
+                    stringResource(viewState.appSettings.appThemePreference.toOption().title) + " " +
                     stringResource(R.string.color_mode) + ": " +
-                    stringResource(viewState.selectedColor.title),
+                    stringResource(viewState.appSettings.appColorPreference.toOption().title),
             icon = com.rodrigmatrix.weatheryou.settings.R.drawable.ic_palette,
             onClick = onEditTheme,
             modifier = Modifier
         )
+//        Spacer(Modifier.height(10.dp))
+//        TvSwitchWithDescription(
+//            checked = viewState.appSettings.enableWeatherAnimations,
+//            description = stringResource(R.string.enable_weather_animations),
+//            onCheckedChange = { onWeatherAnimationsChange(!viewState.appSettings.enableWeatherAnimations) },
+//            modifier = Modifier.padding(horizontal = 16.dp)
+//        )
     }
+}
+
+
+@Composable
+fun TvSwitchWithDescription(
+    checked: Boolean,
+    description: String,
+    onCheckedChange: ((Boolean) -> Unit),
+    modifier: Modifier = Modifier
+) {
+    ListItem(
+        selected = false,
+        onClick = {
+            onCheckedChange(checked.not())
+        },
+        headlineContent = {
+            Text(
+                text = description,
+                style = MaterialTheme.typography.titleMedium,
+                textAlign = TextAlign.Start,
+                modifier = Modifier.padding(end = 16.dp)
+            )
+        },
+        trailingContent = {
+            val icon: (@Composable () -> Unit)? = if (checked) {
+                {
+                    Icon(
+                        imageVector = Icons.Filled.Check,
+                        contentDescription = null,
+                        modifier = Modifier.size(SwitchDefaults.IconSize),
+                    )
+                }
+            } else {
+                null
+            }
+            Switch(
+                checked = checked,
+                onCheckedChange = onCheckedChange,
+                thumbContent = icon,
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp)
+            )
+        },
+        modifier = modifier,
+    )
 }
 
 @Composable

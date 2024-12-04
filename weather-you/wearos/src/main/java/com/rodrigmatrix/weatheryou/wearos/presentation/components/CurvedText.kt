@@ -8,9 +8,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.TextStyle
-import androidx.wear.compose.foundation.CurvedRow
 import androidx.wear.compose.foundation.CurvedTextStyle
-import androidx.wear.compose.material.CurvedText
 import androidx.wear.compose.material.LocalTextStyle
 import androidx.wear.compose.material.Text
 
@@ -22,12 +20,10 @@ fun CurvedText(
 ) {
     val isRoundDevice = LocalConfiguration.current.isScreenRound
     if (isRoundDevice) {
-        CurvedRow(modifier) {
-            CurvedText(
-                text = text,
-                style = CurvedTextStyle(style)
-            )
-        }
+//        Text(
+//            text = text,
+//            style = CurvedTextStyle(style)
+//        )
     } else {
         Row(
             modifier = modifier.fillMaxSize(),

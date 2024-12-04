@@ -8,7 +8,12 @@ class FetchLocationUseCase(
     private val weatherRepository: WeatherRepository
 ) {
 
-    operator fun invoke(latitude: Double, longitude: Double): Flow<WeatherLocation> {
-        return weatherRepository.fetchLocation(latitude, longitude)
+    operator fun invoke(
+        latitude: Double,
+        longitude: Double,
+        countryCode: String,
+        timezone: String,
+    ): Flow<WeatherLocation> {
+        return weatherRepository.fetchLocation(latitude, longitude, countryCode, timezone)
     }
 }

@@ -8,7 +8,7 @@ class SetWidgetLocationUseCase(
     private val weatherRepository: WeatherRepository,
 ) {
 
-    operator fun invoke(weatherLocation: WeatherLocation): Flow<Unit> {
-        return weatherRepository.setSavedLocation(weatherLocation)
+    operator fun invoke(weatherLocation: WeatherLocation, widgetId: String): Flow<Unit> {
+        return weatherRepository.setSavedLocation(weatherLocation, widgetId)
     }
 }

@@ -10,4 +10,6 @@ interface SearchRepository {
     fun searchLocation(locationName: String): Flow<List<SearchAutocompleteLocation>>
 
     fun getFamousCities(): Flow<List<City>>
+
+    fun getTimezone(lat: Double, long: Double): Flow<String>
 }

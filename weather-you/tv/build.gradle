@@ -4,6 +4,7 @@ plugins {
     id 'com.google.gms.google-services'
     id 'kotlinx-serialization'
     id 'com.google.firebase.crashlytics'
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
@@ -15,7 +16,7 @@ android {
         minSdk Sdk.tvMinSdk
         targetSdk Sdk.targetSdk
         versionCode Sdk.versionCode
-        versionName "2.0"
+        versionName "3.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -69,6 +70,8 @@ dependencies {
     implementation project(LocalModules.domain)
     implementation project(LocalModules.data)
     implementation project(LocalModules.core)
+    implementation project(LocalModules.ads)
+    implementation(libs.androidx.browser)
 
     implementation project(LocalModules.components)
     implementation project(LocalModules.locationDetails)

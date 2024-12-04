@@ -68,13 +68,12 @@ fun ThemeAndColorModeSelector(
     onClose: () -> Unit,
     onColorChange: (AppColorPreferenceOption) -> Unit,
     onThemeModeChange: (AppThemePreferenceOption) -> Unit,
-    navigationType: ScreenNavigationType,
     modifier: Modifier = Modifier,
 ) {
     Dialog(
         onDismissRequest = onClose,
     ) {
-        if (navigationType == ScreenNavigationType.NAVIGATION_RAIL) {
+        if (true) {
             val dialogWindowProvider = LocalView.current.parent as DialogWindowProvider
             dialogWindowProvider.window.setGravity(Gravity.END)
         }
@@ -154,7 +153,7 @@ fun ThemeAndColorModeSelector(
                                                     selectedColor = WeatherYouTheme.colorScheme.primary,
                                                     unselectedColor = WeatherYouTheme.colorScheme.secondary,
                                                 ),
-                                                onClick = { },
+                                                onClick = { onThemeModeChange(it) },
                                             )
                                         }
                                     }
@@ -228,7 +227,7 @@ fun ThemeAndColorModeSelector(
                                                     selectedColor = it.colorScheme().primaryContainer,
                                                     unselectedColor = it.colorScheme().primaryContainer
                                                 ),
-                                                onClick = { },
+                                                onClick = { onColorChange(it) },
                                             )
                                         }
                                     }
@@ -302,7 +301,6 @@ private fun ThemeAndColorModeSelectorLightPreview() {
             onClose = {},
             onColorChange = {},
             onThemeModeChange = { },
-            navigationType = ScreenNavigationType.BOTTOM_NAVIGATION,
         )
     }
 }
@@ -320,7 +318,6 @@ private fun ThemeAndColorModeSelectorDarkPreview() {
             onClose = {},
             onColorChange = {},
             onThemeModeChange = { },
-            navigationType = ScreenNavigationType.BOTTOM_NAVIGATION,
         )
     }
 }

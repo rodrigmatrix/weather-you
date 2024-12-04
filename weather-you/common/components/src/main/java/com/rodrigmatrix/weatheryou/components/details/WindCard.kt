@@ -37,6 +37,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.components.R
+import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme.weatherTextColor
 import com.rodrigmatrix.weatheryou.core.extensions.speedString
 import com.rodrigmatrix.weatheryou.domain.model.TemperaturePreference
 import java.lang.Math.PI
@@ -47,7 +48,6 @@ import kotlin.math.sin
 fun WindCardContent(
     windSpeed: Double,
     windDirection: Double,
-    unit: TemperaturePreference,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -67,19 +67,19 @@ fun WindCardContent(
                 Icon(
                     painter = painterResource(com.rodrigmatrix.weatheryou.weathericons.R.drawable.ic_air),
                     contentDescription = stringResource(R.string.wind),
-                    tint = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                    tint = WeatherYouTheme.colorScheme.weatherTextColor,
                     modifier = Modifier.padding(end = 4.dp)
                 )
                 Text(
                     text = stringResource(R.string.wind),
-                    color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                    color = WeatherYouTheme.colorScheme.weatherTextColor,
                     style = WeatherYouTheme.typography.titleMedium,
                 )
             }
             Text(
-                text = windSpeed.speedString(unit),
+                text = windSpeed.speedString(),
                 style = WeatherYouTheme.typography.titleLarge,
-                color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+                color = WeatherYouTheme.colorScheme.weatherTextColor,
                 modifier = Modifier
             )
         }
@@ -196,7 +196,6 @@ fun WindCardPreview() {
         WindCardContent(
             windSpeed = 10.0,
             windDirection = 251.0,
-            unit = TemperaturePreference.METRIC,
         )
     }
 }

@@ -14,4 +14,5 @@
     <string name="very_high">Very High</string>
     <string name="uv_index">UV Index</string>
     <string name="no_internet_connect">No internet connection available</string>
+    <string name="day_weather_complication_label">Day Weather</string>
 </resources>

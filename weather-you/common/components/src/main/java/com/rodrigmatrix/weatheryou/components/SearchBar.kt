@@ -19,7 +19,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.key.*
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.PlatformImeOptions
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
@@ -30,10 +32,15 @@ fun SearchBar(
     onQueryChange: (String) -> Unit,
     onSearchFocusChange: (Boolean) -> Unit,
     onClearQuery: () -> Unit,
+    onSearchButtonClicked: () -> Unit,
     searching: Boolean,
     modifier: Modifier = Modifier,
     showBackButton: Boolean = true,
-    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions(
+        onSearch = {
+            onSearchButtonClicked()
+        },
+    ),
 ) {
     Surface(
         color = WeatherYouTheme.colorScheme.secondaryContainer,
@@ -91,7 +98,10 @@ fun SearchBar(
                     onValueChange = onQueryChange,
                     textStyle = WeatherYouTheme.typography.bodyMedium
                         .copy(color = WeatherYouTheme.colorScheme.onSurface),
-                    keyboardOptions = KeyboardOptions(KeyboardCapitalization.Words),
+                    keyboardOptions = KeyboardOptions(
+                        capitalization = KeyboardCapitalization.Words,
+                        imeAction = ImeAction.Search,
+                    ),
                     keyboardActions = keyboardActions,
                     cursorBrush = SolidColor(WeatherYouTheme.colorScheme.onSurface),
                     singleLine = true,
@@ -104,6 +114,14 @@ fun SearchBar(
                             .padding(horizontal = 6.dp)
                             .size(36.dp)
                     )
+                } else if (query.isNotEmpty()) {
+                    IconButton(onClick = onSearchButtonClicked) {
+                        Icon(
+                            imageVector =  Icons.Outlined.Search,
+                            tint = WeatherYouTheme.colorScheme.primary,
+                            contentDescription = stringResource(R.string.label_search)
+                        )
+                    }
                 } else {
                     Spacer(Modifier.width(IconSize))
                 }
@@ -141,6 +159,7 @@ fun SearchBarPreview() {
         onQueryChange = { },
         onSearchFocusChange = { },
         onClearQuery = { },
+        onSearchButtonClicked = { },
         searching = false
     )
 }

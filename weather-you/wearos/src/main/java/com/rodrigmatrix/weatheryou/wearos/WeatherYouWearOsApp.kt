@@ -4,6 +4,7 @@ import android.app.Application
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
+import com.rodrigmatrix.weatheryou.data.BuildConfig
 import com.rodrigmatrix.weatheryou.data.di.WeatherYouDataModules
 import com.rodrigmatrix.weatheryou.wearos.di.WeatherYouWatchModules
 import org.koin.android.ext.koin.androidContext

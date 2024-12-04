@@ -14,9 +14,12 @@ class OpenWeatherRemoteMapper(
     private val weatherConditionMapper: OpenWeatherConditionMapper
 ) {
 
-    fun map(source: OpenWeatherLocationResponse, unit: TemperaturePreference): WeatherLocation {
+    fun map(source: OpenWeatherLocationResponse): WeatherLocation {
+        val daysList = source.daily?.mapDaysList(source.timezone).orEmpty()
         return WeatherLocation(
             id = 0,
+            widgetId = "",
+            orderIndex = 0,
             name = source.name.orEmpty().split(",").dropLast(1).joinToString(),
             latitude = source.lat ?: 0.0,
             longitude = source.lon ?: 0.0,
@@ -39,15 +42,18 @@ class OpenWeatherRemoteMapper(
             sunset = source.current?.sunset.toDateTime(source.timezone),
             visibility = (source.current?.visibility ?: 0.0) / 1000.0,
             pressure = source.current?.pressure?.toDouble() ?: 0.0,
-            days = source.daily?.mapDaysList(source.timezone, unit).orEmpty(),
+            days = daysList,
             hours = source.getTodayHoursList(source.timezone),
-            unit = unit,
+            expirationDate = source.current?.datetime.toDateTime(source.timezone),
+            minWeekTemperature = daysList.minOf { it.minTemperature },
+            maxWeekTemperature = daysList.maxOf { it.maxTemperature },
+            cloudCover = 0.0,
+            countryCode = "",
         )
     }
 
     private fun List<OpenWeatherDaily>.mapDaysList(
         timeZone: String?,
-        unit: TemperaturePreference,
     ): List<WeatherDay> {
         return this.map {
             WeatherDay(
@@ -63,7 +69,6 @@ class OpenWeatherRemoteMapper(
                 sunrise = it.sunrise.toDateTime(timeZone),
                 sunset = it.sunset.toDateTime(timeZone),
                 hours = emptyList(),
-                unit = unit,
             )
         }
     }
@@ -75,7 +80,16 @@ class OpenWeatherRemoteMapper(
                 weatherCondition = weatherConditionMapper.map(it.weather?.first()?.description),
                 temperature = it.temp ?: 0.0,
                 precipitationProbability = it.pop.calculatePrecipitation(),
-                precipitationType = it.weather?.firstOrNull()?.main.orEmpty()
+                precipitationType = it.weather?.firstOrNull()?.main.orEmpty(),
+                cloudCover = it.clouds?.toDouble() ?: 0.0,
+                feelsLike = it.feelsLike ?: 0.0,
+                humidity = it.humidity ?: 0.0,
+                visibility = it.visibility?.toDouble() ?: 0.0,
+                windSpeed = it.windSpeed ?: 0.0,
+                windDirection = it.windDeg ?: 0,
+                uvIndex = it.uvi ?: 0.0,
+                snowfallIntensity = 0.0,
+                precipitationAmount = 0.0,
             )
         }
     }

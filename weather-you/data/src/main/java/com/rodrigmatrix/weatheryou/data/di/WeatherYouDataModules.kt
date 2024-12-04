@@ -1,14 +1,9 @@
 package com.rodrigmatrix.weatheryou.data.di
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.location.Geocoder
-import androidx.datastore.core.DataMigration
-import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.SharedPreferencesMigration
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
 import androidx.datastore.preferences.preferencesDataStoreFile
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -20,17 +15,22 @@ import com.rodrigmatrix.weatheryou.data.BuildConfig
 import com.rodrigmatrix.weatheryou.data.analytics.WeatherYouAnalytics
 import com.rodrigmatrix.weatheryou.data.analytics.WeatherYouAnalyticsImpl
 import com.rodrigmatrix.weatheryou.data.local.*
+import com.rodrigmatrix.weatheryou.data.local.database.LocationsDatabase
 import com.rodrigmatrix.weatheryou.data.local.database.WeatherDatabase
+import com.rodrigmatrix.weatheryou.data.local.database.WidgetDatabase
 import com.rodrigmatrix.weatheryou.data.mapper.*
 import com.rodrigmatrix.weatheryou.data.remote.RemoteConfigDataSource
 import com.rodrigmatrix.weatheryou.data.remote.RemoteConfigDataSourceImpl
 import com.rodrigmatrix.weatheryou.data.remote.WeatherYouRemoteDataSource
 import com.rodrigmatrix.weatheryou.data.remote.builder.RetrofitClientGenerator
 import com.rodrigmatrix.weatheryou.data.remote.interceptor.GoogleMapsInterceptor
+import com.rodrigmatrix.weatheryou.data.remote.interceptor.LocationIqInterceptor
 import com.rodrigmatrix.weatheryou.data.remote.interceptor.NinjasApiInterceptor
 import com.rodrigmatrix.weatheryou.data.remote.interceptor.OpenWeatherInterceptor
 import com.rodrigmatrix.weatheryou.data.remote.interceptor.VisualCrossingInterceptor
+import com.rodrigmatrix.weatheryou.data.remote.interceptor.WeatherKitInterceptor
 import com.rodrigmatrix.weatheryou.data.remote.openweather.OpenWeatherRemoteDataSourceImpl
+import com.rodrigmatrix.weatheryou.data.remote.remoteconfig.WeatherYouRemoteConfigKeys.LOCATION_IQ_API_KEY
 import com.rodrigmatrix.weatheryou.data.remote.remoteconfig.WeatherYouRemoteConfigKeys.NINJAS_API_KEY
 import com.rodrigmatrix.weatheryou.data.remote.remoteconfig.WeatherYouRemoteConfigKeys.OPEN_WEATHER_API_KEY
 import com.rodrigmatrix.weatheryou.data.remote.remoteconfig.WeatherYouRemoteConfigKeys.VISUAL_CROSSING_API_KEY
@@ -40,26 +40,27 @@ import com.rodrigmatrix.weatheryou.data.remote.search.SearchLocalDataSourceImpl
 import com.rodrigmatrix.weatheryou.data.remote.search.SearchRemoteDataSource
 import com.rodrigmatrix.weatheryou.data.remote.search.SearchRemoteDataSourceImpl
 import com.rodrigmatrix.weatheryou.data.remote.visualcrossing.VisualCrossingRemoteDataSourceImpl
+import com.rodrigmatrix.weatheryou.data.remote.weatherkit.WeatherKitRemoteDataSourceImpl
+import com.rodrigmatrix.weatheryou.data.remote.weatherkit.jwt.WeatherKitTokenGenerator
 import com.rodrigmatrix.weatheryou.data.repository.RemoteConfigRepositoryImpl
 import com.rodrigmatrix.weatheryou.data.repository.SearchRepositoryImpl
 import com.rodrigmatrix.weatheryou.data.repository.SettingsRepositoryImpl
 import com.rodrigmatrix.weatheryou.data.repository.WeatherRepositoryImpl
 import com.rodrigmatrix.weatheryou.data.service.ApiNinjasService
+import com.rodrigmatrix.weatheryou.data.service.LocationIqService
 import com.rodrigmatrix.weatheryou.data.service.OpenWeatherService
 import com.rodrigmatrix.weatheryou.data.service.SearchLocationService
 import com.rodrigmatrix.weatheryou.data.service.VisualCrossingService
+import com.rodrigmatrix.weatheryou.data.service.WeatherKitService
 import com.rodrigmatrix.weatheryou.domain.repository.RemoteConfigRepository
 import com.rodrigmatrix.weatheryou.domain.repository.SearchRepository
 import com.rodrigmatrix.weatheryou.domain.repository.SettingsRepository
 import com.rodrigmatrix.weatheryou.domain.repository.WeatherRepository
 import com.rodrigmatrix.weatheryou.domain.usecase.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import okio.Path.Companion.toPath
 import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.loadKoinModules
@@ -73,6 +74,8 @@ object WeatherYouDataModules {
     private const val WEATHER_YOU_SHARED_PREFERENCES = "weather_you_shared_preferences"
     private const val OPEN_WEATHER = "OPEN_WEATHER"
     private const val API_NINJAS = "API_NINJAS"
+    private const val WEATHER_KIT = "WEATHER_KIT"
+    private const val LOCATION_IQ = "LOCATION_IQ"
 
     fun loadModules() {
         loadKoinModules(
@@ -88,16 +91,23 @@ object WeatherYouDataModules {
     private val useCaseModule = module {
         factory { GetFamousLocationsUseCase(searchRepository = get()) }
         factory { SearchLocationUseCase(searchRepository = get()) }
-        factory { AddLocationUseCase(weatherRepository = get(), getRemoteConfigLongUseCase = get()) }
+        factory {
+            AddLocationUseCase(
+                weatherRepository = get(),
+                getRemoteConfigLongUseCase = get()
+            )
+        }
         factory { DeleteLocationUseCase(weatherRepository = get()) }
-        factory { FetchLocationsUseCase(weatherRepository = get()) }
+        factory { UpdateLocationsUseCase(weatherRepository = get()) }
         factory { FetchLocationUseCase(weatherRepository = get()) }
         factory { GetRemoteConfigLongUseCase(remoteConfigRepository = get()) }
-        factory { UpdateWidgetTemperatureUseCase(weatherRepository = get()) }
         factory { GetWidgetTemperatureUseCase(weatherRepository = get()) }
         factory { SetWidgetLocationUseCase(weatherRepository = get()) }
         factory { DeleteWidgetLocationUseCase(weatherRepository = get()) }
         factory { GetLocationSizeUseCase(weatherRepository = get()) }
+        factory { GetLocationsUseCase(weatherRepository = get()) }
+        factory { UpdateLocationsListOrderUseCase(weatherRepository = get()) }
+        factory { UpdateWidgetLocationsUseCase(weatherRepository = get()) }
     }
 
     private val repositoryModule = module {
@@ -106,13 +116,14 @@ object WeatherYouDataModules {
                 weatherYouRemoteDataSource = get(),
                 weatherLocalDataSource = get(),
                 userLocationDataSource = get(),
-                settingsRepository = get(),
-                weatherLocationDomainToEntityMapper = WeatherLocationDomainToEntityMapper(),
+                searchRepository = get(),
+                applicationContext = androidApplication(),
             )
         }
         factory<SearchRepository> {
             SearchRepositoryImpl(
                 searchLocalDataSource = get(),
+                searchRemoteDataSource = get(),
                 famousCitiesMapper = FamousCitiesMapper(),
             )
         }
@@ -125,22 +136,37 @@ object WeatherYouDataModules {
     @SuppressLint("MissingPermission")
     private val dataSourceModule = module {
         single<WeatherYouRemoteDataSource> {
-            if (get<RemoteConfigDataSource>().getString(WEATHER_PROVIDER) == OPEN_WEATHER) {
-                OpenWeatherRemoteDataSourceImpl(
-                    openWeatherService = get(),
-                    OpenWeatherRemoteMapper(OpenWeatherConditionMapper())
-                )
-            } else {
-                VisualCrossingRemoteDataSourceImpl(
-                    visualCrossingService = get(),
-                    VisualCrossingRemoteMapper(VisualCrossingWeatherConditionMapper())
-                )
-            }
+            //val provider = get<RemoteConfigDataSource>().getString(WEATHER_PROVIDER)
+            WeatherKitRemoteDataSourceImpl(
+                weatherKitService = get(),
+                weatherKitRemoteMapper = WeatherKitRemoteMapper(WeatherKitConditionMapper()),
+            )
+//            when (provider) {
+//                OPEN_WEATHER -> {
+//                    OpenWeatherRemoteDataSourceImpl(
+//                        openWeatherService = get(),
+//                        OpenWeatherRemoteMapper(OpenWeatherConditionMapper())
+//                    )
+//                }
+//                WEATHER_KIT -> {
+//                    WeatherKitRemoteDataSourceImpl(
+//                        weatherKitService = get(),
+//                        weatherKitRemoteMapper = WeatherKitRemoteMapper(WeatherKitConditionMapper()),
+//                    )
+//                }
+//                else -> {
+//                    VisualCrossingRemoteDataSourceImpl(
+//                        visualCrossingService = get(),
+//                        VisualCrossingRemoteMapper(VisualCrossingWeatherConditionMapper())
+//                    )
+//                }
+//            }
         }
         factory<WeatherLocalDataSource> {
             WeatherLocalDataSourceImpl(
                 weatherDAO = get(),
                 widgetDataDao = get(),
+                locationsDAO = get(),
             )
         }
         factory<UserLocationDataSource> {
@@ -156,9 +182,7 @@ object WeatherYouDataModules {
         }
         factory<SearchRemoteDataSource> {
             SearchRemoteDataSourceImpl(
-                apiNinjasService = get(named(API_NINJAS)),
-                searchAutocompleteRemoteMapper = SearchAutocompleteRemoteMapper(),
-                searchLocationRemoteMapper = SearchLocationRemoteMapper(),
+                locationIqService = get(named(LOCATION_IQ)),
             )
         }
         factory<SearchLocalDataSource> {
@@ -192,8 +216,11 @@ object WeatherYouDataModules {
 
     private val otherModules = module {
         single { WeatherDatabase(androidApplication()) }
-        factory { get<WeatherDatabase>().locationsDao() }
-        factory { get<WeatherDatabase>().widgetDataDao() }
+        single { LocationsDatabase(androidApplication()) }
+        single { WidgetDatabase(androidApplication()) }
+        factory { get<LocationsDatabase>().locationsDao() }
+        factory { get<WidgetDatabase>().widgetDataDao() }
+        factory { get<WeatherDatabase>().weatherDao() }
         factory {
             Json {
                 encodeDefaults = true
@@ -243,6 +270,26 @@ object WeatherYouDataModules {
             )
             visualCrossingRetrofit.create(VisualCrossingService::class.java)
         }
+        single {
+            val interceptor = OkHttpClient.Builder().apply {
+                if (BuildConfig.DEBUG) {
+                    val logging = HttpLoggingInterceptor()
+                    logging.setLevel(HttpLoggingInterceptor.Level.BASIC)
+                    addNetworkInterceptor(logging)
+                }
+                addNetworkInterceptor(
+                    WeatherKitInterceptor(
+                        weatherKitTokenGenerator = WeatherKitTokenGenerator()
+                    )
+                )
+            }.build()
+            val weatherKitRetrofit = RetrofitClientGenerator().create(
+                baseUrl = BuildConfig.WEATHER_KIT_URL,
+                converterFactory = get<Json>().asConverterFactory("application/json".toMediaType()),
+                httpClient = interceptor
+            )
+            weatherKitRetrofit.create(WeatherKitService::class.java)
+        }
         single(named(API_NINJAS)) {
             val interceptor = OkHttpClient.Builder().apply {
                 if (BuildConfig.DEBUG) {
@@ -263,6 +310,27 @@ object WeatherYouDataModules {
                 httpClient = interceptor
             )
             ninjasRetrofit.create(ApiNinjasService::class.java)
+        }
+        single(named(LOCATION_IQ)) {
+            val interceptor = OkHttpClient.Builder().apply {
+                if (BuildConfig.DEBUG) {
+                    val logging = HttpLoggingInterceptor()
+                    logging.setLevel(HttpLoggingInterceptor.Level.BASIC)
+                    addNetworkInterceptor(logging)
+                }
+                addNetworkInterceptor(
+                    LocationIqInterceptor(
+                        apiKey = get<RemoteConfigDataSource>().getString(LOCATION_IQ_API_KEY)
+                            .ifEmpty { BuildConfig.LOCATION_IQ_TOKEN }
+                    )
+                )
+            }.build()
+            val locationIqRetrofit = RetrofitClientGenerator().create(
+                baseUrl = BuildConfig.LOCATION_IQ_URL,
+                converterFactory = get<Json>().asConverterFactory("application/json".toMediaType()),
+                httpClient = interceptor
+            )
+            locationIqRetrofit.create(LocationIqService::class.java)
         }
 
         single(named(GOOGLE_MAPS_SERVICE)) {

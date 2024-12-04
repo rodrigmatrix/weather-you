@@ -14,13 +14,11 @@ import com.rodrigmatrix.weatheryou.domain.model.TemperaturePreference
 @Composable
 fun VisibilityCard(
     visibility: Double,
-    unit: TemperaturePreference,
     modifier: Modifier = Modifier
 ) {
     WeatherYouCard(modifier) {
         VisibilityCardContent(
             visibility = visibility,
-            unit = unit,
         )
     }
 }
@@ -32,7 +30,6 @@ fun VisibilityCardPreview() {
     WeatherYouTheme {
         VisibilityCard(
             visibility = 80.0,
-            unit = TemperaturePreference.METRIC,
         )
     }
 }

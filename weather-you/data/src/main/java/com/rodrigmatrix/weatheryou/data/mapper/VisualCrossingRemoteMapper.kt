@@ -18,7 +18,11 @@ class VisualCrossingRemoteMapper(
     private val weatherConditionMapper: VisualCrossingWeatherConditionMapper
 ) {
 
-    fun map(source: VisualCrossingWeatherResponse, unit: TemperaturePreference): WeatherLocation {
+    fun map(source: VisualCrossingWeatherResponse): WeatherLocation {
+        val currentTime = source.currentConditions?.datetimeEpoch.toDateTime(source.timezone)
+        val sunrise = source.currentConditions?.sunriseEpoch.toDateTime(source.timezone)
+        val sunset = source.currentConditions?.sunriseEpoch.toDateTime(source.timezone)
+        val sunriseSunsetRange = sunrise.hourOfDay..sunset.hourOfDay
         return WeatherLocation(
             id = 0,
             name = if (source.resolvedAddress.orEmpty().hasLetters()) {
@@ -32,8 +36,9 @@ class VisualCrossingRemoteMapper(
             maxTemperature = source.days?.firstOrNull()?.tempmax ?: 0.0,
             lowestTemperature = source.days?.firstOrNull()?.tempmin ?: 0.0,
             feelsLike = source.currentConditions?.feelslike ?: 0.0,
-            currentTime = source.currentConditions?.datetimeEpoch.toDateTime(source.timezone),
+            currentTime = currentTime,
             timeZone = source.timezone.orEmpty(),
+            isDaylight = currentTime.hourOfDay in sunriseSunsetRange,
             precipitationProbability = source.currentConditions?.precipprob ?: 0.0,
             precipitationType = source.currentConditions?.preciptype?.firstOrNull().orEmpty(),
             humidity = source.currentConditions?.humidity ?: 0.0,
@@ -41,19 +46,22 @@ class VisualCrossingRemoteMapper(
             windDirection = source.currentConditions?.winddir ?: 0.0,
             windSpeed = source.currentConditions?.windspeed ?: 0.0,
             uvIndex = source.currentConditions?.uvindex ?: 0.0,
-            sunrise = source.currentConditions?.sunriseEpoch.toDateTime(source.timezone),
-            sunset = source.currentConditions?.sunsetEpoch.toDateTime(source.timezone),
+            sunrise = sunrise,
+            sunset = sunset,
             visibility = source.currentConditions?.visibility ?: 0.0,
             pressure = source.currentConditions?.pressure ?: 0.0,
-            days = source.days?.mapDaysList(source.timezone, unit).orEmpty(),
+            days = source.days?.mapDaysList(source.timezone).orEmpty(),
             hours = source.getTodayHoursList(),
-            unit = unit,
+            expirationDate = currentTime,
+            minWeekTemperature = source.days?.minOf { it.tempmin ?: 0.0 } ?: 0.0,
+            maxWeekTemperature = source.days?.maxOf { it.tempmax ?: 0.0 } ?: 0.0,
+            cloudCover = 0.0,
+            countryCode = "",
         )
     }
 
     private fun List<DayResponse>.mapDaysList(
         timeZone: String?,
-        unit: TemperaturePreference,
     ): List<WeatherDay> {
         return this.map {
             WeatherDay(
@@ -69,7 +77,6 @@ class VisualCrossingRemoteMapper(
                 humidity = it.humidity ?: 0.0,
                 sunrise = it.sunriseEpoch.toDateTime(timeZone),
                 sunset = it.sunsetEpoch.toDateTime(timeZone),
-                unit = unit,
             )
         }
     }
@@ -83,7 +90,16 @@ class VisualCrossingRemoteMapper(
                 weatherCondition = weatherConditionMapper.map(it.icon),
                 temperature = it.temp ?: 0.0,
                 precipitationProbability = it.precipprob ?: 0.0,
-                precipitationType = it.preciptype?.firstOrNull().orEmpty()
+                precipitationType = it.preciptype?.firstOrNull().orEmpty(),
+                cloudCover = it.cloudcover ?: 0.0,
+                feelsLike = it.feelslike ?: 0.0,
+                humidity = it.humidity ?: 0.0,
+                visibility = it.visibility ?: 0.0,
+                windSpeed = it.windspeed ?: 0.0,
+                windDirection = it.winddir?.toInt() ?: 0,
+                uvIndex = it.uvindex ?: 0.0,
+                snowfallIntensity = it.snow ?: 0.0,
+                precipitationAmount = it.precip ?: 0.0,
             )
         }
     }

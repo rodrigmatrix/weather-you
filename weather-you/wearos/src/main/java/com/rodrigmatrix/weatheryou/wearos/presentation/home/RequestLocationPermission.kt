@@ -34,7 +34,7 @@ fun RequestLocationPermission(
                 ) {
                     Text(
                         text = stringResource(R.string.location_request_title),
-                        style = WeatherYouTheme.typography.title3,
+                        style = MaterialTheme.typography.title3,
                         textAlign = TextAlign.Center
                     )
                     Spacer(Modifier.padding(bottom = 4.dp))

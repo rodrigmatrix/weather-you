@@ -17,7 +17,8 @@ class AddLocationUseCase(
     operator fun invoke(
         name: String,
         latitude: Double,
-        longitude: Double
+        longitude: Double,
+        countryCode: String,
     ): Flow<Unit> {
         return flow {
             val locationsCount = weatherRepository.getLocationsSize().first()
@@ -25,7 +26,7 @@ class AddLocationUseCase(
             if (locationsCount >= maxLocations) {
                 throw LocationLimitException(maxLocations)
             } else{
-                emitAll(weatherRepository.addLocation(name, latitude, longitude))
+                emitAll(weatherRepository.addLocation(name, latitude, longitude, countryCode))
             }
         }
     }

@@ -15,6 +15,7 @@ fun SunriseSunsetCard(
     sunrise: DateTime,
     sunset: DateTime,
     currentTime: DateTime,
+    isDaylight: Boolean,
     modifier: Modifier = Modifier
 ) {
     WeatherYouCard(modifier) {
@@ -22,6 +23,7 @@ fun SunriseSunsetCard(
             sunrise = sunrise,
             sunset = sunset,
             currentTime = currentTime,
+            isDaylight = isDaylight,
         )
     }
 }
@@ -36,16 +38,19 @@ fun SunriseSunsetCardPreview() {
                 sunrise = DateTime(),
                 sunset = DateTime(),
                 currentTime = DateTime(),
+                isDaylight = true,
             )
             SunriseSunsetCard(
                 sunrise = DateTime(),
                 sunset = DateTime(),
                 currentTime = DateTime(),
+                isDaylight = true,
             )
             SunriseSunsetCard(
                 sunrise = DateTime(),
                 sunset = DateTime(),
                 currentTime = DateTime(),
+                isDaylight = true,
             )
         }
     }

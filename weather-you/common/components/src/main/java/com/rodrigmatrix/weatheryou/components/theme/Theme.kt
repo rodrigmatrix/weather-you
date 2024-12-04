@@ -1,6 +1,7 @@
 package com.rodrigmatrix.weatheryou.components.theme
 
 import android.app.Activity
+import android.os.Build
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -23,6 +24,7 @@ import androidx.core.view.WindowCompat
 fun WeatherYouTheme(
     themeMode: ThemeMode = ThemeMode.System,
     colorMode: ColorMode = ColorMode.Dynamic,
+    themeSettings: ThemeSettings = ThemeSettings(),
     content: @Composable () -> Unit
 ) {
     val darkTheme = when (themeMode) {
@@ -32,9 +34,16 @@ fun WeatherYouTheme(
     }
     val context = LocalContext.current
     val colorScheme = when (colorMode) {
-        ColorMode.Dynamic -> when {
-            darkTheme -> dynamicDarkColorScheme(context)
-            else -> dynamicLightColorScheme(context)
+        ColorMode.Dynamic -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            when {
+                darkTheme -> dynamicDarkColorScheme(context)
+                else -> dynamicLightColorScheme(context)
+            }
+        } else {
+            when {
+                darkTheme -> DarkColorScheme.switch()
+                else -> LightColorScheme.switch()
+            }
         }
         ColorMode.Default -> when {
             darkTheme -> DarkColorScheme.switch()
@@ -102,6 +111,7 @@ fun WeatherYouTheme(
         LocalWeatherYouTypography provides typography,
         LocalWeatherYouThemeMode provides themeMode,
         LocalWeatherYouColorMode provides colorMode,
+        LocalWeatherYouThemeSettingsEnabled provides themeSettings,
     ) {
         MaterialTheme(
             colorScheme = colorScheme,
@@ -136,7 +146,19 @@ val LocalWeatherYouColorMode = compositionLocalOf {
     ColorMode.Default
 }
 
+val LocalWeatherYouThemeSettingsEnabled = compositionLocalOf {
+    ThemeSettings()
+}
+
 object WeatherYouTheme {
+
+    val isDarkTheme: Boolean
+        @Composable
+        get() = when (themeMode) {
+            ThemeMode.System -> isSystemInDarkTheme()
+            ThemeMode.Light -> false
+            ThemeMode.Dark -> true
+        }
 
     val colorScheme: WeatherYouColors
         @Composable
@@ -157,7 +179,24 @@ object WeatherYouTheme {
     val shapes: Shapes
         @Composable
         get() = MaterialTheme.shapes
+
+    val themeSettings: ThemeSettings
+        @Composable
+        get() = LocalWeatherYouThemeSettingsEnabled.current
+
+    val WeatherYouColors.weatherTextColor: Color
+        @Composable
+        get() = if (themeSettings.showWeatherAnimations) {
+            Color.White
+        } else {
+            onSecondaryContainer
+        }
 }
+
+data class ThemeSettings(
+    val showWeatherAnimations: Boolean = false,
+    val enableThemeColorForWeatherAnimations: Boolean = false,
+)
 
 
 @Composable

@@ -14,6 +14,8 @@ class SearchAutocompleteRemoteMapper : Mapper<List<NinjasCityResponse>, List<Sea
                 name = it.name + " " + it.country,
                 lat = it.latitude ?: 0.0,
                 long = it.longitude ?: 0.0,
+                countryCode = it.country.orEmpty(),
+                timezone = "",
             )
         }
     }

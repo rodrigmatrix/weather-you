@@ -6,37 +6,37 @@ class VisualCrossingWeatherConditionMapper {
 
     fun map(source: String?): WeatherCondition {
         return when(source) {
-            "partly-cloudy-day" -> WeatherCondition.PARTLY_CLOUDY_DAY
+            "partly-cloudy-day" -> WeatherCondition.PartlyCloudy
 
-            "partly-cloudy-night" -> WeatherCondition.PARTLY_CLOUDY_NIGHT
+            "partly-cloudy-night" -> WeatherCondition.PartlyCloudy
 
-            "cloudy" -> WeatherCondition.CLOUDY
+            "cloudy" -> WeatherCondition.Cloudy
 
-            "wind" -> WeatherCondition.WINDY
+            "wind" -> WeatherCondition.Windy
 
-            "clear-day"-> WeatherCondition.SUNNY_DAY
+            "clear-day"-> WeatherCondition.Clear
 
-            "clear-night" -> WeatherCondition.CLEAR_NIGHT
+            "clear-night" -> WeatherCondition.Clear
 
-            "snow" -> WeatherCondition.SNOW_DAY
+            "snow" -> WeatherCondition.Snow
 
-            "snow-night" -> WeatherCondition.SNOW_NIGHT
+            "snow-night" -> WeatherCondition.Snow
 
-            "rain" -> WeatherCondition.RAIN_DAY
+            "rain" -> WeatherCondition.Rain
 
-            "fog" -> WeatherCondition.MIST
+            "fog" -> WeatherCondition.Fog
 
-            "snow-showers-day" -> WeatherCondition.RAIN_DAY
+            "snow-showers-day" -> WeatherCondition.Rain
 
-            "snow-showers-night" -> WeatherCondition.RAIN_NIGHT
+            "snow-showers-night" -> WeatherCondition.Snow
 
-            "thunder-rain" -> WeatherCondition.STORM_RAIN_DAY
+            "thunder-rain" -> WeatherCondition.ScatteredThunderstorms
 
-            "thunder-showers-day" -> WeatherCondition.STORM_RAIN_NIGHT
+            "thunder-showers-day" -> WeatherCondition.ScatteredThunderstorms
 
-            "thunder-showers-night" -> WeatherCondition.STORM_RAIN_NIGHT
+            "thunder-showers-night" -> WeatherCondition.ScatteredThunderstorms
 
-            else -> WeatherCondition.SUNNY_DAY
+            else -> WeatherCondition.Clear
         }
     }
 }

@@ -1,11 +1,8 @@
 package com.rodrigmatrix.weatheryou.home.presentation.home
 
-import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.content.res.Configuration
+import android.os.Build
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,9 +29,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.adaptive.layout.AnimatedPane
+import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
+import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
+import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirectiveWithTwoPanesOnMediumWidth
+import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
@@ -43,16 +45,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.window.layout.DisplayFeature
-import com.google.accompanist.adaptive.HorizontalTwoPaneStrategy
-import com.google.accompanist.adaptive.TwoPane
+import androidx.navigation.NavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.PermissionState
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
 import com.rodrigmatrix.weatheryou.components.R
-import com.rodrigmatrix.weatheryou.components.ScreenContentType
-import com.rodrigmatrix.weatheryou.components.ScreenNavigationType
 import com.rodrigmatrix.weatheryou.components.WeatherIcon
+import com.rodrigmatrix.weatheryou.components.location.RequestBackgroundLocationDialog
 import com.rodrigmatrix.weatheryou.components.preview.PreviewWeatherList
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.domain.model.WeatherCondition
@@ -62,129 +63,85 @@ import com.rodrigmatrix.weatheryou.locationdetails.presentaion.details.WeatherDe
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun HomeScreen(
+    navController: NavController,
     homeUiState: HomeUiState,
-    navigationType: ScreenNavigationType,
-    displayFeatures: List<DisplayFeature>,
-    contentType: ScreenContentType,
     onLocationSelected: (WeatherLocation?) -> Unit,
-    onDismissLocationDialogClicked: () -> Unit,
+    onDialogStateChanged: (HomeDialogState) -> Unit,
     onSwipeRefresh: () -> Unit,
     onDeleteLocation: (WeatherLocation) -> Unit,
-    onDeleteLocationClicked: () -> Unit,
     onDeleteLocationConfirmButtonClicked: () -> Unit,
     onAddLocation: () -> Unit,
     onPermissionGranted: () -> Unit,
-    locationPermissionState: PermissionState = rememberPermissionState(ACCESS_COARSE_LOCATION),
-) {
+    onOrderChanged: (List<WeatherLocation>) -> Unit,
+    backgroundLocationPermissionState: PermissionState = rememberPermissionState(
+        permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
+        } else {
+            android.Manifest.permission.ACCESS_FINE_LOCATION
+        },
+        onPermissionResult = {
+            onPermissionGranted()
+        }
+    ),
+    locationPermissionState: MultiplePermissionsState = rememberMultiplePermissionsState(
+        permissions = listOf(
+            android.Manifest.permission.ACCESS_COARSE_LOCATION,
+            android.Manifest.permission.ACCESS_FINE_LOCATION,
+        ),
+        onPermissionsResult = {
+            if (it.all { it.value }) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    onDialogStateChanged(HomeDialogState.BackgroundLocation)
+                } else {
+                    onPermissionGranted()
+                }
+            } else {
+                onPermissionGranted()
+            }
+        }
+    ),
+
+    ) {
     BackHandler(enabled = homeUiState.isLocationSelected()) {
         onLocationSelected(null)
     }
 
-    if (locationPermissionState.permissionRequested && locationPermissionState.hasPermission) {
-        onPermissionGranted()
-    }
-
-    LaunchedEffect(key1 = locationPermissionState) {
-        if (locationPermissionState.permissionRequested && locationPermissionState.hasPermission) {
-            onSwipeRefresh()
+    when (homeUiState.dialogState) {
+        HomeDialogState.BackgroundLocation -> {
+            RequestBackgroundLocationDialog(
+                onRequestPermissionClicked = {
+                    backgroundLocationPermissionState.launchPermissionRequest()
+                    onDialogStateChanged(HomeDialogState.Hidden)
+                },
+                onDismissRequest = {
+                    onPermissionGranted()
+                    onDialogStateChanged(HomeDialogState.Hidden)
+                },
+            )
         }
+        HomeDialogState.DeleteLocation -> {
+            DeleteLocationDialog(
+                onDismiss = {
+                    onDialogStateChanged(HomeDialogState.Hidden)
+                },
+                onDeleteLocationClicked = onDeleteLocationConfirmButtonClicked,
+            )
+        }
+        HomeDialogState.Hidden -> Unit
     }
-
-    if (homeUiState.deleteLocationDialogVisible) {
-        DeleteLocationDialog(
-            onDismiss = onDismissLocationDialogClicked,
-            onDeleteLocationClicked = onDeleteLocationConfirmButtonClicked,
-        )
-    }
-
     HomeScreen(
         homeUiState = homeUiState,
         showLocationPermissionRequest = homeUiState.showLocationPermissionRequest(locationPermissionState),
-        navigationType = navigationType,
-        displayFeatures = displayFeatures,
-        contentType = contentType,
         onLocationSelected = onLocationSelected,
         onSwipeRefresh = onSwipeRefresh,
         onDeleteLocation = onDeleteLocation,
-        onDeleteLocationClicked = onDeleteLocationClicked,
+        onDeleteLocationClicked = {
+            onDialogStateChanged(HomeDialogState.DeleteLocation)
+        },
         onAddLocation = onAddLocation,
-        onRequestPermission = locationPermissionState::launchPermissionRequest,
+        onRequestPermission = locationPermissionState::launchMultiplePermissionRequest,
+        onOrderChanged = onOrderChanged,
     )
-}
-
-@Composable
-fun HomeScreen(
-    homeUiState: HomeUiState,
-    showLocationPermissionRequest: Boolean,
-    navigationType: ScreenNavigationType,
-    displayFeatures: List<DisplayFeature>,
-    contentType: ScreenContentType,
-    onLocationSelected: (WeatherLocation?) -> Unit,
-    onSwipeRefresh: () -> Unit,
-    onDeleteLocation: (WeatherLocation) -> Unit,
-    onDeleteLocationClicked: () -> Unit,
-    onAddLocation: () -> Unit,
-    onRequestPermission: () -> Unit,
-) {
-    if (contentType == ScreenContentType.DUAL_PANE && homeUiState.isLocationSelected()) {
-        TwoPane(
-            first = {
-                WeatherLocationsListScreen(
-                    uiState = homeUiState,
-                    isFullScreen = false,
-                    showLocationPermissionRequest = showLocationPermissionRequest,
-                    onItemClick = onLocationSelected,
-                    onSwipeRefresh = onSwipeRefresh,
-                    onDeleteLocation = onDeleteLocation,
-                    onSearchLocationClick = onAddLocation,
-                    onRequestPermission = onRequestPermission,
-                )
-            },
-            second = {
-                AnimatedVisibility(
-                    visible = homeUiState.isLocationSelected(),
-                    enter = fadeIn(),
-                    exit = fadeOut()
-                ) {
-                    WeatherDetailsScreen(
-                        weatherLocation = homeUiState.selectedWeatherLocation,
-                        onCloseClick = {
-                            onLocationSelected(null)
-                        },
-                        isFullScreen = false,
-                        onDeleteLocationClicked = onDeleteLocationClicked
-                    )
-                }
-            },
-            strategy = HorizontalTwoPaneStrategy(splitFraction = 0.5f, gapWidth = 16.dp),
-            displayFeatures = displayFeatures
-        )
-    } else {
-        WeatherLocationsListScreen(
-            uiState = homeUiState,
-            showLocationPermissionRequest = showLocationPermissionRequest,
-            isFullScreen = false,
-            onItemClick = onLocationSelected,
-            onSwipeRefresh = onSwipeRefresh,
-            onDeleteLocation = onDeleteLocation,
-            onSearchLocationClick = onAddLocation,
-            onRequestPermission = onRequestPermission,
-        )
-        AnimatedVisibility(
-            visible = homeUiState.isLocationSelected(),
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            WeatherDetailsScreen(
-                weatherLocation = homeUiState.selectedWeatherLocation,
-                onCloseClick = {
-                    onLocationSelected(null)
-                },
-                isFullScreen = false,
-                onDeleteLocationClicked = onDeleteLocationClicked
-            )
-        }
-    }
 }
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -198,6 +155,7 @@ fun WeatherLocationsListScreen(
     onDeleteLocation: (WeatherLocation) -> Unit,
     onSearchLocationClick: () -> Unit,
     onRequestPermission: () -> Unit,
+    onOrderChanged: (List<WeatherLocation>) -> Unit,
 ) {
     val pullRefreshState = rememberPullRefreshState(
         refreshing = uiState.isLoading,
@@ -235,10 +193,12 @@ fun WeatherLocationsListScreen(
                 ) {
                     WeatherLocationList(
                         weatherLocationList = uiState.locationsList,
+                        isRefreshingLocations = uiState.isRefreshingLocations,
                         selectedLocation = uiState.selectedWeatherLocation,
                         onItemClick = onItemClick,
                         onDismiss = onDeleteLocation,
-                        modifier = Modifier.padding(top = 4.dp)
+                        onOrderChanged = onOrderChanged,
+                        modifier = Modifier.padding(top = 4.dp),
                     )
 
                     PullRefreshIndicator(
@@ -255,6 +215,73 @@ fun WeatherLocationsListScreen(
     }
 }
 
+
+@OptIn(ExperimentalMaterial3AdaptiveApi::class)
+@Composable
+fun HomeScreen(
+    homeUiState: HomeUiState,
+    showLocationPermissionRequest: Boolean,
+    onLocationSelected: (WeatherLocation?) -> Unit,
+    onSwipeRefresh: () -> Unit,
+    onDeleteLocation: (WeatherLocation) -> Unit,
+    onDeleteLocationClicked: () -> Unit,
+    onAddLocation: () -> Unit,
+    onRequestPermission: () -> Unit,
+    onOrderChanged: (List<WeatherLocation>) -> Unit,
+) {
+    val navigator = rememberListDetailPaneScaffoldNavigator<Int>(
+        calculatePaneScaffoldDirectiveWithTwoPanesOnMediumWidth(currentWindowAdaptiveInfo())
+    )
+    val onNavigateToLocation: (Int) -> Unit = { id ->
+        navigator.navigateTo(
+            pane = ListDetailPaneScaffoldRole.Detail,
+            content = id,
+        )
+    }
+    BackHandler(navigator.canNavigateBack()) {
+        navigator.navigateBack()
+        onLocationSelected(null)
+    }
+
+    ListDetailPaneScaffold(
+        value = navigator.scaffoldValue,
+        directive = navigator.scaffoldDirective,
+        listPane = {
+            AnimatedPane(modifier = Modifier.preferredWidth(260.dp)) {
+                WeatherLocationsListScreen(
+                    uiState = homeUiState,
+                    isFullScreen = false,
+                    showLocationPermissionRequest = showLocationPermissionRequest,
+                    onItemClick = {
+                        onLocationSelected(it)
+                        onNavigateToLocation(it.id)
+                    },
+                    onSwipeRefresh = onSwipeRefresh,
+                    onDeleteLocation = onDeleteLocation,
+                    onSearchLocationClick = onAddLocation,
+                    onRequestPermission = onRequestPermission,
+                    onOrderChanged = onOrderChanged,
+                )
+            }
+        },
+        detailPane = {
+            homeUiState.selectedWeatherLocation?.let {
+                AnimatedPane {
+                    WeatherDetailsScreen(
+                        weatherLocation = homeUiState.selectedWeatherLocation,
+                        onCloseClick = {
+                            navigator.navigateBack()
+                            onLocationSelected(null)
+                        },
+                        isFullScreen = false,
+                        onDeleteLocationClicked = onDeleteLocationClicked,
+                    )
+                }
+            }
+        },
+    )
+}
+
 @Composable
 fun WeatherLocationsEmptyState(
     modifier: Modifier = Modifier,
@@ -268,7 +295,8 @@ fun WeatherLocationsEmptyState(
             .padding(start = 16.dp, end = 16.dp, bottom = 200.dp)
     ) {
         WeatherIcon(
-            weatherCondition = WeatherCondition.PARTLY_CLOUDY_NIGHT,
+            weatherCondition = WeatherCondition.PartlyCloudy,
+            isDaylight = false,
             modifier = Modifier
                 .size(120.dp)
                 .padding(10.dp)
@@ -332,7 +360,7 @@ fun DeleteLocationDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
-            Text(text = stringResource(com.rodrigmatrix.weatheryou.components.R.string.delete_location_title))
+            Text(text = stringResource(R.string.delete_location_title))
         },
         confirmButton = {
             TextButton(onClick = onDeleteLocationClicked) {
@@ -394,15 +422,13 @@ fun HomeScreenPreview() {
                 selectedWeatherLocation = PreviewWeatherList.first(),
             ),
             showLocationPermissionRequest = false,
-            navigationType = ScreenNavigationType.BOTTOM_NAVIGATION,
-            displayFeatures = emptyList(),
-            contentType = ScreenContentType.SINGLE_PANE,
             onLocationSelected = { },
             onSwipeRefresh = { },
             onDeleteLocation = { },
             onDeleteLocationClicked = { },
             onAddLocation = { },
             onRequestPermission = { },
+            onOrderChanged = { },
         )
     }
 }
@@ -418,15 +444,13 @@ fun HomeScreenWithLocationPreview() {
                 selectedWeatherLocation = PreviewWeatherList.first(),
             ),
             showLocationPermissionRequest = false,
-            navigationType = ScreenNavigationType.NAVIGATION_RAIL,
-            displayFeatures = emptyList(),
-            contentType = ScreenContentType.DUAL_PANE,
             onLocationSelected = { },
             onSwipeRefresh = { },
             onDeleteLocation = { },
             onDeleteLocationClicked = { },
             onAddLocation = { },
             onRequestPermission = { },
+            onOrderChanged = { },
         )
     }
 }

@@ -6,8 +6,9 @@ import com.rodrigmatrix.weatheryou.components.ScreenNavigationType
 import com.rodrigmatrix.weatheryou.core.viewmodel.ViewModel
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.domain.usecase.DeleteLocationUseCase
-import com.rodrigmatrix.weatheryou.domain.usecase.FetchLocationsUseCase
+import com.rodrigmatrix.weatheryou.domain.usecase.UpdateLocationsUseCase
 import com.rodrigmatrix.weatheryou.domain.usecase.GetLocationSizeUseCase
+import com.rodrigmatrix.weatheryou.domain.usecase.GetLocationsUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
@@ -18,30 +19,35 @@ import kotlinx.coroutines.launch
 import java.io.IOException
 
 class TVWeatherLocationsViewModel(
-    private val fetchLocationsUseCase: FetchLocationsUseCase,
+    private val updateLocationsUseCase: UpdateLocationsUseCase,
     private val deleteLocationUseCase: DeleteLocationUseCase,
-    private val getLocationSizeUseCase: GetLocationSizeUseCase,
+    private val getLocationsUseCase: GetLocationsUseCase,
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ): ViewModel<TvWeatherLocationsUiState, TvWeatherLocationsUiAction>(TvWeatherLocationsUiState()) {
 
     init {
-        loadLocations()
-        observeLocationSize()
+        updateLocations()
+        observeLocations()
     }
 
-    private fun observeLocationSize() {
+    private fun observeLocations() {
         viewModelScope.launch {
-            getLocationSizeUseCase()
+            getLocationsUseCase()
                 .flowOn(coroutineDispatcher)
-                .collect { size ->
-                    setState { it.copy(locationsSize = size) }
+                .collect { locations ->
+                    setState {
+                        it.copy(
+                            locationsList = locations,
+                            locationsSize = locations.size,
+                        )
+                    }
                 }
         }
     }
 
-    fun loadLocations() {
+    fun updateLocations() {
         viewModelScope.launch {
-            fetchLocationsUseCase()
+            updateLocationsUseCase()
                 .flowOn(coroutineDispatcher)
                 .onStart { setState { it.copy(isLoading = true) } }
                 .onCompletion { setState { it.copy(isLoading = false) } }
@@ -50,11 +56,7 @@ class TVWeatherLocationsViewModel(
                 }
                 .collect { weatherLocationsList ->
                     setState {
-                        it.copy(
-                            locationsList = weatherLocationsList,
-                            selectedWeatherLocation = getSelectedWeatherLocation(weatherLocationsList),
-                            isLoading = false
-                        )
+                        it.copy(isLoading = false)
                     }
                 }
         }
@@ -87,7 +89,7 @@ class TVWeatherLocationsViewModel(
     fun deleteLocation(location: WeatherLocation, navigationType: ScreenNavigationType) {
         viewModelScope.launch {
             hideDeleteLocationDialog()
-            deleteLocationUseCase(location.id)
+            deleteLocationUseCase(location)
                 .flowOn(coroutineDispatcher)
                 .onStart { setState { it.copy(isLoading = true) } }
                 .onCompletion { setState { it.copy(isLoading = false) } }

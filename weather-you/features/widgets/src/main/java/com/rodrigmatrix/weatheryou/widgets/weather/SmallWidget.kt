@@ -24,18 +24,18 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import com.rodrigmatrix.weatheryou.components.extensions.getStaticIcon
+import com.rodrigmatrix.weatheryou.components.preview.PreviewWeatherLocation
 import com.rodrigmatrix.weatheryou.core.extensions.temperatureString
 import com.rodrigmatrix.weatheryou.domain.model.WeatherCondition
-import com.rodrigmatrix.weatheryou.domain.model.WidgetWeather
-import com.rodrigmatrix.weatheryou.domain.model.WidgetWeatherDay
-import com.rodrigmatrix.weatheryou.domain.model.WidgetWeatherHour
+import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.widgets.R
+import org.joda.time.DateTime
 
 private const val MAX_WIDTH = 186
 
 @Composable
 fun SmallWidget(
-    weather: WidgetWeather,
+    weather: WeatherLocation,
     onWidgetClicked: () -> Unit,
     glanceModifier: GlanceModifier = GlanceModifier,
 ) {
@@ -54,7 +54,7 @@ fun SmallWidget(
                 .padding(horizontal = 16.dp)
         ) {
             Image(
-                provider = ImageProvider(weather.currentCondition.getStaticIcon()),
+                provider = ImageProvider(weather.currentCondition.getStaticIcon(weather.isDaylight)),
                 contentDescription = null,
                 modifier = GlanceModifier.size(36.dp)
             )
@@ -86,7 +86,7 @@ fun SmallWidget(
                 .padding(horizontal = 16.dp)
         ) {
             Text(
-                text = weather.maxWeather.temperatureString(),
+                text = weather.maxTemperature.temperatureString(),
                 style = TextStyle(
                     color = GlanceTheme.colors.onPrimaryContainer,
                     fontSize = 20.sp,
@@ -95,7 +95,7 @@ fun SmallWidget(
             )
             Spacer(modifier = GlanceModifier.width(4.dp))
             Text(
-                text = weather.minWeather.temperatureString(),
+                text = weather.lowestTemperature.temperatureString(),
                 style = TextStyle(
                     color = GlanceTheme.colors.onPrimaryContainer,
                     fontSize = 14.sp,
@@ -112,61 +112,8 @@ fun SmallWidget(
 private fun SmallWidgetPreview() {
     GlanceTheme {
         SmallWidget(
-            weather = PreviewWidgetWeather,
+            weather = PreviewWeatherLocation,
             onWidgetClicked = { },
         )
     }
 }
-
-val PreviewWidgetWeather = WidgetWeather(
-    id = 0,
-    name = "São Paulo",
-    lat = 0.0,
-    long = 0.0,
-    currentCondition = WeatherCondition.MIST,
-    currentWeather = 11.0,
-    maxWeather = 15.0,
-    minWeather = 8.0,
-    lastUpdate = "",
-    hours = listOf(
-        WidgetWeatherHour(
-            weather = 10.0,
-            condition = WeatherCondition.MIST,
-        ),
-        WidgetWeatherHour(
-            weather = 10.0,
-            condition = WeatherCondition.CLOUDY,
-        ),
-        WidgetWeatherHour(
-            weather = 9.0,
-            condition = WeatherCondition.PARTLY_CLOUDY_NIGHT,
-        ),
-        WidgetWeatherHour(
-            weather = 8.0,
-            condition = WeatherCondition.PARTLY_CLOUDY_NIGHT,
-        )
-    ),
-    days = listOf(
-        WidgetWeatherDay(
-            maxWeather = -2.0,
-            minWeather = 8.0,
-            condition = WeatherCondition.SNOW_DAY,
-        ),
-        WidgetWeatherDay(
-            maxWeather = 3.0,
-            minWeather = 5.0,
-            condition = WeatherCondition.MIST,
-        ),
-        WidgetWeatherDay(
-            maxWeather = 10.0,
-            minWeather = 8.0,
-            condition = WeatherCondition.SUNNY_DAY,
-        ),
-        WidgetWeatherDay(
-            maxWeather = 7.0,
-            minWeather = 4.0,
-            condition = WeatherCondition.RAIN_DAY,
-        )
-    ),
-
-)

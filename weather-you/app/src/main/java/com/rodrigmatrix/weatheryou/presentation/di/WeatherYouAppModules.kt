@@ -20,8 +20,7 @@ object WeatherYouAppModules {
             CurrentWeatherWidgetConfigurationViewModel(
                 setWidgetLocationUseCase = get(),
                 getWidgetTemperatureUseCase = get(),
-                deleteWidgetLocationUseCase = get(),
-                fetchLocationsUseCase = get(),
+                getLocationsUseCase = get(),
             )
         }
     }

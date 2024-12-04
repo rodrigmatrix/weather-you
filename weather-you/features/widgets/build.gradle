@@ -2,6 +2,7 @@
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
@@ -49,12 +50,14 @@ dependencies {
 
      implementation platform(libs.compose.bom)
     implementation(libs.compose.ui)
+    implementation(libs.compose.runtime)
     implementation(libs.glanceAppWidget)
     implementation(libs.glanceAppWidget.material3)
     implementation(libs.glance.preview)
     implementation(libs.glanceAppWidget.preview)
     implementation(libs.compose.preview)
     implementation(libs.compose.navigation)
+    implementation(libs.google.play.location)
 
     implementation(libs.koin.android)
     implementation(libs.koin.compose)

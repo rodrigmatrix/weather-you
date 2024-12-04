@@ -1,6 +1,6 @@
 package com.rodrigmatrix.weatheryou.tv.presentation.search
 
-import android.content.Context
+import android.app.Activity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.rodrigmatrix.weatheryou.components.R as Strings
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
@@ -36,6 +37,8 @@ import androidx.tv.material3.Text
 import com.rodrigmatrix.weatheryou.addlocation.AddLocationViewEffect
 import com.rodrigmatrix.weatheryou.addlocation.AddLocationViewModel
 import com.rodrigmatrix.weatheryou.addlocation.AddLocationViewState
+import com.rodrigmatrix.weatheryou.addlocation.LocationSelectList
+import com.rodrigmatrix.weatheryou.addlocation.LocationSuggestions
 import com.rodrigmatrix.weatheryou.components.R
 import com.rodrigmatrix.weatheryou.components.SearchBar
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
@@ -75,30 +78,36 @@ internal fun SearchLocationScreen(
     }
     SearchLocationScreen(
         viewState,
-        onQueryChanged = viewModel::onSearch,
-        onLocationClick = viewModel::addLocation,
+        onQueryChanged = viewModel::onQueryChanged,
+        onLocationClick = { location ->
+            viewModel.addLocation(location, context as Activity)
+        },
         onClearQuery = {
             if (viewState.searchText.isNotEmpty()) {
-                viewModel.onSearch("")
+                viewModel.onQueryChanged("")
             }
         },
-        onFamousLocationClicked = viewModel::addFamousLocation
+        onFamousLocationClicked = { city ->
+            viewModel.addFamousLocation(city, context as Activity)
+        },
+        onSearchButtonClicked = viewModel::search
     )
 }
 
 @Composable
 private fun SearchLocationScreen(
-    uiState: AddLocationViewState,
+    viewState: AddLocationViewState,
     onQueryChanged: (String) -> Unit,
+    onSearchButtonClicked: () -> Unit,
     onLocationClick: (SearchAutocompleteLocation?) -> Unit,
-    onFamousLocationClicked: (City, Context) -> Unit,
+    onFamousLocationClicked: (City) -> Unit,
     onClearQuery: () -> Unit
 ) {
     val focusRequester = remember { FocusRequester() }
     val context = LocalContext.current
     Column {
         SearchBar(
-            query = uiState.searchText,
+            query = viewState.searchText,
             onQueryChange = onQueryChanged,
             onSearchFocusChange = {
                 if (it) {
@@ -106,37 +115,59 @@ private fun SearchLocationScreen(
                 }
             },
             onClearQuery = onClearQuery,
-            searching = uiState.isLoading,
+            searching = viewState.isLoading,
             modifier = Modifier.padding(bottom = 8.dp),
             showBackButton = false,
+            onSearchButtonClicked = {
+                onSearchButtonClicked()
+            },
             keyboardActions = KeyboardActions(
-                onDone = {
-                    onLocationClick(uiState.locationsList.firstOrNull())
+                onSearch = {
+                    onSearchButtonClicked()
                 }
             )
         )
         Column(Modifier) {
-            if (uiState.isLocationsListVisible()) {
-                LocationSelectList(
-                    uiState.locationsList,
-                    onLocationClick,
-                    Modifier.focusRequester(focusRequester)
-                )
-            } else {
+            if (viewState.showKeepTyping) {
                 Text(
-                    text = stringResource(R.string.no_results_found),
+                    text = stringResource(Strings.string.keep_typing),
+                    color = WeatherYouTheme.colorScheme.onBackground,
                     style = WeatherYouTheme.typography.titleLarge,
-                    color = WeatherYouTheme.colorScheme.onSurface,
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
                         .padding(bottom = 20.dp)
                 )
             }
+            if (viewState.showClickToSearch && viewState.isLoading.not()) {
+                Text(
+                    text = stringResource(Strings.string.click_to_search),
+                    color = WeatherYouTheme.colorScheme.onBackground,
+                    style = WeatherYouTheme.typography.titleLarge,
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(bottom = 20.dp)
+                )
+            }
+            if (viewState.showEmptyState) {
+                Text(
+                    text = stringResource(Strings.string.no_results_found),
+                    color = WeatherYouTheme.colorScheme.onBackground,
+                    style = WeatherYouTheme.typography.titleLarge,
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(bottom = 20.dp)
+                )
+            }
+            if (viewState.locationsList.isNotEmpty()) {
+                LocationSelectList(
+                    viewState.locationsList,
+                    onLocationClick,
+                    Modifier.focusRequester(focusRequester)
+                )
+            }
             LocationSuggestions(
-                uiState.famousLocationsList,
-                onLocationClick = {
-                    onFamousLocationClicked(it, context)
-                }
+                viewState.famousLocationsList,
+                onLocationClick = onFamousLocationClicked,
             )
         }
     }
@@ -200,22 +231,23 @@ private fun LocationItem(
 fun AddLocationScreenPreview() {
     WeatherYouTheme {
         SearchLocationScreen(
-            uiState = AddLocationViewState(
+            viewState = AddLocationViewState(
                 famousLocationsList = PreviewFamousCities
             ),
             { },
             { },
-            { _, _ -> },
+            { _ -> },
+            { },
             { },
         )
     }
 }
 
 val PreviewFamousCities = listOf(
-    City(R.string.new_york, 0.0, 0.0, ""),
-    City(R.string.los_angeles, 0.0, 0.0, ""),
-    City(R.string.toronto, 0.0, 0.0, ""),
-    City(R.string.vancouver, 0.0, 0.0, ""),
-    City(R.string.rio_de_janeiro, 0.0, 0.0, ""),
-    City(R.string.sao_paulo, 0.0, 0.0, "")
+    City(R.string.new_york, 0.0, 0.0, "", "", ""),
+    City(R.string.los_angeles, 0.0, 0.0, "", "", ""),
+    City(R.string.toronto, 0.0, 0.0, "", "", ""),
+    City(R.string.vancouver, 0.0, 0.0, "", "", ""),
+    City(R.string.rio_de_janeiro, 0.0, 0.0, "", "", ""),
+    City(R.string.sao_paulo, 0.0, 0.0, "", "", "")
 )

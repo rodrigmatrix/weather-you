@@ -1,15 +1,34 @@
 package com.rodrigmatrix.weatheryou.locationdetails.presentaion.details
 
+import androidx.lifecycle.viewModelScope
 import com.rodrigmatrix.weatheryou.core.viewmodel.ViewModel
 import com.rodrigmatrix.weatheryou.domain.model.WeatherDay
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
+import com.rodrigmatrix.weatheryou.domain.usecase.GetAppSettingsUseCase
+import kotlinx.coroutines.launch
 
 private const val EXPANDED_LIST_SIZE = 15
 private const val COLLAPSED_LIST_SIZE = 7
 
-class WeatherDetailsViewModel : ViewModel<WeatherDetailsViewState, WeatherDetailsViewEffect>(
+class WeatherDetailsViewModel(
+    private val getAppSettingsUseCase: GetAppSettingsUseCase,
+) : ViewModel<WeatherDetailsViewState, WeatherDetailsViewEffect>(
     WeatherDetailsViewState()
 ) {
+
+    init {
+        viewModelScope.launch {
+            getAppSettingsUseCase()
+                .collect { settings ->
+                    setState {
+                        it.copy(
+                            enableThemeColorWithWeatherAnimations = settings.enableThemeColorWithWeatherAnimations,
+                            enableWeatherAnimations = settings.enableWeatherAnimations,
+                        )
+                    }
+                }
+        }
+    }
 
     fun setWeatherLocation(weatherLocation: WeatherLocation?) {
         if (weatherLocation != null) {

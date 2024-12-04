@@ -12,6 +12,8 @@ import com.rodrigmatrix.weatheryou.domain.model.CurrentLocation
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
+import org.joda.time.DateTime
+import java.util.TimeZone
 
 class UserLocationDataSourceImpl(
     private val locationServices: FusedLocationProviderClient,
@@ -53,7 +55,10 @@ class UserLocationDataSourceImpl(
         return CurrentLocation(
             name = "$subAdminArea,$adminArea,$countryName",
             latitude = this.latitude,
-            longitude = this.longitude
+            longitude = this.longitude,
+            countryCode = this.countryCode,
+            timezone = TimeZone.getDefault().id,
+            lastUpdate = DateTime.now(),
         )
     }
 

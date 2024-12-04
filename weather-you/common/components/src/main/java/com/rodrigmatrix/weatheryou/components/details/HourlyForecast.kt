@@ -3,6 +3,7 @@ package com.rodrigmatrix.weatheryou.components.details
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -14,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.components.R
 import com.rodrigmatrix.weatheryou.components.WeatherIcon
 import com.rodrigmatrix.weatheryou.components.WeatherYouDivider
+import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme.weatherTextColor
 import com.rodrigmatrix.weatheryou.core.extensions.*
 import com.rodrigmatrix.weatheryou.domain.model.WeatherHour
 
@@ -36,7 +38,7 @@ fun HourlyForecastContent(
                     top = 10.dp
                 ),
             style = WeatherYouTheme.typography.headlineSmall,
-            color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+            color = WeatherYouTheme.colorScheme.weatherTextColor,
         )
         WeatherYouDivider(
             Modifier
@@ -44,9 +46,9 @@ fun HourlyForecastContent(
                 .height(1.dp)
         )
         LazyRow(Modifier.padding(start = 16.dp, end = 16.dp)) {
-            items(hoursList) { item  ->
+            itemsIndexed(hoursList) { index, item  ->
                 hourItemWrapper {
-                    HourRow(item)
+                    HourRow(item, index == 0)
                 }
             }
         }
@@ -54,7 +56,7 @@ fun HourlyForecastContent(
 }
 
 @Composable
-fun HourRow(hour: WeatherHour) {
+fun HourRow(hour: WeatherHour, firstItem: Boolean) {
     Column(
         Modifier
             .padding(
@@ -69,8 +71,8 @@ fun HourRow(hour: WeatherHour) {
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(bottom = 4.dp),
-            color = WeatherYouTheme.colorScheme.onSecondaryContainer,
-            style = WeatherYouTheme.typography.bodySmall
+            color = WeatherYouTheme.colorScheme.weatherTextColor,
+            style = WeatherYouTheme.typography.bodySmall,
         )
         if (hour.precipitationType.isNotEmpty()) {
             Text(
@@ -78,8 +80,8 @@ fun HourRow(hour: WeatherHour) {
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .padding(bottom = 4.dp),
-                color = WeatherYouTheme.colorScheme.onSecondaryContainer,
-                style = WeatherYouTheme.typography.bodySmall
+                color = WeatherYouTheme.colorScheme.weatherTextColor,
+                style = WeatherYouTheme.typography.bodySmall,
             )
         } else {
             Spacer(
@@ -90,15 +92,20 @@ fun HourRow(hour: WeatherHour) {
         }
         WeatherIcon(
             weatherCondition = hour.weatherCondition,
+            isDaylight = hour.isDaylight,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(bottom = 10.dp)
                 .size(34.dp)
         )
         Text(
-            text = hour.dateTime.getHourString(LocalContext.current),
+            text = if (firstItem) {
+                stringResource(R.string.now)
+            } else {
+                hour.dateTime.getHourString(LocalContext.current)
+            },
             modifier = Modifier.align(Alignment.CenterHorizontally),
-            color = WeatherYouTheme.colorScheme.onSecondaryContainer,
+            color = WeatherYouTheme.colorScheme.weatherTextColor,
             style = WeatherYouTheme.typography.bodySmall
         )
     }

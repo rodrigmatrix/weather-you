@@ -6,18 +6,18 @@ class OpenWeatherConditionMapper {
 
     fun map(source: String?): WeatherCondition {
         return when(source) {
-            "01d" -> WeatherCondition.SUNNY_DAY
-            "01n" -> WeatherCondition.CLEAR_NIGHT
-            "02d" -> WeatherCondition.PARTLY_CLOUDY_DAY
-            "02n" -> WeatherCondition.PARTLY_CLOUDY_NIGHT
-            "03d", "03n", "04d", "04n" -> WeatherCondition.WINDY
-            "09d", "09n", "10d", "10n" -> WeatherCondition.RAIN_DAY
-            "11d" -> WeatherCondition.STORM_RAIN_DAY
-            "11n" -> WeatherCondition.STORM_RAIN_NIGHT
-            "13d" -> WeatherCondition.SNOW_DAY
-            "13n" -> WeatherCondition.SNOW_NIGHT
-            "50d", "50n" -> WeatherCondition.MIST
-            else -> WeatherCondition.SUNNY_DAY
+            "01d" -> WeatherCondition.Clear
+            "01n" -> WeatherCondition.Clear
+            "02d" -> WeatherCondition.PartlyCloudy
+            "02n" -> WeatherCondition.PartlyCloudy
+            "03d", "03n", "04d", "04n" -> WeatherCondition.Windy
+            "09d", "09n", "10d", "10n" -> WeatherCondition.Rain
+            "11d" -> WeatherCondition.ScatteredThunderstorms
+            "11n" -> WeatherCondition.ScatteredThunderstorms
+            "13d" -> WeatherCondition.Snow
+            "13n" -> WeatherCondition.Snow
+            "50d", "50n" -> WeatherCondition.Fog
+            else -> WeatherCondition.Clear
         }
     }
 }

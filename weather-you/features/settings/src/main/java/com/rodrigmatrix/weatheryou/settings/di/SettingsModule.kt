@@ -1,11 +1,7 @@
 package com.rodrigmatrix.weatheryou.settings.di
 
-import com.rodrigmatrix.weatheryou.domain.usecase.GetAppColorPreferenceUseCase
-import com.rodrigmatrix.weatheryou.domain.usecase.GetAppThemePreferenceUseCase
-import com.rodrigmatrix.weatheryou.domain.usecase.GetTemperaturePreferenceUseCase
-import com.rodrigmatrix.weatheryou.domain.usecase.SetAppColorPreferenceUseCase
-import com.rodrigmatrix.weatheryou.domain.usecase.SetAppThemePreferenceUseCase
-import com.rodrigmatrix.weatheryou.domain.usecase.SetTemperaturePreferenceUseCase
+import com.rodrigmatrix.weatheryou.domain.usecase.GetAppSettingsUseCase
+import com.rodrigmatrix.weatheryou.domain.usecase.SetAppSettingsUseCase
 import com.rodrigmatrix.weatheryou.settings.presentation.settings.SettingsViewModel
 import com.rodrigmatrix.weatheryou.settings.utils.AppThemeManager
 import com.rodrigmatrix.weatheryou.settings.utils.AppThemeManagerImpl
@@ -20,29 +16,20 @@ object SettingsModule {
     }
 
     private val domainModule = module {
-        factory { GetTemperaturePreferenceUseCase(settingsRepository = get()) }
-        factory { SetTemperaturePreferenceUseCase(settingsRepository = get()) }
-        factory { GetAppThemePreferenceUseCase(settingsRepository = get()) }
-        factory { SetAppThemePreferenceUseCase(settingsRepository = get()) }
-        factory { GetAppColorPreferenceUseCase(settingsRepository = get()) }
-        factory { SetAppColorPreferenceUseCase(settingsRepository = get()) }
+        factory { GetAppSettingsUseCase(settingsRepository = get()) }
+        factory { SetAppSettingsUseCase(settingsRepository = get()) }
     }
 
     private val presentationModule = module {
         viewModel {
             SettingsViewModel(
-                getTemperaturePreferenceUseCase = get(),
-                setTemperaturePreferenceUseCase = get(),
-                getAppThemePreferenceUseCase = get(),
-                setAppThemePreferenceUseCase = get(),
-                getAppColorPreferenceUseCase = get(),
-                setAppColorPreferenceUseCase = get(),
-                appThemeManager = get()
+                getAppSettingsUseCase = get(),
+                setAppSettingsUseCase = get(),
             )
         }
     }
 
     private val otherModule = module {
-        factory<AppThemeManager> { AppThemeManagerImpl(getAppThemePreferenceUseCase = get()) }
+        factory<AppThemeManager> { AppThemeManagerImpl(getAppSettingsUseCase = get()) }
     }
 }

@@ -16,7 +16,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,28 +33,30 @@ import com.rodrigmatrix.weatheryou.components.theme.ColorMode
 import com.rodrigmatrix.weatheryou.components.theme.ThemeMode
 import com.rodrigmatrix.weatheryou.tv.R
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
+import com.rodrigmatrix.weatheryou.core.state.LocalWeatherYouAppSettings
 import com.rodrigmatrix.weatheryou.domain.model.AppColorPreference
 import com.rodrigmatrix.weatheryou.domain.model.AppThemePreference
-import com.rodrigmatrix.weatheryou.domain.usecase.GetAppColorPreferenceUseCase
-import com.rodrigmatrix.weatheryou.domain.usecase.GetAppThemePreferenceUseCase
+import com.rodrigmatrix.weatheryou.domain.usecase.GetAppSettingsUseCase
 import com.rodrigmatrix.weatheryou.settings.utils.AppThemeManager
 import com.rodrigmatrix.weatheryou.tv.presentation.theme.WeatherYouTvTheme
 import org.koin.android.ext.android.inject
+import kotlin.getValue
 
 class MainActivity : AppCompatActivity() {
 
-    private val getAppColorPreferenceUseCase: GetAppColorPreferenceUseCase by inject()
-    private val getAppThemePreferenceUseCase: GetAppThemePreferenceUseCase by inject()
+    private val getAppSettingsUseCase by inject<GetAppSettingsUseCase>()
     private val appThemeManager: AppThemeManager by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            val defaultSettings = LocalWeatherYouAppSettings.current
             var colorMode by remember { mutableStateOf(ColorMode.Default) }
             var themeMode by remember { mutableStateOf(ThemeMode.Dark) }
+            var appSettings by remember { mutableStateOf(defaultSettings) }
             LaunchedEffect(Unit) {
-                getAppColorPreferenceUseCase().collect {
-                    colorMode = when (it) {
+                getAppSettingsUseCase().collect {
+                    colorMode = when (it.appColorPreference) {
                         AppColorPreference.DYNAMIC -> ColorMode.Dynamic
                         AppColorPreference.DEFAULT -> ColorMode.Default
                         AppColorPreference.MOSQUE -> ColorMode.Mosque
@@ -66,16 +67,14 @@ class MainActivity : AppCompatActivity() {
                         AppColorPreference.PERU_TAN -> ColorMode.PeruTan
                         AppColorPreference.GIGAS -> ColorMode.Gigas
                     }
-                }
-            }
-            LaunchedEffect(Unit) {
-                getAppThemePreferenceUseCase().collect {
-                    themeMode = when (it) {
+                    themeMode = when (it.appThemePreference) {
                         AppThemePreference.SYSTEM_DEFAULT -> ThemeMode.Dark
                         AppThemePreference.LIGHT -> ThemeMode.Light
                         AppThemePreference.DARK -> ThemeMode.Dark
                     }
+
                     appThemeManager.setAppTheme(enableFollowSystem = false)
+                    appSettings = it
                 }
             }
             WeatherYouTvTheme(

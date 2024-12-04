@@ -5,7 +5,6 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -82,7 +81,7 @@ private fun Loading() {
         contentAlignment = Alignment.Center,
         modifier = Modifier.fillMaxSize()
     ) {
-        CircularProgressIndicator(color = WeatherYouTheme.colors.primary)
+        CircularProgressIndicator(trackColor = MaterialTheme.colors.primary)
     }
 }
 
@@ -101,7 +100,7 @@ private fun Error(
         ) {
             Text(
                 text = stringResource(error),
-                style = WeatherYouTheme.typography.title3,
+                style = MaterialTheme.typography.title3,
                 textAlign = TextAlign.Center
             )
             Spacer(Modifier.padding(bottom = 4.dp))
@@ -132,7 +131,7 @@ fun WeatherContent(
         timeText = {
             CurvedText(
                 text = weatherLocation.currentTime.getHourWithMinutesString(context),
-                style = WeatherYouTheme.typography.caption2
+                style = MaterialTheme.typography.caption2
             )
         },
         positionIndicator = {

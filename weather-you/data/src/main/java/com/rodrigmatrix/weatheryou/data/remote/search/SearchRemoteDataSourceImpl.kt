@@ -1,26 +1,47 @@
 package com.rodrigmatrix.weatheryou.data.remote.search
 
-import com.rodrigmatrix.weatheryou.data.mapper.SearchAutocompleteRemoteMapper
-import com.rodrigmatrix.weatheryou.data.mapper.SearchLocationRemoteMapper
-import com.rodrigmatrix.weatheryou.data.service.ApiNinjasService
-import com.rodrigmatrix.weatheryou.data.service.SearchLocationService
+import com.rodrigmatrix.weatheryou.data.service.LocationIqService
 import com.rodrigmatrix.weatheryou.domain.model.SearchAutocompleteLocation
-import com.rodrigmatrix.weatheryou.domain.model.SearchLocation
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
-import java.util.Locale
 
 class SearchRemoteDataSourceImpl(
-    private val apiNinjasService: ApiNinjasService,
-    private val searchAutocompleteRemoteMapper: SearchAutocompleteRemoteMapper,
-    private val searchLocationRemoteMapper: SearchLocationRemoteMapper,
+    private val locationIqService: LocationIqService,
 ) : SearchRemoteDataSource {
 
     override fun searchLocation(locationName: String): Flow<List<SearchAutocompleteLocation>> {
         return flow {
-            emit(apiNinjasService.searchCity(locationName))
-        }.map(searchAutocompleteRemoteMapper::map)
+            emit(
+                locationIqService.searchLocation(locationName)
+                    .map {
+                        val city = it.address?.name.orEmpty()
+                        val state = it.address?.state.orEmpty()
+                        val country = it.address?.country.orEmpty()
+                        SearchAutocompleteLocation(
+                            name = if (city.isNotEmpty() && state.isNotEmpty()) {
+                                "$city, $state, $country"
+                            } else {
+                                it.displayName.orEmpty()
+                            },
+                            lat = it.lat?.toDouble() ?: 0.0,
+                            long = it.lon?.toDouble() ?: 0.0,
+                            countryCode = it.address?.countryCode.orEmpty(),
+                            timezone = "",
+                        )
+                    }
+            )
+        }
     }
+
+    override fun getTimezone(lat: Double, long: Double): Flow<String> {
+        return flow { emit(locationIqService.getTimezone(lat, long)) }
+            .map { it.timezone?.name.orEmpty() }
+            .catch {
+                emit("")
+            }
+    }
+
+
 }

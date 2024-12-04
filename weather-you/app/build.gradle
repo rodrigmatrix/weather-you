@@ -6,17 +6,22 @@ plugins {
     id 'kotlinx-serialization'
     id 'com.google.gms.google-services'
     id 'com.google.firebase.crashlytics'
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
     compileSdk Sdk.compileSdk
+
+    compileOptions {
+        coreLibraryDesugaringEnabled true
+    }
 
     defaultConfig {
         applicationId Sdk.applicationId
         minSdk Sdk.phoneMinSdk
         targetSdk Sdk.targetSdk
         versionCode Sdk.versionCode
-        versionName "3.0"
+        versionName "4.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -42,8 +47,8 @@ android {
         }
         debug {
             minifyEnabled false
-            applicationIdSuffix ".debug"
             debuggable true
+            applicationIdSuffix ".debug"
         }
     }
     compileOptions {
@@ -78,6 +83,7 @@ dependencies {
     implementation project(LocalModules.domain)
     implementation project(LocalModules.data)
     implementation project(LocalModules.core)
+    implementation project(LocalModules.ads)
 
     implementation project(LocalModules.components)
     implementation project(LocalModules.home)
@@ -106,8 +112,11 @@ dependencies {
     implementation(libs.compose.preview)
     implementation(libs.compose.activity)
     implementation(libs.compose.navigation)
+    implementation(libs.androidx.adaptive)
+    implementation(libs.androidx.adaptive.layout)
+    implementation(libs.androidx.adaptive.navigation)
+    implementation(libs.androidx.adaptive.navigation.suite)
     implementation(libs.compose.constraint.layout)
-    implementation(libs.compose.navigation)
     implementation(libs.compose.window.size)
     implementation(libs.accompanist.permissions)
     implementation(libs.accompanist.navigation)
@@ -130,8 +139,10 @@ dependencies {
 
     implementation(libs.workManager)
 
-    implementation(libs.playServices.location)
+    implementation(libs.google.play.location)
     implementation(libs.google.play.review)
+    implementation(libs.google.play.ads)
+    implementation(libs.google.play.billing)
 
     implementation(libs.jodaTime)
 
@@ -140,6 +151,8 @@ dependencies {
     implementation(libs.coil)
 
     implementation(libs.lottie.compose)
+
+    coreLibraryDesugaring libs.desugar.jdk.libs
 
     debugImplementation(libs.composeUiTooling)
     debugImplementation(libs.composeTestManifest)

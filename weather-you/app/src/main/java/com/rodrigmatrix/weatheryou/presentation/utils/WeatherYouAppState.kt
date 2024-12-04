@@ -12,26 +12,26 @@ import com.rodrigmatrix.weatheryou.home.presentation.navigation.routes
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-@Composable
-fun rememberWeatherYouAppState(
-    scaffoldState: ScaffoldState = rememberScaffoldState(),
-    navController: NavHostController = rememberNavController()
-): WeatherYouAppState {
-    return remember(scaffoldState, navController) {
-        WeatherYouAppState(scaffoldState, navController, scaffoldState.snackbarHostState)
-    }
-}
-
-
-@Stable
-class WeatherYouAppState(
-    val scaffoldState: ScaffoldState,
-    val navController: NavHostController,
-    val snackbarState: SnackbarHostState
-) {
-    @Composable
-    fun shouldShowBottomBar(): Boolean {
-        val currentDestination = navController.currentBackStackEntryAsState().value?.destination
-        return currentDestination?.route in HomeEntry.values().routes
-    }
-}
+//@Composable
+//fun rememberWeatherYouAppState(
+//    scaffoldState: ScaffoldState = rememberScaffoldState(),
+//    navController: NavHostController = rememberNavController()
+//): WeatherYouAppState {
+//    return remember(scaffoldState, navController) {
+//        WeatherYouAppState(scaffoldState, navController, scaffoldState.snackbarHostState)
+//    }
+//}
+//
+//
+//@Stable
+//class WeatherYouAppState(
+//    val scaffoldState: ScaffoldState,
+//    val navController: NavHostController,
+//    val snackbarState: SnackbarHostState
+//) {
+//    @Composable
+//    fun shouldShowBottomBar(): Boolean {
+//        val currentDestination = navController.currentBackStackEntryAsState().value?.destination
+//        return currentDestination?.route in HomeEntry.values().routes
+//    }
+//}

@@ -32,8 +32,24 @@ android {
         buildConfigField "String", "API_NINJAS_URL", "\"https://api.api-ninjas.com/\""
         buildConfigField "String", "API_NINJAS_TOKEN", localProperties['apininjas.token']
 
+        buildConfigField "String", "WEATHER_KIT_URL", "\"https://weatherkit.apple.com/api/\""
+        buildConfigField "String", "WEATHER_KIT_TOKEN", localProperties['weatherkit.token']
+        buildConfigField "String", "WEATHER_KIT_ID", localProperties['weatherkit.id']
+        buildConfigField "String", "WEATHER_KIT_KID", localProperties['weatherkit.kid']
+        buildConfigField "String", "WEATHER_KIT_ISS", localProperties['weatherkit.iss']
+        buildConfigField "String", "WEATHER_KIT_SUB", localProperties['weatherkit.sub']
+
+        buildConfigField "String", "LOCATION_IQ_URL", "\"https://api.locationiq.com/v1/\""
+        buildConfigField "String", "LOCATION_IQ_TOKEN", localProperties['locationiq.token']
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
@@ -61,6 +77,10 @@ dependencies {
     implementation(libs.kotlin.serialization)
     implementation(libs.coroutines.playServices)
 
+    implementation(libs.jwt.api)
+    runtimeOnly(libs.jwt.impl)
+    runtimeOnly(libs.jwt.jackson)
+
     implementation platform(libs.firebase.bom)
     implementation(libs.firebase.remote.config)
     implementation(libs.firebase.analytics)
@@ -84,7 +104,7 @@ dependencies {
 
     implementation(libs.jodaTime)
 
-    implementation(libs.playServices.location)
+    implementation(libs.google.play.location)
 
     testImplementation(libs.junit)
     testImplementation(libs.mockk)

@@ -15,5 +15,4 @@ data class WeatherDay(
     val humidity: Double,
     val sunrise: DateTime,
     val sunset: DateTime,
-    val unit: TemperaturePreference,
 )

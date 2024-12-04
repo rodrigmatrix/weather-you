@@ -5,6 +5,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import com.rodrigmatrix.weatheryou.addlocation.di.AddLocationModule
+import com.rodrigmatrix.weatheryou.ads.di.WeatherYouAdsModule
 import com.rodrigmatrix.weatheryou.data.BuildConfig
 import com.rodrigmatrix.weatheryou.data.di.WeatherYouDataModules
 import com.rodrigmatrix.weatheryou.settings.utils.AppThemeManager
@@ -28,6 +29,7 @@ class WeatherYouTvApp : Application() {
             WeatherYouDataModules.loadModules()
             AddLocationModule.loadModules()
             WeatherYouTvModule.loadModules()
+            WeatherYouAdsModule.loadModules()
         }
         setAppTheme()
     }
