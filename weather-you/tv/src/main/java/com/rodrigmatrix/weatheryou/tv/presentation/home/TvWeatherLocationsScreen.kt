@@ -52,10 +52,12 @@ import com.rodrigmatrix.weatheryou.components.R
 import com.rodrigmatrix.weatheryou.components.WeatherIcon
 import com.rodrigmatrix.weatheryou.components.WeatherLocationCardContent
 import com.rodrigmatrix.weatheryou.components.extensions.shimmerLoadingAnimation
+import com.rodrigmatrix.weatheryou.components.particle.WeatherAnimationsBackground
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.domain.model.WeatherCondition
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.tv.components.TvCard
+import com.rodrigmatrix.weatheryou.tv.presentation.details.TvWeatherDetailsScreen
 import com.rodrigmatrix.weatheryou.tv.presentation.details.TvWeatherLocationScreen
 import com.rodrigmatrix.weatheryou.tv.presentation.locations.TvWeatherLocationsUiState
 import com.rodrigmatrix.weatheryou.tv.presentation.locations.TVWeatherLocationsViewModel
@@ -219,10 +221,7 @@ private fun TvWeatherLocationsContent(
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier.padding(
-            horizontal = 16.dp,
-            vertical = 8.dp
-        )
+        modifier
     ) {
         WeatherLocationsList(
             weatherLocationsList = locationsList,
@@ -232,9 +231,9 @@ private fun TvWeatherLocationsContent(
             modifier = Modifier.weight(1f)
         )
         currentLocation?.let { selectedLocation ->
-            TvWeatherLocationScreen(
+            TvWeatherDetailsScreen(
                 weatherLocation = selectedLocation,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
             )
         }
     }
@@ -345,10 +344,18 @@ private fun WeatherLocationsList(
                 },
                 modifier = Modifier.padding(horizontal = 16.dp)
             ) {
-                WeatherLocationCardContent(
-                    weatherLocation = weatherLocation,
-                    isRefreshingLocations = false,
-                )
+                Box {
+                    if (WeatherYouTheme.themeSettings.showWeatherAnimations) {
+                        WeatherAnimationsBackground(
+                            weatherLocation = weatherLocation,
+                            modifier = Modifier.height(130.dp),
+                        )
+                    }
+                    WeatherLocationCardContent(
+                        weatherLocation = weatherLocation,
+                        isRefreshingLocations = false,
+                    )
+                }
             }
         }
     }

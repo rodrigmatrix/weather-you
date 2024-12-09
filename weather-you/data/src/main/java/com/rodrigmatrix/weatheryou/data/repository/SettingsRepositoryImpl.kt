@@ -19,4 +19,12 @@ class SettingsRepositoryImpl(
     override fun setAppSettings(settings: AppSettings): Flow<Unit> {
         return settingsLocalDataSource.setAppSettings(settings)
     }
+
+    override fun getIsPremiumUser(): Flow<Boolean> {
+        return settingsLocalDataSource.getIsPremiumUser()
+    }
+
+    override fun setIsPremiumUser(premium: Boolean): Flow<Unit> {
+        return settingsLocalDataSource.setIsPremiumUser(premium)
+    }
 }

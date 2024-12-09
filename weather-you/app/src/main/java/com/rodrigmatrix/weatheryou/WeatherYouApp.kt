@@ -65,7 +65,7 @@ class WeatherYouApp: Application() {
 
     private fun initWidgetWorker() {
         val updateWidgetRequest =
-            PeriodicWorkRequestBuilder<UpdateWidgetWeatherDataWorker>(1, TimeUnit.HOURS)
+            PeriodicWorkRequestBuilder<UpdateWidgetWeatherDataWorker>(15, TimeUnit.MINUTES)
                 .setConstraints(
                     Constraints.Builder()
                         .setRequiresBatteryNotLow(false)

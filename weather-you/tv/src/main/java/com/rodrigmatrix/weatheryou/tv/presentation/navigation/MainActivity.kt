@@ -31,6 +31,7 @@ import androidx.tv.material3.NavigationDrawerItem
 import androidx.tv.material3.Text
 import com.rodrigmatrix.weatheryou.components.theme.ColorMode
 import com.rodrigmatrix.weatheryou.components.theme.ThemeMode
+import com.rodrigmatrix.weatheryou.components.theme.ThemeSettings
 import com.rodrigmatrix.weatheryou.tv.R
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.core.state.LocalWeatherYouAppSettings
@@ -80,6 +81,10 @@ class MainActivity : AppCompatActivity() {
             WeatherYouTvTheme(
                 themeMode = themeMode,
                 colorMode = colorMode,
+                themeSettings = ThemeSettings(
+                    showWeatherAnimations = appSettings.enableWeatherAnimations,
+                    enableThemeColorForWeatherAnimations = appSettings.enableThemeColorWithWeatherAnimations,
+                ),
             ) {
                 val navController = rememberNavController()
                 NavigationDrawer(

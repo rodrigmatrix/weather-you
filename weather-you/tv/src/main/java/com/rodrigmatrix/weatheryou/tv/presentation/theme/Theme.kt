@@ -18,8 +18,10 @@ import com.rodrigmatrix.weatheryou.components.theme.ColorMode
 import com.rodrigmatrix.weatheryou.components.theme.LocalWeatherYouColorMode
 import com.rodrigmatrix.weatheryou.components.theme.LocalWeatherYouColorScheme
 import com.rodrigmatrix.weatheryou.components.theme.LocalWeatherYouThemeMode
+import com.rodrigmatrix.weatheryou.components.theme.LocalWeatherYouThemeSettingsEnabled
 import com.rodrigmatrix.weatheryou.components.theme.LocalWeatherYouTypography
 import com.rodrigmatrix.weatheryou.components.theme.ThemeMode
+import com.rodrigmatrix.weatheryou.components.theme.ThemeSettings
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouColors
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTypography
 
@@ -66,6 +68,7 @@ fun ColorScheme.toWeatherYouColors() = WeatherYouColors(
 fun WeatherYouTvTheme(
     themeMode: ThemeMode = ThemeMode.Dark,
     colorMode: ColorMode = ColorMode.Default,
+    themeSettings: ThemeSettings = ThemeSettings(),
     content: @Composable () -> Unit
 ) {
     val darkTheme = themeMode in listOf(ThemeMode.Dark, ThemeMode.System)
@@ -140,6 +143,7 @@ fun WeatherYouTvTheme(
         LocalWeatherYouTypography provides typography,
         LocalWeatherYouThemeMode provides themeMode,
         LocalWeatherYouColorMode provides colorMode,
+        LocalWeatherYouThemeSettingsEnabled provides themeSettings,
     ) {
         MaterialTheme(
             colorScheme = colorScheme,

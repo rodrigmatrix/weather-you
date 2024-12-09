@@ -10,17 +10,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material.*
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.PermissionState
 import com.rodrigmatrix.weatheryou.wearos.R
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun RequestLocationPermission(
-    permissionState: PermissionState,
+    permissionState: MultiplePermissionsState,
     onLocationPermissionChanged: () -> Unit
 ) {
     when {
-        permissionState.hasPermission -> {
+        permissionState.allPermissionsGranted -> {
             onLocationPermissionChanged()
         }
         else -> {
@@ -40,7 +41,7 @@ fun RequestLocationPermission(
                     Spacer(Modifier.padding(bottom = 4.dp))
                     Button(
                         modifier = Modifier.size(ButtonDefaults.SmallButtonSize),
-                        onClick = permissionState::launchPermissionRequest
+                        onClick = permissionState::launchMultiplePermissionRequest
                     ) {
                         Icon(
                             painter = painterResource(R.drawable.ic_check),

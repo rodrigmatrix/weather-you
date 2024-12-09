@@ -11,6 +11,7 @@ import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
+import androidx.glance.action.Action
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.lazy.LazyColumn
 import androidx.glance.appwidget.lazy.itemsIndexed
@@ -39,11 +40,10 @@ import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.widgets.R
 import java.util.Calendar
 
-
 @Composable
 fun MediumLargeWidget(
     weather: WeatherLocation,
-    onWidgetClicked: () -> Unit,
+    onWidgetClicked: Action,
     showDays: Boolean,
     glanceModifier: GlanceModifier = GlanceModifier,
 ) {
@@ -52,7 +52,7 @@ fun MediumLargeWidget(
         modifier = glanceModifier
             .background(ImageProvider(R.drawable.weather_outside_shape_widget))
             .fillMaxSize()
-            .clickable(block = onWidgetClicked)
+            .clickable(onWidgetClicked)
     ) {
         Spacer(GlanceModifier.height(8.dp))
         MediumWidgetHeader(weather)
@@ -285,7 +285,7 @@ private fun DayRow(
 
 @Composable
 fun MediumLargeLoading(
-    onWidgetClicked: () -> Unit,
+    onWidgetClicked: Action,
     modifier: GlanceModifier = GlanceModifier
 ) {
     Column(
@@ -294,7 +294,7 @@ fun MediumLargeLoading(
         modifier = modifier
             .background(ImageProvider(R.drawable.weather_outside_shape_widget))
             .fillMaxSize()
-            .clickable(block = onWidgetClicked)
+            .clickable(onWidgetClicked)
     ) {
         Text(
             text = "Loading Data...",
@@ -314,7 +314,7 @@ private fun MediumWidgetPreview() {
     GlanceTheme {
         MediumLargeWidget(
             weather = PreviewWeatherLocation,
-            onWidgetClicked = { },
+            onWidgetClicked = object : Action { },
             showDays = true,
         )
     }

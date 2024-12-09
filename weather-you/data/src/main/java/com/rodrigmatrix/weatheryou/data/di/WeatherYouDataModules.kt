@@ -94,7 +94,8 @@ object WeatherYouDataModules {
         factory {
             AddLocationUseCase(
                 weatherRepository = get(),
-                getRemoteConfigLongUseCase = get()
+                getRemoteConfigLongUseCase = get(),
+                settingsRepository = get(),
             )
         }
         factory { DeleteLocationUseCase(weatherRepository = get()) }
@@ -108,6 +109,7 @@ object WeatherYouDataModules {
         factory { GetLocationsUseCase(weatherRepository = get()) }
         factory { UpdateLocationsListOrderUseCase(weatherRepository = get()) }
         factory { UpdateWidgetLocationsUseCase(weatherRepository = get()) }
+        factory { GetLocationByLatLongUseCase(weatherRepository = get()) }
     }
 
     private val repositoryModule = module {

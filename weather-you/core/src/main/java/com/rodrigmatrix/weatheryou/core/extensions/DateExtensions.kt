@@ -30,6 +30,14 @@ fun DateTime.getLocalTime(): LocalTime {
     }
 }
 
+fun String.getDateTimeFromTimezone(): DateTime {
+    return try {
+        DateTime(DateTimeZone.forID(this))
+    } catch (e: Exception) {
+        DateTime()
+    }
+}
+
 fun DateTime.getHoursAndMinutesDiff(second: DateTime): Pair<Int, Int> {
     val timeLeft = Period(
         this.getLocalTime(),

@@ -1,6 +1,7 @@
 package com.rodrigmatrix.weatheryou.presentation.navigation
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -60,7 +61,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        intent.extras?.getString("locationId")
         setContent {
             val defaultSettings = LocalWeatherYouAppSettings.current
             var colorMode by remember { mutableStateOf(ColorMode.Default) }
@@ -73,6 +73,13 @@ class MainActivity : AppCompatActivity() {
             val homeViewModel = getViewModel<HomeViewModel>()
             val homeViewState by homeViewModel.viewState.collectAsState()
             val coroutineScope = rememberCoroutineScope()
+            LaunchedEffect(Unit) {
+                val latitude = intent.extras?.getDouble("latitude")
+                val longitude = intent.extras?.getDouble("longitude")
+                if (latitude != null && longitude != null) {
+                    homeViewModel.openLocation(latitude = latitude, longitude = longitude)
+                }
+            }
             LaunchedEffect(Unit) {
                 getAppSettingsUseCase().collect {
                     colorMode = when (it.appColorPreference) {

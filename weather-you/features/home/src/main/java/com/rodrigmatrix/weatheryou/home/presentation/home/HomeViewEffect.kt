@@ -10,4 +10,6 @@ sealed class HomeViewEffect : ViewEffect {
     data object ShowInAppReview : HomeViewEffect()
 
     data object UpdateWidgets : HomeViewEffect()
+
+    data class OpenLocation(val id: Int) : HomeViewEffect()
 }

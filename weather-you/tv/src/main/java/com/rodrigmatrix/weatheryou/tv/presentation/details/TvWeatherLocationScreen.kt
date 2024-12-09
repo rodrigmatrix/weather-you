@@ -1,5 +1,6 @@
 package com.rodrigmatrix.weatheryou.tv.presentation.details
 
+import android.annotation.SuppressLint
 import android.net.Uri
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.Image
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -22,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.focusProperties
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -48,9 +51,37 @@ import com.rodrigmatrix.weatheryou.components.details.SunriseSunsetCardContent
 import com.rodrigmatrix.weatheryou.components.details.UvIndexCardContent
 import com.rodrigmatrix.weatheryou.components.details.VisibilityCardContent
 import com.rodrigmatrix.weatheryou.components.details.WindCardContent
+import com.rodrigmatrix.weatheryou.components.particle.WeatherAnimationsBackground
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
+import com.rodrigmatrix.weatheryou.core.extensions.getDateTimeFromTimezone
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.tv.components.TvCard
+import com.rodrigmatrix.weatheryou.tv.presentation.theme.md_theme_dark_secondaryContainer
+
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@Composable
+fun TvWeatherDetailsScreen(
+    weatherLocation: WeatherLocation,
+    modifier: Modifier = Modifier,
+) {
+    Scaffold(
+        containerColor = if (WeatherYouTheme.themeSettings.showWeatherAnimations) {
+            Color.Transparent
+        } else {
+            WeatherYouTheme.colorScheme.background
+        },
+        modifier = modifier,
+    ) { paddingValues ->
+        if (WeatherYouTheme.themeSettings.showWeatherAnimations) {
+            WeatherAnimationsBackground(
+                weatherLocation = weatherLocation,
+            )
+        }
+        TvWeatherLocationScreen(
+            weatherLocation
+        )
+    }
+}
 
 @Composable
 fun TvWeatherLocationScreen(
@@ -87,6 +118,13 @@ fun TvWeatherLocationScreen(
                     hourItemWrapper = { content ->
                         TvCard(
                             onClick = { },
+                            colors = CardDefaults.colors(
+                                containerColor =  if (WeatherYouTheme.themeSettings.showWeatherAnimations) {
+                                    Color.Transparent
+                                } else {
+                                    WeatherYouTheme.colorScheme.secondaryContainer
+                                },
+                            ),
                             scale = CardDefaults.scale(
                                 focusedScale = 1.005f,
                             ),
@@ -130,12 +168,20 @@ fun TvWeatherLocationScreen(
                                     focusedScale = 1.005f,
                                 ),
                                 colors = ClickableSurfaceDefaults.colors(
-                                    focusedContainerColor = WeatherYouTheme.colorScheme.primaryContainer,
-                                    containerColor = WeatherYouTheme.colorScheme.secondaryContainer,
+                                    focusedContainerColor = WeatherYouTheme.colorScheme.primaryContainer.copy(alpha = 0.4f),
+                                    containerColor = if (WeatherYouTheme.themeSettings.showWeatherAnimations) {
+                                        md_theme_dark_secondaryContainer.copy(alpha = 0.4f)
+                                    } else {
+                                        WeatherYouTheme.colorScheme.secondaryContainer
+                                    },
                                 ),
                                 glow = ClickableSurfaceDefaults.glow(
                                     focusedGlow = Glow(
-                                        elevationColor = WeatherYouTheme.colorScheme.tertiary,
+                                        elevationColor = if (WeatherYouTheme.themeSettings.showWeatherAnimations) {
+                                            md_theme_dark_secondaryContainer.copy(alpha = 0.4f)
+                                        } else {
+                                            WeatherYouTheme.colorScheme.tertiary
+                                        },
                                         elevation = 3.dp,
                                     )
                                 ),
@@ -155,6 +201,13 @@ fun TvWeatherLocationScreen(
                                 hourItemWrapper = { content ->
                                     TvCard(
                                         onClick = { },
+                                        colors = CardDefaults.colors(
+                                            containerColor =  if (WeatherYouTheme.themeSettings.showWeatherAnimations) {
+                                                Color.Transparent
+                                            } else {
+                                                WeatherYouTheme.colorScheme.secondaryContainer
+                                            },
+                                        ),
                                         scale = CardDefaults.scale(
                                             focusedScale = 1.005f,
                                         ),
@@ -219,7 +272,7 @@ fun TvWeatherLocationScreen(
                 SunriseSunsetCardContent(
                     sunrise = weatherLocation.sunrise,
                     sunset = weatherLocation.sunset,
-                    currentTime = weatherLocation.currentTime,
+                    currentTime = weatherLocation.timeZone.getDateTimeFromTimezone(),
                     isDaylight = weatherLocation.isDaylight,
                 )
             }

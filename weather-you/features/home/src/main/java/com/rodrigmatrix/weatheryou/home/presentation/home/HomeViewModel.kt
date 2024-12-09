@@ -7,6 +7,7 @@ import com.rodrigmatrix.weatheryou.domain.usecase.DeleteLocationUseCase
 import com.rodrigmatrix.weatheryou.domain.usecase.UpdateLocationsUseCase
 import com.rodrigmatrix.weatheryou.components.R
 import com.rodrigmatrix.weatheryou.domain.usecase.GetAppSettingsUseCase
+import com.rodrigmatrix.weatheryou.domain.usecase.GetLocationByLatLongUseCase
 import com.rodrigmatrix.weatheryou.domain.usecase.GetLocationsUseCase
 import com.rodrigmatrix.weatheryou.domain.usecase.UpdateLocationsListOrderUseCase
 import com.rodrigmatrix.weatheryou.home.presentation.home.HomeViewEffect.Error
@@ -33,6 +34,7 @@ class HomeViewModel(
     private val getLocationsUseCase: GetLocationsUseCase,
     private val deleteLocationUseCase: DeleteLocationUseCase,
     private val getAppSettingsUseCase: GetAppSettingsUseCase,
+    private val getLocationByLatLongUseCase: GetLocationByLatLongUseCase,
     private val updateLocationsListOrderUseCase: UpdateLocationsListOrderUseCase,
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ): ViewModel<HomeUiState, HomeViewEffect>(HomeUiState()) {
@@ -160,6 +162,26 @@ class HomeViewModel(
     fun selectLocation(weatherLocation: WeatherLocation? = null) {
         setState {
             it.copy(selectedWeatherLocation = getSelectedLocation(weatherLocation))
+        }
+    }
+
+    fun openLocation(
+        latitude: Double,
+        longitude: Double,
+    ) {
+        viewModelScope.launch {
+            getLocationByLatLongUseCase(latitude, longitude)
+                .catch { }
+                .firstOrNull { weatherLocation ->
+                    if (weatherLocation != null) {
+                        setState {
+                            it.copy(selectedWeatherLocation = weatherLocation)
+                        }
+                        setEffect { HomeViewEffect.OpenLocation(weatherLocation.id) }
+                    }
+                    return@firstOrNull true
+                }
+
         }
     }
 

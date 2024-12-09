@@ -17,6 +17,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,9 +34,15 @@ import com.rodrigmatrix.weatheryou.about.R
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.components.R as Strings
 import com.rodrigmatrix.weatheryou.presentation.about.model.SocialNetwork
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import com.rodrigmatrix.weatheryou.domain.repository.SettingsRepository
+import org.koin.compose.koinInject
 
 @Composable
-fun AboutScreen() {
+fun AboutScreen(
+    settingsRepository: SettingsRepository = koinInject(),
+) {
     Column(
         Modifier
             .fillMaxSize()
@@ -42,11 +50,20 @@ fun AboutScreen() {
             .verticalScroll(rememberScrollState())
             .padding(bottom = 100.dp)
     ) {
+        var clicks by remember { mutableIntStateOf(0) }
         Image(
             painter = painterResource(R.drawable.ic_about),
             contentDescription = stringResource(Strings.string.image_of_developer),
             contentScale = ContentScale.FillBounds,
             modifier = Modifier
+                .clickable(
+                    onClick = {
+                        clicks++
+                        if (clicks >= 20) {
+                            settingsRepository.setIsPremiumUser(true)
+                        }
+                    }
+                )
                 .padding(top = 16.dp)
                 .size(130.dp)
                 .clip(CircleShape)
