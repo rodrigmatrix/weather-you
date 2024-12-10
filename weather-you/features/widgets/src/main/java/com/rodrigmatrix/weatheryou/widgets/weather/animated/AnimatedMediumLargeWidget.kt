@@ -7,11 +7,8 @@ import android.graphics.Paint
 import android.graphics.Shader
 import android.text.format.DateFormat
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.ColorFilter
@@ -20,7 +17,7 @@ import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
-import androidx.glance.LocalSize
+import androidx.glance.action.Action
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.lazy.LazyColumn
@@ -60,7 +57,7 @@ import kotlin.math.absoluteValue
 @Composable
 fun AnimatedMediumLargeWidget(
     weather: WeatherLocation,
-    onWidgetClicked: () -> Unit,
+    onWidgetClicked: Action,
     showDays: Boolean,
     width: Float,
     height: Float,
@@ -73,7 +70,7 @@ fun AnimatedMediumLargeWidget(
             .background(ImageProvider(weather.gradientBackground(width, height)))
             .fillMaxSize()
             .cornerRadius(16.dp)
-            .clickable(block = onWidgetClicked)
+            .clickable(onWidgetClicked)
     ) {
         MediumWidgetHeader(weather)
         Spacer(modifier = GlanceModifier.defaultWeight())
@@ -416,7 +413,7 @@ private fun MediumWidgetPreview() {
     GlanceTheme {
         AnimatedMediumLargeWidget(
             weather = PreviewWeatherLocation,
-            onWidgetClicked = { },
+            onWidgetClicked = object: Action { },
             showDays = true,
             width = 400f,
             height = 400f,

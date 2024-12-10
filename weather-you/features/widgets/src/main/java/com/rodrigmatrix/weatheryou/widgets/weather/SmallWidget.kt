@@ -7,6 +7,7 @@ import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
+import androidx.glance.action.Action
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.components.Scaffold
 import androidx.glance.background
@@ -36,7 +37,7 @@ private const val MAX_WIDTH = 186
 @Composable
 fun SmallWidget(
     weather: WeatherLocation,
-    onWidgetClicked: () -> Unit,
+    onWidgetClicked: Action,
     glanceModifier: GlanceModifier = GlanceModifier,
 ) {
     Column(
@@ -44,7 +45,7 @@ fun SmallWidget(
         modifier = glanceModifier
             .background(ImageProvider(R.drawable.weather_outside_shape_widget))
             .size(width = MAX_WIDTH.dp, height = 184.dp)
-            .clickable(block = onWidgetClicked)
+            .clickable(onWidgetClicked)
     ) {
         Spacer(GlanceModifier.height(8.dp))
         Row(
@@ -113,7 +114,7 @@ private fun SmallWidgetPreview() {
     GlanceTheme {
         SmallWidget(
             weather = PreviewWeatherLocation,
-            onWidgetClicked = { },
+            onWidgetClicked = object : Action { },
         )
     }
 }

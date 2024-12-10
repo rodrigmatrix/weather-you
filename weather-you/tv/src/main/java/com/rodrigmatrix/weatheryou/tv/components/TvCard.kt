@@ -14,6 +14,7 @@ import androidx.tv.material3.CardScale
 import androidx.tv.material3.CardShape
 import androidx.tv.material3.Glow
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
+import com.rodrigmatrix.weatheryou.tv.presentation.theme.md_theme_dark_secondaryContainer
 
 @Composable
 fun TvCard(
@@ -22,13 +23,23 @@ fun TvCard(
     onLongClick: (() -> Unit)? = null,
     shape: CardShape = CardDefaults.shape(),
     colors: CardColors = CardDefaults.colors(
-        containerColor = WeatherYouTheme.colorScheme.secondaryContainer,
+        containerColor =  if (WeatherYouTheme.themeSettings.showWeatherAnimations) {
+            md_theme_dark_secondaryContainer.copy(alpha = 0.4f)
+        } else {
+            WeatherYouTheme.colorScheme.secondaryContainer
+        },
     ),
-    scale: CardScale = CardDefaults.scale(),
+    scale: CardScale = CardDefaults.scale(
+        focusedScale = 1.08f,
+    ),
     border: CardBorder = CardDefaults.border(),
     glow: CardGlow = CardDefaults.glow(
         focusedGlow = Glow(
-            elevationColor = WeatherYouTheme.colorScheme.tertiary,
+            elevationColor = if (WeatherYouTheme.themeSettings.showWeatherAnimations) {
+                md_theme_dark_secondaryContainer.copy(alpha = 0.4f)
+            } else {
+                WeatherYouTheme.colorScheme.secondaryContainer
+            },
             elevation = 4.dp,
         )
     ),

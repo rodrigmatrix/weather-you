@@ -11,4 +11,8 @@ interface SettingsRepository {
     fun getAppSettings(): Flow<AppSettings>
 
     fun setAppSettings(settings: AppSettings): Flow<Unit>
+
+    fun getIsPremiumUser(): Flow<Boolean>
+
+    fun setIsPremiumUser(premium: Boolean): Flow<Unit>
 }

@@ -2,7 +2,6 @@ package com.rodrigmatrix.weatheryou.widgets.weather.animated
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.ColorFilter
@@ -11,6 +10,7 @@ import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
+import androidx.glance.action.Action
 import androidx.glance.action.clickable
 import androidx.glance.background
 import androidx.glance.layout.Alignment
@@ -31,11 +31,8 @@ import com.rodrigmatrix.weatheryou.components.extensions.getStaticIcon
 import com.rodrigmatrix.weatheryou.components.extensions.getString
 import com.rodrigmatrix.weatheryou.components.preview.PreviewWeatherLocation
 import com.rodrigmatrix.weatheryou.core.extensions.temperatureString
-import com.rodrigmatrix.weatheryou.domain.model.WeatherCondition
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
-import com.rodrigmatrix.weatheryou.widgets.R
 import com.rodrigmatrix.weatheryou.widgets.weather.utils.gradientBackground
-import org.joda.time.DateTime
 
 private const val MAX_WIDTH = 186
 
@@ -44,7 +41,7 @@ fun AnimatedSmallWidget(
     weather: WeatherLocation,
     width: Float,
     height: Float,
-    onWidgetClicked: () -> Unit,
+    onWidgetClicked: Action,
     glanceModifier: GlanceModifier = GlanceModifier,
 ) {
     Column(
@@ -52,7 +49,7 @@ fun AnimatedSmallWidget(
             .background(ImageProvider(weather.gradientBackground(width, height)))
             .size(width = MAX_WIDTH.dp, height = 184.dp)
             .padding(horizontal = 16.dp)
-            .clickable(block = onWidgetClicked)
+            .clickable(onWidgetClicked)
     ) {
         Spacer(GlanceModifier.height(8.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -125,7 +122,7 @@ private fun SmallWidgetPreview() {
     GlanceTheme {
         AnimatedSmallWidget(
             weather = PreviewWeatherLocation,
-            onWidgetClicked = { },
+            onWidgetClicked = object: Action { },
             width = 200f,
             height = 200f,
         )

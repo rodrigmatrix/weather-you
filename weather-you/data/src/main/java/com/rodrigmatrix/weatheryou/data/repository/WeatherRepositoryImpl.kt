@@ -137,6 +137,35 @@ class WeatherRepositoryImpl(
         return weatherLocalDataSource.getAllLocations().map { locationsList -> locationsList.size }
     }
 
+    override fun getLocation(latitude: Double, longitude: Double): Flow<WeatherLocation?> {
+        return weatherLocalDataSource.getWeather(latitude, longitude).flatMapLatest { weather ->
+            require(weather != null) {
+                throw IllegalArgumentException("weather not found")
+            }
+            if (weather.isCurrentLocation) {
+                weatherLocalDataSource.getCurrentLocation().map { currentLocation ->
+                    require(currentLocation != null) {
+                        throw IllegalArgumentException("CurrentLocation not found")
+                    }
+                    weather.toWeatherLocation(
+                        id = currentLocation.id,
+                        orderIndex = -1,
+                    )
+                }
+            } else {
+                weatherLocalDataSource.getLocation(latitude = latitude, longitude = longitude).map { location ->
+                    require(location != null) {
+                        throw IllegalArgumentException("Location not found")
+                    }
+                    weather.toWeatherLocation(
+                        id = location.id,
+                        orderIndex = -1,
+                    )
+                }
+            }
+        }
+    }
+
     override fun setSavedLocation(weatherLocation: WeatherLocation, widgetId: String): Flow<Unit> {
         return weatherLocalDataSource.saveWidgetLocation(
             weatherLocation.toWeatherWidgetLocationEntity().copy(id = widgetId)

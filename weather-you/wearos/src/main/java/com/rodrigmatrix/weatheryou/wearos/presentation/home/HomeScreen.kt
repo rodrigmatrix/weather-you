@@ -1,6 +1,7 @@
 package com.rodrigmatrix.weatheryou.wearos.presentation.home
 
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
+import android.os.Build
 import androidx.annotation.StringRes
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.scrollBy
@@ -21,7 +22,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material.*
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.PermissionState
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
 import com.rodrigmatrix.weatheryou.core.extensions.getHourWithMinutesString
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
@@ -36,7 +39,33 @@ import org.koin.androidx.compose.getViewModel
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = getViewModel(),
-    locationPermissionState: PermissionState = rememberPermissionState(ACCESS_COARSE_LOCATION)
+    backgroundLocationPermissionState: PermissionState = rememberPermissionState(
+        permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
+        } else {
+            android.Manifest.permission.ACCESS_FINE_LOCATION
+        },
+        onPermissionResult = {
+            //viewModel.on()
+        }
+    ),
+    locationPermissionState: MultiplePermissionsState = rememberMultiplePermissionsState(
+        permissions = listOf(
+            android.Manifest.permission.ACCESS_COARSE_LOCATION,
+            android.Manifest.permission.ACCESS_FINE_LOCATION,
+        ),
+        onPermissionsResult = {
+            if (it.all { it.value }) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    //onDialogStateChanged(HomeDialogState.BackgroundLocation)
+                } else {
+                    //onPermissionGranted()
+                }
+            } else {
+                //onPermissionGranted()
+            }
+        }
+    ),
 ) {
     val viewState by viewModel.viewState.collectAsState()
     HomeScreen(
@@ -50,11 +79,11 @@ fun HomeScreen(
 @Composable
 fun HomeScreen(
     viewState: HomeViewState,
-    locationPermissionState: PermissionState,
+    locationPermissionState: MultiplePermissionsState,
     onRefreshLocation: () -> Unit
 ) {
     when {
-        locationPermissionState.hasPermission.not() -> {
+        locationPermissionState.allPermissionsGranted -> {
             RequestLocationPermission(locationPermissionState, onRefreshLocation)
             return
         }

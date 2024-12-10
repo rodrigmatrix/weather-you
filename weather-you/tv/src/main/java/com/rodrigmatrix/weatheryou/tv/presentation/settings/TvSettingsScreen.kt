@@ -143,13 +143,13 @@ fun TvSettingsScreen(
             onClick = onEditTheme,
             modifier = Modifier
         )
-//        Spacer(Modifier.height(10.dp))
-//        TvSwitchWithDescription(
-//            checked = viewState.appSettings.enableWeatherAnimations,
-//            description = stringResource(R.string.enable_weather_animations),
-//            onCheckedChange = { onWeatherAnimationsChange(!viewState.appSettings.enableWeatherAnimations) },
-//            modifier = Modifier.padding(horizontal = 16.dp)
-//        )
+        Spacer(Modifier.height(10.dp))
+        TvSwitchWithDescription(
+            checked = viewState.appSettings.enableWeatherAnimations,
+            description = stringResource(R.string.enable_weather_animations),
+            onCheckedChange = { onWeatherAnimationsChange(!viewState.appSettings.enableWeatherAnimations) },
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
     }
 }
 

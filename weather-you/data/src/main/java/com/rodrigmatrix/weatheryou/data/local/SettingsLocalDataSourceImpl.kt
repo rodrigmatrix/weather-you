@@ -14,7 +14,6 @@ import com.rodrigmatrix.weatheryou.domain.model.AppSettings
 import com.rodrigmatrix.weatheryou.domain.model.AppThemePreference
 import com.rodrigmatrix.weatheryou.domain.model.TemperaturePreference
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.encodeToString
@@ -26,6 +25,7 @@ internal const val COLOR_KEY = "color_pref"
 internal const val WEATHER_ANIMATIONS_KEY = "weather_animations_pref"
 internal const val THEME_COLOR_WEATHER_ANIMATIONS_KEY = "theme_color_weather_animations_pref"
 internal const val APP_SETTINGS_KEY = "app_settings_key"
+internal const val IS_PREMIUM_USER_KEY = "is_premium_user_key"
 
 class SettingsLocalDataSourceImpl(
     private val dataStore: DataStore<Preferences>,
@@ -97,10 +97,25 @@ class SettingsLocalDataSourceImpl(
     }
 
     private fun getIsWeatherAnimationsEnabled(preferences: Preferences): Boolean {
-        return preferences[booleanPreferencesKey(WEATHER_ANIMATIONS_KEY)] ?: true
+        return preferences[booleanPreferencesKey(WEATHER_ANIMATIONS_KEY)] != false
     }
 
     private fun getIsThemeColorWithWeatherAnimationsEnabled(preferences: Preferences): Boolean {
-        return preferences[booleanPreferencesKey(THEME_COLOR_WEATHER_ANIMATIONS_KEY)] ?: false
+        return preferences[booleanPreferencesKey(THEME_COLOR_WEATHER_ANIMATIONS_KEY)] == true
+    }
+
+    override fun getIsPremiumUser(): Flow<Boolean> {
+        return dataStore.data.map { preferences ->
+            preferences[booleanPreferencesKey(IS_PREMIUM_USER_KEY)] == true
+        }
+    }
+
+    override fun setIsPremiumUser(premium: Boolean): Flow<Unit> {
+        return flow {
+            dataStore.edit { preferences ->
+                preferences[booleanPreferencesKey(IS_PREMIUM_USER_KEY)] = premium
+            }
+            emit(Unit)
+        }
     }
 }

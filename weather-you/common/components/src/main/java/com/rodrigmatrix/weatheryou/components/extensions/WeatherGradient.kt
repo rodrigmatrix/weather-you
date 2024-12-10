@@ -1,6 +1,7 @@
 package com.rodrigmatrix.weatheryou.components.extensions
 
 import androidx.compose.ui.graphics.Color
+import com.rodrigmatrix.weatheryou.core.extensions.getDateTimeFromTimezone
 import com.rodrigmatrix.weatheryou.domain.model.WeatherCondition
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import org.joda.time.DateTime
@@ -20,13 +21,13 @@ fun getGradientList(
     val sunriseDuration = Duration(currentTime, sunrise)
     val sunsetDuration = Duration(currentTime, sunset)
     return when {
-        sunriseDuration.standardMinutes.absoluteValue <= 30 -> listOf(
+        sunriseDuration.standardMinutes.absoluteValue <= 20 -> listOf(
             Color(0xFF203356),
             Color(0xFF715D7C),
             Color(0xFF8D6780),
         )
 
-        sunsetDuration.standardMinutes.absoluteValue <= 30 -> listOf(
+        sunsetDuration.standardMinutes.absoluteValue <= 15 -> listOf(
             Color(0xFF46679A),
             Color(0xFF7190BF),
             Color(0xFFBCA591),
@@ -74,7 +75,7 @@ fun getGradientList(
 
 fun WeatherLocation.getGradientList(): List<Color> {
     return getGradientList(
-        currentTime = currentTime,
+        currentTime = timeZone.getDateTimeFromTimezone(),
         currentCondition = currentCondition,
         sunrise = sunrise,
         sunset = sunset,

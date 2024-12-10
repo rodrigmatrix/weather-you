@@ -1,5 +1,12 @@
+@file:OptIn(ExperimentalMaterial3AdaptiveApi::class)
+
 package com.rodrigmatrix.weatheryou.presentation.navigation
 
+import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
+import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirectiveWithTwoPanesOnMediumWidth
+import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
@@ -35,9 +42,19 @@ fun WeatherHomeNavHost(
     ) {
         composable(HomeEntry.Locations.route) {
             val context = LocalContext.current
+            val navigator = rememberListDetailPaneScaffoldNavigator<Int>(
+                calculatePaneScaffoldDirectiveWithTwoPanesOnMediumWidth(currentWindowAdaptiveInfo())
+            )
+            val onNavigateToLocation: (Int) -> Unit = { id ->
+                navigator.navigateTo(
+                    pane = ListDetailPaneScaffoldRole.Detail,
+                    content = id,
+                )
+            }
             HomeScreen(
                 navController = navController,
                 homeUiState = homeViewState,
+                navigator = navigator,
                 onAddLocation = {
                     navController.navigate(NavigationEntries.ADD_LOCATION_ROUTE)
                 },
@@ -48,6 +65,7 @@ fun WeatherHomeNavHost(
                 onDeleteLocation = homeViewModel::deleteLocation,
                 onDeleteLocationConfirmButtonClicked = homeViewModel::deleteLocation,
                 onOrderChanged = homeViewModel::orderLocations,
+                onNavigateToLocation = onNavigateToLocation,
             )
             LaunchedEffect(homeViewModel) {
                 homeViewModel.viewEffect.collect { viewEffect ->
@@ -61,6 +79,10 @@ fun WeatherHomeNavHost(
                         }
                         HomeViewEffect.UpdateWidgets -> {
                             onUpdateWidgets()
+                        }
+
+                        is HomeViewEffect.OpenLocation -> {
+                            onNavigateToLocation(viewEffect.id)
                         }
                     }
                 }

@@ -1,6 +1,5 @@
 package com.rodrigmatrix.weatheryou.locationdetails.presentaion.details
 
-import android.annotation.SuppressLint
 import android.net.Uri
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.animation.animateContentSize
@@ -10,14 +9,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -44,15 +41,14 @@ import com.rodrigmatrix.weatheryou.components.preview.PreviewHourlyForecast
 import com.rodrigmatrix.weatheryou.components.preview.PreviewLightDark
 import com.rodrigmatrix.weatheryou.components.preview.PreviewWeatherLocation
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
-import com.rodrigmatrix.weatheryou.domain.model.TemperaturePreference
+import com.rodrigmatrix.weatheryou.core.extensions.getDateTimeFromTimezone
 import org.koin.androidx.compose.getViewModel
-import java.net.URI
 
 @Composable
 fun WeatherDetailsScreen(
     weatherLocation: WeatherLocation?,
+    isUpdating: Boolean,
     onCloseClick: () -> Unit,
-    isFullScreen: Boolean,
     onDeleteLocationClicked: () -> Unit,
     viewModel: WeatherDetailsViewModel = getViewModel(),
 ) {
@@ -62,18 +58,17 @@ fun WeatherDetailsScreen(
 
     WeatherDetailsScreen(
         viewState = viewState,
-        isFullScreen = isFullScreen,
+        isUpdating = isUpdating,
         onExpandedButtonClick = viewModel::onFutureWeatherButtonClick,
         onCloseClick = onCloseClick,
         onDeleteClick = onDeleteLocationClicked
     )
 }
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun WeatherDetailsScreen(
     viewState: WeatherDetailsViewState,
-    isFullScreen: Boolean,
+    isUpdating: Boolean,
     onExpandedButtonClick: (Boolean) -> Unit,
     onCloseClick: () -> Unit,
     onDeleteClick: () -> Unit,
@@ -81,21 +76,12 @@ fun WeatherDetailsScreen(
 ) {
     Scaffold(
         topBar = {
-            if (isFullScreen) {
-                ExpandedTopAppBar(
-                    viewState.weatherLocation?.name.orEmpty(),
-                    onCloseClick,
-                    onDeleteClick,
-                    viewState.weatherLocation?.isCurrentLocation?.not() == true
-                )
-            } else {
-                SmallScreenTopAppBar(
-                    viewState.weatherLocation?.name.orEmpty(),
-                    onCloseClick,
-                    onDeleteClick,
-                    viewState.weatherLocation?.isCurrentLocation?.not() == true
-                )
-            }
+            SmallScreenTopAppBar(
+                viewState.weatherLocation?.name.orEmpty(),
+                onCloseClick,
+                onDeleteClick,
+                viewState.weatherLocation?.isCurrentLocation?.not() == true
+            )
         },
         containerColor = if (WeatherYouTheme.themeSettings.showWeatherAnimations) {
             Color.Transparent
@@ -113,6 +99,7 @@ fun WeatherDetailsScreen(
         }
         WeatherDetailsContent(
             viewState = viewState,
+            isUpdating = isUpdating,
             onExpandedButtonClick = onExpandedButtonClick,
             paddingValues = paddingValues,
         )
@@ -122,6 +109,7 @@ fun WeatherDetailsScreen(
 @Composable
 private fun WeatherDetailsContent(
     viewState: WeatherDetailsViewState,
+    isUpdating: Boolean,
     onExpandedButtonClick: (Boolean) -> Unit,
     paddingValues: PaddingValues,
 ) {
@@ -131,6 +119,19 @@ private fun WeatherDetailsContent(
         state = scrollState,
         contentPadding = paddingValues,
     ) {
+        if (isUpdating) {
+            item {
+                Text(
+                    text = "Updating location",
+                    style = WeatherYouTheme.typography.bodyMedium,
+                    color = WeatherYouTheme.colorScheme.onBackground,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                )
+            }
+        }
         item {
             viewState.weatherLocation?.let {
                 CurrentWeather(
@@ -195,7 +196,7 @@ private fun WeatherDetailsContent(
                 SunriseSunsetCard(
                     sunrise = weatherLocation.sunrise,
                     sunset = weatherLocation.sunset,
-                    currentTime = weatherLocation.currentTime,
+                    currentTime = weatherLocation.timeZone.getDateTimeFromTimezone(),
                     isDaylight = weatherLocation.isDaylight,
                     modifier = Modifier.padding(horizontal = 16.dp),
                 )
@@ -246,11 +247,12 @@ fun AppleWeatherAttribution(
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .padding(horizontal = 16.dp)
-                .clickable(onClick = {
-                val intent = CustomTabsIntent.Builder()
-                    .build()
-                intent.launchUrl(context, Uri.parse("https://developer.apple.com/weatherkit/data-source-attribution/"))
-            })
+                .clickable(
+                    onClick = {
+                        val intent = CustomTabsIntent.Builder().build()
+                        intent.launchUrl(context, Uri.parse("https://developer.apple.com/weatherkit/data-source-attribution/"))
+                    }
+                )
         )
         Spacer(Modifier.height(16.dp))
     }
@@ -352,7 +354,7 @@ fun WeatherDetailsScreenPreview() {
                 todayWeatherHoursList = PreviewHourlyForecast,
                 futureDaysList = PreviewFutureDaysForecast,
             ),
-            isFullScreen = false,
+            isUpdating = true,
             onExpandedButtonClick = { },
             onCloseClick = {},
             onDeleteClick = {},

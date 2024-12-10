@@ -19,6 +19,7 @@ object HomeModule {
                 getAppSettingsUseCase = get(),
                 getLocationsUseCase = get(),
                 updateLocationsListOrderUseCase = get(),
+                getLocationByLatLongUseCase = get(),
             )
         }
     }

@@ -1,9 +1,12 @@
+@file:OptIn(ExperimentalMaterial3AdaptiveApi::class)
+
 package com.rodrigmatrix.weatheryou.home.presentation.home
 
 import android.content.res.Configuration
 import android.os.Build
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,10 +38,14 @@ import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
 import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirectiveWithTwoPanesOnMediumWidth
+import androidx.compose.material3.adaptive.navigation.ThreePaneScaffoldNavigator
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -53,6 +60,7 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
 import com.rodrigmatrix.weatheryou.components.R
 import com.rodrigmatrix.weatheryou.components.WeatherIcon
+import com.rodrigmatrix.weatheryou.components.extensions.getGradientList
 import com.rodrigmatrix.weatheryou.components.location.RequestBackgroundLocationDialog
 import com.rodrigmatrix.weatheryou.components.preview.PreviewWeatherList
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
@@ -65,6 +73,7 @@ import com.rodrigmatrix.weatheryou.locationdetails.presentaion.details.WeatherDe
 fun HomeScreen(
     navController: NavController,
     homeUiState: HomeUiState,
+    navigator: ThreePaneScaffoldNavigator<Int>,
     onLocationSelected: (WeatherLocation?) -> Unit,
     onDialogStateChanged: (HomeDialogState) -> Unit,
     onSwipeRefresh: () -> Unit,
@@ -100,8 +109,9 @@ fun HomeScreen(
             }
         }
     ),
+    onNavigateToLocation: (Int) -> Unit,
+) {
 
-    ) {
     BackHandler(enabled = homeUiState.isLocationSelected()) {
         onLocationSelected(null)
     }
@@ -131,6 +141,7 @@ fun HomeScreen(
     }
     HomeScreen(
         homeUiState = homeUiState,
+        navigator = navigator,
         showLocationPermissionRequest = homeUiState.showLocationPermissionRequest(locationPermissionState),
         onLocationSelected = onLocationSelected,
         onSwipeRefresh = onSwipeRefresh,
@@ -141,6 +152,7 @@ fun HomeScreen(
         onAddLocation = onAddLocation,
         onRequestPermission = locationPermissionState::launchMultiplePermissionRequest,
         onOrderChanged = onOrderChanged,
+        onNavigateToLocation = onNavigateToLocation,
     )
 }
 
@@ -148,14 +160,15 @@ fun HomeScreen(
 @Composable
 fun WeatherLocationsListScreen(
     uiState: HomeUiState,
+    navigator: ThreePaneScaffoldNavigator<Int>,
     showLocationPermissionRequest: Boolean,
-    isFullScreen: Boolean,
     onItemClick: (WeatherLocation) -> Unit,
     onSwipeRefresh: () -> Unit,
     onDeleteLocation: (WeatherLocation) -> Unit,
     onSearchLocationClick: () -> Unit,
     onRequestPermission: () -> Unit,
     onOrderChanged: (List<WeatherLocation>) -> Unit,
+    onNavigateToLocation: (Int) -> Unit,
 ) {
     val pullRefreshState = rememberPullRefreshState(
         refreshing = uiState.isLoading,
@@ -167,48 +180,58 @@ fun WeatherLocationsListScreen(
                 onSearchLocationClick = onSearchLocationClick,
             )
         },
-        containerColor = WeatherYouTheme.colorScheme.background,
+        containerColor = Color.Transparent,
     ) { paddingValues ->
-        when {
-            showLocationPermissionRequest -> {
-                RequestLocationPermission(
-                    onRequestPermission = onRequestPermission,
-                    modifier = Modifier.padding(paddingValues)
-                )
-            }
-
-            uiState.isLoading.not() && uiState.locationsList.isEmpty() -> {
-                WeatherLocationsEmptyState(
-                    Modifier
-                        .padding(paddingValues)
-                )
-            }
-
-            else -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues)
-                        .pullRefresh(pullRefreshState)
-                ) {
-                    WeatherLocationList(
-                        weatherLocationList = uiState.locationsList,
-                        isRefreshingLocations = uiState.isRefreshingLocations,
-                        selectedLocation = uiState.selectedWeatherLocation,
-                        onItemClick = onItemClick,
-                        onDismiss = onDeleteLocation,
-                        onOrderChanged = onOrderChanged,
-                        modifier = Modifier.padding(top = 4.dp),
+        Box(
+//            modifier = Modifier.background(brush = if (uiState.enableWeatherAnimations && uiState.selectedWeatherLocation != null) {
+//            Brush.linearGradient(uiState.selectedWeatherLocation.getGradientList().map {
+//                it.copy(alpha = 0.4f)
+//            })
+//            } else {
+//                Brush.linearGradient(listOf(WeatherYouTheme.colorScheme.background, WeatherYouTheme.colorScheme.background))
+//            })
+        ) {
+            when {
+                showLocationPermissionRequest -> {
+                    RequestLocationPermission(
+                        onRequestPermission = onRequestPermission,
+                        modifier = Modifier.padding(paddingValues)
                     )
+                }
 
-                    PullRefreshIndicator(
-                        refreshing = uiState.isLoading,
-                        state = pullRefreshState,
-                        backgroundColor = WeatherYouTheme.colorScheme.primary,
-                        contentColor = WeatherYouTheme.colorScheme.secondaryContainer,
-                        scale = true,
-                        modifier = Modifier.align(Alignment.TopCenter),
+                uiState.isLoading.not() && uiState.locationsList.isEmpty() -> {
+                    WeatherLocationsEmptyState(
+                        Modifier
+                            .padding(paddingValues)
                     )
+                }
+
+                else -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues)
+                            .pullRefresh(pullRefreshState)
+                    ) {
+                        WeatherLocationList(
+                            weatherLocationList = uiState.locationsList,
+                            isRefreshingLocations = uiState.isRefreshingLocations,
+                            selectedLocation = uiState.selectedWeatherLocation,
+                            onItemClick = onItemClick,
+                            onDismiss = onDeleteLocation,
+                            onOrderChanged = onOrderChanged,
+                            modifier = Modifier.padding(top = 4.dp),
+                        )
+
+                        PullRefreshIndicator(
+                            refreshing = uiState.isLoading,
+                            state = pullRefreshState,
+                            backgroundColor = WeatherYouTheme.colorScheme.primary,
+                            contentColor = WeatherYouTheme.colorScheme.secondaryContainer,
+                            scale = true,
+                            modifier = Modifier.align(Alignment.TopCenter),
+                        )
+                    }
                 }
             }
         }
@@ -221,6 +244,7 @@ fun WeatherLocationsListScreen(
 fun HomeScreen(
     homeUiState: HomeUiState,
     showLocationPermissionRequest: Boolean,
+    navigator: ThreePaneScaffoldNavigator<Int>,
     onLocationSelected: (WeatherLocation?) -> Unit,
     onSwipeRefresh: () -> Unit,
     onDeleteLocation: (WeatherLocation) -> Unit,
@@ -228,16 +252,8 @@ fun HomeScreen(
     onAddLocation: () -> Unit,
     onRequestPermission: () -> Unit,
     onOrderChanged: (List<WeatherLocation>) -> Unit,
+    onNavigateToLocation: (Int) -> Unit,
 ) {
-    val navigator = rememberListDetailPaneScaffoldNavigator<Int>(
-        calculatePaneScaffoldDirectiveWithTwoPanesOnMediumWidth(currentWindowAdaptiveInfo())
-    )
-    val onNavigateToLocation: (Int) -> Unit = { id ->
-        navigator.navigateTo(
-            pane = ListDetailPaneScaffoldRole.Detail,
-            content = id,
-        )
-    }
     BackHandler(navigator.canNavigateBack()) {
         navigator.navigateBack()
         onLocationSelected(null)
@@ -250,7 +266,7 @@ fun HomeScreen(
             AnimatedPane(modifier = Modifier.preferredWidth(260.dp)) {
                 WeatherLocationsListScreen(
                     uiState = homeUiState,
-                    isFullScreen = false,
+                    navigator = navigator,
                     showLocationPermissionRequest = showLocationPermissionRequest,
                     onItemClick = {
                         onLocationSelected(it)
@@ -261,6 +277,7 @@ fun HomeScreen(
                     onSearchLocationClick = onAddLocation,
                     onRequestPermission = onRequestPermission,
                     onOrderChanged = onOrderChanged,
+                    onNavigateToLocation = onNavigateToLocation,
                 )
             }
         },
@@ -269,11 +286,11 @@ fun HomeScreen(
                 AnimatedPane {
                     WeatherDetailsScreen(
                         weatherLocation = homeUiState.selectedWeatherLocation,
+                        isUpdating = homeUiState.isRefreshingLocations,
                         onCloseClick = {
                             navigator.navigateBack()
                             onLocationSelected(null)
                         },
-                        isFullScreen = false,
                         onDeleteLocationClicked = onDeleteLocationClicked,
                     )
                 }
@@ -421,6 +438,9 @@ fun HomeScreenPreview() {
                 locationsList = PreviewWeatherList,
                 selectedWeatherLocation = PreviewWeatherList.first(),
             ),
+            navigator = rememberListDetailPaneScaffoldNavigator<Int>(
+                calculatePaneScaffoldDirectiveWithTwoPanesOnMediumWidth(currentWindowAdaptiveInfo())
+            ),
             showLocationPermissionRequest = false,
             onLocationSelected = { },
             onSwipeRefresh = { },
@@ -429,6 +449,7 @@ fun HomeScreenPreview() {
             onAddLocation = { },
             onRequestPermission = { },
             onOrderChanged = { },
+            onNavigateToLocation = { }
         )
     }
 }
@@ -443,6 +464,9 @@ fun HomeScreenWithLocationPreview() {
                 locationsList = PreviewWeatherList,
                 selectedWeatherLocation = PreviewWeatherList.first(),
             ),
+            navigator = rememberListDetailPaneScaffoldNavigator<Int>(
+                calculatePaneScaffoldDirectiveWithTwoPanesOnMediumWidth(currentWindowAdaptiveInfo())
+            ),
             showLocationPermissionRequest = false,
             onLocationSelected = { },
             onSwipeRefresh = { },
@@ -451,6 +475,7 @@ fun HomeScreenWithLocationPreview() {
             onAddLocation = { },
             onRequestPermission = { },
             onOrderChanged = { },
+            onNavigateToLocation = { }
         )
     }
 }

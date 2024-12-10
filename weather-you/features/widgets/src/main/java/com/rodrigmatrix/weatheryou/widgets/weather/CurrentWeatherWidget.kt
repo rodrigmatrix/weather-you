@@ -1,17 +1,12 @@
 package com.rodrigmatrix.weatheryou.widgets.weather
 
 import android.content.Context
-import android.content.Intent
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.glance.GlanceId
 import androidx.glance.GlanceTheme
-import androidx.glance.LocalGlanceId
 import androidx.glance.LocalSize
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
@@ -23,7 +18,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
@@ -47,52 +41,31 @@ class CurrentWeatherWidget: GlanceAppWidget(), KoinComponent {
 
     private val mainScope: CoroutineScope = MainScope()
 
-
-
     override suspend fun provideGlance(context: Context, id: GlanceId) {
+        val glanceWidgetManager = GlanceAppWidgetManager(context)
+        val appWidgetId = glanceWidgetManager.getAppWidgetId(id).toString()
+        val weatherFlow = getWidgetTemperatureUseCase(appWidgetId)
+            .onStart{ emit(null) }
         provideContent {
-            val appWidgetId = LocalGlanceId.current.toString().filter { it.isDigit() }.toString()
-            var widgetState by remember {
-                mutableStateOf<WidgetState>(WidgetState.Loading)
-            }
+            val weather by weatherFlow.collectAsState(null)
             val size = LocalSize.current
             GlanceTheme {
-                when (widgetState) {
-                    is WidgetState.Complete -> {
-                        when (size) {
-                            smallMode -> SmallWidget(
-                                weather = (widgetState as WidgetState.Complete).weather,
-                                onWidgetClicked = { openMainActivity(context) },
-                            )
-                            mediumMode, largeMode -> MediumLargeWidget(
-                                weather = (widgetState as WidgetState.Complete).weather,
-                                showDays = size.height >= largeMode.height,
-                                onWidgetClicked = { openMainActivity(context) },
-                            )
-                        }
-                    }
-                    WidgetState.Error -> {
-
-                    }
-                    WidgetState.Loading -> {
-                        MediumLargeLoading(
-                            onWidgetClicked = { openMainActivity(context) },
+                if (weather != null) {
+                    when (size) {
+                        smallMode -> SmallWidget(
+                            weather = weather!!,
+                            onWidgetClicked = openMainActivity(context, weather),
+                        )
+                        mediumMode, largeMode -> MediumLargeWidget(
+                            weather = weather!!,
+                            showDays = size.height >= largeMode.height,
+                            onWidgetClicked = openMainActivity(context, weather),
                         )
                     }
-                }
-                LaunchedEffect(Unit) {
-                    getWidgetTemperatureUseCase(appWidgetId)
-                        .onStart {
-                            widgetState = WidgetState.Loading
-                        }
-                        .firstOrNull { weather ->
-                            widgetState = if (weather != null) {
-                                WidgetState.Complete(weather)
-                            } else {
-                                WidgetState.Error
-                            }
-                            return@firstOrNull true
-                        }
+                } else {
+                    MediumLargeLoading(
+                        onWidgetClicked = openMainActivity(context, null),
+                    )
                 }
             }
         }
@@ -108,13 +81,6 @@ class CurrentWeatherWidget: GlanceAppWidget(), KoinComponent {
                 .collectLatest {
                     super.onDelete(context, glanceId)
                 }
-        }
-    }
-
-    private fun openMainActivity(context: Context) {
-        Intent("action.weatheryou.open").setPackage(context.packageName).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            context.startActivity(this)
         }
     }
 }

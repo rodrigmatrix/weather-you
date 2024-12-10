@@ -14,6 +14,9 @@ interface LocationsDAO {
     @Query("SELECT * FROM locations")
     fun getAllLocations(): Flow<List<WeatherLocationEntity>>
 
+    @Query("SELECT * FROM locations WHERE latitude LIKE :latitude AND longitude LIKE :longitude")
+    fun getLocation(latitude: Double, longitude: Double): Flow<WeatherLocationEntity?>
+
     @Query("SELECT * FROM currentLocation")
     fun getCurrentLocation(): Flow<CurrentLocationEntity?>
 
