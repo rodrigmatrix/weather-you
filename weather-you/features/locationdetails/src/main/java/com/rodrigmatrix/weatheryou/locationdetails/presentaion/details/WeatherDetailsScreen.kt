@@ -132,7 +132,7 @@ private fun WeatherDetailsContent(
         if (isUpdating) {
             item {
                 Text(
-                    text = "Updating location...",
+                    text = stringResource(R.string.updating_location),
                     style = WeatherYouTheme.typography.bodyMedium,
                     color = WeatherYouTheme.colorScheme.onBackground,
                     textAlign = TextAlign.Center,
@@ -236,20 +236,18 @@ fun AppleWeatherAttribution(
                     else -> com.rodrigmatrix.weatheryou.locationdetails.R.drawable.ic_apple_weather_dark
                 }
             ),
-            contentDescription = "Apple Weather",
+            contentDescription = stringResource(R.string.apple_weather),
         )
         Spacer(Modifier.height(10.dp))
         Text(
             text = buildAnnotatedString {
-                append("For more information, ")
+                append(stringResource(R.string.for_more_information))
                 withStyle(
                     style = SpanStyle(
                         textDecoration = TextDecoration.Underline
                     ),
                 ) {
-                    append(
-                        "visit Apple Weather",
-                    )
+                    append(stringResource(R.string.visit_apple_weather))
                 }
             },
             style = WeatherYouTheme.typography.bodyMedium,

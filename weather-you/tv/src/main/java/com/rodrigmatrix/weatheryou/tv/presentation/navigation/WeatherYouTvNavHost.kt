@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
+import com.rodrigmatrix.weatheryou.home.presentation.home.HomeViewModel
 import com.rodrigmatrix.weatheryou.presentation.about.AboutScreen
 import com.rodrigmatrix.weatheryou.tv.presentation.home.TvWeatherLocationsScreen
 import com.rodrigmatrix.weatheryou.tv.presentation.locations.TVWeatherLocationsViewModel
@@ -20,7 +21,7 @@ import org.koin.androidx.compose.getViewModel
 fun WeatherYouTvNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    TVWeatherLocationsViewModel: TVWeatherLocationsViewModel = getViewModel(),
+    homeViewModel: HomeViewModel = getViewModel(),
 ) {
     NavHost(
         navController,
@@ -29,7 +30,7 @@ fun WeatherYouTvNavHost(
     ) {
         composable<TvRoutes.Home> {
             TvWeatherLocationsScreen(
-                viewModel = TVWeatherLocationsViewModel,
+                viewModel = homeViewModel,
                 navController = navController,
             )
         }

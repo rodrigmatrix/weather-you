@@ -113,7 +113,7 @@ fun DayRow(
     day: WeatherDay,
     index: Int,
 ) {
-    var isExpanded by remember { mutableStateOf(false) }
+    var isExpanded by remember(day) { mutableStateOf(false) }
     WeatherYouDivider(Modifier.height(1.dp))
     DayContent(
         minWeekTemperature = minWeekTemperature,

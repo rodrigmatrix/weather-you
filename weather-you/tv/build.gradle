@@ -16,7 +16,7 @@ android {
         minSdk Sdk.tvMinSdk
         targetSdk Sdk.targetSdk
         versionCode Sdk.versionCode
-        versionName "3.0"
+        versionName "3.0.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -75,6 +75,7 @@ dependencies {
 
     implementation project(LocalModules.components)
     implementation project(LocalModules.locationDetails)
+    implementation project(LocalModules.home)
     implementation project(LocalModules.settings)
     implementation project(LocalModules.addLocation)
     implementation project(LocalModules.about)

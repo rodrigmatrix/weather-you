@@ -36,9 +36,10 @@ class WeatherDetailsViewModel(
                 it.copy(
                     weatherLocation = weatherLocation,
                     todayWeatherHoursList = weatherLocation.hours,
+                    isFutureWeatherExpanded = false,
                     futureDaysList = weatherLocation
                         .days
-                        .take(if (it.isFutureWeatherExpanded) 15 else 7)
+                        .take(COLLAPSED_LIST_SIZE)
                 )
             }
         }
@@ -47,13 +48,13 @@ class WeatherDetailsViewModel(
     fun onFutureWeatherButtonClick(isExpanded: Boolean) {
         setState {
             it.copy(
-                futureDaysList = it.futureDaysList.getFutureDaysList(isExpanded),
+                futureDaysList = it.weatherLocation?.days?.getFutureDaysList(isExpanded).orEmpty(),
                 isFutureWeatherExpanded = isExpanded
             )
         }
     }
 
     private fun List<WeatherDay>.getFutureDaysList(isExpanded: Boolean): List<WeatherDay> {
-        return this.take(if (isExpanded) EXPANDED_LIST_SIZE else COLLAPSED_LIST_SIZE)
+        return this.toMutableList().take(if (isExpanded) EXPANDED_LIST_SIZE else COLLAPSED_LIST_SIZE)
     }
 }

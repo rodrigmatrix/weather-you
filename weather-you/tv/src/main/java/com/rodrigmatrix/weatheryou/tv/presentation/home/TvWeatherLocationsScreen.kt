@@ -56,6 +56,9 @@ import com.rodrigmatrix.weatheryou.components.particle.WeatherAnimationsBackgrou
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.domain.model.WeatherCondition
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
+import com.rodrigmatrix.weatheryou.home.presentation.home.HomeDialogState
+import com.rodrigmatrix.weatheryou.home.presentation.home.HomeUiState
+import com.rodrigmatrix.weatheryou.home.presentation.home.HomeViewModel
 import com.rodrigmatrix.weatheryou.tv.components.TvCard
 import com.rodrigmatrix.weatheryou.tv.presentation.details.TvWeatherDetailsScreen
 import com.rodrigmatrix.weatheryou.tv.presentation.details.TvWeatherLocationScreen
@@ -66,7 +69,7 @@ import com.rodrigmatrix.weatheryou.tv.presentation.locations.TVWeatherLocationsV
 @Composable
 internal fun TvWeatherLocationsScreen(
     modifier: Modifier = Modifier,
-    viewModel: TVWeatherLocationsViewModel,
+    viewModel: HomeViewModel,
     locationPermissionState: MultiplePermissionsState = rememberMultiplePermissionsState(
         permissions = listOf(
             Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -81,13 +84,17 @@ internal fun TvWeatherLocationsScreen(
     val uiState by viewModel.viewState.collectAsState()
     var locationToDelete: WeatherLocation? by remember { mutableStateOf(null) }
 
-    if (uiState.deleteLocationDialogVisible) {
-        DeleteLocationDialog(
+    when (uiState.dialogState) {
+        HomeDialogState.BackgroundLocation -> Unit
+        HomeDialogState.DeleteLocation -> DeleteLocationDialog(
             onConfirmButtonClick = {
                 locationToDelete?.let { viewModel.deleteLocation(it) }
             },
-            onDismissButtonClick = viewModel::hideDeleteLocationDialog,
+            onDismissButtonClick = {
+                viewModel.onDialogStateChanged(HomeDialogState.Hidden)
+            },
         )
+        HomeDialogState.Hidden -> Unit
     }
     TvWeatherLocationsScreen(
         uiState = uiState,
@@ -96,7 +103,7 @@ internal fun TvWeatherLocationsScreen(
         onWeatherLocationClicked = viewModel::selectLocation,
         onDeleteLocation = {
             locationToDelete = it
-            viewModel.showDeleteLocationDialog()
+            viewModel.onDialogStateChanged(HomeDialogState.DeleteLocation)
         },
         modifier = modifier,
     )
@@ -104,7 +111,7 @@ internal fun TvWeatherLocationsScreen(
 
 @Composable
 private fun TvWeatherLocationsScreen(
-    uiState: TvWeatherLocationsUiState,
+    uiState: HomeUiState,
     showLocationPermissionRequest: Boolean,
     onRequestPermission: () -> Unit,
     onWeatherLocationClicked: (WeatherLocation) -> Unit,
@@ -129,7 +136,7 @@ private fun TvWeatherLocationsScreen(
             else -> {
                 if (uiState.locationsList.isEmpty()) {
                     WeatherLocationsLoadingState(
-                        size = uiState.locationsSize
+                        size = 0
                     )
                 } else {
                     TvWeatherLocationsContent(
