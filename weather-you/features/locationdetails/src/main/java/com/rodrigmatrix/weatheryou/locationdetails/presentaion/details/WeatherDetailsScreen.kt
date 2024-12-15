@@ -40,6 +40,7 @@ import com.rodrigmatrix.weatheryou.components.preview.PreviewFutureDaysForecast
 import com.rodrigmatrix.weatheryou.components.preview.PreviewHourlyForecast
 import com.rodrigmatrix.weatheryou.components.preview.PreviewLightDark
 import com.rodrigmatrix.weatheryou.components.preview.PreviewWeatherLocation
+import com.rodrigmatrix.weatheryou.components.theme.ThemeMode
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.core.extensions.getDateTimeFromTimezone
 import org.koin.androidx.compose.getViewModel
@@ -55,14 +56,23 @@ fun WeatherDetailsScreen(
     val viewState by viewModel.viewState.collectAsState()
 
     viewModel.setWeatherLocation(weatherLocation)
-
-    WeatherDetailsScreen(
-        viewState = viewState,
-        isUpdating = isUpdating,
-        onExpandedButtonClick = viewModel::onFutureWeatherButtonClick,
-        onCloseClick = onCloseClick,
-        onDeleteClick = onDeleteLocationClicked
-    )
+    WeatherYouTheme(
+        themeMode = if (WeatherYouTheme.themeSettings.showWeatherAnimations) {
+            ThemeMode.Dark
+        } else {
+            WeatherYouTheme.themeMode
+        },
+        colorMode = WeatherYouTheme.colorMode,
+        themeSettings = WeatherYouTheme.themeSettings,
+    ) {
+        WeatherDetailsScreen(
+            viewState = viewState,
+            isUpdating = isUpdating,
+            onExpandedButtonClick = viewModel::onFutureWeatherButtonClick,
+            onCloseClick = onCloseClick,
+            onDeleteClick = onDeleteLocationClicked
+        )
+    }
 }
 
 @Composable
@@ -122,7 +132,7 @@ private fun WeatherDetailsContent(
         if (isUpdating) {
             item {
                 Text(
-                    text = "Updating location",
+                    text = stringResource(R.string.updating_location),
                     style = WeatherYouTheme.typography.bodyMedium,
                     color = WeatherYouTheme.colorScheme.onBackground,
                     textAlign = TextAlign.Center,
@@ -226,20 +236,18 @@ fun AppleWeatherAttribution(
                     else -> com.rodrigmatrix.weatheryou.locationdetails.R.drawable.ic_apple_weather_dark
                 }
             ),
-            contentDescription = "Apple Weather",
+            contentDescription = stringResource(R.string.apple_weather),
         )
         Spacer(Modifier.height(10.dp))
         Text(
             text = buildAnnotatedString {
-                append("For more information, ")
+                append(stringResource(R.string.for_more_information))
                 withStyle(
                     style = SpanStyle(
                         textDecoration = TextDecoration.Underline
                     ),
                 ) {
-                    append(
-                        "visit Apple Weather",
-                    )
+                    append(stringResource(R.string.visit_apple_weather))
                 }
             },
             style = WeatherYouTheme.typography.bodyMedium,

@@ -40,11 +40,7 @@ fun WeatherLocationCardContent(
     ) {
         Column(Modifier.weight(1f)) {
             Text(
-                text = if (isRefreshingLocations) {
-                    "-----"
-                } else {
-                    weatherLocation.currentWeather.temperatureString()
-                },
+                text = weatherLocation.currentWeather.temperatureString(),
                 style = WeatherYouTheme.typography.headlineLarge,
                 color = WeatherYouTheme.colorScheme.weatherTextColor,
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp)

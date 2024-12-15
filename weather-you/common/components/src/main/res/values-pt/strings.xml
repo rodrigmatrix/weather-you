@@ -109,4 +109,10 @@
   <string name="condition_thunderstorm">Chuva</string>
   <string name="weather_widget_disclaimer">Por favor, selecione o local que você deseja que seja exibido no widget do tempo. Se você quiser um local diferente, abra o aplicativo e adicione-o e volte aqui. Se você quiser sempre exibir a localização atual, por favor, selecione-a</string>
   <string name="widget_location">Configurações do Widget</string>
+
+  <string name="keep_typing">Continue digitando...</string>
+
+  <string name="apple_weather">Apple Weather</string>
+  <string name="for_more_information">Para mais informações, </string>
+  <string name="visit_apple_weather">visite o Apple Weather</string>
 </resources>

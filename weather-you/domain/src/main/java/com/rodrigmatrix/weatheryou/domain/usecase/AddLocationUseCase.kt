@@ -25,7 +25,10 @@ class AddLocationUseCase(
     ): Flow<Unit> {
         return flow {
             val locationsCount = weatherRepository.getLocationsSize().first()
-            val maxLocations = getRemoteConfigLongUseCase(MAX_LOCATIONS_KEY).toInt()
+            var maxLocations = getRemoteConfigLongUseCase(MAX_LOCATIONS_KEY).toInt()
+            if (maxLocations <= 0) {
+                maxLocations = 4
+            }
             val isPremium = settingsRepository.getIsPremiumUser().firstOrNull() == true
             if (!isPremium && (locationsCount >= maxLocations)) {
                 throw LocationLimitException(maxLocations)

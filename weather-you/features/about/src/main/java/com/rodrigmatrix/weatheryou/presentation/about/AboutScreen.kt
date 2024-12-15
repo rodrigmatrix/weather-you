@@ -13,7 +13,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,14 +39,50 @@ import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.components.R as Strings
 import com.rodrigmatrix.weatheryou.presentation.about.model.SocialNetwork
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import com.rodrigmatrix.weatheryou.about.BuildConfig
 import com.rodrigmatrix.weatheryou.domain.repository.SettingsRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AboutScreen(
     settingsRepository: SettingsRepository = koinInject(),
+    coroutineScope: CoroutineScope = rememberCoroutineScope(),
 ) {
+    var showPremiumDialog by remember { mutableStateOf(false) }
+    var password by remember { mutableStateOf("") }
+    if (showPremiumDialog) {
+        AlertDialog(
+            onDismissRequest = { }
+        ) {
+            Column {
+                OutlinedTextField(
+                    value = password,
+                    onValueChange = {
+                        password = it
+                    },
+                )
+                Button(
+                    onClick = {
+                        if (password == BuildConfig.PREMIUM_PASSWORD) {
+                            coroutineScope.launch {
+                                settingsRepository
+                                    .setIsPremiumUser(true)
+                                    .collect {
+                                        showPremiumDialog = false
+                                    }
+                            }
+                        }
+                    }
+                ) { }
+            }
+        }
+    }
     Column(
         Modifier
             .fillMaxSize()
@@ -60,7 +100,7 @@ fun AboutScreen(
                     onClick = {
                         clicks++
                         if (clicks >= 20) {
-                            settingsRepository.setIsPremiumUser(true)
+                            showPremiumDialog = true
                         }
                     }
                 )

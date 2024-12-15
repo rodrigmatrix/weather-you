@@ -132,4 +132,10 @@
     <string name="theme_and_color_mode">Theme &amp; color mode</string>
     <string name="enable_weather_animations">Enable Weather Animations</string>
     <string name="click_to_search">Click on the search icon to search</string>
+
+    <string name="updating_location">Updating location...</string>
+
+    <string name="apple_weather">Apple Weather</string>
+    <string name="for_more_information">For more information, </string>
+    <string name="visit_apple_weather">visit Apple Weather</string>
 </resources>

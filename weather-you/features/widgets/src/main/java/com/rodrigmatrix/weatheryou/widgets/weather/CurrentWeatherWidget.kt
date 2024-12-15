@@ -1,6 +1,7 @@
 package com.rodrigmatrix.weatheryou.widgets.weather
 
 import android.content.Context
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.unit.DpSize
@@ -12,7 +13,14 @@ import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.provideContent
+import com.rodrigmatrix.weatheryou.components.theme.LocalWeatherYouThemeSettingsEnabled
+import com.rodrigmatrix.weatheryou.core.state.LocalWeatherYouAppSettings
+import com.rodrigmatrix.weatheryou.domain.model.AppColorPreference
+import com.rodrigmatrix.weatheryou.domain.model.AppSettings
+import com.rodrigmatrix.weatheryou.domain.model.AppThemePreference
+import com.rodrigmatrix.weatheryou.domain.model.TemperaturePreference
 import com.rodrigmatrix.weatheryou.domain.usecase.DeleteWidgetLocationUseCase
+import com.rodrigmatrix.weatheryou.domain.usecase.GetAppSettingsUseCase
 import com.rodrigmatrix.weatheryou.domain.usecase.GetWidgetTemperatureUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
@@ -37,6 +45,8 @@ class CurrentWeatherWidget: GlanceAppWidget(), KoinComponent {
 
     private val getWidgetTemperatureUseCase by inject<GetWidgetTemperatureUseCase>()
 
+    private val getAppSettingsUseCase by inject<GetAppSettingsUseCase>()
+
     private val deleteWidgetLocationUseCase by inject<DeleteWidgetLocationUseCase>()
 
     private val mainScope: CoroutineScope = MainScope()
@@ -46,26 +56,38 @@ class CurrentWeatherWidget: GlanceAppWidget(), KoinComponent {
         val appWidgetId = glanceWidgetManager.getAppWidgetId(id).toString()
         val weatherFlow = getWidgetTemperatureUseCase(appWidgetId)
             .onStart{ emit(null) }
+        val appSettingsFlow = getAppSettingsUseCase()
         provideContent {
             val weather by weatherFlow.collectAsState(null)
+            val appSettings by appSettingsFlow.collectAsState(AppSettings(
+                temperaturePreference = TemperaturePreference.METRIC,
+                enableWeatherAnimations = false,
+                enableThemeColorWithWeatherAnimations = false,
+                appColorPreference = AppColorPreference.DEFAULT,
+                appThemePreference = AppThemePreference.SYSTEM_DEFAULT,
+            ))
             val size = LocalSize.current
-            GlanceTheme {
-                if (weather != null) {
-                    when (size) {
-                        smallMode -> SmallWidget(
-                            weather = weather!!,
-                            onWidgetClicked = openMainActivity(context, weather),
-                        )
-                        mediumMode, largeMode -> MediumLargeWidget(
-                            weather = weather!!,
-                            showDays = size.height >= largeMode.height,
-                            onWidgetClicked = openMainActivity(context, weather),
+            CompositionLocalProvider(
+                LocalWeatherYouAppSettings provides appSettings,
+            ) {
+                GlanceTheme {
+                    if (weather != null) {
+                        when (size) {
+                            smallMode -> SmallWidget(
+                                weather = weather!!,
+                                onWidgetClicked = openMainActivity(context, weather),
+                            )
+                            mediumMode, largeMode -> MediumLargeWidget(
+                                weather = weather!!,
+                                showDays = size.height >= largeMode.height,
+                                onWidgetClicked = openMainActivity(context, weather),
+                            )
+                        }
+                    } else {
+                        MediumLargeLoading(
+                            onWidgetClicked = openMainActivity(context, null),
                         )
                     }
-                } else {
-                    MediumLargeLoading(
-                        onWidgetClicked = openMainActivity(context, null),
-                    )
                 }
             }
         }

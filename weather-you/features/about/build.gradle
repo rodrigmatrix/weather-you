@@ -12,6 +12,11 @@ android {
         minSdk Sdk.phoneMinSdk
         targetSdk Sdk.targetSdk
 
+        def localProperties = new Properties()
+        localProperties.load(new FileInputStream(rootProject.file("local.properties")))
+
+        buildConfigField "String", "PREMIUM_PASSWORD", localProperties['weatheryou.premiumpassword']
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
@@ -27,6 +32,7 @@ android {
     }
     buildFeatures {
         compose true
+        buildConfig true
     }
     composeOptions {
         kotlinCompilerExtensionVersion libs.versions.composeCompilerVersion.get()

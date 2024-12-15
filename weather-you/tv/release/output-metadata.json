@@ -11,8 +11,8 @@
       "type": "SINGLE",
       "filters": [],
       "attributes": [],
-      "versionCode": 40,
-      "versionName": "3.0",
+      "versionCode": 44,
+      "versionName": "3.0.1",
       "outputFile": "tv-release.apk"
     }
   ],
