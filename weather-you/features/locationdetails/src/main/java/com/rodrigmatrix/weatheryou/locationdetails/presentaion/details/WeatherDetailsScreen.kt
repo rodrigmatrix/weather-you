@@ -40,6 +40,7 @@ import com.rodrigmatrix.weatheryou.components.preview.PreviewFutureDaysForecast
 import com.rodrigmatrix.weatheryou.components.preview.PreviewHourlyForecast
 import com.rodrigmatrix.weatheryou.components.preview.PreviewLightDark
 import com.rodrigmatrix.weatheryou.components.preview.PreviewWeatherLocation
+import com.rodrigmatrix.weatheryou.components.theme.ThemeMode
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.core.extensions.getDateTimeFromTimezone
 import org.koin.androidx.compose.getViewModel
@@ -55,14 +56,23 @@ fun WeatherDetailsScreen(
     val viewState by viewModel.viewState.collectAsState()
 
     viewModel.setWeatherLocation(weatherLocation)
-
-    WeatherDetailsScreen(
-        viewState = viewState,
-        isUpdating = isUpdating,
-        onExpandedButtonClick = viewModel::onFutureWeatherButtonClick,
-        onCloseClick = onCloseClick,
-        onDeleteClick = onDeleteLocationClicked
-    )
+    WeatherYouTheme(
+        themeMode = if (WeatherYouTheme.themeSettings.showWeatherAnimations) {
+            ThemeMode.Dark
+        } else {
+            WeatherYouTheme.themeMode
+        },
+        colorMode = WeatherYouTheme.colorMode,
+        themeSettings = WeatherYouTheme.themeSettings,
+    ) {
+        WeatherDetailsScreen(
+            viewState = viewState,
+            isUpdating = isUpdating,
+            onExpandedButtonClick = viewModel::onFutureWeatherButtonClick,
+            onCloseClick = onCloseClick,
+            onDeleteClick = onDeleteLocationClicked
+        )
+    }
 }
 
 @Composable
@@ -122,7 +132,7 @@ private fun WeatherDetailsContent(
         if (isUpdating) {
             item {
                 Text(
-                    text = "Updating location",
+                    text = "Updating location...",
                     style = WeatherYouTheme.typography.bodyMedium,
                     color = WeatherYouTheme.colorScheme.onBackground,
                     textAlign = TextAlign.Center,

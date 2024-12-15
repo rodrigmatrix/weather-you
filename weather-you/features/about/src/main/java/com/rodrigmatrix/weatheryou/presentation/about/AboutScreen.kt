@@ -35,13 +35,17 @@ import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.components.R as Strings
 import com.rodrigmatrix.weatheryou.presentation.about.model.SocialNetwork
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import com.rodrigmatrix.weatheryou.domain.repository.SettingsRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
 @Composable
 fun AboutScreen(
     settingsRepository: SettingsRepository = koinInject(),
+    coroutineScope: CoroutineScope = rememberCoroutineScope(),
 ) {
     Column(
         Modifier
@@ -60,7 +64,11 @@ fun AboutScreen(
                     onClick = {
                         clicks++
                         if (clicks >= 20) {
-                            settingsRepository.setIsPremiumUser(true)
+                            coroutineScope.launch {
+                                settingsRepository
+                                    .setIsPremiumUser(true)
+                                    .collect { }
+                            }
                         }
                     }
                 )

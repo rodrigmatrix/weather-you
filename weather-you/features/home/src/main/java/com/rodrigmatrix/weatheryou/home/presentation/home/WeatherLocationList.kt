@@ -35,6 +35,7 @@ import com.rodrigmatrix.weatheryou.components.theme.md_theme_dark_secondaryConta
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import sh.calvin.reorderable.ReorderableItem
 import androidx.compose.runtime.setValue
+import com.rodrigmatrix.weatheryou.components.theme.ThemeMode
 import sh.calvin.reorderable.rememberReorderableLazyGridState
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -113,48 +114,56 @@ fun WeatherLocation(
     onDismiss: (WeatherLocation) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    WeatherYouCard(
-        color = if (WeatherYouTheme.themeSettings.showWeatherAnimations) {
-            if (WeatherYouTheme.themeSettings.enableThemeColorForWeatherAnimations) {
-                if (isSelected) {
-                    WeatherYouTheme.colorScheme.primaryContainer
-                } else {
-                    WeatherYouTheme.colorScheme.secondaryContainer
-                }.copy(alpha = 0.4f)
-            } else {
-                if (isSelected) {
-                    md_theme_dark_primaryContainer
-                } else {
-                    md_theme_dark_secondaryContainer
-                }.copy(alpha = 0.4f)
-            }
+    WeatherYouTheme(
+        themeMode = if (WeatherYouTheme.themeSettings.showWeatherAnimations) {
+            ThemeMode.Dark
         } else {
-            WeatherYouTheme.colorScheme.secondaryContainer
+            WeatherYouTheme.themeMode
         },
-        isDismissible = false,
-        onClick = {
-            if (isRefreshingLocations.not()) {
-                onItemClick(weatherLocation)
-            }
-        },
-        onDismiss = {
-            onDismiss(weatherLocation)
-        },
-        modifier = modifier
-            .padding(horizontal = 16.dp)
-            .fillMaxWidth()
+        colorMode = WeatherYouTheme.colorMode,
+        themeSettings = WeatherYouTheme.themeSettings,
     ) {
-        Box{
-            if (WeatherYouTheme.themeSettings.showWeatherAnimations) {
-                WeatherAnimationsBackground(
+        WeatherYouCard(
+            color = if (WeatherYouTheme.themeSettings.showWeatherAnimations) {
+                if (WeatherYouTheme.themeSettings.enableThemeColorForWeatherAnimations) {
+                    if (isSelected) {
+                        WeatherYouTheme.colorScheme.primaryContainer
+                    } else {
+                        WeatherYouTheme.colorScheme.secondaryContainer
+                    }.copy(alpha = 0.4f)
+                } else {
+                    if (isSelected) {
+                        md_theme_dark_primaryContainer
+                    } else {
+                        md_theme_dark_secondaryContainer
+                    }.copy(alpha = 0.4f)
+                }
+            } else {
+                WeatherYouTheme.colorScheme.secondaryContainer
+            },
+            isDismissible = false,
+            onClick = {
+                onItemClick(weatherLocation)
+            },
+            onDismiss = {
+                onDismiss(weatherLocation)
+            },
+            modifier = modifier
+                .padding(horizontal = 16.dp)
+                .fillMaxWidth()
+        ) {
+            Box{
+                if (WeatherYouTheme.themeSettings.showWeatherAnimations) {
+                    WeatherAnimationsBackground(
+                        weatherLocation = weatherLocation,
+                        modifier = Modifier.height(130.dp),
+                    )
+                }
+                WeatherLocationCardContent(
                     weatherLocation = weatherLocation,
-                    modifier = Modifier.height(130.dp),
+                    isRefreshingLocations = isRefreshingLocations,
                 )
             }
-            WeatherLocationCardContent(
-                weatherLocation = weatherLocation,
-                isRefreshingLocations = isRefreshingLocations,
-            )
         }
     }
 }

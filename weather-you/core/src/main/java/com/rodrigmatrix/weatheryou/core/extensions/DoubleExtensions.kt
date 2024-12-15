@@ -8,9 +8,11 @@ import java.math.RoundingMode
 import kotlin.math.roundToInt
 
 @Composable
-fun Double.temperatureString(): String {
+fun Double.temperatureString(
+    temperaturePreference: TemperaturePreference = WeatherYouAppState.appSettings.temperaturePreference,
+): String {
     val intTemp = this.roundToInt()
-    return when (WeatherYouAppState.appSettings.temperaturePreference) {
+    return when (temperaturePreference) {
         TemperaturePreference.METRIC -> "$intTemp°"
         TemperaturePreference.IMPERIAL -> ((this * 1.8) + 32).roundToInt().toString() + "°"
     }
@@ -26,16 +28,20 @@ fun Double.percentageString(): String {
 }
 
 @Composable
-fun Double.speedString(): String {
-    return when (WeatherYouAppState.appSettings.temperaturePreference) {
+fun Double.speedString(
+    temperaturePreference: TemperaturePreference = WeatherYouAppState.appSettings.temperaturePreference,
+): String {
+    return when (temperaturePreference) {
         TemperaturePreference.METRIC -> this.roundToInt().toString() + " " + "km/h"
         TemperaturePreference.IMPERIAL -> (this * 0.621371).roundToInt().toString() + " " + "mph"
     }
 }
 
 @Composable
-fun Double.distanceString(): String {
-    return when (WeatherYouAppState.appSettings.temperaturePreference) {
+fun Double.distanceString(
+    temperaturePreference: TemperaturePreference = WeatherYouAppState.appSettings.temperaturePreference,
+): String {
+    return when (temperaturePreference) {
         TemperaturePreference.METRIC -> this.roundToInt().toString() + " " + "km"
         TemperaturePreference.IMPERIAL -> (this * 0.621371).roundToInt().toString() + " " + "mi"
     }

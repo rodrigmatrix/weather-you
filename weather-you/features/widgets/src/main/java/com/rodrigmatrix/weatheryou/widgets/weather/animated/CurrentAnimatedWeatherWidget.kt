@@ -1,6 +1,7 @@
 package com.rodrigmatrix.weatheryou.widgets.weather.animated
 
 import android.content.Context
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.unit.DpSize
@@ -14,7 +15,13 @@ import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.provideContent
 import androidx.glance.state.GlanceStateDefinition
 import androidx.glance.state.PreferencesGlanceStateDefinition
+import com.rodrigmatrix.weatheryou.core.state.LocalWeatherYouAppSettings
+import com.rodrigmatrix.weatheryou.domain.model.AppColorPreference
+import com.rodrigmatrix.weatheryou.domain.model.AppSettings
+import com.rodrigmatrix.weatheryou.domain.model.AppThemePreference
+import com.rodrigmatrix.weatheryou.domain.model.TemperaturePreference
 import com.rodrigmatrix.weatheryou.domain.usecase.DeleteWidgetLocationUseCase
+import com.rodrigmatrix.weatheryou.domain.usecase.GetAppSettingsUseCase
 import com.rodrigmatrix.weatheryou.domain.usecase.GetWidgetTemperatureUseCase
 import com.rodrigmatrix.weatheryou.widgets.weather.MediumLargeLoading
 import com.rodrigmatrix.weatheryou.widgets.weather.openMainActivity
@@ -25,6 +32,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import kotlin.getValue
 
 class CurrentAnimatedWeatherWidget(
 
@@ -44,6 +52,8 @@ class CurrentAnimatedWeatherWidget(
 
     private val deleteWidgetLocationUseCase by inject<DeleteWidgetLocationUseCase>()
 
+    private val getAppSettingsUseCase by inject<GetAppSettingsUseCase>()
+
     private val getWidgetTemperatureUseCase by inject<GetWidgetTemperatureUseCase>()
 
     private val scope = CoroutineScope(SupervisorJob())
@@ -55,39 +65,51 @@ class CurrentAnimatedWeatherWidget(
         val appWidgetId = glanceWidgetManager.getAppWidgetId(id).toString()
         val weatherFlow = getWidgetTemperatureUseCase(appWidgetId)
             .onStart { emit(null) }
+        val appSettingsFlow = getAppSettingsUseCase()
         provideContent {
             val weather by weatherFlow.collectAsState(null)
+            val appSettings by appSettingsFlow.collectAsState(AppSettings(
+                temperaturePreference = TemperaturePreference.METRIC,
+                enableWeatherAnimations = false,
+                enableThemeColorWithWeatherAnimations = false,
+                appColorPreference = AppColorPreference.DEFAULT,
+                appThemePreference = AppThemePreference.SYSTEM_DEFAULT,
+            ))
             val size = LocalSize.current
-            GlanceTheme {
-                if (weather != null) {
-                    when (size) {
-                        smallMode -> AnimatedSmallWidget(
-                            weather = weather!!,
-                            width = size.width.value,
-                            height = size.height.value,
-                            onWidgetClicked = openMainActivity(context, weather),
-                        )
-                        smallLarge, mediumMode, largeMode -> AnimatedMediumLargeWidget(
-                            weather = weather!!,
-                            showDays = size.height >= largeMode.height,
-                            daysCount = 4,
-                            width = size.width.value,
-                            height = size.height.value,
-                            onWidgetClicked = openMainActivity(context, weather),
-                        )
-                        superLargeMode -> AnimatedMediumLargeWidget(
-                            weather = weather!!,
-                            showDays = size.height >= largeMode.height,
-                            width = size.width.value,
-                            height = size.height.value,
-                            daysCount = 8,
-                            onWidgetClicked = openMainActivity(context, weather),
+            CompositionLocalProvider(
+                LocalWeatherYouAppSettings provides appSettings,
+            ) {
+                GlanceTheme {
+                    if (weather != null) {
+                        when (size) {
+                            smallMode -> AnimatedSmallWidget(
+                                weather = weather!!,
+                                width = size.width.value,
+                                height = size.height.value,
+                                onWidgetClicked = openMainActivity(context, weather),
+                            )
+                            smallLarge, mediumMode, largeMode -> AnimatedMediumLargeWidget(
+                                weather = weather!!,
+                                showDays = size.height >= largeMode.height,
+                                daysCount = 4,
+                                width = size.width.value,
+                                height = size.height.value,
+                                onWidgetClicked = openMainActivity(context, weather),
+                            )
+                            superLargeMode -> AnimatedMediumLargeWidget(
+                                weather = weather!!,
+                                showDays = size.height >= largeMode.height,
+                                width = size.width.value,
+                                height = size.height.value,
+                                daysCount = 8,
+                                onWidgetClicked = openMainActivity(context, weather),
+                            )
+                        }
+                    } else {
+                        MediumLargeLoading(
+                            onWidgetClicked = openMainActivity(context, null),
                         )
                     }
-                } else {
-                    MediumLargeLoading(
-                        onWidgetClicked = openMainActivity(context, null),
-                    )
                 }
             }
         }
