@@ -4,72 +4,6 @@ orbs:
   android: circleci/android@3.0.2  # Import the Android orb
 
 jobs:
-  deploy-app-internal-track:
-    docker:
-      - image: cimg/android:2022.10  # Use an Android Docker image
-    steps:
-      - checkout  # Check out the code
-      - run:
-          name: Install Dependencies
-          command: |
-            sudo apt-get update
-            sudo apt-get install -y jq
-      - android/download-keys:  # Use the Android orb to download keys
-          keystore-url: "$KEYSTORE_URL"
-          keystore-password: "$KEYSTORE_PASSWORD"
-          alias: "$KEY_ALIAS"
-          key-password: "$KEY_PASSWORD"
-      - android/gradle-build:
-          project-dir: "./"
-          variant: "appRelease"
-      - run:
-          name: Retain Old TV Module Build
-          command: |
-            echo "Skipping build for :tv module; using existing artifacts."
-      - run:
-          name: Sign APK for :app module
-          command: |
-            ./gradlew :app:signReleaseBundle
-      - android/play-publish:
-          service-account-json: "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON"
-          track: "internal"
-          release-file: "app/build/outputs/bundle/appRelease/app-release.aab"
-
-  deploy-all-production:
-    docker:
-      - image: cimg/android:2022.10  # Use an Android Docker image
-    steps:
-      - checkout  # Check out the code
-      - run:
-          name: Install Dependencies
-          command: |
-            sudo apt-get update
-            sudo apt-get install -y jq
-      - android/download-keys:  # Use the Android orb to download keys
-          keystore-url: "$KEYSTORE_URL"
-          keystore-password: "$KEYSTORE_PASSWORD"
-          alias: "$KEY_ALIAS"
-          key-password: "$KEY_PASSWORD"
-      - android/gradle-build:
-          project-dir: "./"
-          variant: "appRelease"
-      - android/gradle-build:
-          project-dir: "./"
-          variant: "tvRelease"
-      - run:
-          name: Sign APKs for :app and :tv modules
-          command: |
-            ./gradlew :app:signReleaseBundle
-            ./gradlew :tv:signReleaseBundle
-      - android/play-publish:
-          service-account-json: "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON"
-          track: "production"
-          release-file: "app/build/outputs/bundle/appRelease/app-release.aab"
-      - android/play-publish:
-          service-account-json: "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON"
-          track: "production"
-          release-file: "tv/build/outputs/bundle/tvRelease/tv-release.aab"
-
   generate-phone-downloadable-apk:
     docker:
       - image: cimg/android:2022.10  # Use an Android Docker image
@@ -94,12 +28,6 @@ jobs:
 
 workflows:
   version: 1
-  deploy-app-internal-track-workflow:
-    jobs:
-      - deploy-app-internal-track
-  deploy-all-production-workflow:
-    jobs:
-      - deploy-all-production
   generate-phone-downloadable-apk-workflow:
     jobs:
       - generate-phone-downloadable-apk
