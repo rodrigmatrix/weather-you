@@ -6,7 +6,7 @@ orbs:
 jobs:
   generate-phone-downloadable-apk:
     docker:
-      - image: cimg/android:2022.10  # Use an Android Docker image
+      - image: cimg/android:2024.11  # Use an Android Docker image
     steps:
       - checkout  # Check out the code
       - run:
@@ -14,9 +14,9 @@ jobs:
           command: |
             sudo apt-get update
             sudo apt-get install -y jq
-      - android/gradle-build:
-          project-dir: "./"
-          variant: "release"
+      - run:
+          name: Build app
+          command: ./gradlew build
       - run:
           name: Archive APK
           command: |
