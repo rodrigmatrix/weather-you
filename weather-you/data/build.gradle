@@ -21,7 +21,7 @@ android {
         if (rootProject.file("local.properties").exists()) {
             localProperties.load(new FileInputStream(rootProject.file("local.properties")))
         }
-        def visualCodingToken = System.getenv("VISUAL_CODING_TOKEN") ?: localProperties['visualcoding.token']
+        def visualCodingToken = System.env.VISUAL_CODING_TOKEN ?: localProperties['visualcoding.token']
         def openWeatherToken = System.getenv("OPEN_WEATHER_TOKEN") ?: localProperties['openweather.token']
         def googleMapsToken = System.getenv("GOOGLE_MAPS_TOKEN") ?: localProperties['googlemaps.token']
         def apiNinjasToken = System.getenv("API_NINJAS_TOKEN") ?: localProperties['apininjas.token']

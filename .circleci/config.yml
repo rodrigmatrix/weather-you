@@ -16,6 +16,10 @@ jobs:
           command: |
             sudo apt-get update
             sudo apt-get install -y jq
+
+      - run:
+          name: Process .env file variables
+          command: echo "export $(grep -v '^#' .env | xargs)" >> $BASH_ENV
       - run:
           name: Build app
           command: ./gradlew build
