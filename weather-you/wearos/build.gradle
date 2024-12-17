@@ -14,7 +14,7 @@ android {
         applicationId Sdk.applicationId
         minSdk Sdk.wearMinSdk
         targetSdk Sdk.targetSdk
-        versionCode Sdk.versionCode
+        versionCode 1
         versionName "1.0"
         vectorDrawables {
             useSupportLibrary true
