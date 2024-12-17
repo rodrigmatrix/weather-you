@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  android: circleci/android@4.2.1  # Import the Android orb
+  android: circleci/android@3.0.2  # Import the Android orb
 
 jobs:
   deploy-app-internal-track:
