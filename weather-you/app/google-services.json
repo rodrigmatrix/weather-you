@@ -1,0 +1,147 @@
+{
+  "project_info": {
+    "project_number": "139154958049",
+    "firebase_url": "https://weatheryou-cfaf5-default-rtdb.firebaseio.com",
+    "project_id": "weatheryou-cfaf5",
+    "storage_bucket": "weatheryou-cfaf5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:139154958049:android:aaf40cb149f89bd27839a0",
+        "android_client_info": {
+          "package_name": "com.rodrigmatrix.weatheryou"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "139154958049-lo1rbpr4688aji3e3b2q5j52jpulp0ln.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rodrigmatrix.weatheryou",
+            "certificate_hash": "791947c7c90f44c62ac8928d49252552f63e6f99"
+          }
+        },
+        {
+          "client_id": "139154958049-u2ptliedob6i60tmth4lt97fpmp63187.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA2acrdw-3AklqfZGxw7tSsPvlL0Oxxjfk"
+        },
+        {
+          "current_key": "AIzaSyBxqMIVwHO5BESSRWiOnLnz8fKvZMCVZ0A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "139154958049-u2ptliedob6i60tmth4lt97fpmp63187.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:139154958049:android:2bc2b338b12d59487839a0",
+        "android_client_info": {
+          "package_name": "com.rodrigmatrix.weatheryou.debug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "139154958049-u2ptliedob6i60tmth4lt97fpmp63187.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA2acrdw-3AklqfZGxw7tSsPvlL0Oxxjfk"
+        },
+        {
+          "current_key": "AIzaSyBxqMIVwHO5BESSRWiOnLnz8fKvZMCVZ0A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "139154958049-u2ptliedob6i60tmth4lt97fpmp63187.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:139154958049:android:f60a1f6bf32182227839a0",
+        "android_client_info": {
+          "package_name": "com.rodrigmatrix.weatheryou.tv"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "139154958049-u2ptliedob6i60tmth4lt97fpmp63187.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA2acrdw-3AklqfZGxw7tSsPvlL0Oxxjfk"
+        },
+        {
+          "current_key": "AIzaSyBxqMIVwHO5BESSRWiOnLnz8fKvZMCVZ0A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "139154958049-u2ptliedob6i60tmth4lt97fpmp63187.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:139154958049:android:889f165d1ab6a8d87839a0",
+        "android_client_info": {
+          "package_name": "com.rodrigmatrix.weatheryou.tv.debug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "139154958049-u2ptliedob6i60tmth4lt97fpmp63187.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA2acrdw-3AklqfZGxw7tSsPvlL0Oxxjfk"
+        },
+        {
+          "current_key": "AIzaSyBxqMIVwHO5BESSRWiOnLnz8fKvZMCVZ0A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "139154958049-u2ptliedob6i60tmth4lt97fpmp63187.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
