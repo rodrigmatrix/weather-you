@@ -1,44 +1,105 @@
-# This config was automatically generated from your source code
-# Stacks detected: deps:java:weather-you,tool:gradle:
 version: 2.1
+
+orbs:
+  android: circleci/android@4.2.1  # Import the Android orb
+
 jobs:
-  test-java:
+  deploy-app-internal-track:
     docker:
-      - image: cimg/openjdk:17.0
-    working_directory: ~/project/weather-you
+      - image: cimg/android:2022.10  # Use an Android Docker image
     steps:
-      - checkout:
-          path: ~/project
+      - checkout  # Check out the code
       - run:
-          name: Calculate cache key
-          command: |-
-            find . -name 'pom.xml' -o -name 'gradlew*' -o -name '*.gradle*' | \
-                    sort | xargs cat > /tmp/CIRCLECI_CACHE_KEY
-      - restore_cache:
-          key: cache-{{ checksum "/tmp/CIRCLECI_CACHE_KEY" }}
+          name: Install Dependencies
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y jq
+      - android/download-keys:  # Use the Android orb to download keys
+          keystore-url: "$KEYSTORE_URL"
+          keystore-password: "$KEYSTORE_PASSWORD"
+          alias: "$KEY_ALIAS"
+          key-password: "$KEY_PASSWORD"
+      - android/gradle-build:
+          project-dir: "./"
+          variant: "appRelease"
       - run:
-          command: ./gradlew check
-      - store_test_results:
-          path: build/test-results
-      - save_cache:
-          key: cache-{{ checksum "/tmp/CIRCLECI_CACHE_KEY" }}
-          paths:
-            - ~/.gradle/caches
+          name: Retain Old TV Module Build
+          command: |
+            echo "Skipping build for :tv module; using existing artifacts."
+      - run:
+          name: Sign APK for :app module
+          command: |
+            ./gradlew :app:signReleaseBundle
+      - android/play-publish:
+          service-account-json: "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON"
+          track: "internal"
+          release-file: "app/build/outputs/bundle/appRelease/app-release.aab"
+
+  deploy-all-production:
+    docker:
+      - image: cimg/android:2022.10  # Use an Android Docker image
+    steps:
+      - checkout  # Check out the code
+      - run:
+          name: Install Dependencies
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y jq
+      - android/download-keys:  # Use the Android orb to download keys
+          keystore-url: "$KEYSTORE_URL"
+          keystore-password: "$KEYSTORE_PASSWORD"
+          alias: "$KEY_ALIAS"
+          key-password: "$KEY_PASSWORD"
+      - android/gradle-build:
+          project-dir: "./"
+          variant: "appRelease"
+      - android/gradle-build:
+          project-dir: "./"
+          variant: "tvRelease"
+      - run:
+          name: Sign APKs for :app and :tv modules
+          command: |
+            ./gradlew :app:signReleaseBundle
+            ./gradlew :tv:signReleaseBundle
+      - android/play-publish:
+          service-account-json: "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON"
+          track: "production"
+          release-file: "app/build/outputs/bundle/appRelease/app-release.aab"
+      - android/play-publish:
+          service-account-json: "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON"
+          track: "production"
+          release-file: "tv/build/outputs/bundle/tvRelease/tv-release.aab"
+
+  generate-phone-downloadable-apk:
+    docker:
+      - image: cimg/android:2022.10  # Use an Android Docker image
+    steps:
+      - checkout  # Check out the code
+      - run:
+          name: Install Dependencies
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y jq
+      - android/gradle-build:
+          project-dir: "./"
+          variant: "release"
+      - run:
+          name: Archive APK
+          command: |
+            mkdir -p ~/circleci-artifacts
+            cp app/build/outputs/apk/debug/app-debug.apk ~/circleci-artifacts/
       - store_artifacts:
-          path: build/reports
-  deploy:
-    # This is an example deploy job, not actually used by the workflow
-    docker:
-      - image: cimg/base:stable
-    steps:
-      # Replace this with steps to deploy to users
-      - run:
-          name: deploy
-          command: '#e.g. ./deploy.sh'
+          path: ~/circleci-artifacts
+          destination: apk
+
 workflows:
-  build-and-test:
+  version: 1
+  deploy-app-internal-track-workflow:
     jobs:
-      - test-java
-    # - deploy:
-    #     requires:
-    #       - test-java
+      - deploy-app-internal-track
+  deploy-all-production-workflow:
+    jobs:
+      - deploy-all-production
+  generate-phone-downloadable-apk-workflow:
+    jobs:
+      - generate-phone-downloadable-apk
