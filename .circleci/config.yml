@@ -7,8 +7,10 @@ jobs:
   generate-phone-downloadable-apk:
     docker:
       - image: cimg/android:2024.11  # Use an Android Docker image
+    working_directory: ~/project/weather-you
     steps:
-      - checkout  # Check out the code
+      - checkout:
+          path: ~/project
       - run:
           name: Install Dependencies
           command: |
