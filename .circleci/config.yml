@@ -18,7 +18,9 @@ jobs:
             sudo apt-get install -y jq
       - run:
           name: Set Google Services
-          command: echo $GOOGLE_SERVICES | base64 --decode > /app/google-services.json
+          command: 
+            touch /app/google-services.json
+            echo $GOOGLE_SERVICES | base64 --decode > /app/google-services.json
       - run:
           name: Build app
           command: ./gradlew build
