@@ -15,11 +15,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.PaintingStyle.Companion.Stroke
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.rodrigmatrix.weatheryou.components.extensions.getTemperatureGradient
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.domain.model.WeatherHour
 import kotlin.math.absoluteValue
@@ -35,9 +35,9 @@ fun TemperatureBar(
     modifier: Modifier = Modifier,
 ) {
     val gradientList = getTemperatureGradient(
-        minDayTemperature,
-        maxDayTemperature,
-        hours
+        minDayTemperature = minDayTemperature,
+        maxDayTemperature = maxDayTemperature,
+        hours = hours,
     )
     val backgroundColor = Color.Black.copy(alpha = 0.1f)
     Canvas(
@@ -85,55 +85,6 @@ fun TemperatureBar(
                 style = Stroke(width = 3f),
             )
         }
-    }
-}
-
-
-fun getTemperatureGradient(
-    minDayTemperature: Double,
-    maxDayTemperature: Double,
-    hours: List<WeatherHour>,
-): List<Color> {
-    val colors = mutableListOf<Color>()
-    val temperatureList = listOf(minDayTemperature, maxDayTemperature)
-
-    if (temperatureList.any { it in (-10.0..0.0) }) {
-        colors.add(Color(0xff1a70f3))
-    }
-    if (temperatureList.any { it in (0.1..10.0) }) {
-        colors.add(Color(0xff5acaf5))
-    }
-    if (temperatureList.any { it in (10.1..15.0) }) {
-        colors.add(Color(0xff8bceb4))
-    }
-    if (temperatureList.any { it in (13.1..15.0) }) {
-        colors.add(Color(0xffa1d4a7))
-    }
-    if (temperatureList.any { it in (15.1..20.0) }) {
-        colors.add(Color(0xffd2d176))
-    }
-    if (temperatureList.any { it in (20.1..25.0) }) {
-        colors.add(Color(0xffcecc75))
-    }
-    if (temperatureList.any { it in (25.1..30.0) }) {
-        colors.add(Color(0xfffacc04))
-    }
-    if (temperatureList.any { it in (30.1..38.0) }) {
-        colors.add(Color(0xffff820c))
-    }
-    if (temperatureList.any { it in (38.1..40.0) }) {
-        colors.add(Color(0xfffe412c))
-    }
-    if (temperatureList.any { it in (50.0..100.0) }) {
-        colors.add(Color(0xFF760700))
-    }
-    return if (colors.size == 1) {
-        colors.add(colors[0])
-        colors
-    } else if (colors.isEmpty()) {
-        listOf(Color(0xffa1d4a7), Color(0xffa1d4a7))
-    } else {
-        colors
     }
 }
 

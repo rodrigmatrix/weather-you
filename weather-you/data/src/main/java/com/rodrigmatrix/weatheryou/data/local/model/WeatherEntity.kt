@@ -2,7 +2,9 @@ package com.rodrigmatrix.weatheryou.data.local.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import com.rodrigmatrix.weatheryou.domain.model.MoonPhase
 import kotlinx.serialization.Serializable
+import org.joda.time.DateTime
 
 @Entity(tableName = "weather", primaryKeys = ["latitude", "longitude"])
 data class WeatherEntity(
@@ -52,6 +54,17 @@ data class WeatherDayEntity(
     val humidity: Double,
     val sunrise: String,
     val sunset: String,
+    val precipitationAmount: Double,
+    val snowfallAmount: Double,
+    val solarNoon: String,
+    val solarMidnight: String,
+    val moonPhase: String,
+    val sunriseAstronomical: String,
+    val sunsetAstronomical: String,
+    val sunriseNautical: String,
+    val sunsetNautical: String,
+    val sunriseCivil: String,
+    val sunsetCivil: String,
 )
 
 @Serializable

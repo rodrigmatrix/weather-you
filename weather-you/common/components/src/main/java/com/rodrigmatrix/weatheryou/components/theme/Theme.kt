@@ -25,7 +25,7 @@ fun WeatherYouTheme(
     themeMode: ThemeMode = ThemeMode.System,
     colorMode: ColorMode = ColorMode.Dynamic,
     themeSettings: ThemeSettings = ThemeSettings(),
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     val darkTheme = when (themeMode) {
         ThemeMode.System -> isSystemInDarkTheme()
@@ -97,12 +97,10 @@ fun WeatherYouTheme(
     )
     val view = LocalView.current
     if (!view.isInEditMode) {
-        val currentWindow = (view.context as? Activity)?.window
         SideEffect {
-            currentWindow?.let {
-                currentWindow.statusBarColor = colorScheme.primary.toArgb()
-                WindowCompat.getInsetsController(currentWindow, view).isAppearanceLightStatusBars =
-                    darkTheme
+            (view.context as? Activity?)?.window?.apply {
+                statusBarColor = Color.Transparent.toArgb()
+                WindowCompat.getInsetsController(this, view).isAppearanceLightStatusBars = darkTheme
             }
         }
     }
@@ -183,14 +181,6 @@ object WeatherYouTheme {
     val themeSettings: ThemeSettings
         @Composable
         get() = LocalWeatherYouThemeSettingsEnabled.current
-
-    val WeatherYouColors.weatherTextColor: Color
-        @Composable
-        get() = if (themeSettings.showWeatherAnimations) {
-            Color.White
-        } else {
-            onSecondaryContainer
-        }
 }
 
 data class ThemeSettings(

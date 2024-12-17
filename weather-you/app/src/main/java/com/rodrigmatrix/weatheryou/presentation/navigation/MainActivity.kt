@@ -2,6 +2,7 @@ package com.rodrigmatrix.weatheryou.presentation.navigation
 
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -59,8 +60,8 @@ class MainActivity : AppCompatActivity() {
 
     @OptIn(ExperimentalMaterial3AdaptiveApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        super.onCreate(savedInstanceState)
         setContent {
             val defaultSettings = LocalWeatherYouAppSettings.current
             var colorMode by remember { mutableStateOf(ColorMode.Default) }
@@ -107,7 +108,7 @@ class MainActivity : AppCompatActivity() {
             navController.addOnDestinationChangedListener { _, destination, _ ->
                 currentDestination = destination.route.orEmpty()
             }
-            Box(Modifier.safeDrawingPadding()) {
+            Box {
                 WeatherYouAppState(
                     appSettings = appSettings,
                     currentDestination = currentDestination,

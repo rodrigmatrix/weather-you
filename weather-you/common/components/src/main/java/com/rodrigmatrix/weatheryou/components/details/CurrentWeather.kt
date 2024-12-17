@@ -25,11 +25,12 @@ import com.rodrigmatrix.weatheryou.components.R
 import com.rodrigmatrix.weatheryou.components.WeatherIcon
 import com.rodrigmatrix.weatheryou.components.extensions.getString
 import com.rodrigmatrix.weatheryou.components.preview.PreviewWeatherLocation
-import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme.weatherTextColor
+import com.rodrigmatrix.weatheryou.components.theme.weatherTextColor
 import com.rodrigmatrix.weatheryou.core.extensions.getHourWithMinutesString
 import com.rodrigmatrix.weatheryou.core.extensions.getTimeZoneHourAndMinutes
 import com.rodrigmatrix.weatheryou.core.extensions.percentageString
 import com.rodrigmatrix.weatheryou.core.extensions.temperatureString
+import com.rodrigmatrix.weatheryou.domain.model.PrecipitationType
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 
 @Composable
@@ -107,7 +108,7 @@ fun CurrentWeatherContent(
                     color = WeatherYouTheme.colorScheme.weatherTextColor,
                     style = WeatherYouTheme.typography.titleSmall
                 )
-                if (weatherLocation.precipitationType.isNotEmpty()) {
+                if (weatherLocation.precipitationType != PrecipitationType.Clear) {
                     Text(
                         text = stringResource(
                             R.string.chance_of_precipitation,

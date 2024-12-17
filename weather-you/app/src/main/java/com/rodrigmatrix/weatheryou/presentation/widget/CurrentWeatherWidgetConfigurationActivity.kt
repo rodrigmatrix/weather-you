@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.glance.appwidget.updateAll
 import androidx.lifecycle.lifecycleScope
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
@@ -16,6 +17,7 @@ import kotlinx.coroutines.withContext
 
 class CurrentWeatherWidgetConfigurationActivity : AppCompatActivity() {
 
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {

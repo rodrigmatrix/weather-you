@@ -3,9 +3,43 @@ package com.rodrigmatrix.weatheryou.components.theme
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
+import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme.themeSettings
+
+val WeatherYouColors.rain: Color
+    @Composable
+    get() = if (WeatherYouTheme.isDarkTheme) {
+        Color(0xFF54bef0)
+    } else {
+        Color(0xFF54bef0)
+    }
+
+val WeatherYouColors.snow: Color
+    @Composable
+    get() = if (WeatherYouTheme.isDarkTheme) {
+        Color(0xffffffff)
+    } else {
+        Color(0xffffffff)
+    }
+
+val WeatherYouColors.weatherTextColor: Color
+    @Composable
+    get() = if (themeSettings.showWeatherAnimations) {
+        Color.White
+    } else {
+        onSecondaryContainer
+    }
+
+val WeatherYouColors.backgroundDarkColor: Color
+    @Composable
+    get() = if (themeSettings.showWeatherAnimations) {
+        Color.White
+    } else {
+        onSecondaryContainer
+    }
 
 val md_theme_light_primary = Color(0xFF4159a9)
 val md_theme_light_onPrimary = Color(0xFFffffff)

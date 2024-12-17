@@ -43,8 +43,8 @@ import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import com.rodrigmatrix.weatheryou.components.extensions.getStaticIcon
 import com.rodrigmatrix.weatheryou.components.extensions.getString
+import com.rodrigmatrix.weatheryou.components.extensions.getTemperatureGradient
 import com.rodrigmatrix.weatheryou.components.preview.PreviewWeatherLocation
-import com.rodrigmatrix.weatheryou.components.temperature.getTemperatureGradient
 import com.rodrigmatrix.weatheryou.core.extensions.temperatureString
 import com.rodrigmatrix.weatheryou.domain.model.WeatherDay
 import com.rodrigmatrix.weatheryou.domain.model.WeatherHour

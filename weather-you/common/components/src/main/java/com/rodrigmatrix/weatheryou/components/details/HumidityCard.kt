@@ -13,7 +13,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.components.R
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
-import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme.weatherTextColor
+import com.rodrigmatrix.weatheryou.components.theme.weatherTextColor
 import com.rodrigmatrix.weatheryou.weathericons.R as WeatherIcons
 import com.rodrigmatrix.weatheryou.core.extensions.percentageString
 import com.rodrigmatrix.weatheryou.core.extensions.temperatureString

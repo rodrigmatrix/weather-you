@@ -12,7 +12,7 @@ import com.rodrigmatrix.weatheryou.data.local.model.WeatherEntity
     entities = [
         WeatherEntity::class,
     ],
-    version = 1,
+    version = 2,
     exportSchema = true,
 )
 @TypeConverters(WeatherDatabaseConverters::class)

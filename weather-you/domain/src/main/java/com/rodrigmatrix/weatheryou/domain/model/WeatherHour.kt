@@ -10,7 +10,7 @@ data class WeatherHour(
     val precipitationProbability: Double,
     val feelsLike: Double,
     val cloudCover: Double,
-    val precipitationType: String,
+    val precipitationType: PrecipitationType,
     val humidity: Double,
     val visibility: Double,
     val precipitationAmount: Double,

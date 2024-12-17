@@ -3,6 +3,10 @@ package com.rodrigmatrix.weatheryou.locationdetails.presentaion.details
 import android.net.Uri
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.EaseInOutCubic
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -14,12 +18,19 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.*
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -30,11 +41,13 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.window.core.layout.WindowWidthSizeClass
 import com.rodrigmatrix.weatheryou.components.WeatherYouLargeAppBar
 import com.rodrigmatrix.weatheryou.components.WeatherYouSmallAppBar
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.components.R
 import com.rodrigmatrix.weatheryou.components.details.FutureDaysForecast
+import com.rodrigmatrix.weatheryou.components.extensions.toGradientList
 import com.rodrigmatrix.weatheryou.components.particle.WeatherAnimationsBackground
 import com.rodrigmatrix.weatheryou.components.preview.PreviewFutureDaysForecast
 import com.rodrigmatrix.weatheryou.components.preview.PreviewHourlyForecast
@@ -43,8 +56,23 @@ import com.rodrigmatrix.weatheryou.components.preview.PreviewWeatherLocation
 import com.rodrigmatrix.weatheryou.components.theme.ThemeMode
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.core.extensions.getDateTimeFromTimezone
+import com.rodrigmatrix.weatheryou.domain.model.WeatherDay
+import com.rodrigmatrix.weatheryou.locationdetails.presentaion.conditions.ConditionsBottomSheet
+import com.rodrigmatrix.weatheryou.locationdetails.presentaion.conditions.ConditionsViewModel
+import ir.ehsannarmani.compose_charts.LineChart
+import ir.ehsannarmani.compose_charts.models.AnimationMode
+import ir.ehsannarmani.compose_charts.models.DotProperties
+import ir.ehsannarmani.compose_charts.models.DrawStyle
+import ir.ehsannarmani.compose_charts.models.LabelProperties
+import ir.ehsannarmani.compose_charts.models.Line
+import ir.ehsannarmani.compose_charts.models.LineProperties
+import ir.ehsannarmani.compose_charts.models.ZeroLineProperties
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
+import kotlin.math.roundToInt
 
+@ExperimentalMaterial3Api
 @Composable
 fun WeatherDetailsScreen(
     weatherLocation: WeatherLocation?,
@@ -52,8 +80,22 @@ fun WeatherDetailsScreen(
     onCloseClick: () -> Unit,
     onDeleteLocationClicked: () -> Unit,
     viewModel: WeatherDetailsViewModel = getViewModel(),
+    conditionsViewModel: ConditionsViewModel = getViewModel(),
+    coroutineScope: CoroutineScope = rememberCoroutineScope(),
+    scaffoldState: SheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    ),
+    modifier: Modifier = Modifier,
 ) {
     val viewState by viewModel.viewState.collectAsState()
+    val conditionsViewState by conditionsViewModel.viewState.collectAsState()
+    val adaptiveInfo = currentWindowAdaptiveInfo()
+    val isCompat = adaptiveInfo.windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT
+    val blurValue = if (scaffoldState.currentValue == SheetValue.Hidden || !isCompat) {
+        0.dp
+    } else {
+        64.dp
+    }
 
     viewModel.setWeatherLocation(weatherLocation)
     WeatherYouTheme(
@@ -70,29 +112,56 @@ fun WeatherDetailsScreen(
             isUpdating = isUpdating,
             onExpandedButtonClick = viewModel::onFutureWeatherButtonClick,
             onCloseClick = onCloseClick,
-            onDeleteClick = onDeleteLocationClicked
+            onDeleteClick = onDeleteLocationClicked,
+            onExpandDay = {
+                coroutineScope.launch {
+                    conditionsViewModel.setConditions(
+                        weatherLocation = viewState.weatherLocation!!,
+                        day = it,
+                    )
+                    scaffoldState.expand()
+                }
+            },
+            modifier = modifier.blur(radius = blurValue),
         )
+    }
+
+    if (conditionsViewState.weatherLocation != null) {
+        Column {
+            Spacer(Modifier.height(20.dp))
+            ConditionsBottomSheet(
+                viewState = conditionsViewState,
+                bottomSheetState = scaffoldState,
+                onClick = {
+                    conditionsViewModel.setConditions(
+                        weatherLocation = viewState.weatherLocation!!,
+                        day = it,
+                    )
+                },
+                onTemperatureTypeChange = conditionsViewModel::onTemperatureTypeChange,
+                onDismissRequest = {
+                    coroutineScope.launch {
+                        conditionsViewModel.hideConditions()
+                        scaffoldState.hide()
+                    }
+                }
+            )
+        }
     }
 }
 
+@ExperimentalMaterial3Api
 @Composable
 fun WeatherDetailsScreen(
     viewState: WeatherDetailsViewState,
     isUpdating: Boolean,
     onExpandedButtonClick: (Boolean) -> Unit,
+    onExpandDay: (WeatherDay) -> Unit,
     onCloseClick: () -> Unit,
     onDeleteClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
-        topBar = {
-            SmallScreenTopAppBar(
-                viewState.weatherLocation?.name.orEmpty(),
-                onCloseClick,
-                onDeleteClick,
-                viewState.weatherLocation?.isCurrentLocation?.not() == true
-            )
-        },
         containerColor = if (WeatherYouTheme.themeSettings.showWeatherAnimations) {
             Color.Transparent
         } else {
@@ -111,24 +180,38 @@ fun WeatherDetailsScreen(
             viewState = viewState,
             isUpdating = isUpdating,
             onExpandedButtonClick = onExpandedButtonClick,
+            onExpandDay = onExpandDay,
+            onCloseClick = onCloseClick,
+            onDeleteClick = onDeleteClick,
             paddingValues = paddingValues,
         )
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 private fun WeatherDetailsContent(
     viewState: WeatherDetailsViewState,
     isUpdating: Boolean,
     onExpandedButtonClick: (Boolean) -> Unit,
+    onExpandDay: (WeatherDay) -> Unit,
+    onCloseClick: () -> Unit,
+    onDeleteClick: () -> Unit,
     paddingValues: PaddingValues,
 ) {
     val scrollState = rememberLazyListState()
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(20.dp),
         state = scrollState,
-        contentPadding = paddingValues,
     ) {
+        item {
+            SmallScreenTopAppBar(
+                viewState.weatherLocation?.name.orEmpty(),
+                onCloseClick,
+                onDeleteClick,
+                viewState.weatherLocation?.isCurrentLocation?.not() == true,
+            )
+        }
         if (isUpdating) {
             item {
                 Text(
@@ -153,6 +236,7 @@ private fun WeatherDetailsContent(
         item {
             HourlyForecast(
                 hoursList = viewState.todayWeatherHoursList,
+                onClick = { onExpandDay(viewState.weatherLocation?.days?.first()!!) },
                 modifier = Modifier.padding(horizontal = 16.dp),
             )
         }
@@ -164,6 +248,7 @@ private fun WeatherDetailsContent(
                 currentTemperature = viewState.weatherLocation?.currentWeather ?: 0.0,
                 isExpanded = viewState.isFutureWeatherExpanded,
                 onExpandedButtonClick = onExpandedButtonClick,
+                onExpandDay = onExpandDay,
                 modifier = Modifier.padding(horizontal = 16.dp),
             )
         }
@@ -266,13 +351,14 @@ fun AppleWeatherAttribution(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@ExperimentalMaterial3Api
 @Composable
 fun SmallScreenTopAppBar(
     title: String,
     onCloseClick: () -> Unit,
     onDeleteButtonClick: () -> Unit,
-    showDeleteButton: Boolean
+    showDeleteButton: Boolean,
+    scrollBehavior: TopAppBarScrollBehavior? = null,
 ) {
     WeatherYouSmallAppBar(
         title = {
@@ -307,7 +393,8 @@ fun SmallScreenTopAppBar(
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = Color.Transparent
-        )
+        ),
+        scrollBehavior = scrollBehavior,
     )
 }
 
@@ -352,6 +439,7 @@ fun ExpandedTopAppBar(
     )
 }
 
+@ExperimentalMaterial3Api
 @PreviewLightDark
 @Composable
 fun WeatherDetailsScreenPreview() {
@@ -366,6 +454,7 @@ fun WeatherDetailsScreenPreview() {
             onExpandedButtonClick = { },
             onCloseClick = {},
             onDeleteClick = {},
+            onExpandDay = { },
             modifier = Modifier.background(WeatherYouTheme.colorScheme.background)
         )
     }

@@ -234,7 +234,7 @@ object WeatherYouDataModules {
             val interceptor = OkHttpClient.Builder().apply {
                 if (BuildConfig.DEBUG) {
                     val logging = HttpLoggingInterceptor()
-                    logging.setLevel(HttpLoggingInterceptor.Level.BASIC)
+                    logging.setLevel(HttpLoggingInterceptor.Level.BODY)
                     addNetworkInterceptor(logging)
                 }
                 addNetworkInterceptor(
@@ -276,7 +276,7 @@ object WeatherYouDataModules {
             val interceptor = OkHttpClient.Builder().apply {
                 if (BuildConfig.DEBUG) {
                     val logging = HttpLoggingInterceptor()
-                    logging.setLevel(HttpLoggingInterceptor.Level.BASIC)
+                    logging.setLevel(HttpLoggingInterceptor.Level.BODY)
                     addNetworkInterceptor(logging)
                 }
                 addNetworkInterceptor(

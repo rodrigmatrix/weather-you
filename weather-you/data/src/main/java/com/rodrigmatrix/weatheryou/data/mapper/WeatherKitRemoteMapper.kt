@@ -3,6 +3,7 @@ package com.rodrigmatrix.weatheryou.data.mapper
 import com.rodrigmatrix.weatheryou.data.model.weatherkit.Day
 import com.rodrigmatrix.weatheryou.data.model.weatherkit.Hour
 import com.rodrigmatrix.weatheryou.data.model.weatherkit.WeatherKitLocationResponse
+import com.rodrigmatrix.weatheryou.domain.model.MoonPhase
 import com.rodrigmatrix.weatheryou.domain.model.WeatherDay
 import com.rodrigmatrix.weatheryou.domain.model.WeatherHour
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
@@ -43,7 +44,7 @@ class WeatherKitRemoteMapper(
             currentTime = timezone.getCurrentTime(),
             timeZone = timezone,
             precipitationProbability = source.forecastDaily?.days?.first()?.precipitationChance.toPercentage(),
-            precipitationType = "",
+            precipitationType = source.forecastDaily?.days?.first()?.precipitationType.toPrecipitationType(),
             isDaylight = source.currentWeather?.daylight == true,
             humidity = source.currentWeather?.humidity.toPercentage(),
             dewPoint = source.currentWeather?.temperatureDewPoint ?: 0.0,
@@ -76,11 +77,26 @@ class WeatherKitRemoteMapper(
                 minTemperature = it.temperatureMin.round(),
                 hours = hours?.mapHoursList(it.forecastStart, timezone).orEmpty(),
                 precipitationProbability = it.precipitationChance.toPercentage(),
-                precipitationType = it.precipitationType.orEmpty(),
+                precipitationType = it.precipitationType.toPrecipitationType(),
                 windSpeed = it.windSpeedAvg ?: 0.0,
                 humidity = hours.orEmpty().maxOf { it.humidity.toPercentage() },
                 sunrise = it.sunrise.toDateTime(timezone),
                 sunset = it.sunrise.toDateTime(timezone),
+                precipitationAmount = it.precipitationAmount ?: 0.0,
+                snowfallAmount = it.snowfallAmount ?: 0.0,
+                solarNoon = it.solarNoon.toDateTime(timezone),
+                solarMidnight = it.solarMidnight.toDateTime(timezone),
+                moonPhase = try {
+                    MoonPhase.valueOf(it.moonPhase.orEmpty())
+                } catch (_: Exception) {
+                    MoonPhase.New
+                },
+                sunriseAstronomical = it.sunriseAstronomical.toDateTime(timezone),
+                sunsetAstronomical = it.sunsetAstronomical.toDateTime(timezone),
+                sunriseNautical = it.sunriseNautical.toDateTime(timezone),
+                sunsetNautical = it.sunsetNautical.toDateTime(timezone),
+                sunriseCivil = it.sunriseCivil.toDateTime(timezone),
+                sunsetCivil = it.sunsetCivil.toDateTime(timezone),
             )
         }
     }
@@ -100,7 +116,7 @@ class WeatherKitRemoteMapper(
                 temperature = it.temperature.round(),
                 isDaylight = it.daylight == true,
                 precipitationProbability = it.precipitationChance.toPercentage(),
-                precipitationType = it.precipitationType.orEmpty(),
+                precipitationType = it.precipitationType.toPrecipitationType(),
                 precipitationAmount = it.precipitationAmount ?: 0.0,
                 cloudCover = it.cloudCover.toPercentage(),
                 feelsLike = it.temperatureApparent ?: 0.0,
@@ -115,8 +131,17 @@ class WeatherKitRemoteMapper(
     }
 
     private fun List<Hour>.mapHoursList(date: String?, timezone: String): List<WeatherHour> {
+        var plusOne = false
         return this.filter {
-            date.toDateTime(timezone).isSameDay(it.forecastStart.toDateTime(timezone))
+            if (date.toDateTime(timezone).isSameDay(it.forecastStart.toDateTime(timezone))) {
+                plusOne = true
+                true
+            } else if (plusOne) {
+                plusOne = false
+                true
+            } else {
+                false
+            }
         }.map {
             WeatherHour(
                 dateTime = it.forecastStart.toDateTime(timezone),
@@ -124,7 +149,7 @@ class WeatherKitRemoteMapper(
                 isDaylight = it.daylight == true,
                 temperature = it.temperature.round(),
                 precipitationProbability = it.precipitationChance.toPercentage(),
-                precipitationType = it.precipitationType.orEmpty(),
+                precipitationType = it.precipitationType.toPrecipitationType(),
                 precipitationAmount = it.precipitationAmount ?: 0.0,
                 cloudCover = it.cloudCover.toPercentage(),
                 feelsLike = it.temperatureApparent ?: 0.0,

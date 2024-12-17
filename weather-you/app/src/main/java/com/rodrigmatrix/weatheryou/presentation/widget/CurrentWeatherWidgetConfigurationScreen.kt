@@ -22,6 +22,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -59,6 +60,7 @@ import com.rodrigmatrix.weatheryou.widgets.weather.animated.CurrentAnimatedWeath
 import com.rodrigmatrix.weatheryou.worker.UpdateWidgetWeatherDataWorker
 import org.koin.androidx.compose.getViewModel
 
+@ExperimentalMaterial3Api
 @Composable
 fun CurrentWeatherWidgetConfigurationScreen(
     widgetId: String,
@@ -93,6 +95,7 @@ fun CurrentWeatherWidgetConfigurationScreen(
     }
 }
 
+@ExperimentalMaterial3Api
 @Composable
 private fun CurrentWeatherWidgetConfigurationScreen(
     uiState: CurrentWeatherWidgetConfigurationUiState,
@@ -251,6 +254,7 @@ private fun LocationRow(
 }
 
 
+@ExperimentalMaterial3Api
 @Preview
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(device = Devices.PIXEL_C)

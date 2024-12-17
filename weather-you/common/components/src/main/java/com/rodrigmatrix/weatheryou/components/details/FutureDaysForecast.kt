@@ -25,7 +25,7 @@ import com.rodrigmatrix.weatheryou.components.WeatherYouCard
 import com.rodrigmatrix.weatheryou.components.extensions.getString
 import com.rodrigmatrix.weatheryou.components.preview.PreviewFutureDaysForecast
 import com.rodrigmatrix.weatheryou.components.temperature.TemperatureBar
-import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme.weatherTextColor
+import com.rodrigmatrix.weatheryou.components.theme.weatherTextColor
 
 private const val TODAY_INDEX = 0
 private const val TOMORROW_INDEX = 1
@@ -38,9 +38,13 @@ fun FutureDaysForecast(
     currentTemperature: Double,
     isExpanded: Boolean,
     onExpandedButtonClick: (Boolean) -> Unit,
+    onExpandDay: (WeatherDay) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    WeatherYouCard(modifier = modifier) {
+    WeatherYouCard(
+        showPressAnimation = true,
+        modifier = modifier,
+    ) {
         FutureDaysForecastContent(
             futureDaysList = futureDaysList,
             minWeekTemperature = minWeekTemperature,
@@ -48,6 +52,7 @@ fun FutureDaysForecast(
             currentTemperature = currentTemperature,
             isExpanded = isExpanded,
             onExpandedButtonClick = onExpandedButtonClick,
+            onExpandDay = onExpandDay,
         )
     }
 }
@@ -60,6 +65,7 @@ fun FutureDaysForecastContent(
     currentTemperature: Double,
     isExpanded: Boolean,
     onExpandedButtonClick: (Boolean) -> Unit,
+    onExpandDay: (WeatherDay) -> Unit,
     modifier: Modifier = Modifier,
     dayItem: @Composable (index: Int, day: WeatherDay) -> Unit = { index, day ->
         DayRow(
@@ -68,6 +74,7 @@ fun FutureDaysForecastContent(
             index = index,
             currentTemperature = currentTemperature,
             day = day,
+            onExpandDay = onExpandDay,
         )
     },
     expandButton: @Composable () -> Unit = {
@@ -112,8 +119,8 @@ fun DayRow(
     currentTemperature: Double,
     day: WeatherDay,
     index: Int,
+    onExpandDay: (WeatherDay) -> Unit,
 ) {
-    var isExpanded by remember(day) { mutableStateOf(false) }
     WeatherYouDivider(Modifier.height(1.dp))
     DayContent(
         minWeekTemperature = minWeekTemperature,
@@ -122,12 +129,8 @@ fun DayRow(
         currentTemperature = currentTemperature,
         index = index,
         modifier = Modifier.clickable {
-            isExpanded = !isExpanded
+            onExpandDay(day)
         }
-    )
-    ExpandedCardContent(
-        day = day,
-        isExpanded = isExpanded
     )
 }
 
@@ -294,7 +297,8 @@ fun FutureDaysForecastPreview() {
             minWeekTemperature = 10.0,
             currentTemperature = 20.0,
             isExpanded = false,
-            onExpandedButtonClick = {}
+            onExpandedButtonClick = { },
+            onExpandDay = { },
         )
     }
 }

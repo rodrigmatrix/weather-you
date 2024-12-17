@@ -83,6 +83,15 @@ fun DateTime.getDateWithMonth(): String {
     }
 }
 
+fun DateTime.getFullDate(): String {
+    return try {
+        val pattern = DateTimeFormat.forPattern("EEEE, dd MMMM, YYYY")
+        pattern.print(this).replaceFirstChar { it.uppercase() }
+    } catch (e: Exception) {
+        ""
+    }
+}
+
 fun DateTime.getDayString(): String {
     return try {
         val pattern = DateTimeFormat.forPattern("EEE")
@@ -91,3 +100,21 @@ fun DateTime.getDayString(): String {
         ""
     }
 }
+
+fun DateTime.getFullDayString(): String {
+    return try {
+        val pattern = DateTimeFormat.forPattern("EEEE")
+        pattern.print(this).replaceFirstChar { it.uppercase() }
+    } catch (e: Exception) {
+        ""
+    }
+}
+
+fun DateTime.getDayNumberString(): String {
+    return try {
+        this.dayOfMonth.toString()
+    } catch (e: Exception) {
+        ""
+    }
+}
+

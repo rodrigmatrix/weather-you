@@ -6,6 +6,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
@@ -20,6 +21,7 @@ fun WeatherYouSmallAppBar(
         containerColor = WeatherYouTheme.colorScheme.background,
     ),
     actions: @Composable RowScope.() -> Unit = {},
+    scrollBehavior: TopAppBarScrollBehavior? = null,
 ) {
     Box(modifier = modifier) {
         TopAppBar(
@@ -28,6 +30,7 @@ fun WeatherYouSmallAppBar(
             title = title,
             navigationIcon = navigationIcon,
             colors = colors,
+            scrollBehavior = scrollBehavior,
         )
     }
 }

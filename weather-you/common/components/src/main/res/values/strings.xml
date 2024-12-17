@@ -138,4 +138,15 @@
     <string name="apple_weather">Apple Weather</string>
     <string name="for_more_information">For more information, </string>
     <string name="visit_apple_weather">visit Apple Weather</string>
+    <string name="feels_like">Feels Like</string>
+    <string name="celsius">Celsius (°C)</string>
+    <string name="fahrenheit">Fahrenheit (°F)</string>
+    <string name="chance_of_precipitation_title">Chance of precipitation</string>
+    <string name="precipitation_total">Precipitation total</string>
+    <string name="precipitation">Precipitation</string>
+
+    <string name="day_chance">%s\'s chance: %s</string>
+    <string name="actual_temperature">Actual: %s</string>
+    <string name="millimeters">mm</string>
+    <string name="centimeters">cm</string>
 </resources>

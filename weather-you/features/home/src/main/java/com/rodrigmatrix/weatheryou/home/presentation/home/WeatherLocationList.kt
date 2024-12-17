@@ -8,6 +8,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -64,8 +65,11 @@ fun WeatherLocationList(
         columns = GridCells.Fixed(1),
         verticalArrangement = Arrangement.spacedBy(10.dp),
         state = listState,
-        modifier = modifier.fillMaxHeight(),
+        modifier = modifier,
     ) {
+        item {
+            Spacer(Modifier.height(4.dp))
+        }
         items(
             items = list,
             key = { it.id },
@@ -101,6 +105,9 @@ fun WeatherLocationList(
                     )
                 }
             }
+        }
+        item {
+            Spacer(Modifier.height(4.dp))
         }
     }
 }
