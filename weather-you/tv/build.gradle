@@ -74,7 +74,7 @@ static def computeVersionCode() {
     return (Sdk.tvVersionMajor * 100000)
     + (Sdk.tvVersionMinor * 10000)
     + (Sdk.tvVersionPatch * 1000)
-    + Integer.valueOf(System.env.BUILD_NUMBER ?: 0)
+    + Integer.valueOf(System.getenv("CIRCLE_BUILD_NUM") ?: 0)
 }
 
 dependencies {

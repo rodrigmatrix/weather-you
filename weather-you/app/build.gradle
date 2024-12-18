@@ -87,7 +87,7 @@ static def computeVersionCode() {
     return (Sdk.phoneVersionMajor * 100000)
     + (Sdk.phoneVersionMinor * 10000)
     + (Sdk.phoneVersionPatch * 1000)
-    + Integer.valueOf(System.env.BUILD_NUMBER ?: 0)
+    + Integer.valueOf(System.getenv("CIRCLE_BUILD_NUM") ?: 0)
 }
 
 dependencies {
