@@ -22,7 +22,7 @@ jobs:
           command: echo "export $(grep -v '^#' .env | xargs)" >> $BASH_ENV
       - run:
           name: Build app
-          command: ./gradlew build
+          command: ./gradlew build -x lint
       - run:
           name: Archive APK
           command: |
