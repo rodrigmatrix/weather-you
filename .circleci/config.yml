@@ -20,15 +20,15 @@ workflows:
   deploy:
     jobs:
       - android/deploy-to-play-store:
-          executor:
-            name: android/android-docker
-            tag: "2022.0.7"
-          base64-keystore: RELEASE_BASE64_KEYSTORE
-          release-key-alias: RELEASE_KEY_ALIAS
-          release-key-password: RELEASE_KEY_PASSWORD
-          release-keystore: ./keystore
-          release-store-password: RELEASE_STORE_PASSWORD
-          keystore-properties-working-directory: '.'
-          google-play-key: GOOGLE_PLAY_KEY
-          lane-name: deploy
-          fastlane-working-directory: '.'
+        executor:
+          name: android/android-docker
+          tag: "2022.0.7"
+        base64-keystore: RELEASE_BASE64_KEYSTORE
+        release-key-alias: RELEASE_KEY_ALIAS
+        release-key-password: RELEASE_KEY_PASSWORD
+        release-keystore: ./keystore
+        release-store-password: RELEASE_STORE_PASSWORD
+        keystore-properties-working-directory: '.'
+        google-play-key: GOOGLE_PLAY_KEY
+        lane-name: deploy
+        fastlane-working-directory: '.'
