@@ -9,6 +9,10 @@ plugins {
     alias(libs.plugins.compose.compiler)
 }
 
+def keyStorePropertiesFile = rootProject.file("keystore.properties")
+def keyStoreProperties = new Properties()
+keyStoreProperties.load(new FileInputStream(keyStorePropertiesFile))
+
 android {
     compileSdk Sdk.compileSdk
 
@@ -36,10 +40,18 @@ android {
             }
         }
     }
-
+    signingConfigs {
+        release {
+            keyAlias keyStoreProperties['releaseKeyAlias']
+            keyPassword keyStoreProperties['releaseKeyPassword']
+            storeFile file(keyStoreProperties['releaseKeyStore'])
+            storePassword keyStoreProperties['releaseStorePassword']
+        }
+    }
     buildTypes {
         release {
             minifyEnabled true
+            signingConfig signingConfigs.release
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

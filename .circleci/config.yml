@@ -4,36 +4,31 @@ orbs:
   android: circleci/android@3.0.2  # Import the Android orb
 
 jobs:
-  generate-phone-downloadable-apk:
+  generate-debug-phone-downloadable-apk:
     docker:
       - image: cimg/android:2024.11  # Use an Android Docker image
     working_directory: ~/project/weather-you
     steps:
       - checkout:
           path: ~/project
-      - run:
-          name: Install Dependencies
-          command: |
-            sudo apt-get update
-            sudo apt-get install -y jq
 
       - run:
           name: Process .env file variables
           command: echo "export $(grep -v '^#' .env | xargs)" >> $BASH_ENV
-      - run:
-          name: Build app
-          command: ./gradlew build -x lint
-      - run:
-          name: Archive APK
-          command: |
-            mkdir -p ~/circleci-artifacts
-            cp app/build/outputs/apk/debug/app-debug.apk ~/circleci-artifacts/
-      - store_artifacts:
-          path: ~/circleci-artifacts
-          destination: apk
-
 workflows:
   version: 1
-  generate-phone-downloadable-apk-workflow:
+  deploy:
     jobs:
-      - generate-phone-downloadable-apk
+      - android/deploy-to-play-store:
+          executor:
+            name: android/android-docker
+            tag: "2022.0.7"
+          base64-keystore: RELEASE_BASE64_KEYSTORE
+          release-key-alias: RELEASE_KEY_ALIAS
+          release-key-password: RELEASE_KEY_PASSWORD
+          release-keystore: ./keystore
+          release-store-password: RELEASE_STORE_PASSWORD
+          keystore-properties-working-directory: '.'
+          google-play-key: GOOGLE_PLAY_KEY
+          lane-name: deploy
+          fastlane-working-directory: '.'

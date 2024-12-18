@@ -1,0 +1,2 @@
+json_key_file("/Users/rodrigo/Documents/projects/fastlane/keys/weatheryou-fastlane-key.json") # Path to the json secret file - Follow https://docs.fastlane.tools/actions/supply/#setup to get one
+package_name("com.rodrigmatrix.weatheryou") # e.g. com.krausefx.app
