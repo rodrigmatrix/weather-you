@@ -17,7 +17,7 @@ android {
             localProperties.load(new FileInputStream(rootProject.file("local.properties")))
         }
         def password = System.getenv("WEATHERYOU_PREMIUM_PASSWORD") ?: localProperties['weatheryou.premiumpassword']
-        buildConfigField "String", "PREMIUM_PASSWORD", password
+        buildConfigField "String", "PREMIUM_PASSWORD", "\"" + password + "\""
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")

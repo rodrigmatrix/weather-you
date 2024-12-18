@@ -21,7 +21,7 @@ android {
         if (rootProject.file("local.properties").exists()) {
             localProperties.load(new FileInputStream(rootProject.file("local.properties")))
         }
-        def visualCodingToken = System.env.VISUAL_CODING_TOKEN ?: localProperties['visualcoding.token']
+        def visualCodingToken = System.getenv("VISUAL_CODING_TOKEN") ?: localProperties['visualcoding.token']
         def openWeatherToken = System.getenv("OPEN_WEATHER_TOKEN") ?: localProperties['openweather.token']
         def googleMapsToken = System.getenv("GOOGLE_MAPS_TOKEN") ?: localProperties['googlemaps.token']
         def apiNinjasToken = System.getenv("API_NINJAS_TOKEN") ?: localProperties['apininjas.token']
@@ -33,26 +33,26 @@ android {
         def locationIqToken = System.getenv("LOCATIONIQ_TOKEN") ?: localProperties['locationiq.token']
 
         buildConfigField "String", "VISUAL_CODING_URL", "\"https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/\""
-        buildConfigField "String", "VISUAL_CODING_TOKEN", visualCodingToken
+        buildConfigField "String", "VISUAL_CODING_TOKEN", "\"" + visualCodingToken + "\""
 
         buildConfigField "String", "OPEN_WEATHER_URL", "\"https://api.openweathermap.org/data/2.5/\""
-        buildConfigField "String", "OPEN_WEATHER_TOKEN", openWeatherToken
+        buildConfigField "String", "OPEN_WEATHER_TOKEN", "\"" + openWeatherToken + "\""
 
         buildConfigField "String", "GOOGLE_MAPS_URL", "\"https://maps.googleapis.com/maps/api/\""
-        buildConfigField "String", "GOOGLE_MAPS_TOKEN", googleMapsToken
+        buildConfigField "String", "GOOGLE_MAPS_TOKEN", "\"" + googleMapsToken + "\""
 
         buildConfigField "String", "API_NINJAS_URL", "\"https://api.api-ninjas.com/\""
-        buildConfigField "String", "API_NINJAS_TOKEN", apiNinjasToken
+        buildConfigField "String", "API_NINJAS_TOKEN", "\"" + apiNinjasToken + "\""
 
         buildConfigField "String", "WEATHER_KIT_URL", "\"https://weatherkit.apple.com/api/\""
-        buildConfigField "String", "WEATHER_KIT_TOKEN", weatherKitToken
-        buildConfigField "String", "WEATHER_KIT_ID", weatherKitId
-        buildConfigField "String", "WEATHER_KIT_KID", weatherKitKid
-        buildConfigField "String", "WEATHER_KIT_ISS", weatherKitISS
-        buildConfigField "String", "WEATHER_KIT_SUB", weatherKitSub
+        buildConfigField "String", "WEATHER_KIT_TOKEN", "\"" + weatherKitToken + "\""
+        buildConfigField "String", "WEATHER_KIT_ID", "\"" + weatherKitId + "\""
+        buildConfigField "String", "WEATHER_KIT_KID", "\"" + weatherKitKid + "\""
+        buildConfigField "String", "WEATHER_KIT_ISS", "\"" + weatherKitISS + "\""
+        buildConfigField "String", "WEATHER_KIT_SUB", "\"" + weatherKitSub + "\""
 
         buildConfigField "String", "LOCATION_IQ_URL", "\"https://api.locationiq.com/v1/\""
-        buildConfigField "String", "LOCATION_IQ_TOKEN", locationIqToken
+        buildConfigField "String", "LOCATION_IQ_TOKEN", "\"" + locationIqToken + "\""
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
