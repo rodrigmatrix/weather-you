@@ -4,31 +4,48 @@ orbs:
   android: circleci/android@3.0.2  # Import the Android orb
 
 jobs:
-  generate-debug-phone-downloadable-apk:
+  generate-phone-downloadable-apk:
     docker:
       - image: cimg/android:2024.11  # Use an Android Docker image
     working_directory: ~/project/weather-you
     steps:
       - checkout:
           path: ~/project
+      - run:
+          name: Install Dependencies
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y jq
 
       - run:
           name: Process .env file variables
           command: echo "export $(grep -v '^#' .env | xargs)" >> $BASH_ENV
+      - run:
+          name: Decode keystore
+          working_directory: android
+          command: echo $RELEASE_KEYSTORE_BASE64 | base64 -d | tee app/your-project.keystore > /dev/null
+      - run:
+          name: Create keystore.properties
+          working_directory: android
+          command: echo -e "releaseKeyAlias=$RELEASE_KEY_ALIAS\nreleaseKeyPassword=$RELEASE_KEY_PASSWORD\nreleaseKeyStore=$RELEASE_KEYSTORE\nreleaseStorePassword=$RELEASE_STORE_PASSWORD" > keystore.properties
+      - run:
+          name: Create Google Play key
+          working_directory: android 
+          command: echo $GOOGLE_PLAY_KEY > weather-you-key.json
+      - run: 
+          name: Upload to Google App Store
+          command: cd android && bundle exec fastlane playstore --verbose
+      - run:
+          name: Archive APK
+          command: |
+            mkdir -p ~/circleci-artifacts
+            cp app/build/outputs/apk/debug/app-debug.apk ~/circleci-artifacts/
+      - store_artifacts:
+          path: ~/circleci-artifacts
+          destination: apk
+
 workflows:
   version: 1
-  deploy:
+  generate-phone-downloadable-apk-workflow:
     jobs:
-      - android/deploy-to-play-store:
-        executor:
-          name: android/android-docker
-          tag: "2022.0.7"
-        base64-keystore: RELEASE_BASE64_KEYSTORE
-        release-key-alias: RELEASE_KEY_ALIAS
-        release-key-password: RELEASE_KEY_PASSWORD
-        release-keystore: ./keystore
-        release-store-password: RELEASE_STORE_PASSWORD
-        keystore-properties-working-directory: '.'
-        google-play-key: GOOGLE_PLAY_KEY
-        lane-name: deploy
-        fastlane-working-directory: '.'
+      - generate-phone-downloadable-apk
