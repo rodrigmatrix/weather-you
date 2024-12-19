@@ -21,10 +21,6 @@ jobs:
           name: Process .env file variables
           command: echo "export $(grep -v '^#' .env | xargs)" >> $BASH_ENV
       - run:
-          name: Decode keystore
-          working_directory: android
-          command: echo $RELEASE_KEYSTORE_BASE64 | base64 -d | tee weather-you/keystore/release > /dev/null
-      - run:
           name: Create keystore.properties
           working_directory: android
           command: echo -e "releaseKeyAlias=$RELEASE_KEY_ALIAS\nreleaseKeyPassword=$RELEASE_KEY_PASSWORD\nreleaseKeyStore=$RELEASE_KEYSTORE\nreleaseStorePassword=$RELEASE_STORE_PASSWORD" > keystore.properties
