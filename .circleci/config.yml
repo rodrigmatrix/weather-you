@@ -23,7 +23,7 @@ jobs:
       - run:
           name: Decode keystore
           working_directory: android
-          command: echo $RELEASE_KEYSTORE_BASE64 | base64 -d | tee keystore/release > /dev/null
+          command: echo $RELEASE_KEYSTORE_BASE64 | base64 -d | tee weather-you/keystore/release > /dev/null
       - run:
           name: Create keystore.properties
           working_directory: android
