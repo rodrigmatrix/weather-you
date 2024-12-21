@@ -9,6 +9,7 @@ import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
@@ -25,6 +26,7 @@ import com.rodrigmatrix.weatheryou.home.presentation.home.HomeViewModel
 import com.rodrigmatrix.weatheryou.home.presentation.navigation.HomeEntry
 import com.rodrigmatrix.weatheryou.home.presentation.navigation.NavigationEntries
 import com.rodrigmatrix.weatheryou.settings.presentation.settings.SettingsScreen
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -35,6 +37,7 @@ fun WeatherHomeNavHost(
     onUpdateWidgets: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val coroutineScope = rememberCoroutineScope()
     NavHost(
         navController,
         startDestination = HomeEntry.Locations.route,
@@ -46,10 +49,12 @@ fun WeatherHomeNavHost(
                 calculatePaneScaffoldDirectiveWithTwoPanesOnMediumWidth(currentWindowAdaptiveInfo())
             )
             val onNavigateToLocation: (Int) -> Unit = { id ->
-                navigator.navigateTo(
-                    pane = ListDetailPaneScaffoldRole.Detail,
-                    content = id,
-                )
+                coroutineScope.launch {
+                    navigator.navigateTo(
+                        pane = ListDetailPaneScaffoldRole.Detail,
+                        contentKey = id,
+                    )
+                }
             }
             HomeScreen(
                 navController = navController,

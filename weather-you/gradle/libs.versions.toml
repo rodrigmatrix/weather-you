@@ -52,16 +52,16 @@ datastoreVersion = "1.1.1"
 playBilling = "7.1.1"
 googlePlayAds = "23.5.0"
 jwtVersion = "0.12.6"
-material3AdaptiveAndroid = "1.1.0-alpha03"
+material3AdaptiveAndroid = "1.1.0-alpha08"
 reorderable = "2.3.3"
 androidxBrowserVersion = "1.8.0"
 
 [libraries]
 # Android
-androidx-adaptive-navigation-suite = { module = "androidx.compose.material3:material3-adaptive-navigation-suite" }
-androidx-adaptive-navigation = { module = "androidx.compose.material3.adaptive:adaptive-navigation" }
-androidx-adaptive-layout = { module = "androidx.compose.material3.adaptive:adaptive-layout" }
-androidx-adaptive = { module = "androidx.compose.material3.adaptive:adaptive" }
+androidx-adaptive-navigation-suite = { module = "androidx.compose.material3:material3-adaptive-navigation-suite", version.ref = "material3AdaptiveAndroid" }
+androidx-adaptive-navigation = { module = "androidx.compose.material3.adaptive:adaptive-navigation", version.ref = "material3AdaptiveAndroid" }
+androidx-adaptive-layout = { module = "androidx.compose.material3.adaptive:adaptive-layout", version.ref = "material3AdaptiveAndroid" }
+androidx-adaptive = { module = "androidx.compose.material3.adaptive:adaptive", version.ref = "material3AdaptiveAndroid" }
 androidx-adaptive-navigation-suite-android = { module = "androidx.compose.material3:material3-adaptive-navigation-suite-android" }
 androidx-watchface-complications-data-source = { module = "androidx.wear.watchface:watchface-complications-data-source", version.ref = "wearWatchface" }
 androidx-watchface = { module = "androidx.wear.watchface:watchface", version.ref = "wearWatchface" }

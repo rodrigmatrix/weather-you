@@ -53,6 +53,12 @@ class WeatherDetailsViewModel(
         }
     }
 
+    fun onFullScreenModeChange(isFullScreenMode: Boolean) {
+        setState {
+            it.copy(isFullScreenMode = isFullScreenMode)
+        }
+    }
+
     private fun List<WeatherDay>.getFutureDaysList(isExpanded: Boolean): List<WeatherDay> {
         return this.toMutableList().take(if (isExpanded) EXPANDED_LIST_SIZE else COLLAPSED_LIST_SIZE)
     }

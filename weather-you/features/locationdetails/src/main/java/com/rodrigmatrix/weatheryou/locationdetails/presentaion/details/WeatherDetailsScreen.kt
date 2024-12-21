@@ -2,6 +2,7 @@ package com.rodrigmatrix.weatheryou.locationdetails.presentaion.details
 
 import android.net.Uri
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.EaseInOutCubic
 import androidx.compose.animation.core.animateDpAsState
@@ -19,6 +20,8 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.*
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -79,6 +82,7 @@ fun WeatherDetailsScreen(
     isUpdating: Boolean,
     onCloseClick: () -> Unit,
     onDeleteLocationClicked: () -> Unit,
+    onFullScreenModeChange: (Boolean) -> Unit,
     viewModel: WeatherDetailsViewModel = getViewModel(),
     conditionsViewModel: ConditionsViewModel = getViewModel(),
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
@@ -122,6 +126,10 @@ fun WeatherDetailsScreen(
                     scaffoldState.expand()
                 }
             },
+            onFullScreenModeChange = {
+                viewModel.onFullScreenModeChange(it)
+                onFullScreenModeChange(it)
+            },
             modifier = modifier.blur(radius = blurValue),
         )
     }
@@ -157,6 +165,7 @@ fun WeatherDetailsScreen(
     isUpdating: Boolean,
     onExpandedButtonClick: (Boolean) -> Unit,
     onExpandDay: (WeatherDay) -> Unit,
+    onFullScreenModeChange: (Boolean) -> Unit,
     onCloseClick: () -> Unit,
     onDeleteClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -184,6 +193,7 @@ fun WeatherDetailsScreen(
             onCloseClick = onCloseClick,
             onDeleteClick = onDeleteClick,
             paddingValues = paddingValues,
+            onFullScreenModeChange = onFullScreenModeChange,
         )
     }
 }
@@ -194,6 +204,7 @@ private fun WeatherDetailsContent(
     viewState: WeatherDetailsViewState,
     isUpdating: Boolean,
     onExpandedButtonClick: (Boolean) -> Unit,
+    onFullScreenModeChange: (Boolean) -> Unit,
     onExpandDay: (WeatherDay) -> Unit,
     onCloseClick: () -> Unit,
     onDeleteClick: () -> Unit,
@@ -206,10 +217,12 @@ private fun WeatherDetailsContent(
     ) {
         item {
             SmallScreenTopAppBar(
-                viewState.weatherLocation?.name.orEmpty(),
-                onCloseClick,
-                onDeleteClick,
-                viewState.weatherLocation?.isCurrentLocation?.not() == true,
+                title = viewState.weatherLocation?.name.orEmpty(),
+                onCloseClick = onCloseClick,
+                onDeleteButtonClick = onDeleteClick,
+                onFullScreenModeChange = onFullScreenModeChange,
+                isFullScreenMode = viewState.isFullScreenMode,
+                showDeleteButton = viewState.weatherLocation?.isCurrentLocation?.not() == true,
             )
         }
         if (isUpdating) {
@@ -342,8 +355,13 @@ fun AppleWeatherAttribution(
                 .padding(horizontal = 16.dp)
                 .clickable(
                     onClick = {
-                        val intent = CustomTabsIntent.Builder().build()
-                        intent.launchUrl(context, Uri.parse("https://developer.apple.com/weatherkit/data-source-attribution/"))
+                        val intent = CustomTabsIntent
+                            .Builder()
+                            .build()
+                        intent.launchUrl(
+                            context,
+                            Uri.parse("https://developer.apple.com/weatherkit/data-source-attribution/")
+                        )
                     }
                 )
         )
@@ -357,9 +375,13 @@ fun SmallScreenTopAppBar(
     title: String,
     onCloseClick: () -> Unit,
     onDeleteButtonClick: () -> Unit,
+    onFullScreenModeChange: (Boolean) -> Unit,
     showDeleteButton: Boolean,
+    isFullScreenMode: Boolean,
     scrollBehavior: TopAppBarScrollBehavior? = null,
 ) {
+    val adaptiveInfo = currentWindowAdaptiveInfo()
+    val navSuiteType = NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(adaptiveInfo)
     WeatherYouSmallAppBar(
         title = {
             Text(
@@ -380,14 +402,37 @@ fun SmallScreenTopAppBar(
             }
         },
         actions = {
-            if (showDeleteButton) {
-                IconButton(onClick = onDeleteButtonClick) {
-                    Icon(
-                        imageVector = Icons.Outlined.Delete,
-                        tint = WeatherYouTheme.colorScheme.primary,
-                        modifier = Modifier.size(24.dp),
-                        contentDescription = stringResource(R.string.delete_location)
-                    )
+            Row {
+                if (navSuiteType != NavigationSuiteType.NavigationBar) {
+                    Crossfade(
+                        if (isFullScreenMode) {
+                            com.rodrigmatrix.weatheryou.locationdetails.R.drawable.ic_close_fullscreen
+                        } else {
+                            com.rodrigmatrix.weatheryou.locationdetails.R.drawable.ic_open_in_full
+                        }, label = "fullscreen_icon"
+                    ) { icon ->
+                        IconButton(onClick = {
+                            onFullScreenModeChange(!isFullScreenMode)
+                        }) {
+                            Icon(
+                                painter = painterResource(icon),
+                                tint = WeatherYouTheme.colorScheme.primary,
+                                modifier = Modifier.size(24.dp),
+                                contentDescription = null,
+                            )
+                        }
+                    }
+                    Spacer(Modifier.width(10.dp))
+                }
+                if (showDeleteButton) {
+                    IconButton(onClick = onDeleteButtonClick) {
+                        Icon(
+                            imageVector = Icons.Outlined.Delete,
+                            tint = WeatherYouTheme.colorScheme.primary,
+                            modifier = Modifier.size(24.dp),
+                            contentDescription = stringResource(R.string.delete_location)
+                        )
+                    }
                 }
             }
         },
@@ -455,6 +500,7 @@ fun WeatherDetailsScreenPreview() {
             onCloseClick = {},
             onDeleteClick = {},
             onExpandDay = { },
+            onFullScreenModeChange = { },
             modifier = Modifier.background(WeatherYouTheme.colorScheme.background)
         )
     }

@@ -108,6 +108,8 @@ private fun CurrentWeatherWidgetConfigurationScreen(
             title = stringResource(R.string.widget_location),
             onCloseClick = onCloseClick,
             onDeleteButtonClick = { },
+            onFullScreenModeChange = { },
+            isFullScreenMode = false,
             showDeleteButton = false,
         )
         if (uiState.isLoading) {
