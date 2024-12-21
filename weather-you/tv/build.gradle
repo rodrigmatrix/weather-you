@@ -7,6 +7,10 @@ plugins {
     alias(libs.plugins.compose.compiler)
 }
 
+def keyStorePropertiesFile = rootProject.file("keystore.properties")
+def keyStoreProperties = new Properties()
+keyStoreProperties.load(new FileInputStream(keyStorePropertiesFile))
+
 android {
     namespace "com.rodrigmatrix.weatheryou.tv"
     compileSdk Sdk.compileSdk
@@ -15,8 +19,8 @@ android {
         applicationId Sdk.applicationId
         minSdk Sdk.tvMinSdk
         targetSdk Sdk.targetSdk
-        versionCode Sdk.versionCode
-        versionName "3.0.1"
+        versionCode computeVersionCode()
+        versionName computeVersionName()
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -31,9 +35,17 @@ android {
             }
         }
     }
-
+    signingConfigs {
+        release {
+            keyAlias keyStoreProperties['releaseKeyAlias']
+            keyPassword keyStoreProperties['releaseKeyPassword']
+            storeFile file(keyStoreProperties['releaseKeyStore'])
+            storePassword keyStoreProperties['releaseStorePassword']
+        }
+    }
     buildTypes {
         release {
+            signingConfig signingConfigs.release
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -64,6 +76,17 @@ android {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
+}
+
+static def computeVersionName() {
+    return String.format('%d.%d.%d', Sdk.tvVersionMajor, Sdk.tvVersionMinor, Sdk.tvVersionPatch)
+}
+
+static def computeVersionCode() {
+    return (Sdk.tvVersionMajor * 100000)
+    + (Sdk.tvVersionMinor * 10000)
+    + (Sdk.tvVersionPatch * 1000)
+    + Integer.valueOf(System.getenv("CIRCLE_BUILD_NUM") ?: 0)
 }
 
 dependencies {

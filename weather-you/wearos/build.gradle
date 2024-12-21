@@ -6,6 +6,10 @@ plugins {
     alias(libs.plugins.compose.compiler)
 }
 
+def keyStorePropertiesFile = rootProject.file("keystore.properties")
+def keyStoreProperties = new Properties()
+keyStoreProperties.load(new FileInputStream(keyStorePropertiesFile))
+
 android {
     namespace 'com.rodrigmatrix.weatheryou.wearos'
     compileSdk Sdk.compileSdk
@@ -14,15 +18,23 @@ android {
         applicationId Sdk.applicationId
         minSdk Sdk.wearMinSdk
         targetSdk Sdk.targetSdk
-        versionCode Sdk.versionCode
+        versionCode 1
         versionName "1.0"
         vectorDrawables {
             useSupportLibrary true
         }
     }
-
+    signingConfigs {
+        release {
+            keyAlias keyStoreProperties['releaseKeyAlias']
+            keyPassword keyStoreProperties['releaseKeyPassword']
+            storeFile file(keyStoreProperties['releaseKeyStore'])
+            storePassword keyStoreProperties['releaseStorePassword']
+        }
+    }
     buildTypes {
         release {
+            signingConfig signingConfigs.release
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
