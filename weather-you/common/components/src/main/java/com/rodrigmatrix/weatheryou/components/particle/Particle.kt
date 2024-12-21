@@ -129,7 +129,7 @@ class ParticleSystemHelper(
     }
 
     private fun generateX(startFromSourceEdge: Boolean = false): Float {
-        val randomX = Random.nextInt(frameWidth).toFloat()
+        val randomX = Random.nextInt(frameWidth.absoluteValue.ifZero { 1 }).toFloat()
         return when (parameters.sourceEdge) {
             PrecipitationSourceEdge.TOP -> randomX
             PrecipitationSourceEdge.RIGHT -> if (startFromSourceEdge) frameWidth.toFloat() else randomX
@@ -139,7 +139,7 @@ class ParticleSystemHelper(
     }
 
     private fun generateY(startFromSourceEdge: Boolean = false): Float {
-        val randomY = Random.nextInt(frameHeight).toFloat()
+        val randomY = Random.nextInt(frameHeight.absoluteValue.ifZero { 1 }).toFloat()
         return when (parameters.sourceEdge) {
             PrecipitationSourceEdge.TOP -> if (startFromSourceEdge) 0f else randomY
             PrecipitationSourceEdge.RIGHT -> randomY
@@ -238,6 +238,14 @@ class ParticleSystemHelper(
         } else {
             Random.nextInt(parameters.minAngle, parameters.maxAngle)
         }
+    }
+}
+
+private fun Int.ifZero(function: () -> Int): Int {
+    return if (this <= 0) {
+        function()
+    } else {
+        this
     }
 }
 

@@ -19,6 +19,10 @@ data class HomeUiState(
         return selectedWeatherLocation != null
     }
 
+    fun getSelectedOrFirstLocation(): WeatherLocation? {
+        return selectedWeatherLocation ?: locationsList.firstOrNull()
+    }
+
     @OptIn(ExperimentalPermissionsApi::class)
     fun showLocationPermissionRequest(permissionState: MultiplePermissionsState): Boolean {
         return permissionState.allPermissionsGranted.not()

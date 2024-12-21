@@ -176,10 +176,14 @@ class WeatherKitRemoteMapper(
     }
 
     private fun String?.toDateTime(timezone: String): DateTime {
-        return if (timezone.isEmpty()) {
-            DateTime.parse(this)
-        } else {
-            DateTime.parse(this).toDateTime(DateTimeZone.forID(timezone))
+        return try {
+            if (timezone.isEmpty()) {
+                DateTime.parse(this)
+            } else {
+                DateTime.parse(this).toDateTime(DateTimeZone.forID(timezone))
+            }
+        } catch (_: Exception) {
+            DateTime.now()
         }
     }
 

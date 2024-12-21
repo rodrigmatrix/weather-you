@@ -71,7 +71,7 @@ val PreviewWeatherList = listOf(
         countryCode = "",
     ),
     WeatherLocation(
-        id = 0,
+        id = 1,
         widgetId = "",
         orderIndex = 0,
         name = "Montreal",
@@ -103,7 +103,7 @@ val PreviewWeatherList = listOf(
         countryCode = "",
     ),
     WeatherLocation(
-        id = 0,
+        id = 2,
         widgetId = "",
         orderIndex = 0,
         name = "Montreal",
@@ -135,7 +135,7 @@ val PreviewWeatherList = listOf(
         countryCode = "",
     ),
     WeatherLocation(
-        id = 0,
+        id = 3,
         widgetId = "",
         orderIndex = 0,
         name = "Montreal",
@@ -167,7 +167,7 @@ val PreviewWeatherList = listOf(
         countryCode = "",
     ),
     WeatherLocation(
-        id = 0,
+        id = 4,
         widgetId = "",
         orderIndex = 0,
         name = "Montreal",
@@ -199,7 +199,7 @@ val PreviewWeatherList = listOf(
         countryCode = "",
     ),
     WeatherLocation(
-        id = 0,
+        id = 5,
         widgetId = "",
         orderIndex = 0,
         name = "Montreal",
@@ -231,7 +231,7 @@ val PreviewWeatherList = listOf(
         countryCode = "",
     ),
     WeatherLocation(
-        id = 0,
+        id = 6,
         widgetId = "",
         orderIndex = 0,
         name = "Montreal",
@@ -263,7 +263,7 @@ val PreviewWeatherList = listOf(
         countryCode = "",
     ),
     WeatherLocation(
-        id = 0,
+        id = 7,
         widgetId = "",
         orderIndex = 0,
         name = "Montreal",
@@ -295,7 +295,7 @@ val PreviewWeatherList = listOf(
         countryCode = "",
     ),
     WeatherLocation(
-        id = 0,
+        id = 8,
         widgetId = "",
         orderIndex = 0,
         name = "Montreal",

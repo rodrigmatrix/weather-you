@@ -300,6 +300,7 @@ private fun DayRow(
             maxWeekTemperature = maxWeekTemperature,
             minDayTemperature = day.minTemperature,
             maxDayTemperature = day.maxTemperature,
+            hours = day.hours,
             modifier = GlanceModifier.defaultWeight()
         )
         Image(
@@ -357,6 +358,7 @@ private fun TemperatureGlanceBar(
     maxWeekTemperature: Double,
     minDayTemperature: Double,
     maxDayTemperature: Double,
+    hours: List<WeatherHour>,
     modifier: GlanceModifier = GlanceModifier,
 ) {
     Box(
@@ -368,7 +370,7 @@ private fun TemperatureGlanceBar(
         val gradientList = getTemperatureGradient(
             minDayTemperature = minDayTemperature,
             maxDayTemperature = maxDayTemperature,
-            hours = emptyList(),
+            hours = hours,
         ).map { it.toArgb() }
         val width = 290f
         val height = 8f

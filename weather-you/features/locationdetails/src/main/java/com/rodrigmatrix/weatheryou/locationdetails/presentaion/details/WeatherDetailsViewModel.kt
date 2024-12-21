@@ -36,10 +36,9 @@ class WeatherDetailsViewModel(
                 it.copy(
                     weatherLocation = weatherLocation,
                     todayWeatherHoursList = weatherLocation.hours,
-                    isFutureWeatherExpanded = false,
                     futureDaysList = weatherLocation
                         .days
-                        .take(COLLAPSED_LIST_SIZE)
+                        .getFutureDaysList(it.isFutureWeatherExpanded)
                 )
             }
         }

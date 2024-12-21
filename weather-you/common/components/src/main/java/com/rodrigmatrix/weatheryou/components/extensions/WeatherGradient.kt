@@ -59,6 +59,16 @@ fun getGradientList(
 
         currentCondition in listOf(
             WeatherCondition.Cloudy,
+            WeatherCondition.Rain,
+            WeatherCondition.FreezingRain,
+            WeatherCondition.Snow,
+            WeatherCondition.Thunderstorm,
+            WeatherCondition.Thunderstorms,
+            WeatherCondition.SevereThunderstorm,
+            WeatherCondition.ScatteredThunderstorms,
+            WeatherCondition.MixedRainfall,
+            WeatherCondition.MixedRainAndSnow,
+            WeatherCondition.HeavyRain,
         ) -> if (isDaylight) {
             listOf(
                 Color(0xFF949EA7),
