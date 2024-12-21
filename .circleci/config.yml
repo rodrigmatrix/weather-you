@@ -21,16 +21,8 @@ jobs:
           name: Process .env file variables
           command: echo "export $(grep -v '^#' .env | xargs)" >> $BASH_ENV
       - run:
-          name: Create keystore.properties
-          working_directory: android
-          command: echo -e "releaseKeyAlias=$RELEASE_KEY_ALIAS\nreleaseKeyPassword=$RELEASE_KEY_PASSWORD\nreleaseKeyStore=$RELEASE_KEYSTORE\nreleaseStorePassword=$RELEASE_STORE_PASSWORD" > keystore.properties
-      - run:
-          name: Create Google Play key
-          working_directory: android 
-          command: echo $GOOGLE_PLAY_KEY > weather-you-key.json
-      - run: 
-          name: Upload to Google App Store
-          command: cd android && bundle exec fastlane playstore --verbose
+          name: Build app
+          command: ./gradlew build -x lint
       - run:
           name: Archive APK
           command: |
