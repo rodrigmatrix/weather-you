@@ -253,6 +253,10 @@ class WeatherRepositoryImpl(
         }
     }
 
+    override fun getWidgetLocationsSize(): Flow<Int> {
+        return weatherLocalDataSource.getWidgetWeatherList().map { it.size }
+    }
+
     private suspend fun getCurrentLocation(
         forceUpdate: Boolean,
         hasLocationPermission: Boolean,
@@ -267,8 +271,8 @@ class WeatherRepositoryImpl(
         return if (hasLocationPermission && (forceUpdate || minutesBetween.minutes > 60 || currentLocationEntity == null)) {
             try {
                 userLocationDataSource.getCurrentLocation()
-                    .catch().firstOrNull() ?:
-                userLocationDataSource.getLastKnownLocation().catch().firstOrNull()
+                   .firstOrNull() ?:
+                userLocationDataSource.getLastKnownLocation().firstOrNull()
             } catch (_: Exception) {
                 currentLocationEntity
             }
@@ -300,8 +304,13 @@ class WeatherRepositoryImpl(
                 longitude = longitude,
                 countryCode = countryCode,
                 timezone = timeZone,
-            )
-                .catch()
+            ).map {
+                Result.success<WeatherLocation?>(it)
+            }.catch {
+                emit(Result.success(null))
+            }.map {
+                it.getOrNull()
+            }
                 .firstOrNull()
                 ?.copy(
                     name = name,
@@ -338,9 +347,13 @@ class WeatherRepositoryImpl(
                 longitude = currentLocation.longitude,
                 countryCode = currentLocation.countryCode,
                 timezone = currentLocation.timezone,
-            )
-                .catch()
-                .firstOrNull()?.copy(
+            ).map {
+                Result.success<WeatherLocation?>(it)
+            }.catch {
+                emit(Result.success(null))
+            }.map {
+                it.getOrNull()
+            }.firstOrNull()?.copy(
                     id = -1,
                     orderIndex = -1,
                     countryCode = currentLocation.countryCode,

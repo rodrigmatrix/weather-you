@@ -36,10 +36,9 @@ class WeatherDetailsViewModel(
                 it.copy(
                     weatherLocation = weatherLocation,
                     todayWeatherHoursList = weatherLocation.hours,
-                    isFutureWeatherExpanded = false,
                     futureDaysList = weatherLocation
                         .days
-                        .take(COLLAPSED_LIST_SIZE)
+                        .getFutureDaysList(it.isFutureWeatherExpanded)
                 )
             }
         }
@@ -51,6 +50,12 @@ class WeatherDetailsViewModel(
                 futureDaysList = it.weatherLocation?.days?.getFutureDaysList(isExpanded).orEmpty(),
                 isFutureWeatherExpanded = isExpanded
             )
+        }
+    }
+
+    fun onFullScreenModeChange(isFullScreenMode: Boolean) {
+        setState {
+            it.copy(isFullScreenMode = isFullScreenMode)
         }
     }
 

@@ -26,7 +26,7 @@ import com.rodrigmatrix.weatheryou.core.extensions.getLocalTime
 import com.rodrigmatrix.weatheryou.components.R
 import com.rodrigmatrix.weatheryou.components.WeatherYouCard
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
-import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme.weatherTextColor
+import com.rodrigmatrix.weatheryou.components.theme.weatherTextColor
 import org.joda.time.DateTime
 import org.joda.time.LocalTime
 

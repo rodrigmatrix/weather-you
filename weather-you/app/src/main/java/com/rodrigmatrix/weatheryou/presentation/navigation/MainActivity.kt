@@ -2,14 +2,19 @@ package com.rodrigmatrix.weatheryou.presentation.navigation
 
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationRail
+import androidx.compose.material3.NavigationRailDefaults
 import androidx.compose.material3.NavigationRailItem
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
@@ -17,6 +22,7 @@ import androidx.compose.material3.adaptive.navigationsuite.NavigationSuite
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldLayout
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -26,11 +32,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.glance.appwidget.updateAll
 import androidx.navigation.compose.rememberNavController
 import androidx.window.core.layout.WindowWidthSizeClass
+import com.rodrigmatrix.weatheryou.components.extensions.getGradientList
 import com.rodrigmatrix.weatheryou.components.theme.ColorMode
 import com.rodrigmatrix.weatheryou.components.theme.ThemeMode
 import com.rodrigmatrix.weatheryou.components.theme.ThemeSettings
@@ -57,10 +69,10 @@ class MainActivity : AppCompatActivity() {
     private val getAppSettingsUseCase by inject<GetAppSettingsUseCase>()
     private val appThemeManager: AppThemeManager by inject()
 
-    @OptIn(ExperimentalMaterial3AdaptiveApi::class)
+    @OptIn(ExperimentalMaterial3AdaptiveApi::class, ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        super.onCreate(savedInstanceState)
         setContent {
             val defaultSettings = LocalWeatherYouAppSettings.current
             var colorMode by remember { mutableStateOf(ColorMode.Default) }
@@ -73,6 +85,14 @@ class MainActivity : AppCompatActivity() {
             val homeViewModel = getViewModel<HomeViewModel>()
             val homeViewState by homeViewModel.viewState.collectAsState()
             val coroutineScope = rememberCoroutineScope()
+            val conditionsScaffoldState = rememberModalBottomSheetState(
+                skipPartiallyExpanded = true
+            )
+            val blurValue = if (conditionsScaffoldState.currentValue == SheetValue.Hidden) {
+                0.dp
+            } else {
+                64.dp
+            }
             LaunchedEffect(Unit) {
                 val latitude = intent.extras?.getDouble("latitude")
                 val longitude = intent.extras?.getDouble("longitude")
@@ -107,10 +127,11 @@ class MainActivity : AppCompatActivity() {
             navController.addOnDestinationChangedListener { _, destination, _ ->
                 currentDestination = destination.route.orEmpty()
             }
-            Box(Modifier.safeDrawingPadding()) {
+            Box(Modifier.blur(blurValue)) {
                 WeatherYouAppState(
                     appSettings = appSettings,
                     currentDestination = currentDestination,
+                    conditionsScaffoldState = conditionsScaffoldState,
                 ) {
                     WeatherYouTheme(
                         themeMode = themeMode,
@@ -133,7 +154,25 @@ class MainActivity : AppCompatActivity() {
                             layoutType = customNavSuiteType,
                             navigationSuite = {
                                 if (navSuiteType == NavigationSuiteType.NavigationRail) {
-                                    NavigationRail {
+                                    NavigationRail(
+                                        containerColor = if (appSettings.enableWeatherAnimations && currentDestination == HomeEntry.Locations.route) {
+                                            Color.Transparent
+                                        } else {
+                                            NavigationRailDefaults.ContainerColor
+                                        },
+                                        modifier = Modifier.background(
+                                            if (appSettings.enableWeatherAnimations && currentDestination == HomeEntry.Locations.route) {
+                                                Brush.verticalGradient(
+                                                    homeViewState.getSelectedOrFirstLocation()?.getGradientList() ?: listOf(
+                                                        NavigationRailDefaults.ContainerColor,
+                                                        NavigationRailDefaults.ContainerColor
+                                                    )
+                                                )
+                                            } else {
+                                                SolidColor(Color.Transparent)
+                                            }
+                                        )
+                                    ) {
                                         HomeEntry.entries.forEach { screen ->
                                             NavigationRailItem(
                                                 icon = {

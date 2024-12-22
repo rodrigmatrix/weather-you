@@ -20,14 +20,20 @@ import com.rodrigmatrix.weatheryou.components.WeatherYouDivider
 import com.rodrigmatrix.weatheryou.components.details.HourlyForecastContent
 import com.rodrigmatrix.weatheryou.components.preview.PreviewHourlyForecast
 import com.rodrigmatrix.weatheryou.core.extensions.*
+import com.rodrigmatrix.weatheryou.domain.model.WeatherDay
 import com.rodrigmatrix.weatheryou.domain.model.WeatherHour
 
 @Composable
 fun HourlyForecast(
     hoursList: List<WeatherHour>,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    WeatherYouCard(modifier) {
+    WeatherYouCard(
+        onClick = onClick,
+        showPressAnimation = true,
+        modifier = modifier,
+    ) {
         HourlyForecastContent(hoursList = hoursList)
     }
 }
@@ -37,7 +43,10 @@ fun HourlyForecast(
 @Composable
 fun WeatherLocationPreview() {
     WeatherYouTheme {
-        HourlyForecast(PreviewHourlyForecast)
+        HourlyForecast(
+            onClick = { },
+            hoursList = PreviewHourlyForecast,
+        )
     }
 }
 

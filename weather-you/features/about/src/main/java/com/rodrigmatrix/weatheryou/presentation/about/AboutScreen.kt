@@ -86,6 +86,8 @@ fun AboutScreen(
     Column(
         Modifier
             .fillMaxSize()
+            .statusBarsPadding()
+            .navigationBarsPadding()
             .background(WeatherYouTheme.colorScheme.background)
             .verticalScroll(rememberScrollState())
             .padding(bottom = 100.dp)

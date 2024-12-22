@@ -3,6 +3,8 @@ package com.rodrigmatrix.weatheryou.data.mapper
 import com.rodrigmatrix.weatheryou.data.model.visualcrossing.DayResponse
 import com.rodrigmatrix.weatheryou.data.model.visualcrossing.HourResponse
 import com.rodrigmatrix.weatheryou.data.model.visualcrossing.VisualCrossingWeatherResponse
+import com.rodrigmatrix.weatheryou.domain.model.MoonPhase
+import com.rodrigmatrix.weatheryou.domain.model.PrecipitationType
 import com.rodrigmatrix.weatheryou.domain.model.TemperaturePreference
 import com.rodrigmatrix.weatheryou.domain.model.WeatherDay
 import com.rodrigmatrix.weatheryou.domain.model.WeatherHour
@@ -40,7 +42,7 @@ class VisualCrossingRemoteMapper(
             timeZone = source.timezone.orEmpty(),
             isDaylight = currentTime.hourOfDay in sunriseSunsetRange,
             precipitationProbability = source.currentConditions?.precipprob ?: 0.0,
-            precipitationType = source.currentConditions?.preciptype?.firstOrNull().orEmpty(),
+            precipitationType = PrecipitationType.Clear,
             humidity = source.currentConditions?.humidity ?: 0.0,
             dewPoint = source.currentConditions?.dew ?: 0.0,
             windDirection = source.currentConditions?.winddir ?: 0.0,
@@ -72,11 +74,22 @@ class VisualCrossingRemoteMapper(
                 minTemperature = it.tempmin ?: 0.0,
                 hours = it.hours?.mapHoursList(timeZone).orEmpty(),
                 precipitationProbability = it.precipprob ?: 0.0,
-                precipitationType = it.preciptype?.firstOrNull().orEmpty(),
+                precipitationType = PrecipitationType.Clear,
                 windSpeed = it.windspeed ?: 0.0,
                 humidity = it.humidity ?: 0.0,
                 sunrise = it.sunriseEpoch.toDateTime(timeZone),
                 sunset = it.sunsetEpoch.toDateTime(timeZone),
+                precipitationAmount = 0.0,
+                snowfallAmount = 0.0,
+                solarNoon = DateTime(),
+                solarMidnight = DateTime(),
+                moonPhase = MoonPhase.New,
+                sunriseAstronomical = DateTime(),
+                sunsetAstronomical = DateTime(),
+                sunriseNautical = DateTime(),
+                sunsetNautical = DateTime(),
+                sunriseCivil = DateTime(),
+                sunsetCivil = DateTime(),
             )
         }
     }
@@ -90,7 +103,7 @@ class VisualCrossingRemoteMapper(
                 weatherCondition = weatherConditionMapper.map(it.icon),
                 temperature = it.temp ?: 0.0,
                 precipitationProbability = it.precipprob ?: 0.0,
-                precipitationType = it.preciptype?.firstOrNull().orEmpty(),
+                precipitationType = PrecipitationType.Clear,
                 cloudCover = it.cloudcover ?: 0.0,
                 feelsLike = it.feelslike ?: 0.0,
                 humidity = it.humidity ?: 0.0,

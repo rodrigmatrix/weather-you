@@ -13,11 +13,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.components.R
-import com.rodrigmatrix.weatheryou.components.WeatherYouCard
-import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme.weatherTextColor
+import com.rodrigmatrix.weatheryou.components.theme.weatherTextColor
 import com.rodrigmatrix.weatheryou.core.extensions.distanceString
-import com.rodrigmatrix.weatheryou.core.extensions.speedString
-import com.rodrigmatrix.weatheryou.domain.model.TemperaturePreference
 import com.rodrigmatrix.weatheryou.locationdetails.presentaion.extensions.visibilityConditionsStringRes
 
 @Composable

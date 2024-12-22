@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
   <string name="feels_like_x">Sensação térmica %s</string>
-  <string name="high_lowercase_x"></string>
-  <string name="low_lowercase_x"></string>
+  <string name="high_lowercase_x">Min: %s</string>
+  <string name="low_lowercase_x">Max: %s</string>
   <string name="day_x">Dia %s</string>
   <string name="night_x">Noite %s</string>
   <string name="next_x_days_forecast">Previsão para os Próximos %d Dias</string>
@@ -85,11 +85,11 @@
   <string name="light">Claro</string>
   <string name="dark">Escuro</string>
   <string name="system_default">Padrão do sistema</string>
-  <string name="new_york"></string>
-  <string name="vancouver"></string>
-  <string name="los_angeles"></string>
-  <string name="toronto"></string>
-  <string name="rio_de_janeiro"></string>
+  <string name="new_york">Nova Iorque</string>
+  <string name="vancouver">Vancouver</string>
+  <string name="los_angeles">Los Angeles</string>
+  <string name="toronto">Toronto</string>
+  <string name="rio_de_janeiro">Rio de Janeiro</string>
   <string name="sao_paulo">São Paulo</string>
   <string name="add_location_error">Não foi possível adicionar este local. Tente novamente mais tarde</string>
   <string name="add_location_limit_error">Você atingiu o limite de locais permitidos. Exclua um local e tente adicionar novamente.</string>
@@ -110,9 +110,28 @@
   <string name="weather_widget_disclaimer">Por favor, selecione o local que você deseja que seja exibido no widget do tempo. Se você quiser um local diferente, abra o aplicativo e adicione-o e volte aqui. Se você quiser sempre exibir a localização atual, por favor, selecione-a</string>
   <string name="widget_location">Configurações do Widget</string>
 
-  <string name="keep_typing">Continue digitando...</string>
+  <string name="color_mode">Modo de cor</string>
+  <string name="theme_and_color_mode">Tema e modo de cor</string>
+  <string name="enable_weather_animations">Ativar animações de fundo</string>
+  <string name="click_to_search">Pressione para pesquisar</string>
+
+  <string name="keep_typing">Continue digitando…</string>
 
   <string name="apple_weather">Apple Weather</string>
   <string name="for_more_information">Para mais informações, </string>
   <string name="visit_apple_weather">visite o Apple Weather</string>
+
+  <string name="actual">Real</string>
+  <string name="feels_like">Sensação</string>
+  <string name="celsius">Celsius (°C)</string>
+  <string name="fahrenheit">Fahrenheit (°F)</string>
+  <string name="chance_of_precipitation_title">Chance de precipitação</string>
+  <string name="precipitation_total">Precipitação acumulada</string>
+  <string name="precipitation">Precipitação</string>
+
+  <string name="day_chance">Probabilidade %s: %s</string>
+  <string name="actual_temperature">Real: %s</string>
+
+  <string name="millimeters">mm</string>
+  <string name="centimeters">cm</string>
 </resources>

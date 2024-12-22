@@ -21,7 +21,7 @@ data class WeatherLocation(
     val cloudCover: Double,
     val timeZone: String,
     val precipitationProbability: Double,
-    val precipitationType: String,
+    val precipitationType: PrecipitationType,
     val humidity: Double,
     val dewPoint: Double,
     val windSpeed: Double,

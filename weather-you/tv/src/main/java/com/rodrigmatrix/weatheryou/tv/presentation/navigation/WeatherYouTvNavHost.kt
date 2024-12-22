@@ -1,6 +1,7 @@
 package com.rodrigmatrix.weatheryou.tv.presentation.navigation
 
 import androidx.compose.foundation.background
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -16,7 +17,7 @@ import com.rodrigmatrix.weatheryou.tv.presentation.search.SearchLocationScreen
 import com.rodrigmatrix.weatheryou.tv.presentation.settings.TvSettingsScreen
 import org.koin.androidx.compose.getViewModel
 
-@OptIn(ExperimentalPermissionsApi::class)
+@OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun WeatherYouTvNavHost(
     navController: NavHostController,

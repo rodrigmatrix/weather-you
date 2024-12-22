@@ -2,78 +2,34 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "0140a511c9406102fff002ba8f89e353",
+    "identityHash": "0e4b177837daeaf1f878a63c72a3c97e",
     "entities": [
       {
-        "tableName": "locations",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `latitude` REAL NOT NULL, `longitude` REAL NOT NULL, `name` TEXT NOT NULL, `countryCode` TEXT NOT NULL, `timezone` TEXT NOT NULL)",
+        "tableName": "weather",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, `latitude` REAL NOT NULL, `longitude` REAL NOT NULL, `isCurrentLocation` INTEGER NOT NULL, `currentWeather` REAL NOT NULL, `currentCondition` TEXT NOT NULL, `maxTemperature` REAL NOT NULL, `lowestTemperature` REAL NOT NULL, `feelsLike` REAL NOT NULL, `currentTime` TEXT NOT NULL, `isDaylight` INTEGER NOT NULL, `expirationDate` TEXT NOT NULL, `timeZone` TEXT NOT NULL, `precipitationProbability` REAL NOT NULL, `precipitationType` TEXT NOT NULL, `humidity` REAL NOT NULL, `dewPoint` REAL NOT NULL, `windSpeed` REAL NOT NULL, `windDirection` REAL NOT NULL, `uvIndex` REAL NOT NULL, `sunrise` TEXT NOT NULL, `sunset` TEXT NOT NULL, `visibility` REAL NOT NULL, `pressure` REAL NOT NULL, `countryCode` TEXT NOT NULL, `minWeekTemperature` REAL NOT NULL, `maxWeekTemperature` REAL NOT NULL, `cloudCover` REAL NOT NULL, `days` TEXT NOT NULL, `hours` TEXT NOT NULL, PRIMARY KEY(`latitude`, `longitude`))",
         "fields": [
           {
-            "fieldPath": "id",
-            "columnName": "id",
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "latitude",
+            "columnName": "latitude",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "longitude",
+            "columnName": "longitude",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isCurrentLocation",
+            "columnName": "isCurrentLocation",
             "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "latitude",
-            "columnName": "latitude",
-            "affinity": "REAL",
-            "notNull": true
-          },
-          {
-            "fieldPath": "longitude",
-            "columnName": "longitude",
-            "affinity": "REAL",
-            "notNull": true
-          },
-          {
-            "fieldPath": "name",
-            "columnName": "name",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "countryCode",
-            "columnName": "countryCode",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "timezone",
-            "columnName": "timezone",
-            "affinity": "TEXT",
-            "notNull": true
-          }
-        ],
-        "primaryKey": {
-          "autoGenerate": true,
-          "columnNames": [
-            "id"
-          ]
-        },
-        "indices": [],
-        "foreignKeys": []
-      },
-      {
-        "tableName": "weatherWidgetLocationCache",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, `latitude` REAL NOT NULL, `longitude` REAL NOT NULL, `currentWeather` REAL NOT NULL, `currentCondition` TEXT NOT NULL, `maxWeather` REAL NOT NULL, `minWeather` REAL NOT NULL, `lastUpdate` TEXT NOT NULL, `nextHourWeather` REAL NOT NULL, `nextHourCondition` TEXT NOT NULL, `nextTwoHoursWeather` REAL NOT NULL, `nextTwoHoursCondition` TEXT NOT NULL, `nextThreeHoursWeather` REAL NOT NULL, `nextThreeHoursCondition` TEXT NOT NULL, `nextFourHoursWeather` REAL NOT NULL, `nextFourHoursCondition` TEXT NOT NULL, `tomorrowMaxWeather` REAL NOT NULL, `tomorrowMinWeather` REAL NOT NULL, `tomorrowCondition` TEXT NOT NULL, `nextTwoDaysMaxWeather` REAL NOT NULL, `nextTwoDaysMinWeather` REAL NOT NULL, `nextTwoDaysCondition` TEXT NOT NULL, `id` INTEGER NOT NULL, PRIMARY KEY(`id`))",
-        "fields": [
-          {
-            "fieldPath": "name",
-            "columnName": "name",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "latitude",
-            "columnName": "latitude",
-            "affinity": "REAL",
-            "notNull": true
-          },
-          {
-            "fieldPath": "longitude",
-            "columnName": "longitude",
-            "affinity": "REAL",
             "notNull": true
           },
           {
@@ -89,118 +45,155 @@
             "notNull": true
           },
           {
-            "fieldPath": "maxWeather",
-            "columnName": "maxWeather",
+            "fieldPath": "maxTemperature",
+            "columnName": "maxTemperature",
             "affinity": "REAL",
             "notNull": true
           },
           {
-            "fieldPath": "minWeather",
-            "columnName": "minWeather",
+            "fieldPath": "lowestTemperature",
+            "columnName": "lowestTemperature",
             "affinity": "REAL",
             "notNull": true
           },
           {
-            "fieldPath": "lastUpdate",
-            "columnName": "lastUpdate",
+            "fieldPath": "feelsLike",
+            "columnName": "feelsLike",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "currentTime",
+            "columnName": "currentTime",
             "affinity": "TEXT",
             "notNull": true
           },
           {
-            "fieldPath": "nextHourWeather",
-            "columnName": "nextHourWeather",
-            "affinity": "REAL",
-            "notNull": true
-          },
-          {
-            "fieldPath": "nextHourCondition",
-            "columnName": "nextHourCondition",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "nextTwoHoursWeather",
-            "columnName": "nextTwoHoursWeather",
-            "affinity": "REAL",
-            "notNull": true
-          },
-          {
-            "fieldPath": "nextTwoHoursCondition",
-            "columnName": "nextTwoHoursCondition",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "nextThreeHoursWeather",
-            "columnName": "nextThreeHoursWeather",
-            "affinity": "REAL",
-            "notNull": true
-          },
-          {
-            "fieldPath": "nextThreeHoursCondition",
-            "columnName": "nextThreeHoursCondition",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "nextFourHoursWeather",
-            "columnName": "nextFourHoursWeather",
-            "affinity": "REAL",
-            "notNull": true
-          },
-          {
-            "fieldPath": "nextFourHoursCondition",
-            "columnName": "nextFourHoursCondition",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "tomorrowMaxWeather",
-            "columnName": "tomorrowMaxWeather",
-            "affinity": "REAL",
-            "notNull": true
-          },
-          {
-            "fieldPath": "tomorrowMinWeather",
-            "columnName": "tomorrowMinWeather",
-            "affinity": "REAL",
-            "notNull": true
-          },
-          {
-            "fieldPath": "tomorrowCondition",
-            "columnName": "tomorrowCondition",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "nextTwoDaysMaxWeather",
-            "columnName": "nextTwoDaysMaxWeather",
-            "affinity": "REAL",
-            "notNull": true
-          },
-          {
-            "fieldPath": "nextTwoDaysMinWeather",
-            "columnName": "nextTwoDaysMinWeather",
-            "affinity": "REAL",
-            "notNull": true
-          },
-          {
-            "fieldPath": "nextTwoDaysCondition",
-            "columnName": "nextTwoDaysCondition",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "id",
-            "columnName": "id",
+            "fieldPath": "isDaylight",
+            "columnName": "isDaylight",
             "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "expirationDate",
+            "columnName": "expirationDate",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timeZone",
+            "columnName": "timeZone",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "precipitationProbability",
+            "columnName": "precipitationProbability",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "precipitationType",
+            "columnName": "precipitationType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "humidity",
+            "columnName": "humidity",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dewPoint",
+            "columnName": "dewPoint",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "windSpeed",
+            "columnName": "windSpeed",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "windDirection",
+            "columnName": "windDirection",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "uvIndex",
+            "columnName": "uvIndex",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sunrise",
+            "columnName": "sunrise",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sunset",
+            "columnName": "sunset",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "visibility",
+            "columnName": "visibility",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pressure",
+            "columnName": "pressure",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "countryCode",
+            "columnName": "countryCode",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "minWeekTemperature",
+            "columnName": "minWeekTemperature",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "maxWeekTemperature",
+            "columnName": "maxWeekTemperature",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "cloudCover",
+            "columnName": "cloudCover",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "days",
+            "columnName": "days",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "hours",
+            "columnName": "hours",
+            "affinity": "TEXT",
             "notNull": true
           }
         ],
         "primaryKey": {
           "autoGenerate": false,
           "columnNames": [
-            "id"
+            "latitude",
+            "longitude"
           ]
         },
         "indices": [],
@@ -210,7 +203,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0140a511c9406102fff002ba8f89e353')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0e4b177837daeaf1f878a63c72a3c97e')"
     ]
   }
 }

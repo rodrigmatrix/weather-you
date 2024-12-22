@@ -13,4 +13,5 @@ data class WeatherDetailsViewState(
     val isFutureWeatherExpanded: Boolean = false,
     val enableWeatherAnimations: Boolean = false,
     val enableThemeColorWithWeatherAnimations: Boolean = false,
+    val isFullScreenMode: Boolean = false,
 ): ViewState

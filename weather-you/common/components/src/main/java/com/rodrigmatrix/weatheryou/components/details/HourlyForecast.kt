@@ -15,8 +15,9 @@ import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.components.R
 import com.rodrigmatrix.weatheryou.components.WeatherIcon
 import com.rodrigmatrix.weatheryou.components.WeatherYouDivider
-import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme.weatherTextColor
+import com.rodrigmatrix.weatheryou.components.theme.weatherTextColor
 import com.rodrigmatrix.weatheryou.core.extensions.*
+import com.rodrigmatrix.weatheryou.domain.model.PrecipitationType
 import com.rodrigmatrix.weatheryou.domain.model.WeatherHour
 
 @Composable
@@ -74,7 +75,7 @@ fun HourRow(hour: WeatherHour, firstItem: Boolean) {
             color = WeatherYouTheme.colorScheme.weatherTextColor,
             style = WeatherYouTheme.typography.bodySmall,
         )
-        if (hour.precipitationType.isNotEmpty()) {
+        if (hour.precipitationType != PrecipitationType.Clear) {
             Text(
                 text = hour.precipitationProbability.percentageString(),
                 modifier = Modifier

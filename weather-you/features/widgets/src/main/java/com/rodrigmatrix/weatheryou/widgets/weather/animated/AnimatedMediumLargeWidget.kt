@@ -43,8 +43,8 @@ import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import com.rodrigmatrix.weatheryou.components.extensions.getStaticIcon
 import com.rodrigmatrix.weatheryou.components.extensions.getString
+import com.rodrigmatrix.weatheryou.components.extensions.getTemperatureGradient
 import com.rodrigmatrix.weatheryou.components.preview.PreviewWeatherLocation
-import com.rodrigmatrix.weatheryou.components.temperature.getTemperatureGradient
 import com.rodrigmatrix.weatheryou.core.extensions.temperatureString
 import com.rodrigmatrix.weatheryou.domain.model.WeatherDay
 import com.rodrigmatrix.weatheryou.domain.model.WeatherHour
@@ -300,6 +300,7 @@ private fun DayRow(
             maxWeekTemperature = maxWeekTemperature,
             minDayTemperature = day.minTemperature,
             maxDayTemperature = day.maxTemperature,
+            hours = day.hours,
             modifier = GlanceModifier.defaultWeight()
         )
         Image(
@@ -357,6 +358,7 @@ private fun TemperatureGlanceBar(
     maxWeekTemperature: Double,
     minDayTemperature: Double,
     maxDayTemperature: Double,
+    hours: List<WeatherHour>,
     modifier: GlanceModifier = GlanceModifier,
 ) {
     Box(
@@ -368,7 +370,7 @@ private fun TemperatureGlanceBar(
         val gradientList = getTemperatureGradient(
             minDayTemperature = minDayTemperature,
             maxDayTemperature = maxDayTemperature,
-            hours = emptyList(),
+            hours = hours,
         ).map { it.toArgb() }
         val width = 290f
         val height = 8f

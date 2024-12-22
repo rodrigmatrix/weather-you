@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
   <string name="feels_like_x">Si sente come %s</string>
-  <string name="high_lowercase_x"></string>
-  <string name="low_lowercase_x"></string>
+  <string name="high_lowercase_x">Max: %s</string>
+  <string name="low_lowercase_x">Min: %s</string>
   <string name="day_x">Giorno %s</string>
   <string name="night_x">Notte %s</string>
   <string name="next_x_days_forecast">Previsioni per i prossimi %d giorni</string>
@@ -64,10 +64,10 @@
   <string name="dense_fog">La fitta nebbia sta influenzando la visibilità.</string>
   <string name="thick_fog">La fitta nebbia sta influenzando la visibilità.</string>
   <string name="sunrise_sunset"><![CDATA[Alba & Tramonto]]></string>
-  <string name="north_char"></string>
-  <string name="south_char"></string>
-  <string name="east_char"></string>
-  <string name="west_char"></string>
+  <string name="north_char">N</string>
+  <string name="south_char">S</string>
+  <string name="east_char">E</string>
+  <string name="west_char">O</string>
   <string name="sunrise">Alba</string>
   <string name="sunset">Tramonto</string>
   <string name="length_of_day">Durata del giorno:</string>
@@ -85,11 +85,11 @@
   <string name="light">Luce</string>
   <string name="dark">Scuro</string>
   <string name="system_default">Impostazione predefinita del sistema</string>
-  <string name="new_york"></string>
-  <string name="vancouver"></string>
-  <string name="los_angeles"></string>
-  <string name="toronto"></string>
-  <string name="rio_de_janeiro"></string>
+  <string name="new_york">New York</string>
+  <string name="vancouver">Vancouver</string>
+  <string name="los_angeles">Los Angeles</string>
+  <string name="toronto">Toronto</string>
+  <string name="rio_de_janeiro">Rio de Janeiro</string>
   <string name="sao_paulo">Sao Paulo</string>
   <string name="add_location_error">Impossibile aggiungere questa posizione. Riprova più tardi</string>
   <string name="add_location_limit_error">Hai raggiunto il limite di località consentite. Elimina una località e prova ad aggiungerne un\'altra</string>
@@ -109,4 +109,23 @@
   <string name="condition_thunderstorm">Pioggia</string>
   <string name="weather_widget_disclaimer">Seleziona la località che desideri visualizzare sul widget meteo. Se vuoi una località diversa, apri l\'app e aggiungila, poi torna qui. Se vuoi visualizzare sempre la località corrente, selezionala</string>
   <string name="widget_location">Posizione del widget</string>
+  <string name="keep_typing">Continua a digitare…</string>
+  <string name="color_mode">Modalità colore</string>
+  <string name="theme_and_color_mode">Tema e modalità colore</string>
+  <string name="enable_weather_animations">Abilita animazioni meteo</string>
+  <string name="click_to_search">Fai clic sull\'icona di ricerca per cercare</string>
+
+  <string name="updating_location">Aggiornare la posizione…</string>
+
+  <string name="apple_weather">Apple Weather</string>
+  <string name="for_more_information">Per ulteriori informazioni, </string>
+  <string name="visit_apple_weather">visita Apple Weather</string>
+
+  <string name="actual">Reale</string>
+  <string name="feels_like">Percepita</string>
+  <string name="chance_of_precipitation_title">Probabilità di precipitazioni</string>
+  <string name="precipitation_total">Precipitazioni totali</string>
+  <string name="precipitation">Precipitazioni</string>
+  <string name="day_chance">Probabilità di %s: %s</string>
+  <string name="actual_temperature">Reale: %s</string>
 </resources>

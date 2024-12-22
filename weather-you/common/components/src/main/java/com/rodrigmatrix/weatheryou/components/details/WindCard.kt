@@ -37,9 +37,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.components.R
-import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme.weatherTextColor
+import com.rodrigmatrix.weatheryou.components.theme.weatherTextColor
 import com.rodrigmatrix.weatheryou.core.extensions.speedString
-import com.rodrigmatrix.weatheryou.domain.model.TemperaturePreference
 import java.lang.Math.PI
 import kotlin.math.cos
 import kotlin.math.sin

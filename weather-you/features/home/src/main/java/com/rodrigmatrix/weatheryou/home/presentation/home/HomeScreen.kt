@@ -7,14 +7,23 @@ import android.os.Build
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.InteractionSource
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsDraggedAsState
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -27,26 +36,45 @@ import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
+import androidx.compose.material3.adaptive.layout.PaneAdaptedValue
+import androidx.compose.material3.adaptive.layout.PaneExpansionAnchor
 import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirectiveWithTwoPanesOnMediumWidth
+import androidx.compose.material3.adaptive.layout.calculateThreePaneScaffoldValue
+import androidx.compose.material3.adaptive.layout.rememberPaneExpansionState
 import androidx.compose.material3.adaptive.navigation.ThreePaneScaffoldNavigator
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
@@ -67,6 +95,7 @@ import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.domain.model.WeatherCondition
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.locationdetails.presentaion.details.WeatherDetailsScreen
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -156,7 +185,7 @@ fun HomeScreen(
     )
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun WeatherLocationsListScreen(
     uiState: HomeUiState,
@@ -169,20 +198,24 @@ fun WeatherLocationsListScreen(
     onRequestPermission: () -> Unit,
     onOrderChanged: (List<WeatherLocation>) -> Unit,
     onNavigateToLocation: (Int) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val pullRefreshState = rememberPullRefreshState(
         refreshing = uiState.isLoading,
         onRefresh = onSwipeRefresh,
     )
-    Scaffold(
-        topBar = {
-            SearchLocationBar(
-                onSearchLocationClick = onSearchLocationClick,
-            )
-        },
-        containerColor = Color.Transparent,
-    ) { paddingValues ->
-        Box(
+
+    Box {
+        Scaffold(
+            topBar = {
+                SearchLocationBar(
+                    onSearchLocationClick = onSearchLocationClick,
+                )
+            },
+            containerColor = Color.Transparent,
+            modifier = modifier.background(Color.Transparent)
+        ) { paddingValues ->
+            Box(
 //            modifier = Modifier.background(brush = if (uiState.enableWeatherAnimations && uiState.selectedWeatherLocation != null) {
 //            Brush.linearGradient(uiState.selectedWeatherLocation.getGradientList().map {
 //                it.copy(alpha = 0.4f)
@@ -190,56 +223,57 @@ fun WeatherLocationsListScreen(
 //            } else {
 //                Brush.linearGradient(listOf(WeatherYouTheme.colorScheme.background, WeatherYouTheme.colorScheme.background))
 //            })
-        ) {
-            when {
-                showLocationPermissionRequest -> {
-                    RequestLocationPermission(
-                        onRequestPermission = onRequestPermission,
-                        modifier = Modifier.padding(paddingValues)
-                    )
-                }
-
-                uiState.isLoading.not() && uiState.locationsList.isEmpty() -> {
-                    WeatherLocationsEmptyState(
-                        Modifier
-                            .padding(paddingValues)
-                    )
-                }
-
-                else -> {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(paddingValues)
-                            .pullRefresh(pullRefreshState)
-                    ) {
-                        WeatherLocationList(
-                            weatherLocationList = uiState.locationsList,
-                            isRefreshingLocations = uiState.isRefreshingLocations,
-                            selectedLocation = uiState.selectedWeatherLocation,
-                            onItemClick = onItemClick,
-                            onDismiss = onDeleteLocation,
-                            onOrderChanged = onOrderChanged,
-                            modifier = Modifier.padding(top = 4.dp),
+                modifier = Modifier.padding(top = paddingValues.calculateTopPadding())
+            ) {
+                when {
+                    showLocationPermissionRequest -> {
+                        RequestLocationPermission(
+                            onRequestPermission = onRequestPermission,
                         )
+                    }
 
-                        PullRefreshIndicator(
-                            refreshing = uiState.isLoading,
-                            state = pullRefreshState,
-                            backgroundColor = WeatherYouTheme.colorScheme.primary,
-                            contentColor = WeatherYouTheme.colorScheme.secondaryContainer,
-                            scale = true,
-                            modifier = Modifier.align(Alignment.TopCenter),
+                    uiState.isLoading.not() && uiState.locationsList.isEmpty() -> {
+                        WeatherLocationsEmptyState(
+                            Modifier
+                                .padding(paddingValues)
                         )
+                    }
+
+                    else -> {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .pullRefresh(pullRefreshState)
+                        ) {
+                            WeatherLocationList(
+                                weatherLocationList = uiState.locationsList,
+                                isRefreshingLocations = uiState.isRefreshingLocations,
+                                selectedLocation = uiState.selectedWeatherLocation,
+                                onItemClick = onItemClick,
+                                onDismiss = onDeleteLocation,
+                                onOrderChanged = onOrderChanged,
+                                modifier = Modifier,
+                            )
+
+                            PullRefreshIndicator(
+                                refreshing = uiState.isLoading,
+                                state = pullRefreshState,
+                                backgroundColor = WeatherYouTheme.colorScheme.primary,
+                                contentColor = WeatherYouTheme.colorScheme.secondaryContainer,
+                                scale = true,
+                                modifier = Modifier.align(Alignment.TopCenter),
+                            )
+                        }
                     }
                 }
             }
         }
     }
+
 }
 
 
-@OptIn(ExperimentalMaterial3AdaptiveApi::class)
+@OptIn(ExperimentalMaterial3AdaptiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     homeUiState: HomeUiState,
@@ -254,16 +288,35 @@ fun HomeScreen(
     onOrderChanged: (List<WeatherLocation>) -> Unit,
     onNavigateToLocation: (Int) -> Unit,
 ) {
+    val coroutineScope = rememberCoroutineScope()
+    val adaptiveInfo = currentWindowAdaptiveInfo()
+    val paneExpansionState = rememberPaneExpansionState(
+        keyProvider = navigator.scaffoldValue,
+        anchors = listOf(
+            PaneExpansionAnchor.Proportion(0.35f),
+            PaneExpansionAnchor.Proportion(0.55f),
+        ),
+    )
+    var showDragHandle by remember { mutableStateOf(true) }
+    val paneInteractionSource = remember { MutableInteractionSource() }
+    val isPaneDragging by paneInteractionSource.collectIsDraggedAsState()
+    val navSuiteType = NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(adaptiveInfo)
     BackHandler(navigator.canNavigateBack()) {
-        navigator.navigateBack()
-        onLocationSelected(null)
+        coroutineScope.launch {
+            navigator.navigateBack()
+            onLocationSelected(null)
+        }
     }
 
     ListDetailPaneScaffold(
         value = navigator.scaffoldValue,
         directive = navigator.scaffoldDirective,
         listPane = {
-            AnimatedPane(modifier = Modifier.preferredWidth(260.dp)) {
+            AnimatedPane(
+                modifier = Modifier
+                    .preferredWidth(260.dp)
+                    .statusBarsPadding()
+            ) {
                 WeatherLocationsListScreen(
                     uiState = homeUiState,
                     navigator = navigator,
@@ -288,13 +341,65 @@ fun HomeScreen(
                         weatherLocation = homeUiState.selectedWeatherLocation,
                         isUpdating = homeUiState.isRefreshingLocations,
                         onCloseClick = {
-                            navigator.navigateBack()
-                            onLocationSelected(null)
+                            coroutineScope.launch {
+                                navigator.navigateBack()
+                                onLocationSelected(null)
+                            }
+                        },
+                        onFullScreenModeChange = { fullScreen ->
+                            showDragHandle = fullScreen.not()
+                            if (fullScreen) {
+                                paneExpansionState.setFirstPaneProportion(0f)
+                            } else {
+                                paneExpansionState.setFirstPaneProportion(0.35f)
+                            }
                         },
                         onDeleteLocationClicked = onDeleteLocationClicked,
                     )
                 }
             }
+        },
+        paneExpansionDragHandle = {
+            if (navigator.scaffoldValue.primary != PaneAdaptedValue.Hidden && showDragHandle) {
+                Surface(
+                    onClick = { },
+                    shape = WeatherYouTheme.shapes.large,
+                    shadowElevation = 6.dp,
+                    interactionSource = paneInteractionSource,
+                    color = if (WeatherYouTheme.themeSettings.showWeatherAnimations) {
+                        WeatherYouTheme.colorScheme.surface.copy(alpha = 0.4f)
+                    } else {
+                        WeatherYouTheme.colorScheme.primary
+                    },
+                    modifier = Modifier
+                        .scale( if (isPaneDragging) {
+                            1.5f
+                        } else {
+                            1f
+                        })
+                        .size(
+                            height = 40.dp,
+                            width = 10.dp,
+                        ).paneExpansionDraggable(
+                            state = paneExpansionState,
+                            minTouchTargetSize = 0.dp,
+                            interactionSource = paneInteractionSource,
+                        ),
+                ) { }
+            }
+        },
+        paneExpansionState = paneExpansionState,
+        modifier = if (WeatherYouTheme.themeSettings.showWeatherAnimations && navSuiteType == NavigationSuiteType.NavigationRail) {
+            Modifier.background(
+                Brush.verticalGradient(
+                    homeUiState.getSelectedOrFirstLocation()?.getGradientList() ?: listOf(
+                        WeatherYouTheme.colorScheme.background,
+                        WeatherYouTheme.colorScheme.background,
+                    )
+                )
+            )
+        } else {
+            Modifier.background(WeatherYouTheme.colorScheme.background)
         },
     )
 }
@@ -321,6 +426,7 @@ fun WeatherLocationsEmptyState(
         Text(
             text = stringResource(R.string.empty_locations),
             style = WeatherYouTheme.typography.headlineSmall,
+            color = WeatherYouTheme.colorScheme.onBackground,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(10.dp)
         )
@@ -351,12 +457,14 @@ fun RequestLocationPermission(
         Text(
             text = stringResource(R.string.enable_location),
             style = WeatherYouTheme.typography.headlineSmall,
+            color = WeatherYouTheme.colorScheme.onBackground,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(10.dp)
         )
         Text(
             text = stringResource(R.string.enable_location_description),
             style = WeatherYouTheme.typography.titleSmall,
+            color = WeatherYouTheme.colorScheme.onBackground,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(16.dp)
         )
@@ -364,7 +472,11 @@ fun RequestLocationPermission(
             onClick = onRequestPermission,
             modifier = Modifier
         ) {
-            Text(stringResource(R.string.grant_location_permission))
+            Text(
+                text = stringResource(R.string.grant_location_permission),
+                style = WeatherYouTheme.typography.titleSmall,
+                color = WeatherYouTheme.colorScheme.onPrimary,
+            )
         }
     }
 }
@@ -403,7 +515,7 @@ fun SearchLocationBar(
         color = WeatherYouTheme.colorScheme.secondaryContainer,
         modifier = modifier
             .fillMaxWidth()
-            .padding(top = 24.dp, bottom = 4.dp, start = 16.dp, end = 16.dp),
+            .padding(top = 24.dp, start = 16.dp, end = 16.dp),
         onClick = onSearchLocationClick,
     ) {
         Row(

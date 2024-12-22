@@ -20,6 +20,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -29,6 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.rodrigmatrix.weatheryou.addlocation.preview.PreviewFamousCities
+import com.rodrigmatrix.weatheryou.components.SearchBar
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.core.compose.LaunchViewEffect
 import com.rodrigmatrix.weatheryou.core.extensions.toast
@@ -97,7 +99,7 @@ fun AddLocationScreen(
     val focusRequester = remember { FocusRequester() }
     Scaffold(
         topBar = {
-            com.rodrigmatrix.weatheryou.components.SearchBar(
+            SearchBar(
                 query = viewState.searchText,
                 onQueryChange = onQueryChanged,
                 onSearchFocusChange = {
@@ -108,15 +110,17 @@ fun AddLocationScreen(
                 onClearQuery = onClearQuery,
                 searching = viewState.isLoading,
                 onSearchButtonClicked = onSearchButtonClicked,
-                modifier = Modifier.padding(bottom = 8.dp),
                 keyboardActions = KeyboardActions(
                     onSearch = {
                         onSearchButtonClicked()
                     }
-                )
+                ),
+                modifier = Modifier
+                    .padding(bottom = 8.dp),
             )
         },
         containerColor = WeatherYouTheme.colorScheme.background,
+        modifier = Modifier.statusBarsPadding()
     ) { paddingValues ->
         Column(Modifier.padding(paddingValues)) {
             if (viewState.showKeepTyping) {

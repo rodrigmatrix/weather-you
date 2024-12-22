@@ -11,10 +11,8 @@ import com.rodrigmatrix.weatheryou.domain.usecase.GetLocationByLatLongUseCase
 import com.rodrigmatrix.weatheryou.domain.usecase.GetLocationsUseCase
 import com.rodrigmatrix.weatheryou.domain.usecase.UpdateLocationsListOrderUseCase
 import com.rodrigmatrix.weatheryou.home.presentation.home.HomeViewEffect.Error
-import kotlinx.coroutines.CompletableJob
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay

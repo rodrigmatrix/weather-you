@@ -1,7 +1,9 @@
 package com.rodrigmatrix.weatheryou.addlocation
 
 import android.app.Activity
+import androidx.core.os.bundleOf
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.rodrigmatrix.weatheryou.core.viewmodel.ViewModel
 import com.rodrigmatrix.weatheryou.domain.usecase.AddLocationUseCase
@@ -17,16 +19,14 @@ import kotlinx.coroutines.flow.*
 import com.rodrigmatrix.weatheryou.components.R
 import com.rodrigmatrix.weatheryou.domain.model.City
 import com.rodrigmatrix.weatheryou.domain.model.SearchAutocompleteLocation
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 
-@OptIn(FlowPreview::class)
 class AddLocationViewModel(
     private val addLocationUseCase: AddLocationUseCase,
     private val getFamousLocationsUseCase: GetFamousLocationsUseCase,
     private val searchLocationUseCase: SearchLocationUseCase,
     private val firebaseCrashlytics: FirebaseCrashlytics,
+    private val firebaseAnalytics: FirebaseAnalytics,
     private val adsManager: AdsManager,
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ): ViewModel<AddLocationViewState, AddLocationViewEffect>(AddLocationViewState()) {
@@ -58,7 +58,10 @@ class AddLocationViewModel(
                             .catch { exception ->
                                 exception.handleError()
                             }
-                            .collect { setEffect { LocationAdded } }
+                            .collect {
+                                firebaseAnalytics.logEvent("ADDED_LOCATION", bundleOf("name" to location.name))
+                                setEffect { LocationAdded }
+                            }
                     }
                 }
             }
@@ -81,9 +84,13 @@ class AddLocationViewModel(
                     ).flowOn(coroutineDispatcher)
                         .onStart { setState { it.copy(isLoading = true) } }
                         .catch { exception ->
+                            firebaseAnalytics.logEvent("ADD_FAMOUS_LOCATION_ERROR", bundleOf("error" to exception.localizedMessage))
                             exception.handleError()
                         }
-                        .collect { setEffect { LocationAdded } }
+                        .collect {
+                            firebaseAnalytics.logEvent("ADDED_FAMOUS_LOCATION", bundleOf("countryCode" to city.countryCode))
+                            setEffect { LocationAdded }
+                        }
                 }
             }
         )
@@ -124,9 +131,11 @@ class AddLocationViewModel(
                     }
                 }
                 .catch { exception ->
+                    firebaseAnalytics.logEvent("ERROR_SEARCHED_LOCATION", bundleOf("error" to exception.localizedMessage))
                     exception.logError()
                 }
                 .collect { locations ->
+                    firebaseAnalytics.logEvent("SEARCHED_LOCATION", bundleOf("name" to viewState.value.searchText))
                     setState {
                         it.copy(
                             locationsList = locations,
@@ -141,6 +150,7 @@ class AddLocationViewModel(
 
     private fun Throwable.handleError() {
         firebaseCrashlytics.recordException(this)
+        firebaseAnalytics.logEvent("ADD_LOCATION_ERROR", bundleOf("error" to this.localizedMessage))
         val exception = when (this) {
             is LocationLimitException -> R.string.add_location_limit_error
             else -> R.string.add_location_error

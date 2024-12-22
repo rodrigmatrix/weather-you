@@ -116,7 +116,9 @@ private fun SearchLocationScreen(
             },
             onClearQuery = onClearQuery,
             searching = viewState.isLoading,
-            modifier = Modifier.padding(bottom = 8.dp),
+            modifier = Modifier
+                .padding(bottom = 8.dp)
+                .focusRequester(focusRequester),
             showBackButton = false,
             onSearchButtonClicked = {
                 onSearchButtonClicked()
@@ -125,7 +127,7 @@ private fun SearchLocationScreen(
                 onSearch = {
                     onSearchButtonClicked()
                 }
-            )
+            ),
         )
         Column(Modifier) {
             if (viewState.showKeepTyping) {

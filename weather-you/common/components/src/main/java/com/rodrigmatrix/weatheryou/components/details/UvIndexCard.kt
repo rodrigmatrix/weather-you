@@ -23,7 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.components.R
 import androidx.constraintlayout.compose.ConstraintLayout
-import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme.weatherTextColor
+import com.rodrigmatrix.weatheryou.components.theme.weatherTextColor
 import com.rodrigmatrix.weatheryou.locationdetails.presentaion.color.level_10_uv_index_color
 import com.rodrigmatrix.weatheryou.locationdetails.presentaion.color.level_1_uv_index_color
 import com.rodrigmatrix.weatheryou.locationdetails.presentaion.color.level_2_uv_index_color

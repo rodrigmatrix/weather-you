@@ -19,6 +19,7 @@ object AddLocationModule {
                 getFamousLocationsUseCase = get(),
                 searchLocationUseCase = get(),
                 adsManager = get(),
+                firebaseAnalytics = get(),
                 firebaseCrashlytics = FirebaseCrashlytics.getInstance(),
             )
         }

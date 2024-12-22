@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
   <string name="feels_like_x">يشعر وكأنه %s</string>
-  <string name="high_lowercase_x"></string>
-  <string name="low_lowercase_x"></string>
+  <string name="high_lowercase_x">أعلى: %s</string>
+  <string name="low_lowercase_x">أدنى: %s</string>
   <string name="day_x">اليوم %s</string>
   <string name="night_x">ليل %s</string>
   <string name="next_x_days_forecast">التوقعات للـ %d أيام القادمة</string>
@@ -64,10 +64,10 @@
   <string name="dense_fog">الضباب الكثيف يؤثر على الرؤية.</string>
   <string name="thick_fog">الضباب الكثيف يؤثر على الرؤية.</string>
   <string name="sunrise_sunset"><![CDATA[الشروق والغروب]]></string>
-  <string name="north_char"></string>
-  <string name="south_char"></string>
-  <string name="east_char"></string>
-  <string name="west_char"></string>
+  <string name="north_char">شمال</string>
+  <string name="south_char">جنوب</string>
+  <string name="east_char">شرق</string>
+  <string name="west_char">غرب</string>
   <string name="sunrise">شروق الشمس</string>
   <string name="sunset">غروب الشمس</string>
   <string name="length_of_day">مدة اليوم:</string>
@@ -85,11 +85,11 @@
   <string name="light">الضوء</string>
   <string name="dark">داكن</string>
   <string name="system_default">الإعداد الافتراضي للنظام</string>
-  <string name="new_york"></string>
-  <string name="vancouver"></string>
-  <string name="los_angeles"></string>
-  <string name="toronto"></string>
-  <string name="rio_de_janeiro"></string>
+  <string name="new_york">New York</string>
+  <string name="vancouver">Vancouver</string>
+  <string name="los_angeles">Los Angeles</string>
+  <string name="toronto">Toronto</string>
+  <string name="rio_de_janeiro">Rio de janeiro</string>
   <string name="sao_paulo">ساو باولو</string>
   <string name="add_location_error">تعذرت إضافة هذا الموقع. حاول مرة أخرى لاحقا</string>
   <string name="add_location_limit_error">لقد وصلت إلى الحد الأقصى للمواقع المسموح بها. احذف موقعًا وحاول إضافة هذا مرة أخرى</string>

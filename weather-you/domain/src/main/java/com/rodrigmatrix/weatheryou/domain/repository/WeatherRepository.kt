@@ -40,4 +40,6 @@ interface WeatherRepository {
     fun deleteWidgetWeather(widgetId: String): Flow<Unit>
 
     fun getWidgetWeather(widgetId: String): Flow<WeatherLocation?>
+
+    fun getWidgetLocationsSize(): Flow<Int>
 }

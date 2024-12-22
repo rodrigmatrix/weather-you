@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import com.rodrigmatrix.weatheryou.core.state.WeatherYouAppState
 import com.rodrigmatrix.weatheryou.domain.model.TemperaturePreference
 import java.lang.Exception
-import java.math.RoundingMode
 import kotlin.math.roundToInt
 
 @Composable
@@ -18,7 +17,16 @@ fun Double.temperatureString(
     }
 }
 
-@Composable
+fun Double.toTemperatureString(
+    temperaturePreference: TemperaturePreference,
+): String {
+    val intTemp = this.roundToInt()
+    return when (temperaturePreference) {
+        TemperaturePreference.METRIC -> "$intTemp°"
+        TemperaturePreference.IMPERIAL -> ((this * 1.8) + 32).roundToInt().toString() + "°"
+    }
+}
+
 fun Double.percentageString(): String {
     return try {
         this.roundToInt().toString() + "%"

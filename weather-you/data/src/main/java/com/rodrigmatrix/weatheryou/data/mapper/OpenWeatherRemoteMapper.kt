@@ -3,6 +3,8 @@ package com.rodrigmatrix.weatheryou.data.mapper
 import com.rodrigmatrix.weatheryou.data.model.openweather.OpenWeatherDaily
 import com.rodrigmatrix.weatheryou.data.model.openweather.OpenWeatherHourly
 import com.rodrigmatrix.weatheryou.data.model.openweather.OpenWeatherLocationResponse
+import com.rodrigmatrix.weatheryou.domain.model.MoonPhase
+import com.rodrigmatrix.weatheryou.domain.model.PrecipitationType
 import com.rodrigmatrix.weatheryou.domain.model.TemperaturePreference
 import com.rodrigmatrix.weatheryou.domain.model.WeatherDay
 import com.rodrigmatrix.weatheryou.domain.model.WeatherHour
@@ -32,7 +34,7 @@ class OpenWeatherRemoteMapper(
             currentTime = source.current?.datetime.toDateTime(source.timezone),
             timeZone = source.timezone.orEmpty(),
             precipitationProbability = source.hourly.toChanceOfPrecipitation(),
-            precipitationType = source.current?.weather?.firstOrNull()?.main.orEmpty(),
+            precipitationType = PrecipitationType.Clear,
             humidity = source.current?.humidity ?: 0.0,
             dewPoint = source.current?.dewPoint ?: 0.0,
             windDirection = source.current?.windDeg ?: 0.0,
@@ -63,12 +65,23 @@ class OpenWeatherRemoteMapper(
                 maxTemperature = it.temp?.max ?: 0.0,
                 minTemperature = it.temp?.min ?: 0.0,
                 precipitationProbability = it.pop.calculatePrecipitation(),
-                precipitationType = it.weather?.firstOrNull()?.main.orEmpty(),
+                precipitationType = PrecipitationType.Clear,
                 windSpeed = it.windSpeed ?: 0.0,
                 humidity = it.humidity ?: 0.0,
                 sunrise = it.sunrise.toDateTime(timeZone),
                 sunset = it.sunset.toDateTime(timeZone),
                 hours = emptyList(),
+                precipitationAmount = 0.0,
+                snowfallAmount = 0.0,
+                solarNoon = DateTime(),
+                solarMidnight = DateTime(),
+                moonPhase = MoonPhase.New,
+                sunriseAstronomical = DateTime(),
+                sunsetAstronomical = DateTime(),
+                sunriseNautical = DateTime(),
+                sunsetNautical = DateTime(),
+                sunriseCivil = DateTime(),
+                sunsetCivil = DateTime(),
             )
         }
     }
@@ -80,7 +93,7 @@ class OpenWeatherRemoteMapper(
                 weatherCondition = weatherConditionMapper.map(it.weather?.first()?.description),
                 temperature = it.temp ?: 0.0,
                 precipitationProbability = it.pop.calculatePrecipitation(),
-                precipitationType = it.weather?.firstOrNull()?.main.orEmpty(),
+                precipitationType = PrecipitationType.Clear,
                 cloudCover = it.clouds?.toDouble() ?: 0.0,
                 feelsLike = it.feelsLike ?: 0.0,
                 humidity = it.humidity ?: 0.0,
