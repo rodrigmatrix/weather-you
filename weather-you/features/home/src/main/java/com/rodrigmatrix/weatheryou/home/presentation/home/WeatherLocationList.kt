@@ -5,18 +5,15 @@ import android.os.Build
 import android.view.HapticFeedbackConstants
 import android.view.View
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -43,7 +40,6 @@ import androidx.compose.runtime.setValue
 import com.rodrigmatrix.weatheryou.components.theme.ThemeMode
 import sh.calvin.reorderable.rememberReorderableLazyGridState
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun WeatherLocationList(
     weatherLocationList: List<WeatherLocation>,
