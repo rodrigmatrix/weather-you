@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
   <string name="feels_like_x">%sのように感じる</string>
-  <string name="high_lowercase_x"></string>
-  <string name="low_lowercase_x"></string>
+  <string name="high_lowercase_x">最高: %S</string>
+  <string name="low_lowercase_x">最低: %S</string>
   <string name="day_x">日%s</string>
   <string name="night_x">夜%s</string>
   <string name="next_x_days_forecast">次の%d日間の予報</string>
@@ -64,10 +64,10 @@
   <string name="dense_fog">濃霧が視界を妨げています。</string>
   <string name="thick_fog">濃霧が視界を妨げています。</string>
   <string name="sunrise_sunset"><![CDATA[日の出＆日の入り]]></string>
-  <string name="north_char"></string>
-  <string name="south_char"></string>
-  <string name="east_char"></string>
-  <string name="west_char"></string>
+  <string name="north_char">北</string>
+  <string name="south_char">南</string>
+  <string name="east_char">東</string>
+  <string name="west_char">西</string>
   <string name="sunrise">日の出</string>
   <string name="sunset">日没</string>
   <string name="length_of_day">日の長さ:</string>

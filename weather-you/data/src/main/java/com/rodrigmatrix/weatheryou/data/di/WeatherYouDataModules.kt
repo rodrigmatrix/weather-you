@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.preferencesDataStoreFile
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
@@ -223,6 +224,7 @@ object WeatherYouDataModules {
         factory { get<LocationsDatabase>().locationsDao() }
         factory { get<WidgetDatabase>().widgetDataDao() }
         factory { get<WeatherDatabase>().weatherDao() }
+        single { Firebase.analytics }
         factory {
             Json {
                 encodeDefaults = true

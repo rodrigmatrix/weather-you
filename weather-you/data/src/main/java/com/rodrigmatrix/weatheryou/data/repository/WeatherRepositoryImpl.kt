@@ -253,6 +253,10 @@ class WeatherRepositoryImpl(
         }
     }
 
+    override fun getWidgetLocationsSize(): Flow<Int> {
+        return weatherLocalDataSource.getWidgetWeatherList().map { it.size }
+    }
+
     private suspend fun getCurrentLocation(
         forceUpdate: Boolean,
         hasLocationPermission: Boolean,

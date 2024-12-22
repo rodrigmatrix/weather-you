@@ -24,11 +24,15 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Place
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SheetState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,22 +58,30 @@ import com.rodrigmatrix.weatheryou.components.WeatherLocationCardContent
 import com.rodrigmatrix.weatheryou.components.extensions.shimmerLoadingAnimation
 import com.rodrigmatrix.weatheryou.components.particle.WeatherAnimationsBackground
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
+import com.rodrigmatrix.weatheryou.core.state.WeatherYouAppState
 import com.rodrigmatrix.weatheryou.domain.model.WeatherCondition
+import com.rodrigmatrix.weatheryou.domain.model.WeatherDay
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.home.presentation.home.HomeDialogState
 import com.rodrigmatrix.weatheryou.home.presentation.home.HomeUiState
 import com.rodrigmatrix.weatheryou.home.presentation.home.HomeViewModel
+import com.rodrigmatrix.weatheryou.locationdetails.presentaion.conditions.ConditionsBottomSheet
+import com.rodrigmatrix.weatheryou.locationdetails.presentaion.conditions.ConditionsViewModel
 import com.rodrigmatrix.weatheryou.tv.components.TvCard
 import com.rodrigmatrix.weatheryou.tv.presentation.details.TvWeatherDetailsScreen
 import com.rodrigmatrix.weatheryou.tv.presentation.details.TvWeatherLocationScreen
 import com.rodrigmatrix.weatheryou.tv.presentation.locations.TvWeatherLocationsUiState
 import com.rodrigmatrix.weatheryou.tv.presentation.locations.TVWeatherLocationsViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import org.koin.androidx.compose.getViewModel
 
-@OptIn(ExperimentalPermissionsApi::class)
+@OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
 internal fun TvWeatherLocationsScreen(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel,
+    conditionsViewModel: ConditionsViewModel = getViewModel(),
     locationPermissionState: MultiplePermissionsState = rememberMultiplePermissionsState(
         permissions = listOf(
             Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -79,9 +91,14 @@ internal fun TvWeatherLocationsScreen(
             viewModel.updateLocations()
         }
     ),
+    coroutineScope: CoroutineScope = rememberCoroutineScope(),
+    scaffoldState: SheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    ),
     navController: NavController,
 ) {
     val uiState by viewModel.viewState.collectAsState()
+    val conditionsViewState by conditionsViewModel.viewState.collectAsState()
     var locationToDelete: WeatherLocation? by remember { mutableStateOf(null) }
 
     when (uiState.dialogState) {
@@ -105,8 +122,39 @@ internal fun TvWeatherLocationsScreen(
             locationToDelete = it
             viewModel.onDialogStateChanged(HomeDialogState.DeleteLocation)
         },
+        onExpandDay = {
+            coroutineScope.launch {
+                conditionsViewModel.setConditions(
+                    weatherLocation = uiState.selectedWeatherLocation!!,
+                    day = it,
+                )
+                scaffoldState.expand()
+            }
+        },
         modifier = modifier,
     )
+    if (conditionsViewState.weatherLocation != null) {
+        Column {
+            Spacer(Modifier.height(20.dp))
+            ConditionsBottomSheet(
+                viewState = conditionsViewState,
+                bottomSheetState = scaffoldState,
+                onClick = {
+                    conditionsViewModel.setConditions(
+                        weatherLocation = uiState.selectedWeatherLocation!!,
+                        day = it,
+                    )
+                },
+                onTemperatureTypeChange = conditionsViewModel::onTemperatureTypeChange,
+                onDismissRequest = {
+                    coroutineScope.launch {
+                        conditionsViewModel.hideConditions()
+                        scaffoldState.hide()
+                    }
+                }
+            )
+        }
+    }
 }
 
 @Composable
@@ -116,6 +164,7 @@ private fun TvWeatherLocationsScreen(
     onRequestPermission: () -> Unit,
     onWeatherLocationClicked: (WeatherLocation) -> Unit,
     onDeleteLocation: (WeatherLocation) -> Unit,
+    onExpandDay: (WeatherDay) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
@@ -144,6 +193,7 @@ private fun TvWeatherLocationsScreen(
                         currentLocation = uiState.selectedWeatherLocation,
                         onWeatherLocationClicked = onWeatherLocationClicked,
                         onDeleteLocation = onDeleteLocation,
+                        onExpandDay = onExpandDay,
                         modifier = Modifier,
                     )
                 }
@@ -225,6 +275,7 @@ private fun TvWeatherLocationsContent(
     currentLocation: WeatherLocation?,
     onWeatherLocationClicked: (WeatherLocation) -> Unit,
     onDeleteLocation: (WeatherLocation) -> Unit,
+    onExpandDay: (WeatherDay) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -240,6 +291,7 @@ private fun TvWeatherLocationsContent(
         currentLocation?.let { selectedLocation ->
             TvWeatherDetailsScreen(
                 weatherLocation = selectedLocation,
+                onExpandDay = onExpandDay,
                 modifier = Modifier.weight(1f),
             )
         }

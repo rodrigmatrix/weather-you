@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.glance.appwidget.updateAll
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.rodrigmatrix.weatheryou.domain.usecase.GetWidgetLocationsSizeUseCase
+import com.rodrigmatrix.weatheryou.domain.usecase.GetWidgetTemperatureUseCase
 import com.rodrigmatrix.weatheryou.domain.usecase.UpdateLocationsUseCase
 import com.rodrigmatrix.weatheryou.widgets.weather.CurrentWeatherWidget
 import com.rodrigmatrix.weatheryou.widgets.weather.animated.CurrentAnimatedWeatherWidget
@@ -19,13 +21,19 @@ class UpdateWidgetWeatherDataWorker(
 ) : CoroutineWorker(appContext, params), KoinComponent {
 
     private val updateLocationsUseCase by inject<UpdateLocationsUseCase>()
+    private val getWidgetLocationsSizeUseCase by inject<GetWidgetLocationsSizeUseCase>()
 
     override suspend fun doWork(): Result {
-        updateLocationsUseCase()
+        val widgetSize = getWidgetLocationsSizeUseCase()
             .flowOn(Dispatchers.IO)
             .firstOrNull()
-        CurrentWeatherWidget().updateAll(appContext)
-        CurrentAnimatedWeatherWidget().updateAll(appContext)
+        if ((widgetSize ?: 0) > 0) {
+            updateLocationsUseCase()
+                .flowOn(Dispatchers.IO)
+                .firstOrNull()
+            CurrentWeatherWidget().updateAll(appContext)
+            CurrentAnimatedWeatherWidget().updateAll(appContext)
+        }
         return Result.success()
     }
 }

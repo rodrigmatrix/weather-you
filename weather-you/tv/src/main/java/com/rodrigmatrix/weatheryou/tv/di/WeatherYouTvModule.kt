@@ -1,6 +1,7 @@
 package com.rodrigmatrix.weatheryou.tv.di
 
 import com.rodrigmatrix.weatheryou.home.di.HomeModule
+import com.rodrigmatrix.weatheryou.locationdetails.di.LocationDetailsModule
 import com.rodrigmatrix.weatheryou.settings.di.SettingsModule
 import com.rodrigmatrix.weatheryou.tv.presentation.locations.TVWeatherLocationsViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -13,6 +14,7 @@ object WeatherYouTvModule {
         loadKoinModules(presentationModule)
         SettingsModule.loadModules()
         HomeModule.loadModules()
+        LocationDetailsModule.loadModules()
     }
 
     private val presentationModule = module {

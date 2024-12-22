@@ -54,6 +54,7 @@ import com.rodrigmatrix.weatheryou.components.details.WindCardContent
 import com.rodrigmatrix.weatheryou.components.particle.WeatherAnimationsBackground
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.core.extensions.getDateTimeFromTimezone
+import com.rodrigmatrix.weatheryou.domain.model.WeatherDay
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.tv.components.TvCard
 import com.rodrigmatrix.weatheryou.tv.presentation.theme.md_theme_dark_secondaryContainer
@@ -62,6 +63,7 @@ import com.rodrigmatrix.weatheryou.tv.presentation.theme.md_theme_dark_secondary
 @Composable
 fun TvWeatherDetailsScreen(
     weatherLocation: WeatherLocation,
+    onExpandDay: (WeatherDay) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -78,7 +80,8 @@ fun TvWeatherDetailsScreen(
             )
         }
         TvWeatherLocationScreen(
-            weatherLocation
+            weatherLocation = weatherLocation,
+            onExpandDay = onExpandDay,
         )
     }
 }
@@ -86,6 +89,7 @@ fun TvWeatherDetailsScreen(
 @Composable
 fun TvWeatherLocationScreen(
     weatherLocation: WeatherLocation,
+    onExpandDay: (WeatherDay) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var is15DaysVisible by remember { mutableStateOf(false) }
@@ -226,7 +230,8 @@ fun TvWeatherLocationScreen(
                                 is15DaysVisible = !is15DaysVisible
                             },
                         )
-                    }
+                    },
+                    onExpandDay = onExpandDay,
                 )
             }
         }
