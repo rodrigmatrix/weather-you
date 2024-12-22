@@ -9,10 +9,14 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -56,8 +60,16 @@ fun WeatherLocationList(
     }.apply { value = weatherLocationList }
 
     val listState = rememberLazyGridState()
-    val reorderableLazyListState = rememberReorderableLazyGridState(listState) { from, to ->
-        list = list.toMutableList().apply { add(to.index, removeAt(from.index)) }
+    val reorderableLazyListState = rememberReorderableLazyGridState(
+        lazyGridState = listState,
+        scrollThresholdPadding = WindowInsets.statusBars.asPaddingValues(),
+    ) { from, to ->
+
+        list = list.toMutableList().apply {
+            val fromIndex = indexOfFirst { it.id == from.key }
+            val toIndex = indexOfFirst { it.id == to.key }
+            add(toIndex, removeAt(fromIndex))
+        }
         onOrderChanged(list)
         view.performHapticAction(HapticAction.VirtualKey)
     }

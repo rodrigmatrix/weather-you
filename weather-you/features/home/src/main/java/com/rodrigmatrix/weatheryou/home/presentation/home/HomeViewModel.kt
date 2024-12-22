@@ -1,6 +1,9 @@
 package com.rodrigmatrix.weatheryou.home.presentation.home
 
+import androidx.core.os.bundleOf
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.logEvent
 import com.rodrigmatrix.weatheryou.core.viewmodel.ViewModel
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.domain.usecase.DeleteLocationUseCase
@@ -34,6 +37,7 @@ class HomeViewModel(
     private val getAppSettingsUseCase: GetAppSettingsUseCase,
     private val getLocationByLatLongUseCase: GetLocationByLatLongUseCase,
     private val updateLocationsListOrderUseCase: UpdateLocationsListOrderUseCase,
+    private val firebaseAnalytics: FirebaseAnalytics,
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ): ViewModel<HomeUiState, HomeViewEffect>(HomeUiState()) {
 
@@ -62,10 +66,17 @@ class HomeViewModel(
             getLocationsUseCase()
                 .flowOn(coroutineDispatcher)
                 .catch { exception ->
+                    firebaseAnalytics.logEvent("LOAD_LOCATIONS_ERROR", bundleOf("error" to exception.localizedMessage))
                     exception.handleError()
                 }
                 .onStart { setState { it.copy(isLoading = true) } }
                 .collect { weatherLocationsList ->
+                    firebaseAnalytics.logEvent("LOADED_LOCATIONS",
+                        bundleOf(
+                            "size" to weatherLocationsList.size,
+                            "names" to weatherLocationsList.joinToString(separator = ",") { it.name },
+                        )
+                    )
                     setState {
                         if (weatherLocationsList.size >= 2) {
                             setEffect { HomeViewEffect.ShowInAppReview }
@@ -90,6 +101,7 @@ class HomeViewModel(
                 updateLocationsUseCase()
                     .flowOn(coroutineDispatcher)
                     .catch {
+                        firebaseAnalytics.logEvent("UPDATE_LOCATIONS_ERROR", bundleOf("error" to it.localizedMessage))
                         setState {
                             it.copy(
                                 isRefreshingLocations = false,
@@ -98,6 +110,7 @@ class HomeViewModel(
                         }
                     }
                     .firstOrNull().let {
+                        firebaseAnalytics.logEvent("UPDATED_LOCATIONS", bundleOf())
                         setState {
                             it.copy(
                                 isLoading = false,

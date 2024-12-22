@@ -20,6 +20,7 @@ object HomeModule {
                 getLocationsUseCase = get(),
                 updateLocationsListOrderUseCase = get(),
                 getLocationByLatLongUseCase = get(),
+                firebaseAnalytics = get(),
             )
         }
     }
