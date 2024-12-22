@@ -59,6 +59,7 @@ import com.rodrigmatrix.weatheryou.components.preview.PreviewWeatherLocation
 import com.rodrigmatrix.weatheryou.components.theme.ThemeMode
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.core.extensions.getDateTimeFromTimezone
+import com.rodrigmatrix.weatheryou.core.state.WeatherYouAppState
 import com.rodrigmatrix.weatheryou.domain.model.WeatherDay
 import com.rodrigmatrix.weatheryou.locationdetails.presentaion.conditions.ConditionsBottomSheet
 import com.rodrigmatrix.weatheryou.locationdetails.presentaion.conditions.ConditionsViewModel
@@ -86,20 +87,13 @@ fun WeatherDetailsScreen(
     viewModel: WeatherDetailsViewModel = getViewModel(),
     conditionsViewModel: ConditionsViewModel = getViewModel(),
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
-    scaffoldState: SheetState = rememberModalBottomSheetState(
+    scaffoldState: SheetState = WeatherYouAppState.conditionsScaffoldState ?: rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     ),
     modifier: Modifier = Modifier,
 ) {
     val viewState by viewModel.viewState.collectAsState()
     val conditionsViewState by conditionsViewModel.viewState.collectAsState()
-    val adaptiveInfo = currentWindowAdaptiveInfo()
-    val isCompat = adaptiveInfo.windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT
-    val blurValue = if (scaffoldState.currentValue == SheetValue.Hidden || !isCompat) {
-        0.dp
-    } else {
-        64.dp
-    }
 
     viewModel.setWeatherLocation(weatherLocation)
     WeatherYouTheme(
@@ -130,7 +124,7 @@ fun WeatherDetailsScreen(
                 viewModel.onFullScreenModeChange(it)
                 onFullScreenModeChange(it)
             },
-            modifier = modifier.blur(radius = blurValue),
+            modifier = modifier,
         )
     }
 

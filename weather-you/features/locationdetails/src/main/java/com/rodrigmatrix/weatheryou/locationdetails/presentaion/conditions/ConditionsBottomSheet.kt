@@ -106,19 +106,17 @@ fun ConditionsBottomSheet(
     onTemperatureTypeChange: (TemperatureType) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val adaptiveInfo = currentWindowAdaptiveInfo()
-    val isCompat = adaptiveInfo.windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
         dragHandle = { },
         sheetState = bottomSheetState,
-        tonalElevation = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && isCompat) {
+        tonalElevation = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             16.dp
         } else {
             0.dp
         },
         containerColor = WeatherYouTheme.colorScheme.background.copy(
-            alpha = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && isCompat) {
+            alpha = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                  0.3f
             } else {
                 1f
@@ -911,7 +909,7 @@ fun TemperatureTypeSelector(
                         softWrap = false,
                         style = WeatherYouTheme.typography.bodyMedium,
                         color = if(selected)
-                            WeatherYouTheme.colorScheme.onPrimary
+                            WeatherYouTheme.colorScheme.onPrimaryContainer
                         else
                             WeatherYouTheme.colorScheme.onSurface,
                     )
@@ -920,7 +918,7 @@ fun TemperatureTypeSelector(
                     .height(30.dp)
                     .background(
                         if (selected)
-                            WeatherYouTheme.colorScheme.primary
+                            WeatherYouTheme.colorScheme.primaryContainer
                         else
                             WeatherYouTheme.colorScheme.surface
                     ),

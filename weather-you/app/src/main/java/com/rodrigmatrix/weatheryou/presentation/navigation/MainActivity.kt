@@ -9,10 +9,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailDefaults
 import androidx.compose.material3.NavigationRailItem
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
@@ -20,6 +22,7 @@ import androidx.compose.material3.adaptive.navigationsuite.NavigationSuite
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldLayout
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -29,11 +32,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.glance.appwidget.updateAll
 import androidx.navigation.compose.rememberNavController
 import androidx.window.core.layout.WindowWidthSizeClass
@@ -64,7 +69,7 @@ class MainActivity : AppCompatActivity() {
     private val getAppSettingsUseCase by inject<GetAppSettingsUseCase>()
     private val appThemeManager: AppThemeManager by inject()
 
-    @OptIn(ExperimentalMaterial3AdaptiveApi::class)
+    @OptIn(ExperimentalMaterial3AdaptiveApi::class, ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
@@ -80,6 +85,14 @@ class MainActivity : AppCompatActivity() {
             val homeViewModel = getViewModel<HomeViewModel>()
             val homeViewState by homeViewModel.viewState.collectAsState()
             val coroutineScope = rememberCoroutineScope()
+            val conditionsScaffoldState = rememberModalBottomSheetState(
+                skipPartiallyExpanded = true
+            )
+            val blurValue = if (conditionsScaffoldState.currentValue == SheetValue.Hidden) {
+                0.dp
+            } else {
+                64.dp
+            }
             LaunchedEffect(Unit) {
                 val latitude = intent.extras?.getDouble("latitude")
                 val longitude = intent.extras?.getDouble("longitude")
@@ -114,10 +127,11 @@ class MainActivity : AppCompatActivity() {
             navController.addOnDestinationChangedListener { _, destination, _ ->
                 currentDestination = destination.route.orEmpty()
             }
-            Box {
+            Box(Modifier.blur(blurValue)) {
                 WeatherYouAppState(
                     appSettings = appSettings,
                     currentDestination = currentDestination,
+                    conditionsScaffoldState = conditionsScaffoldState,
                 ) {
                     WeatherYouTheme(
                         themeMode = themeMode,
