@@ -54,6 +54,9 @@ jwtVersion = "0.12.6"
 material3AdaptiveAndroid = "1.1.0-alpha08"
 reorderable = "2.4.2"
 androidxBrowserVersion = "1.8.0"
+xrComposeVersion = "1.0.0-alpha01"
+xrRuntimeVersion = "1.0.0-alpha01"
+xrScenecore = "1.0.0-alpha01"
 
 [libraries]
 # Android
@@ -83,6 +86,12 @@ android-material = { group = "com.google.android.material", name = "material", v
 datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastoreVersion" }
 datastore-core = { group = "androidx.datastore", name = "datastore-preferences-core", version.ref = "datastoreVersion" }
 androidx-browser = { group = "androidx.browser", name = "browser", version.ref = "androidxBrowserVersion" }
+
+# Android XR
+xr-compose = { group = "androidx.xr.compose", name = "compose", version.ref = "xrComposeVersion" }
+xr-compose-material3 = { group = "androidx.xr.compose.material3", name = "material3", version.ref = "xrComposeVersion" }
+xr-runtime = { group = "androidx.xr.runtime", name = "runtime", version.ref = "xrRuntimeVersion" }
+xr-scenecore = { group = "androidx.xr.scenecore", name = "scenecore", version.ref = "xrScenecore" }
 
 # JWT
 jwt-api = { group = "io.jsonwebtoken", name = "jjwt-api", version.ref = "jwtVersion" }
@@ -182,6 +191,7 @@ composeUiTooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 composeTestManifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
+androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 
 [plugins]
 org-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlinVersion" }
