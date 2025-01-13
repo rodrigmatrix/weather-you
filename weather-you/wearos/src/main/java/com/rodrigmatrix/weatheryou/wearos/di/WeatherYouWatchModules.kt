@@ -10,19 +10,15 @@ import org.koin.dsl.module
 object WeatherYouWatchModules {
 
     fun loadModules() {
-        loadKoinModules(domainModule + presentationModule)
-    }
-
-    private val domainModule = module {
-        single { GetCurrentLocationUseCase(weatherRepository = get()) }
-        single { GetLocationWeatherUseCase(weatherRepository = get()) }
+        loadKoinModules(presentationModule)
     }
 
     private val presentationModule = module {
         viewModel {
             HomeViewModel(
-                getCurrentLocationUseCase = get(),
-                getLocationWeatherUseCase = get()
+                updateLocationsUseCase = get(),
+                getLocationsUseCase = get(),
+                addLocationUseCase = get(),
             )
         }
     }

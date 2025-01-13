@@ -83,7 +83,7 @@ fun HomeScreen(
     onRefreshLocation: () -> Unit
 ) {
     when {
-        locationPermissionState.allPermissionsGranted -> {
+        locationPermissionState.allPermissionsGranted.not() -> {
             RequestLocationPermission(locationPermissionState, onRefreshLocation)
             return
         }
