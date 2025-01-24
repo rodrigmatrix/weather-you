@@ -39,20 +39,25 @@ class HomeViewModel(
                 .catch { exception ->
                     exception.handleError()
                 }
-                .onEach { weatherLocation ->
+                .onEach { weatherLocations ->
                     setState {
                         it.copy(
                             isLoading = false,
                             error = null,
-                            weatherLocation = weatherLocation.firstOrNull()
+                            weatherLocations = weatherLocations,
                         )
                     }
                 }.collect()
+        }
+    }
+
+    private fun addLocation() {
+        viewModelScope.launch {
             addLocationUseCase(
-                name = "New York",
-                latitude = 40.6970193,
-                longitude = -74.3093288,
-                countryCode = "US",
+                name = "Seoul",
+                latitude = 37.532600,
+                longitude = 127.024612,
+                countryCode = "Asia/Seoul",
             )
                 .flowOn(coroutineDispatcher)
                 .catch { exception ->

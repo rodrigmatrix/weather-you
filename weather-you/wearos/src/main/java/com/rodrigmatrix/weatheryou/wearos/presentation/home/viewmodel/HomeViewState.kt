@@ -6,6 +6,6 @@ import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 
 data class HomeViewState(
     val isLoading: Boolean = false,
-    val weatherLocation: WeatherLocation? = null,
+    val weatherLocations: List<WeatherLocation> = emptyList(),
     @StringRes val error: Int? = null
 ): ViewState

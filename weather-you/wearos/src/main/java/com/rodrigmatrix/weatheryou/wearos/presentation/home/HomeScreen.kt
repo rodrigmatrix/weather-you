@@ -3,15 +3,42 @@ package com.rodrigmatrix.weatheryou.wearos.presentation.home
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.os.Build
 import androidx.annotation.StringRes
+import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
+import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.foundation.gestures.scrollBy
-import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.rotary.onRotaryScrollEvent
 import androidx.compose.ui.platform.LocalContext
@@ -20,12 +47,22 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.wear.compose.material.*
+import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
+import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
+import androidx.wear.compose.material.Button
+import androidx.wear.compose.material.ButtonDefaults
+import androidx.wear.compose.material.CircularProgressIndicator
+import androidx.wear.compose.material.Icon
+import androidx.wear.compose.material.MaterialTheme
+import androidx.wear.compose.material.PositionIndicator
+import androidx.wear.compose.material.Scaffold
+import androidx.wear.compose.material.Text
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
+import com.rodrigmatrix.weatheryou.components.extensions.getGradientList
 import com.rodrigmatrix.weatheryou.core.extensions.getHourWithMinutesString
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.wearos.R
@@ -34,6 +71,19 @@ import com.rodrigmatrix.weatheryou.wearos.presentation.home.viewmodel.HomeViewMo
 import com.rodrigmatrix.weatheryou.wearos.presentation.home.viewmodel.HomeViewState
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.wear.compose.foundation.ExperimentalWearFoundationApi
+import androidx.wear.compose.foundation.HierarchicalFocusCoordinator
+import androidx.wear.compose.foundation.OnFocusChange
+import androidx.wear.compose.material.HorizontalPageIndicator
+import androidx.wear.compose.material.PageIndicatorState
+import androidx.wear.compose.material.TimeText
+import androidx.wear.compose.material.scrollAway
+import com.rodrigmatrix.weatheryou.wearos.presentation.components.pager.PagerScreen
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -82,6 +132,7 @@ fun HomeScreen(
     locationPermissionState: MultiplePermissionsState,
     onRefreshLocation: () -> Unit
 ) {
+    val pagerState = rememberPagerState { viewState.weatherLocations.size }
     when {
         locationPermissionState.allPermissionsGranted.not() -> {
             RequestLocationPermission(locationPermissionState, onRefreshLocation)
@@ -98,8 +149,15 @@ fun HomeScreen(
             )
             return
         }
-        viewState.weatherLocation != null -> {
-            WeatherContent(viewState.weatherLocation)
+        viewState.weatherLocations.isNotEmpty() -> {
+            PagerScreen(
+                state = pagerState,
+                timeText = {
+                    TimeText()
+                }
+            ) { page ->
+                WeatherContent(viewState.weatherLocations[page])
+            }
         }
     }
 }
@@ -177,6 +235,7 @@ fun WeatherContent(
                     }
                     true
                 }
+                .background(Brush.verticalGradient(weatherLocation.getGradientList()))
                 .focusRequester(focusRequester)
                 .focusable(),
             verticalArrangement = Arrangement.spacedBy(8.dp),
