@@ -1,16 +1,11 @@
 package com.rodrigmatrix.weatheryou.wearos.presentation.home
 
-import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.os.Build
 import androidx.annotation.StringRes
-import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
-import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -19,11 +14,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -62,7 +54,6 @@ import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
-import com.rodrigmatrix.weatheryou.components.extensions.getGradientList
 import com.rodrigmatrix.weatheryou.core.extensions.getHourWithMinutesString
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.wearos.R
@@ -72,17 +63,12 @@ import com.rodrigmatrix.weatheryou.wearos.presentation.home.viewmodel.HomeViewSt
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.wear.compose.foundation.ExperimentalWearFoundationApi
-import androidx.wear.compose.foundation.HierarchicalFocusCoordinator
-import androidx.wear.compose.foundation.OnFocusChange
-import androidx.wear.compose.material.HorizontalPageIndicator
-import androidx.wear.compose.material.PageIndicatorState
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.navigation.NavController
+import androidx.wear.compose.material.Chip
+import androidx.wear.compose.material.ChipDefaults
 import androidx.wear.compose.material.TimeText
-import androidx.wear.compose.material.scrollAway
+import com.rodrigmatrix.weatheryou.components.particle.WeatherAnimationsBackground
 import com.rodrigmatrix.weatheryou.wearos.presentation.components.pager.PagerScreen
 
 @OptIn(ExperimentalPermissionsApi::class)
@@ -116,12 +102,18 @@ fun HomeScreen(
             }
         }
     ),
+    navController: NavController,
 ) {
     val viewState by viewModel.viewState.collectAsState()
     HomeScreen(
         viewState = viewState,
         locationPermissionState = locationPermissionState,
-        onRefreshLocation = viewModel::loadLocation
+        onRefreshLocation = viewModel::loadLocation,
+        onAddLocationChipClicked = {
+            navController.navigate("add_location")
+        },
+        onSettingsChipClicked = {
+        },
     )
 }
 
@@ -130,9 +122,11 @@ fun HomeScreen(
 fun HomeScreen(
     viewState: HomeViewState,
     locationPermissionState: MultiplePermissionsState,
-    onRefreshLocation: () -> Unit
+    onRefreshLocation: () -> Unit,
+    onAddLocationChipClicked: () -> Unit,
+    onSettingsChipClicked: () -> Unit,
 ) {
-    val pagerState = rememberPagerState { viewState.weatherLocations.size }
+    val pagerState = rememberPagerState { viewState.weatherLocations.size + 1 }
     when {
         locationPermissionState.allPermissionsGranted.not() -> {
             RequestLocationPermission(locationPermissionState, onRefreshLocation)
@@ -156,8 +150,96 @@ fun HomeScreen(
                     TimeText()
                 }
             ) { page ->
-                WeatherContent(viewState.weatherLocations[page])
+                if (page == 0) {
+                    HomeSettings(
+                        onAddLocationChipClicked = onAddLocationChipClicked,
+                        onSettingsChipClicked = onSettingsChipClicked,
+                    )
+                } else {
+                    WeatherContent(viewState.weatherLocations[page - 1])
+                }
             }
+        }
+    }
+}
+
+@Composable
+fun HomeSettings(
+    onAddLocationChipClicked: () -> Unit,
+    onSettingsChipClicked: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    ScalingLazyColumn(
+        modifier = modifier.fillMaxWidth(),
+    ) {
+        item {
+            Spacer(modifier = Modifier.height(4.dp))
+        }
+        item {
+            Chip(
+                onClick = onAddLocationChipClicked,
+                colors = ChipDefaults.secondaryChipColors(),
+                label = {
+                    Text(
+                        text = "Add Location",
+                        maxLines = 3, overflow = TextOverflow.Ellipsis
+                    )
+                },
+                icon = {
+                    Icon(
+                        painter = painterResource(id = com.rodrigmatrix.weatheryou.weathericons.R.drawable.ic_add_location),
+                        contentDescription = "add location",
+                        modifier = Modifier
+                            .size(ChipDefaults.IconSize)
+                            .wrapContentSize(align = Alignment.Center),
+                    )
+                },
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
+        item {
+            Chip(
+                onClick = {},
+                colors = ChipDefaults.secondaryChipColors(),
+                label = {
+                    Text(
+                        text = "Settings",
+                        maxLines = 3, overflow = TextOverflow.Ellipsis
+                    )
+                },
+                icon = {
+                    Icon(
+                        painter = painterResource(id = com.rodrigmatrix.weatheryou.weathericons.R.drawable.ic_settings),
+                        contentDescription = "settings",
+                        modifier = Modifier
+                            .size(ChipDefaults.IconSize)
+                            .wrapContentSize(align = Alignment.Center),
+                    )
+                },
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
+        item {
+            Chip(
+                onClick = {},
+                colors = ChipDefaults.secondaryChipColors(),
+                label = {
+                    Text(
+                        text = "Manage Locations",
+                        maxLines = 3, overflow = TextOverflow.Ellipsis
+                    )
+                },
+                icon = {
+                    Icon(
+                        painter = painterResource(id = com.rodrigmatrix.weatheryou.weathericons.R.drawable.ic_edit_location),
+                        contentDescription = "reorder",
+                        modifier = Modifier
+                            .size(ChipDefaults.IconSize)
+                            .wrapContentSize(align = Alignment.Center),
+                    )
+                },
+                modifier = Modifier.fillMaxWidth(),
+            )
         }
     }
 }
@@ -225,57 +307,61 @@ fun WeatherContent(
             PositionIndicator(scalingLazyListState = scrollState)
         }
     ) {
-        ScalingLazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .onRotaryScrollEvent {
-                    coroutineScope.launch {
-                        scrollState.scrollBy(it.verticalScrollPixels)
-                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+        Box {
+            WeatherAnimationsBackground(
+                weatherLocation,
+            )
+            ScalingLazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .onRotaryScrollEvent {
+                        coroutineScope.launch {
+                            scrollState.scrollBy(it.verticalScrollPixels)
+                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                        }
+                        true
                     }
-                    true
+                    .focusRequester(focusRequester)
+                    .focusable(),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                state = scrollState
+            ) {
+                item {
+                    Spacer(modifier = Modifier.height(10.dp))
                 }
-                .background(Brush.verticalGradient(weatherLocation.getGradientList()))
-                .focusRequester(focusRequester)
-                .focusable(),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            state = scrollState
-        ) {
-            item {
-                Spacer(modifier = Modifier.height(10.dp))
-            }
-            item {
-                CurrentConditions(weatherLocation)
-            }
-            item {
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 16.dp, end = 16.dp)
-                ) {
-                    weatherLocation.hours.take(3).forEach {
-                        WeatherHour(it)
+                item {
+                    CurrentConditions(weatherLocation)
+                }
+                item {
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 16.dp, end = 16.dp)
+                    ) {
+                        weatherLocation.hours.take(3).forEach {
+                            WeatherHour(it)
+                        }
                     }
                 }
-            }
-            item {
-                Spacer(modifier = Modifier.height(20.dp))
-            }
-            item {
-                UvIndex(uvIndex = weatherLocation.uvIndex)
-            }
-            item {
-                Spacer(modifier = Modifier.height(20.dp))
-            }
-            item {
-                SunriseSunset(
-                    sunrise = weatherLocation.sunrise,
-                    sunset = weatherLocation.sunset
-                )
-            }
-            item {
-                Spacer(modifier = Modifier.height(20.dp))
+                item {
+                    Spacer(modifier = Modifier.height(20.dp))
+                }
+                item {
+                    UvIndex(uvIndex = weatherLocation.uvIndex)
+                }
+                item {
+                    Spacer(modifier = Modifier.height(20.dp))
+                }
+                item {
+                    SunriseSunset(
+                        sunrise = weatherLocation.sunrise,
+                        sunset = weatherLocation.sunset
+                    )
+                }
+                item {
+                    Spacer(modifier = Modifier.height(20.dp))
+                }
             }
         }
         LaunchedEffect(Unit) {

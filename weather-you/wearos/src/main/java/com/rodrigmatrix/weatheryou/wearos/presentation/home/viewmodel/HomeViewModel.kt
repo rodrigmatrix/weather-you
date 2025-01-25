@@ -51,30 +51,12 @@ class HomeViewModel(
         }
     }
 
-    private fun addLocation() {
-        viewModelScope.launch {
-            addLocationUseCase(
-                name = "Seoul",
-                latitude = 37.532600,
-                longitude = 127.024612,
-                countryCode = "Asia/Seoul",
-            )
-                .flowOn(coroutineDispatcher)
-                .catch { exception ->
-                }
-                .collect()
-        }
-    }
-
     private fun fetchLocations() {
         viewModelScope.launch {
-            updateLocationsUseCase(forceUpdate = true)
+            updateLocationsUseCase()
                 .flowOn(coroutineDispatcher)
                 .catch { exception ->
-
-                }
-                .onEach { weatherLocation ->
-
+                    exception.handleError()
                 }.collect()
         }
     }
