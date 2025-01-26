@@ -52,6 +52,7 @@ class AddLocationViewModel(
                         firebaseAnalytics.logEvent("ADDED_LOCATION", bundleOf("name" to location.name))
                         setEffect { LocationAdded }
                         setState { AddLocationViewState() }
+                        getFamousLocations()
                     }
             }
         }
@@ -74,6 +75,7 @@ class AddLocationViewModel(
                     firebaseAnalytics.logEvent("ADDED_FAMOUS_LOCATION", bundleOf("countryCode" to city.countryCode))
                     setEffect { LocationAdded }
                     setState { AddLocationViewState() }
+                    getFamousLocations()
                 }
         }
     }

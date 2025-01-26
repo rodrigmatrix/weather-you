@@ -3,6 +3,9 @@ package com.rodrigmatrix.weatheryou.data.local
 import android.annotation.SuppressLint
 import android.location.Address
 import android.location.Geocoder
+import android.location.Location
+import android.location.LocationManager
+import androidx.core.location.LocationManagerCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.tasks.CancellationToken
@@ -57,6 +60,17 @@ class UserLocationDataSourceImpl(
             latitude = this.latitude,
             longitude = this.longitude,
             countryCode = this.countryCode,
+            timezone = TimeZone.getDefault().id,
+            lastUpdate = DateTime.now(),
+        )
+    }
+
+    private fun Location.toCurrentLocation(): CurrentLocation {
+        return CurrentLocation(
+            name = "",
+            latitude = this.latitude,
+            longitude = this.longitude,
+            countryCode = "",
             timezone = TimeZone.getDefault().id,
             lastUpdate = DateTime.now(),
         )

@@ -1,7 +1,7 @@
 package com.rodrigmatrix.weatheryou.wearos.di
 
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.google.firebase.ktx.Firebase
+import com.rodrigmatrix.weatheryou.wearos.presentation.editlocations.EditLocationsViewModel
 import com.rodrigmatrix.weatheryou.wearos.presentation.home.viewmodel.HomeViewModel
 import com.rodrigmatrix.weatheryou.wearos.presentation.location.AddLocationViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -19,7 +19,6 @@ object WeatherYouWatchModules {
             HomeViewModel(
                 updateLocationsUseCase = get(),
                 getLocationsUseCase = get(),
-                addLocationUseCase = get(),
             )
         }
         viewModel {
@@ -29,6 +28,13 @@ object WeatherYouWatchModules {
                 searchLocationUseCase = get(),
                 firebaseCrashlytics = FirebaseCrashlytics.getInstance(),
                 firebaseAnalytics = get(),
+            )
+        }
+        viewModel {
+            EditLocationsViewModel(
+                getLocationsUseCase = get(),
+                updateLocationsUseCase = get(),
+                deleteLocationUseCase = get(),
             )
         }
     }

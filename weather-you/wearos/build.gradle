@@ -79,7 +79,7 @@ dependencies {
     implementation(libs.compose.ui)
     implementation(libs.compose.wearable.material)
     implementation(libs.compose.wearable.foundation)
-    implementation(libs.compose.navigation)
+    implementation(libs.compose.wearable.navigation)
     implementation(libs.androidx.wear.input)
     implementation(libs.android.material)
     implementation(libs.compose.preview)

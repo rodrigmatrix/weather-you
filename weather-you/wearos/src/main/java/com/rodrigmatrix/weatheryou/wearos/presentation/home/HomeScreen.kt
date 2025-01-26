@@ -15,22 +15,16 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.compositionLocalOf
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.rotary.onRotaryScrollEvent
 import androidx.compose.ui.platform.LocalContext
@@ -54,22 +48,27 @@ import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
-import com.rodrigmatrix.weatheryou.core.extensions.getHourWithMinutesString
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.wearos.R
-import com.rodrigmatrix.weatheryou.wearos.presentation.components.CurvedText
 import com.rodrigmatrix.weatheryou.wearos.presentation.home.viewmodel.HomeViewModel
 import com.rodrigmatrix.weatheryou.wearos.presentation.home.viewmodel.HomeViewState
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.wear.compose.material.Chip
 import androidx.wear.compose.material.ChipDefaults
 import androidx.wear.compose.material.TimeText
 import com.rodrigmatrix.weatheryou.components.particle.WeatherAnimationsBackground
+import com.rodrigmatrix.weatheryou.domain.model.WeatherCondition
+import com.rodrigmatrix.weatheryou.wearos.presentation.components.WeatherIcon
 import com.rodrigmatrix.weatheryou.wearos.presentation.components.pager.PagerScreen
+import com.rodrigmatrix.weatheryou.wearos.presentation.home.viewmodel.HomePage
+import com.rodrigmatrix.weatheryou.wearos.presentation.home.viewmodel.HomeViewEffect
+import com.rodrigmatrix.weatheryou.wearos.presentation.navigation.WeatherYouNavigation
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -104,17 +103,34 @@ fun HomeScreen(
     ),
     navController: NavController,
 ) {
-    val viewState by viewModel.viewState.collectAsState()
+    val viewState by viewModel.viewState.collectAsStateWithLifecycle()
+    val pagerState = rememberPagerState(initialPage = 1) {
+        viewState.pages.size
+    }
     HomeScreen(
         viewState = viewState,
         locationPermissionState = locationPermissionState,
-        onRefreshLocation = viewModel::loadLocation,
+        pagerState = pagerState,
+        onRefreshLocation = viewModel::fetchLocations,
         onAddLocationChipClicked = {
-            navController.navigate("add_location")
+            navController.navigate(WeatherYouNavigation.AddLocation.route)
         },
         onSettingsChipClicked = {
         },
+        onEditLocationsChipClicked = {
+            navController.navigate(WeatherYouNavigation.EditLocations.route)
+        }
     )
+
+    LaunchedEffect(Unit) {
+        viewModel.viewEffect.collect { viewEffect ->
+            when (viewEffect) {
+                is HomeViewEffect.ScrollPager -> {
+                    pagerState.scrollToPage(viewEffect.page)
+                }
+            }
+        }
+    }
 }
 
 @OptIn(ExperimentalPermissionsApi::class)
@@ -122,41 +138,47 @@ fun HomeScreen(
 fun HomeScreen(
     viewState: HomeViewState,
     locationPermissionState: MultiplePermissionsState,
+    pagerState: PagerState,
     onRefreshLocation: () -> Unit,
     onAddLocationChipClicked: () -> Unit,
     onSettingsChipClicked: () -> Unit,
+    onEditLocationsChipClicked: () -> Unit,
 ) {
-    val pagerState = rememberPagerState { viewState.weatherLocations.size + 1 }
     when {
         locationPermissionState.allPermissionsGranted.not() -> {
             RequestLocationPermission(locationPermissionState, onRefreshLocation)
-            return
         }
         viewState.isLoading -> {
             Loading()
-            return
         }
         viewState.error != null -> {
             Error(
                 error = viewState.error,
                 onRefreshLocation = onRefreshLocation
             )
-            return
         }
-        viewState.weatherLocations.isNotEmpty() -> {
+        else -> {
             PagerScreen(
                 state = pagerState,
                 timeText = {
                     TimeText()
                 }
             ) { page ->
-                if (page == 0) {
-                    HomeSettings(
-                        onAddLocationChipClicked = onAddLocationChipClicked,
-                        onSettingsChipClicked = onSettingsChipClicked,
-                    )
-                } else {
-                    WeatherContent(viewState.weatherLocations[page - 1])
+                val pageItem = viewState.pages[page]
+                when (pageItem) {
+                    HomePage.EmptyState -> {
+                        EmptyState()
+                    }
+                    HomePage.Settings -> {
+                        HomeSettings(
+                            onAddLocationChipClicked = onAddLocationChipClicked,
+                            onSettingsChipClicked = onSettingsChipClicked,
+                            onEditLocationsChipClicked = onEditLocationsChipClicked,
+                        )
+                    }
+                    is HomePage.Weather -> {
+                        WeatherContent(pageItem.weatherLocation)
+                    }
                 }
             }
         }
@@ -166,6 +188,7 @@ fun HomeScreen(
 @Composable
 fun HomeSettings(
     onAddLocationChipClicked: () -> Unit,
+    onEditLocationsChipClicked: () -> Unit,
     onSettingsChipClicked: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -199,29 +222,7 @@ fun HomeSettings(
         }
         item {
             Chip(
-                onClick = {},
-                colors = ChipDefaults.secondaryChipColors(),
-                label = {
-                    Text(
-                        text = "Settings",
-                        maxLines = 3, overflow = TextOverflow.Ellipsis
-                    )
-                },
-                icon = {
-                    Icon(
-                        painter = painterResource(id = com.rodrigmatrix.weatheryou.weathericons.R.drawable.ic_settings),
-                        contentDescription = "settings",
-                        modifier = Modifier
-                            .size(ChipDefaults.IconSize)
-                            .wrapContentSize(align = Alignment.Center),
-                    )
-                },
-                modifier = Modifier.fillMaxWidth(),
-            )
-        }
-        item {
-            Chip(
-                onClick = {},
+                onClick = onEditLocationsChipClicked,
                 colors = ChipDefaults.secondaryChipColors(),
                 label = {
                     Text(
@@ -233,6 +234,28 @@ fun HomeSettings(
                     Icon(
                         painter = painterResource(id = com.rodrigmatrix.weatheryou.weathericons.R.drawable.ic_edit_location),
                         contentDescription = "reorder",
+                        modifier = Modifier
+                            .size(ChipDefaults.IconSize)
+                            .wrapContentSize(align = Alignment.Center),
+                    )
+                },
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
+        item {
+            Chip(
+                onClick = onSettingsChipClicked,
+                colors = ChipDefaults.secondaryChipColors(),
+                label = {
+                    Text(
+                        text = "Settings",
+                        maxLines = 3, overflow = TextOverflow.Ellipsis
+                    )
+                },
+                icon = {
+                    Icon(
+                        painter = painterResource(id = com.rodrigmatrix.weatheryou.weathericons.R.drawable.ic_settings),
+                        contentDescription = "settings",
                         modifier = Modifier
                             .size(ChipDefaults.IconSize)
                             .wrapContentSize(align = Alignment.Center),
@@ -286,6 +309,24 @@ private fun Error(
     }
 }
 
+@Composable
+fun EmptyState(
+    modifier: Modifier = Modifier,
+) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Spacer(Modifier.height(16.dp))
+        WeatherIcon(
+            weatherCondition = WeatherCondition.MostlyClear,
+            isDaylight = true,
+            modifier = Modifier.size(48.dp)
+        )
+        Text(
+            text = "No locations found. Please add locations scrolling to the left.",
+            textAlign = TextAlign.Center,
+        )
+    }
+}
+
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun WeatherContent(
@@ -297,12 +338,6 @@ fun WeatherContent(
     val scrollState = rememberScalingLazyListState()
     val coroutineScope = rememberCoroutineScope()
     Scaffold(
-        timeText = {
-            CurvedText(
-                text = weatherLocation.currentTime.getHourWithMinutesString(context),
-                style = MaterialTheme.typography.caption2
-            )
-        },
         positionIndicator = {
             PositionIndicator(scalingLazyListState = scrollState)
         }

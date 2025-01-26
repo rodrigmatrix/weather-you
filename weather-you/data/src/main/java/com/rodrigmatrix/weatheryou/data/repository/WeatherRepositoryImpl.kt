@@ -241,14 +241,17 @@ class WeatherRepositoryImpl(
                     it?.toWeatherLocation(id= -1, orderIndex = -1)
                 }
             }
-            combine(
-                locations.map { location ->
-                    weatherLocalDataSource.getWeather(location.latitude, location.longitude).mapNotNull {
-                        it?.toWeatherLocation(id = location.id, orderIndex = location.orderIndex)
-                    }
-                } + if (currentLocation != null) listOf(currentLocation) else listOf()
-            ) {
-                it.asList()
+            val locationsFlow = locations.map { location ->
+                weatherLocalDataSource.getWeather(location.latitude, location.longitude).mapNotNull {
+                    it?.toWeatherLocation(id = location.id, orderIndex = location.orderIndex)
+                }
+            } + if (currentLocation != null) listOf(currentLocation) else listOf()
+            if (locationsFlow.isEmpty()) {
+                flowOf(emptyList())
+            } else {
+                combine(locationsFlow) {
+                    it.asList()
+                }
             }
         }
     }
@@ -329,10 +332,14 @@ class WeatherRepositoryImpl(
         widgetId: String = "",
         hasLocationPermission: Boolean,
     ): WeatherLocation? {
-        val currentLocation = getCurrentLocation(
-            forceUpdate = forceUpdate,
-            hasLocationPermission = hasLocationPermission,
-        ) ?: return null
+        val currentLocation = try {
+            getCurrentLocation(
+                forceUpdate = forceUpdate,
+                hasLocationPermission = hasLocationPermission,
+            )
+        } catch (_: Exception) {
+            null
+        } ?: return null
         val currentLocationData = weatherLocalDataSource.getCurrentLocationWeather()
             .firstOrNull()?.toWeatherLocation(
                 id = -1,

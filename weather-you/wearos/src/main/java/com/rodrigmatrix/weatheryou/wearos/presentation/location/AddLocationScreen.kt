@@ -48,6 +48,7 @@ import androidx.wear.compose.material.CircularProgressIndicator
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.dialog.Confirmation
 import com.rodrigmatrix.weatheryou.wearos.presentation.components.ErrorDialog
+import com.rodrigmatrix.weatheryou.wearos.presentation.navigation.WeatherYouNavigation
 
 @Composable
 fun AddLocationScreen(
@@ -62,10 +63,10 @@ fun AddLocationScreen(
     AddLocationScreen(
         viewState = viewState,
         onVoiceSearchClicked = {
-            navController.navigate("search_location")
+            navController.navigate(WeatherYouNavigation.SearchLocation.route)
         },
         onTypeLocationClicked = {
-            navController.navigate("search_location")
+            navController.navigate(WeatherYouNavigation.SearchLocation.route)
         },
         onAddFamousLocationClicked = {
             viewModel.addFamousLocation(it, context)
