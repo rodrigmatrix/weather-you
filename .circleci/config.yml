@@ -8,6 +8,7 @@ jobs:
     executor:
       name: android/android_machine
       resource-class: medium  # Adjust resource class as needed
+      tag: default
     steps:
       - checkout
 
@@ -55,6 +56,7 @@ jobs:
     executor:
       name: android/android_machine
       resource-class: medium  # Adjust resource class as needed
+      tag: default
     steps:
       - checkout
 
