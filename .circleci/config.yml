@@ -9,18 +9,15 @@ jobs:
       name: android/android_machine
       resource_class: medium  # Adjust resource class as needed
       tag: default
+    working_directory: ~/project/weather-you  # Set the working directory
     steps:
-      - checkout
-
-      # Change directory to weather-you
-      - run:
-          name: Change directory to weather-you
-          command: cd weather-you
+      - checkout:
+          path: ~/project  # Checkout the repository into the ~/project directory
 
       # Restore Gradle cache using CircleCI's built-in caching
       - restore_cache:
           keys:
-            - gradle-cache-{{ checksum "build.gradle" }}
+            - gradle-cache-{{ checksum "weather-you/build.gradle" }}  # Updated path to build.gradle
 
       # Load .env file and export variables
       - run:
@@ -54,26 +51,23 @@ jobs:
       # Save Gradle cache using CircleCI's built-in caching
       - save_cache:
           paths:
-            - ~/.gradle
-          key: gradle-cache-{{ checksum "build.gradle" }}
+            - ~/project/weather-you/.gradle  # Updated path to .gradle directory
+          key: gradle-cache-{{ checksum "weather-you/build.gradle" }}  # Updated path to build.gradle
 
   build-and-upload-to-artifacts:
     executor:
       name: android/android_machine
       resource_class: medium  # Adjust resource class as needed
       tag: default
+    working_directory: ~/project/weather-you  # Set the working directory
     steps:
-      - checkout
-
-      # Change directory to weather-you
-      - run:
-          name: Change directory to weather-you
-          command: cd weather-you
+      - checkout:
+          path: ~/project  # Checkout the repository into the ~/project directory
 
       # Restore Gradle cache using CircleCI's built-in caching
       - restore_cache:
           keys:
-            - gradle-cache-{{ checksum "build.gradle" }}
+            - gradle-cache-{{ checksum "weather-you/build.gradle" }}  # Updated path to build.gradle
 
       # Load .env file and export variables
       - run:
@@ -99,8 +93,8 @@ jobs:
       # Save Gradle cache using CircleCI's built-in caching
       - save_cache:
           paths:
-            - ~/.gradle
-          key: gradle-cache-{{ checksum "build.gradle" }}
+            - ~/project/weather-you/.gradle  # Updated path to .gradle directory
+          key: gradle-cache-{{ checksum "weather-you/build.gradle" }}  # Updated path to build.gradle
 
 workflows:
   version: 2
