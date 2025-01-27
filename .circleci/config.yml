@@ -7,7 +7,7 @@ jobs:
   build-and-upload-to-play:
     executor:
       name: android/android_machine
-      resource-class: medium  # Adjust resource class as needed
+      resource_class: medium  # Adjust resource class as needed
       tag: default
     steps:
       - checkout
@@ -55,7 +55,7 @@ jobs:
   build-and-upload-to-artifacts:
     executor:
       name: android/android_machine
-      resource-class: medium  # Adjust resource class as needed
+      resource_class: medium  # Adjust resource class as needed
       tag: default
     steps:
       - checkout
