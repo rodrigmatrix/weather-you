@@ -1,39 +1,80 @@
 version: 2.1
 
 orbs:
-  android: circleci/android@3.0.2  # Import the Android orb
+  android: circleci/android@2.0.0
 
 jobs:
-  generate-phone-downloadable-apk:
-    docker:
-      - image: cimg/android:2024.11  # Use an Android Docker image
-    working_directory: ~/project/weather-you
+  build-and-upload-to-play:
+    executor: android/android
     steps:
-      - checkout:
-          path: ~/project
-      - run:
-          name: Install Dependencies
-          command: |
-            sudo apt-get update
-            sudo apt-get install -y jq
+      - checkout
+      - android/restore-build-cache
 
+      # Load .env file and export variables
       - run:
-          name: Process .env file variables
-          command: echo "export $(grep -v '^#' .env | xargs)" >> $BASH_ENV
-      - run:
-          name: Build app
-          command: ./gradlew build -x lint
-      - run:
-          name: Archive APK
+          name: Load .env file
           command: |
-            mkdir -p ~/circleci-artifacts
-            cp app/build/outputs/apk/debug/app-debug.apk ~/circleci-artifacts/
+            if [ -f .env ]; then
+              export $(grep -v '^#' .env | xargs)
+            fi
+
+      # Build .aab files
+      - android/build:
+          build-command: ./gradlew :app:bundleRelease :tv:bundleRelease
+
+      # Upload to Google Play Console
+      - android/upload-to-play-store:
+          service-account-key: $GOOGLE_PLAY_KEY
+          package-name: com.rodrigmatrix.weatheryou
+          track: internal
+          release-files: app/build/outputs/bundle/release/app-release.aab,tv/build/outputs/bundle/release/tv-release.aab
+
+      - android/save-build-cache
+
+  build-and-upload-to-artifacts:
+    executor: android/android
+    steps:
+      - checkout
+      - android/restore-build-cache
+
+      # Load .env file and export variables
+      - run:
+          name: Load .env file
+          command: |
+            if [ -f .env ]; then
+              export $(grep -v '^#' .env | xargs)
+            fi
+
+      # Build .aab files
+      - android/build:
+          build-command: ./gradlew :app:bundleRelease :tv:bundleRelease
+
+      # Upload .aab files to CircleCI artifacts
       - store_artifacts:
-          path: ~/circleci-artifacts
-          destination: apk
+          path: app/build/outputs/apk/release/app-release.apk
+          destination: app-release.apk
+      - store_artifacts:
+          path: tv/build/outputs/apk/release/tv-release.apk
+          destination: tv-release.apk
+
+      - android/save-build-cache
 
 workflows:
-  version: 1
-  generate-phone-downloadable-apk-workflow:
+  version: 2
+  upload-to-play:
     jobs:
-      - generate-phone-downloadable-apk
+      - build-and-upload-to-play:
+          filters:
+            branches:
+              only: 
+                - main
+                - dev
+
+  upload-to-artifacts:
+    jobs:
+      - build-and-upload-to-artifacts:
+          filters:
+            branches:
+              ignore: 
+                - main
+                - dev
