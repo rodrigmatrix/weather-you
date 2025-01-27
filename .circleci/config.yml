@@ -6,7 +6,7 @@ orbs:
 jobs:
   build-and-upload-to-play:
     executor:
-      name: android/android
+      name: android/android_machine
       resource-class: medium  # Adjust resource class as needed
     steps:
       - checkout
@@ -53,7 +53,7 @@ jobs:
 
   build-and-upload-to-artifacts:
     executor:
-      name: android/android
+      name: android/android_machine
       resource-class: medium  # Adjust resource class as needed
     steps:
       - checkout
