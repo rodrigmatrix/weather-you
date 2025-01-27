@@ -1,14 +1,16 @@
 version: 2.1
 
 orbs:
-  android: circleci/android@2.0.0
+  android: circleci/android@3.0.0  # Use the latest version of the Android orb
 
 jobs:
   build-and-upload-to-play:
-    executor: android/android
+    executor:
+      name: android/android
+      resource-class: medium  # Adjust resource class as needed
     steps:
       - checkout
-      - android/restore-build-cache
+      - android/restore-gradle-cache  # Restore Gradle cache
 
       # Load .env file and export variables
       - run:
@@ -18,25 +20,47 @@ jobs:
               export $(grep -v '^#' .env | xargs)
             fi
 
+      # Install gcloud CLI
+      - run:
+          name: Install gcloud CLI
+          command: |
+            echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+            sudo apt-get install apt-transport-https ca-certificates gnupg -y
+            curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
+            sudo apt-get update && sudo apt-get install google-cloud-sdk -y
+
+      # Authenticate with Google Cloud using the service account key
+      - run:
+          name: Authenticate with Google Cloud
+          command: |
+            echo $GCLOUD_SERVICE_ACCOUNT_KEY | base64 --decode > /tmp/gcloud-service-key.json
+            gcloud auth activate-service-account --key-file=/tmp/gcloud-service-key.json
+
       # Build .aab files
       - run:
           name: Build .aab files
           command: ./gradlew :app:bundleRelease :tv:bundleRelease
 
       # Upload .aab files to Google Play Console
-      - android/upload-to-play-store:
-          service-account-key: $GOOGLE_PLAY_KEY
-          package-name: com.rodrigmatrix.weatheryou
-          track: internal
-          release-files: app/build/outputs/bundle/release/app-release.aab,tv/build/outputs/bundle/release/tv-release.aab
+      - run:
+          name: Upload .aab files to Google Play Console
+          command: |
+            gcloud config set project $GOOGLE_PLAY_KEY
+            gcloud firebase app distribution apps list --project=$GOOGLE_PLAY_KEY
+            gcloud firebase app distribution releases upload \
+              --app <your-app-id> \
+              --release-notes-file <path-to-release-notes> \
+              app/build/outputs/bundle/release/app-release.aab
 
-      - android/save-build-cache
+      - android/save-gradle-cache  # Save Gradle cache
 
   build-and-upload-to-artifacts:
-    executor: android/android
+    executor:
+      name: android/android
+      resource-class: medium  # Adjust resource class as needed
     steps:
       - checkout
-      - android/restore-build-cache
+      - android/restore-gradle-cache  # Restore Gradle cache
 
       # Load .env file and export variables
       - run:
@@ -59,7 +83,7 @@ jobs:
           path: tv/build/outputs/apk/release/tv-release.apk
           destination: tv-release.apk
 
-      - android/save-build-cache
+      - android/save-gradle-cache  # Save Gradle cache
 
 workflows:
   version: 2
