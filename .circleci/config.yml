@@ -11,6 +11,10 @@ jobs:
       tag: default
     steps:
       - checkout
+      - run:
+        name: Checkout project
+        command: |
+          cd weather-you
 
       # Restore Gradle cache using CircleCI's built-in caching
       - restore_cache:
