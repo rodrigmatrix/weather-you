@@ -14,6 +14,11 @@ jobs:
       - checkout:
           path: ~/project  # Checkout the repository into the ~/project directory
 
+      - run:
+        name: Print Gradle and AGP versions
+        command: |
+          ./gradlew --version
+
       # Restore Gradle cache using CircleCI's built-in caching
       - restore_cache:
           keys:
