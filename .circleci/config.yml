@@ -19,10 +19,11 @@ jobs:
             fi
 
       # Build .aab files
-      - android/build:
-          build-command: ./gradlew :app:bundleRelease :tv:bundleRelease
+      - run:
+          name: Build .aab files
+          command: ./gradlew :app:bundleRelease :tv:bundleRelease
 
-      # Upload to Google Play Console
+      # Upload .aab files to Google Play Console
       - android/upload-to-play-store:
           service-account-key: $GOOGLE_PLAY_KEY
           package-name: com.rodrigmatrix.weatheryou
@@ -45,11 +46,12 @@ jobs:
               export $(grep -v '^#' .env | xargs)
             fi
 
-      # Build .aab files
-      - android/build:
-          build-command: ./gradlew :app:bundleRelease :tv:bundleRelease
+      # Build .apk files
+      - run:
+          name: Build .apk files
+          command: ./gradlew :app:assembleRelease :tv:assembleRelease
 
-      # Upload .aab files to CircleCI artifacts
+      # Upload .apk files to CircleCI artifacts
       - store_artifacts:
           path: app/build/outputs/apk/release/app-release.apk
           destination: app-release.apk
