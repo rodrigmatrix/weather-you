@@ -15,9 +15,9 @@ jobs:
           path: ~/project  # Checkout the repository into the ~/project directory
 
       - run:
-          name: Print Gradle and AGP versions
+          name: Decode Keystore File
           command: |
-            ./gradlew --version
+            echo $RELEASE_BASE64_KEYSTORE | base64 --decode > keystore.properties
 
       # Restore Gradle cache using CircleCI's built-in caching
       - restore_cache:
