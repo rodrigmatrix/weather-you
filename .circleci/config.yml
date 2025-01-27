@@ -17,7 +17,7 @@ jobs:
       - run:
           name: Decode Keystore File
           command: |
-            echo $RELEASE_BASE64_KEYSTORE | base64 --decode > keystore.properties
+            echo $BASE64_KEYSTORE_PROPERTIES | base64 --decode > keystore.properties
 
       # Restore Gradle cache using CircleCI's built-in caching
       - restore_cache:
