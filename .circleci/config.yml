@@ -11,10 +11,11 @@ jobs:
       tag: default
     steps:
       - checkout
+
+      # Change directory to weather-you
       - run:
-        name: Checkout project
-        command: |
-          cd weather-you
+          name: Change directory to weather-you
+          command: cd weather-you
 
       # Restore Gradle cache using CircleCI's built-in caching
       - restore_cache:
@@ -63,6 +64,11 @@ jobs:
       tag: default
     steps:
       - checkout
+
+      # Change directory to weather-you
+      - run:
+          name: Change directory to weather-you
+          command: cd weather-you
 
       # Restore Gradle cache using CircleCI's built-in caching
       - restore_cache:
