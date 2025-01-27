@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">WeatherYou</string>
+    <string name="app_name" translatable="false">Weather You</string>
     <string name="current_location_not_found">Couldn\'t retrieve your current location</string>
     <string name="generic_error">Something went wrong. Try again later</string>
     <string name="try_again">Try again</string>
@@ -14,5 +14,8 @@
     <string name="very_high">Very High</string>
     <string name="uv_index">UV Index</string>
     <string name="no_internet_connect">No internet connection available</string>
-    <string name="day_weather_complication_label">Day Weather</string>
+    <string name="day_weather_complication_label">Current Weather</string>
+    <string name="uv_index_complication_label">UV Index</string>
+    <string name="precipitation_chance_complication_label">Precipitation Chance</string>
+
 </resources>

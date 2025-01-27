@@ -33,6 +33,8 @@ import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.ListHeader
 import androidx.wear.compose.material.MaterialTheme
+import androidx.wear.compose.material.Scaffold
+import androidx.wear.compose.material.TimeText
 import androidx.wear.compose.material.dialog.Alert
 import org.koin.androidx.compose.getViewModel
 
@@ -89,24 +91,28 @@ fun EditLocationsScreen(
     onDeleteClicked: (WeatherLocation) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    ScalingLazyColumn(
-        modifier = modifier,
+    Scaffold(
+        timeText = { TimeText() }
     ) {
-        item {
-            ListHeader {
-                Text("Manage Locations")
-            }
-        }
-        if (viewState.weatherLocations.isEmpty()) {
+        ScalingLazyColumn(
+            modifier = modifier,
+        ) {
             item {
-                Text("No Locations Found")
+                ListHeader {
+                    Text("Manage Locations")
+                }
             }
-        } else {
-            items(viewState.weatherLocations) { item ->
-                EditLocationItem(
-                    weatherLocation = item,
-                    onDeleteClicked = onDeleteClicked,
-                )
+            if (viewState.weatherLocations.isEmpty()) {
+                item {
+                    Text("No Locations Found")
+                }
+            } else {
+                items(viewState.weatherLocations) { item ->
+                    EditLocationItem(
+                        weatherLocation = item,
+                        onDeleteClicked = onDeleteClicked,
+                    )
+                }
             }
         }
     }

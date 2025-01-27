@@ -110,18 +110,7 @@ private fun UvIndexBar(
                 .clip(RoundedCornerShape(24.dp))
                 .background(
                     brush = Brush.horizontalGradient(
-                        colors = listOf(
-                            level_1_uv_index_color,
-                            level_2_uv_index_color,
-                            level_3_uv_index_color,
-                            level_4_uv_index_color,
-                            level_5_uv_index_color,
-                            level_6_uv_index_color,
-                            level_7_uv_index_color,
-                            level_8_uv_index_color,
-                            level_9_uv_index_color,
-                            level_10_uv_index_color
-                        )
+                        colors = getUvIndexGradientList()
                     )
                 )
                 .constrainAs(uvBar) {
@@ -151,6 +140,21 @@ private fun UvIndexBar(
                 }
         )
     }
+}
+
+fun getUvIndexGradientList(): List<Color> {
+    return listOf(
+        level_1_uv_index_color,
+        level_2_uv_index_color,
+        level_3_uv_index_color,
+        level_4_uv_index_color,
+        level_5_uv_index_color,
+        level_6_uv_index_color,
+        level_7_uv_index_color,
+        level_8_uv_index_color,
+        level_9_uv_index_color,
+        level_10_uv_index_color
+    )
 }
 
 @Preview
