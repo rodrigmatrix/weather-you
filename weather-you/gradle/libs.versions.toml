@@ -1,5 +1,4 @@
 [versions]
-composeCharts = "0.1.0-local-release"
 desugar_jdk_libs = "2.1.4"
 firebaseCrashlyticsGradle = "3.0.2"
 googleServices = "4.4.2"
@@ -67,7 +66,6 @@ androidx-watchface = { module = "androidx.wear.watchface:watchface", version.ref
 androidx-watchface-complications-rendering = { module = "androidx.wear.watchface:watchface-complications-rendering", version.ref = "wearWatchface" }
 androidx-watchface-editor = { module = "androidx.wear.watchface:watchface-editor", version.ref = "wearWatchface" }
 androidx-watchface-complications-data-source-ktx = { module = "androidx.wear.watchface:watchface-complications-data-source-ktx", version.ref = "wearWatchface" }
-compose-charts = { module = "io.github.ehsannarmani:compose-charts", version.ref = "composeCharts" }
 desugar_jdk_libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar_jdk_libs" }
 firebase-crashlytics-gradle = { module = "com.google.firebase:firebase-crashlytics-gradle", version.ref = "firebaseCrashlyticsGradle" }
 google-services = { module = "com.google.gms:google-services", version.ref = "googleServices" }
