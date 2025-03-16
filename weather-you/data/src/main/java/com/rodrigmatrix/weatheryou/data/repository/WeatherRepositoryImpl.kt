@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.app.ActivityCompat
-import com.rodrigmatrix.weatheryou.core.extensions.catch
 import com.rodrigmatrix.weatheryou.data.local.UserLocationDataSource
 import com.rodrigmatrix.weatheryou.data.local.WeatherLocalDataSource
 import com.rodrigmatrix.weatheryou.data.local.model.WeatherLocationEntity
