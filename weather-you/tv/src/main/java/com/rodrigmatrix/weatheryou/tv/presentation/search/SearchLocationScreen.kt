@@ -80,7 +80,7 @@ internal fun SearchLocationScreen(
         viewState,
         onQueryChanged = viewModel::onQueryChanged,
         onLocationClick = { location ->
-            viewModel.addLocation(location, context as Activity, false)
+            viewModel.addLocation(location, context as Activity, showAds = false)
         },
         onClearQuery = {
             if (viewState.searchText.isNotEmpty()) {
@@ -88,7 +88,7 @@ internal fun SearchLocationScreen(
             }
         },
         onFamousLocationClicked = { city ->
-            viewModel.addFamousLocation(city, context as Activity, false)
+            viewModel.addFamousLocation(city, context as Activity, showAds = false)
         },
         onSearchButtonClicked = viewModel::search
     )

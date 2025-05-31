@@ -43,7 +43,7 @@ class AddLocationViewModel(
         setState { it.copy(isLoading = true) }
         adsManager.showRewardedInterstitial(
             activity = activity,
-            showAd = false,
+            showAd = showAds,
             flagId = "location_added_rewarded_interstitial_ad_id",
             onRewardGranted = {
                 viewModelScope.launch {
@@ -72,7 +72,7 @@ class AddLocationViewModel(
         setState { it.copy(isLoading = true) }
         adsManager.showRewardedInterstitial(
             activity = activity,
-            showAd = false,
+            showAd = true,
             flagId = "location_added_rewarded_interstitial_ad_id",
             onRewardGranted = {
                 viewModelScope.launch {

@@ -40,7 +40,7 @@ val LocalWeatherYouConditionsScaffoldState = compositionLocalOf<SheetState?> {
 fun WeatherYouAppState(
     appSettings: AppSettings,
     currentDestination: String,
-    conditionsScaffoldState: SheetState,
+    conditionsScaffoldState: SheetState?,
     content: @Composable () -> Unit,
 ) {
     CompositionLocalProvider(

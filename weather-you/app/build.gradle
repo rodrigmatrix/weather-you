@@ -4,8 +4,6 @@ plugins {
     id 'kotlin-kapt'
     id 'kotlin-parcelize'
     id 'kotlinx-serialization'
-    id 'com.google.gms.google-services'
-    id 'com.google.firebase.crashlytics'
     alias(libs.plugins.compose.compiler)
 }
 
@@ -61,6 +59,18 @@ android {
             minifyEnabled false
             debuggable true
             applicationIdSuffix ".debug"
+        }
+    }
+    flavorDimensions "version"
+    productFlavors {
+        googlePlay {
+            dimension "version"
+            apply plugin: 'com.google.gms.google-services'
+            apply plugin: 'com.google.firebase.crashlytics'
+        }
+        fdroid {
+            dimension "version"
+            versionNameSuffix "-fdroid"
         }
     }
     compileOptions {
