@@ -11,10 +11,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.glance.ColorFilter
 import androidx.glance.GlanceModifier
-import androidx.glance.GlanceTheme
-import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
 import androidx.glance.action.Action
@@ -53,6 +50,10 @@ import com.rodrigmatrix.weatheryou.widgets.R
 import com.rodrigmatrix.weatheryou.widgets.weather.utils.gradientBackground
 import java.util.Calendar
 import kotlin.math.absoluteValue
+import androidx.glance.ColorFilter
+import androidx.glance.Image
+import androidx.glance.GlanceTheme
+import androidx.core.graphics.createBitmap
 
 @Composable
 fun AnimatedMediumLargeWidget(
@@ -252,7 +253,7 @@ private fun DaysList(
         LazyColumn(
             modifier = modifier,
         ) {
-            itemsIndexed(daysList.take(daysCount)) { index, weatherDay ->
+            itemsIndexed(daysList.drop(1).take(daysCount)) { index, weatherDay ->
                 Column {
                     DayRow(
                         day = weatherDay,
@@ -292,8 +293,11 @@ private fun DayRow(
             style = TextStyle(
                 color = ColorProvider(Color.White),
                 fontSize = 18.sp,
-            )
+            ),
+            modifier = GlanceModifier
         )
+
+        Spacer(modifier = GlanceModifier.width(8.dp))
 
         TemperatureGlanceBar(
             minWeekTemperature = minWeekTemperature,
@@ -303,11 +307,13 @@ private fun DayRow(
             hours = day.hours,
             modifier = GlanceModifier.defaultWeight()
         )
+
         Image(
             provider = ImageProvider(day.weatherCondition.getStaticIcon(isDaylight = true)),
             contentDescription = null,
             modifier = GlanceModifier.size(24.dp)
         )
+        Spacer(modifier = GlanceModifier.width(4.dp)) // Added Spacer for visual separation
         Text(
             text = day.maxTemperature.temperatureString(),
             style = TextStyle(
@@ -359,12 +365,12 @@ private fun TemperatureGlanceBar(
     minDayTemperature: Double,
     maxDayTemperature: Double,
     hours: List<WeatherHour>,
-    modifier: GlanceModifier = GlanceModifier,
+    modifier: GlanceModifier = GlanceModifier, // This is the modifier for the outer Box
 ) {
     Box(
         modifier
             .cornerRadius(16.dp)
-            .padding(horizontal = 8.dp)
+            .padding(horizontal = 8.dp) // Outer padding for the bar itself
     ) {
 
         val gradientList = getTemperatureGradient(
@@ -372,12 +378,12 @@ private fun TemperatureGlanceBar(
             maxDayTemperature = maxDayTemperature,
             hours = hours,
         ).map { it.toArgb() }
-        val width = 290f
-        val height = 8f
-        val valueIncrease = ((width / (maxWeekTemperature - minWeekTemperature))).toFloat()
+        val bitmapWidth = 290f // Original bitmap drawing width
+        val bitmapHeight = 8f
+        val valueIncrease = ((bitmapWidth / (maxWeekTemperature - minWeekTemperature))).toFloat()
         val startPosition = valueIncrease * (minWeekTemperature - minDayTemperature).absoluteValue
-        val endPosition = ((width / (maxWeekTemperature - minWeekTemperature)) * (maxDayTemperature - minWeekTemperature))
-        val bitmap = Bitmap.createBitmap(width.toInt(), height.toInt(), Bitmap.Config.ARGB_8888)
+        val endPosition = ((bitmapWidth / (maxWeekTemperature - minWeekTemperature)) * (maxDayTemperature - minWeekTemperature))
+        val bitmap = createBitmap(bitmapWidth.toInt(), bitmapHeight.toInt())
         val canvas = Canvas(bitmap)
         val backgroundColor = Color.Black.copy(alpha = 0.1f)
         val backgroundPaint = Paint().apply {
@@ -387,20 +393,20 @@ private fun TemperatureGlanceBar(
             color = backgroundColor.toArgb()
         }
         val gradientPoint = Paint().apply {
-            strokeWidth = height
+            strokeWidth = bitmapHeight
             style = Paint.Style.STROKE
             strokeCap = Paint.Cap.ROUND
-            shader = LinearGradient(startPosition.toFloat(), height, width, height, gradientList.toIntArray(), null, Shader.TileMode.MIRROR)
+            shader = LinearGradient(startPosition.toFloat(), bitmapHeight, bitmapWidth, bitmapHeight, gradientList.toIntArray(), null, Shader.TileMode.MIRROR)
         }
         canvas.apply {
-            drawLine(0f, height, width, height, backgroundPaint)
+            drawLine(0f, bitmapHeight, bitmapWidth, bitmapHeight, backgroundPaint)
             drawLine(startPosition.toFloat(), 4f, endPosition.toFloat(), 4f, gradientPoint)
         }
         Image(
             modifier = GlanceModifier
-                .cornerRadius(16.dp)
-                .height(height.dp)
-                .width(width.dp),
+                .fillMaxWidth() // Changed from .width(width.dp)
+                .height(bitmapHeight.dp)
+                .cornerRadius(16.dp),
             provider = ImageProvider(bitmap),
             contentScale = ContentScale.FillBounds,
             contentDescription = null,

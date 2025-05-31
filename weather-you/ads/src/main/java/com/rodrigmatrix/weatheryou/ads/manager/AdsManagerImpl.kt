@@ -5,6 +5,8 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
+import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAd
+import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAdLoadCallback
 import com.rodrigmatrix.weatheryou.domain.repository.RemoteConfigRepository
 
 class AdsManagerImpl(
@@ -21,12 +23,12 @@ class AdsManagerImpl(
             val adRequest = AdRequest.Builder().build()
             val adId = remoteConfigRepository.getString(flagId)
 
-            RewardedAd.load(activity, adId, adRequest, object : RewardedAdLoadCallback() {
+            RewardedInterstitialAd.load(activity, adId, adRequest, object : RewardedInterstitialAdLoadCallback() {
                 override fun onAdFailedToLoad(adError: LoadAdError) {
                     onRewardGranted()
                 }
 
-                override fun onAdLoaded(ad: RewardedAd) {
+                override fun onAdLoaded(ad: RewardedInterstitialAd) {
                     ad.show(activity) { onRewardGranted() }
                 }
             })

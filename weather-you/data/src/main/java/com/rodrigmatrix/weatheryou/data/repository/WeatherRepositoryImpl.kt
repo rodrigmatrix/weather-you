@@ -230,24 +230,28 @@ class WeatherRepositoryImpl(
         return combine(
             weatherLocalDataSource.getAllLocations(),
             weatherLocalDataSource.getCurrentLocation()
-        ) { locationsList, currentLocation ->
-            locationsList to currentLocation
+        ) { locationsList, currentLocationInfo ->
+            locationsList to currentLocationInfo
         }.flatMapLatest { pair ->
             val locations = pair.first.toMutableList()
-            var currentLocation: Flow<WeatherLocation>? = null
+            var currentLocationFlow: Flow<WeatherLocation>? = null
             if (pair.second != null) {
-                currentLocation = weatherLocalDataSource.getCurrentLocationWeather().mapNotNull {
-                    it?.toWeatherLocation(id= -1, orderIndex = -1)
+                currentLocationFlow = weatherLocalDataSource.getCurrentLocationWeather().mapNotNull {
+                    it?.toWeatherLocation(id = -1, orderIndex = -1)
                 }
             }
-            combine(
-                locations.map { location ->
-                    weatherLocalDataSource.getWeather(location.latitude, location.longitude).mapNotNull {
-                        it?.toWeatherLocation(id = location.id, orderIndex = location.orderIndex)
-                    }
-                } + if (currentLocation != null) listOf(currentLocation) else listOf()
-            ) {
-                it.asList()
+            val locationDetailFlows = locations.map { location ->
+                weatherLocalDataSource.getWeather(location.latitude, location.longitude).mapNotNull {
+                    it?.toWeatherLocation(id = location.id, orderIndex = location.orderIndex)
+                }
+            } + if (currentLocationFlow != null) listOf(currentLocationFlow) else emptyList()
+
+            if (locationDetailFlows.isEmpty()) {
+                flowOf(emptyList())
+            } else {
+                combine(locationDetailFlows) {
+                    it.asList()
+                }
             }
         }
     }

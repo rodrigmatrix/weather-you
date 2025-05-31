@@ -70,7 +70,7 @@ fun AddLocationScreen(
         viewState,
         onQueryChanged = viewModel::onQueryChanged,
         onLocationClick = { location ->
-            viewModel.addLocation(location, context as Activity, showAds = false)
+            viewModel.addLocation(location, context as Activity)
         },
         onClearQuery = {
             if (viewState.searchText.isNotEmpty()) {
@@ -81,7 +81,7 @@ fun AddLocationScreen(
             }
         },
         onFamousLocationClicked = { city ->
-            viewModel.addFamousLocation(city, context as Activity, showAds = false)
+            viewModel.addFamousLocation(city, context as Activity)
         },
         onSearchButtonClicked = viewModel::search,
     )
