@@ -19,10 +19,12 @@ import kotlinx.coroutines.flow.*
 import com.rodrigmatrix.weatheryou.components.R
 import com.rodrigmatrix.weatheryou.domain.model.City
 import com.rodrigmatrix.weatheryou.domain.model.SearchAutocompleteLocation
+import com.rodrigmatrix.weatheryou.domain.usecase.GetLocationSizeUseCase
 import kotlinx.coroutines.launch
 
 class AddLocationViewModel(
     private val addLocationUseCase: AddLocationUseCase,
+    private val getLocationSizeUseCase: GetLocationSizeUseCase,
     private val getFamousLocationsUseCase: GetFamousLocationsUseCase,
     private val searchLocationUseCase: SearchLocationUseCase,
     private val firebaseCrashlytics: FirebaseCrashlytics,
@@ -59,6 +61,7 @@ class AddLocationViewModel(
                                 exception.handleError()
                             }
                             .collect {
+                                checkForReviewRequest()
                                 firebaseAnalytics.logEvent("ADDED_LOCATION", bundleOf("name" to location.name))
                                 setEffect { LocationAdded }
                             }
@@ -66,6 +69,19 @@ class AddLocationViewModel(
                 }
             }
         )
+    }
+
+    private fun checkForReviewRequest() {
+        viewModelScope.launch {
+            getLocationSizeUseCase().firstOrNull()?.let {
+                if (it >= 2) {
+                    firebaseAnalytics.logEvent("REQUEST_IN_APP_REVIEW", bundleOf(
+                        "locations" to it
+                    ))
+                    setEffect { AddLocationViewEffect.RequestInAppReview }
+                }
+            }
+        }
     }
 
     fun addFamousLocation(city: City, activity: Activity, showAds: Boolean = true) {
@@ -88,6 +104,7 @@ class AddLocationViewModel(
                             exception.handleError()
                         }
                         .collect {
+                            checkForReviewRequest()
                             firebaseAnalytics.logEvent("ADDED_FAMOUS_LOCATION", bundleOf("countryCode" to city.countryCode))
                             setEffect { LocationAdded }
                         }

@@ -2,6 +2,7 @@ package com.rodrigmatrix.weatheryou.addlocation
 
 import android.app.Activity
 import android.content.Context
+import android.content.pm.ApplicationInfo
 import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.*
@@ -29,6 +30,8 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.google.android.play.core.review.ReviewManagerFactory
+import com.google.android.play.core.review.testing.FakeReviewManager
 import com.rodrigmatrix.weatheryou.addlocation.preview.PreviewFamousCities
 import com.rodrigmatrix.weatheryou.components.SearchBar
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
@@ -63,6 +66,26 @@ fun AddLocationScreen(
 
             is AddLocationViewEffect.ShowErrorString -> {
                 context.toast(viewEffect.string)
+            }
+
+            AddLocationViewEffect.RequestInAppReview -> {
+                runCatching {
+                    val activity = context as? Activity
+                    if (activity != null) {
+                        val manager = if (0 != context.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) {
+                            FakeReviewManager(activity)
+                        } else {
+                            ReviewManagerFactory.create(activity)
+                        }
+                        val request = manager.requestReviewFlow()
+                        request.addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                val reviewInfo = task.result
+                                manager.launchReviewFlow(activity, reviewInfo)
+                            }
+                        }
+                    }
+                }
             }
         }
     }

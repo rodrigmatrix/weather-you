@@ -109,6 +109,7 @@ dependencies {
     implementation(libs.androidx.ktx)
     implementation(libs.androidx.lifecycle)
     implementation(libs.androidx.window)
+    implementation(libs.google.play.review)
 
     implementation(libs.kotlin.stdlib)
     implementation(libs.kotlin.coroutines.android)
