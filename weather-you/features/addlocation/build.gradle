@@ -75,6 +75,7 @@ dependencies {
     implementation(libs.coil)
 
     implementation(libs.lottie.compose)
+    implementation libs.google.play.review
 
     debugImplementation(libs.composeUiTooling)
     debugImplementation(libs.composeTestManifest)

@@ -1,6 +1,7 @@
 package com.rodrigmatrix.weatheryou.tv.presentation.search
 
 import android.app.Activity
+import android.content.pm.ApplicationInfo
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -34,6 +35,8 @@ import androidx.navigation.NavController
 import androidx.tv.material3.CardDefaults
 import androidx.tv.material3.Icon
 import androidx.tv.material3.Text
+import com.google.android.play.core.review.ReviewManagerFactory
+import com.google.android.play.core.review.testing.FakeReviewManager
 import com.rodrigmatrix.weatheryou.addlocation.AddLocationViewEffect
 import com.rodrigmatrix.weatheryou.addlocation.AddLocationViewModel
 import com.rodrigmatrix.weatheryou.addlocation.AddLocationViewState
@@ -73,6 +76,25 @@ internal fun SearchLocationScreen(
 
             is AddLocationViewEffect.ShowErrorString -> {
                 context.toast(viewEffect.string)
+            }
+            AddLocationViewEffect.RequestInAppReview -> {
+                runCatching {
+                    val activity = context as? Activity
+                    if (activity != null) {
+                        val manager = if (0 != context.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) {
+                            FakeReviewManager(activity)
+                        } else {
+                            ReviewManagerFactory.create(activity)
+                        }
+                        val request = manager.requestReviewFlow()
+                        request.addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                val reviewInfo = task.result
+                                manager.launchReviewFlow(activity, reviewInfo)
+                            }
+                        }
+                    }
+                }
             }
         }
     }
