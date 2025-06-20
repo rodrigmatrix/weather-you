@@ -15,14 +15,14 @@ import com.rodrigmatrix.weatheryou.tv.presentation.home.TvWeatherLocationsScreen
 import com.rodrigmatrix.weatheryou.tv.presentation.locations.TVWeatherLocationsViewModel
 import com.rodrigmatrix.weatheryou.tv.presentation.search.SearchLocationScreen
 import com.rodrigmatrix.weatheryou.tv.presentation.settings.TvSettingsScreen
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun WeatherYouTvNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    homeViewModel: HomeViewModel = getViewModel(),
+    homeViewModel: HomeViewModel = koinViewModel(),
 ) {
     NavHost(
         navController,

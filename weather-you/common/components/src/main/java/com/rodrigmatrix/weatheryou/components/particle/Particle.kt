@@ -2,6 +2,7 @@ package com.rodrigmatrix.weatheryou.components.particle
 
 import android.annotation.SuppressLint
 import android.util.Log
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -12,6 +13,7 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,10 +35,13 @@ import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.random.Random
 import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.components.R
+import com.rodrigmatrix.weatheryou.components.extensions.getGradientList
+import com.rodrigmatrix.weatheryou.components.preview.PreviewWeatherLocation
 import kotlin.math.absoluteValue
 
 @Composable
@@ -74,18 +79,6 @@ fun Clouds(
     }
 }
 
-@Preview
-@Composable
-fun CloudsPreview() {
-    Clouds(
-        tint = ColorFilter.tint(
-            Color.Black.copy(alpha = 0.2f),
-            BlendMode.SrcAtop
-        ),
-        particleAnimationIteration = 1,
-        cloudCount = 8
-    )
-}
 
 data class Particle(
     var n: Long = 0,
@@ -448,6 +441,109 @@ val starsParameters = PrecipitationsParameters(
 
 @Preview
 @Composable
-fun ParticlesPreview() {
-    Particles(iteration = 1, parameters = rainParameters)
+fun RainPreview() {
+    val infiniteTransition = rememberInfiniteTransition(label = "particleTick")
+    val particleTick by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1_000_000f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 100_000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "particleTick"
+    )
+    Box(
+        modifier = Modifier.background(
+            Brush.linearGradient(
+                PreviewWeatherLocation.getGradientList()
+            )
+        )
+    ) {
+        Particles(iteration = particleTick.toLong(), parameters = rainParameters)
+    }
+}
+
+@Preview
+@Composable
+fun SnowPreview() {
+    val infiniteTransition = rememberInfiniteTransition(label = "particleTick")
+    val particleTick by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1_000_000f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 100_000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "particleTick"
+    )
+    Box(
+        modifier = Modifier.background(
+            Brush.linearGradient(
+                PreviewWeatherLocation.getGradientList()
+            )
+        )
+    ) {
+        Particles(iteration = particleTick.toLong(), parameters = snowParameters)
+    }
+}
+
+
+@Preview
+@Composable
+fun CloudsPreview() {
+    val infiniteTransition = rememberInfiniteTransition(label = "particleTick")
+    val particleTick by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1_000_000f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 100_000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "particleTick"
+    )
+    Box(
+        modifier = Modifier.background(
+            Brush.linearGradient(
+                PreviewWeatherLocation.getGradientList()
+            )
+        )
+    ) {
+        Clouds(
+            tint = ColorFilter.tint(
+                Color.Black.copy(alpha = 0.2f),
+                BlendMode.SrcAtop
+            ),
+            particleAnimationIteration = particleTick.toLong(),
+            cloudCount = 8
+        )
+    }
+}
+
+
+@Preview
+@Composable
+fun ThunderstormPreview() {
+    val infiniteTransition = rememberInfiniteTransition(label = "particleTick")
+    val particleTick by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1_000_000f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 100_000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "particleTick"
+    )
+    Box(
+        modifier = Modifier.background(
+            Brush.linearGradient(
+                PreviewWeatherLocation.getGradientList()
+            )
+        )
+    ) {
+        Thunder(
+            particleAnimationIteration = particleTick.toLong(),
+            width = 600,
+            height = 400,
+        )
+    }
 }

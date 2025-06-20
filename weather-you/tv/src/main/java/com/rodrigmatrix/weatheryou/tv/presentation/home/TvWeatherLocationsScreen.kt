@@ -74,14 +74,14 @@ import com.rodrigmatrix.weatheryou.tv.presentation.locations.TvWeatherLocationsU
 import com.rodrigmatrix.weatheryou.tv.presentation.locations.TVWeatherLocationsViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
 internal fun TvWeatherLocationsScreen(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel,
-    conditionsViewModel: ConditionsViewModel = getViewModel(),
+    conditionsViewModel: ConditionsViewModel = koinViewModel(),
     locationPermissionState: MultiplePermissionsState = rememberMultiplePermissionsState(
         permissions = listOf(
             Manifest.permission.ACCESS_COARSE_LOCATION,

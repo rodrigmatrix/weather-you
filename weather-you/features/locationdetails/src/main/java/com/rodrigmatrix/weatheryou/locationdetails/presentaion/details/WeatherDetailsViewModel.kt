@@ -11,6 +11,7 @@ private const val EXPANDED_LIST_SIZE = 15
 private const val COLLAPSED_LIST_SIZE = 7
 
 class WeatherDetailsViewModel(
+    weatherLocation: WeatherLocation?,
     private val getAppSettingsUseCase: GetAppSettingsUseCase,
 ) : ViewModel<WeatherDetailsViewState, WeatherDetailsViewEffect>(
     WeatherDetailsViewState()
@@ -22,25 +23,17 @@ class WeatherDetailsViewModel(
                 .collect { settings ->
                     setState {
                         it.copy(
+                            weatherLocation = weatherLocation,
+                            todayWeatherHoursList = weatherLocation?.hours.orEmpty(),
+                            futureDaysList = weatherLocation
+                                ?.days
+                                ?.getFutureDaysList(it.isFutureWeatherExpanded)
+                                .orEmpty(),
                             enableThemeColorWithWeatherAnimations = settings.enableThemeColorWithWeatherAnimations,
                             enableWeatherAnimations = settings.enableWeatherAnimations,
                         )
                     }
                 }
-        }
-    }
-
-    fun setWeatherLocation(weatherLocation: WeatherLocation?) {
-        if (weatherLocation != null) {
-            setState {
-                it.copy(
-                    weatherLocation = weatherLocation,
-                    todayWeatherHoursList = weatherLocation.hours,
-                    futureDaysList = weatherLocation
-                        .days
-                        .getFutureDaysList(it.isFutureWeatherExpanded)
-                )
-            }
         }
     }
 

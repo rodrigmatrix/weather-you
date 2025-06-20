@@ -2,18 +2,25 @@ package com.rodrigmatrix.weatheryou.locationdetails.presentaion.details
 
 import android.net.Uri
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.EaseInOutCubic
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
@@ -73,9 +80,11 @@ import ir.ehsannarmani.compose_charts.models.LineProperties
 import ir.ehsannarmani.compose_charts.models.ZeroLineProperties
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 import kotlin.math.roundToInt
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @ExperimentalMaterial3Api
 @Composable
 fun WeatherDetailsScreen(
@@ -84,18 +93,25 @@ fun WeatherDetailsScreen(
     onCloseClick: () -> Unit,
     onDeleteLocationClicked: () -> Unit,
     onFullScreenModeChange: (Boolean) -> Unit,
-    viewModel: WeatherDetailsViewModel = getViewModel(),
-    conditionsViewModel: ConditionsViewModel = getViewModel(),
-    coroutineScope: CoroutineScope = rememberCoroutineScope(),
-    scaffoldState: SheetState = WeatherYouAppState.conditionsScaffoldState ?: rememberModalBottomSheetState(
-        skipPartiallyExpanded = true
-    ),
     modifier: Modifier = Modifier,
+    viewModel: WeatherDetailsViewModel = koinViewModel(key = weatherLocation?.id.toString()) {
+        parametersOf(weatherLocation)
+    },
+    conditionsViewModel: ConditionsViewModel = koinViewModel(key = "conditions_${weatherLocation?.id.toString()}"),
+    coroutineScope: CoroutineScope = rememberCoroutineScope(),
+    scrollState: ScrollState = rememberScrollState(),
+    scaffoldState: SheetState = WeatherYouAppState.conditionsScaffoldState ?: rememberModalBottomSheetState(
+        skipPartiallyExpanded = true,
+        confirmValueChange = {
+            scrollState.value == 0
+        }
+    ),
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
 ) {
     val viewState by viewModel.viewState.collectAsState()
     val conditionsViewState by conditionsViewModel.viewState.collectAsState()
 
-    viewModel.setWeatherLocation(weatherLocation)
     WeatherYouTheme(
         themeMode = if (WeatherYouTheme.themeSettings.showWeatherAnimations) {
             ThemeMode.Dark
@@ -105,50 +121,51 @@ fun WeatherDetailsScreen(
         colorMode = WeatherYouTheme.colorMode,
         themeSettings = WeatherYouTheme.themeSettings,
     ) {
-        WeatherDetailsScreen(
-            viewState = viewState,
-            isUpdating = isUpdating,
-            onExpandedButtonClick = viewModel::onFutureWeatherButtonClick,
-            onCloseClick = onCloseClick,
-            onDeleteClick = onDeleteLocationClicked,
-            onExpandDay = {
-                coroutineScope.launch {
-                    conditionsViewModel.setConditions(
-                        weatherLocation = viewState.weatherLocation!!,
-                        day = it,
-                    )
-                    scaffoldState.expand()
-                }
-            },
-            onFullScreenModeChange = {
-                viewModel.onFullScreenModeChange(it)
-                onFullScreenModeChange(it)
-            },
-            modifier = modifier,
-        )
+        with(sharedTransitionScope) {
+            WeatherDetailsScreen(
+                viewState = viewState,
+                isUpdating = isUpdating,
+                onExpandedButtonClick = viewModel::onFutureWeatherButtonClick,
+                onCloseClick = onCloseClick,
+                onDeleteClick = onDeleteLocationClicked,
+                onExpandDay = {
+                    coroutineScope.launch {
+                        conditionsViewModel.setConditions(
+                            weatherLocation = viewState.weatherLocation!!,
+                            day = it,
+                        )
+                        scrollState.scrollTo(0)
+                        scaffoldState.expand()
+                    }
+                },
+                onFullScreenModeChange = {
+                    viewModel.onFullScreenModeChange(it)
+                    onFullScreenModeChange(it)
+                },
+                modifier = modifier,
+            )
+        }
     }
 
     if (conditionsViewState.weatherLocation != null) {
-        Column {
-            Spacer(Modifier.height(20.dp))
-            ConditionsBottomSheet(
-                viewState = conditionsViewState,
-                bottomSheetState = scaffoldState,
-                onClick = {
-                    conditionsViewModel.setConditions(
-                        weatherLocation = viewState.weatherLocation!!,
-                        day = it,
-                    )
-                },
-                onTemperatureTypeChange = conditionsViewModel::onTemperatureTypeChange,
-                onDismissRequest = {
-                    coroutineScope.launch {
-                        conditionsViewModel.hideConditions()
-                        scaffoldState.hide()
-                    }
+        ConditionsBottomSheet(
+            viewState = conditionsViewState,
+            bottomSheetState = scaffoldState,
+            scrollState = scrollState,
+            onClick = {
+                conditionsViewModel.setConditions(
+                    weatherLocation = viewState.weatherLocation!!,
+                    day = it,
+                )
+            },
+            onTemperatureTypeChange = conditionsViewModel::onTemperatureTypeChange,
+            onDismissRequest = {
+                coroutineScope.launch {
+                    conditionsViewModel.hideConditions()
+                    scaffoldState.hide()
                 }
-            )
-        }
+            }
+        )
     }
 }
 
@@ -172,13 +189,6 @@ fun WeatherDetailsScreen(
         },
         modifier = modifier,
     ) { paddingValues ->
-        if (WeatherYouTheme.themeSettings.showWeatherAnimations) {
-            viewState.weatherLocation?.let {
-                WeatherAnimationsBackground(
-                    weatherLocation = viewState.weatherLocation,
-                )
-            }
-        }
         WeatherDetailsContent(
             viewState = viewState,
             isUpdating = isUpdating,
@@ -210,23 +220,17 @@ private fun WeatherDetailsContent(
         state = scrollState,
     ) {
         item {
-            SmallScreenTopAppBar(
-                title = viewState.weatherLocation?.name.orEmpty(),
-                onCloseClick = onCloseClick,
-                onDeleteButtonClick = onDeleteClick,
-                onFullScreenModeChange = onFullScreenModeChange,
-                isFullScreenMode = viewState.isFullScreenMode,
-                showDeleteButton = viewState.weatherLocation?.isCurrentLocation?.not() == true,
-            )
+            Spacer(Modifier.windowInsetsTopHeight(WindowInsets.statusBars))
         }
         if (isUpdating) {
-            item {
+            stickyHeader {
                 Text(
                     text = stringResource(R.string.updating_location),
                     style = WeatherYouTheme.typography.bodyMedium,
                     color = WeatherYouTheme.colorScheme.onBackground,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
+                        .windowInsetsTopHeight(WindowInsets.statusBars)
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp),
                 )

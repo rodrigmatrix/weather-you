@@ -49,12 +49,13 @@ import com.rodrigmatrix.weatheryou.settings.presentation.settings.model.AppColor
 import com.rodrigmatrix.weatheryou.settings.presentation.settings.model.AppThemePreferenceOption
 import com.rodrigmatrix.weatheryou.settings.presentation.settings.model.TemperaturePreferenceOption
 import com.rodrigmatrix.weatheryou.settings.presentation.settings.model.toOption
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun SettingsScreen(
-    viewModel: SettingsViewModel = getViewModel(),
+    viewModel: SettingsViewModel = koinViewModel(),
     onFetchLocations: () -> Unit,
     backgroundLocationPermissionState: PermissionState = rememberPermissionState(
         permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {

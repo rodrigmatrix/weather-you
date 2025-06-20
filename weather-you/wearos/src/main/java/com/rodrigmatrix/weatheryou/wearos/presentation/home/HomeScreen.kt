@@ -33,12 +33,12 @@ import com.rodrigmatrix.weatheryou.wearos.presentation.components.CurvedText
 import com.rodrigmatrix.weatheryou.wearos.presentation.home.viewmodel.HomeViewModel
 import com.rodrigmatrix.weatheryou.wearos.presentation.home.viewmodel.HomeViewState
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel = getViewModel(),
+    viewModel: HomeViewModel = koinViewModel(),
     backgroundLocationPermissionState: PermissionState = rememberPermissionState(
         permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             android.Manifest.permission.ACCESS_BACKGROUND_LOCATION

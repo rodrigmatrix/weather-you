@@ -58,14 +58,14 @@ import com.rodrigmatrix.weatheryou.presentation.widget.CurrentWeatherWidgetConfi
 import com.rodrigmatrix.weatheryou.widgets.weather.CurrentWeatherWidget
 import com.rodrigmatrix.weatheryou.widgets.weather.animated.CurrentAnimatedWeatherWidget
 import com.rodrigmatrix.weatheryou.worker.UpdateWidgetWeatherDataWorker
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @ExperimentalMaterial3Api
 @Composable
 fun CurrentWeatherWidgetConfigurationScreen(
     widgetId: String,
     modifier: Modifier = Modifier,
-    viewModel: CurrentWeatherWidgetConfigurationViewModel = getViewModel(),
+    viewModel: CurrentWeatherWidgetConfigurationViewModel = koinViewModel(),
     onConfigurationCancelled: () -> Unit,
     onConfigurationComplete: () -> Unit,
 ) {

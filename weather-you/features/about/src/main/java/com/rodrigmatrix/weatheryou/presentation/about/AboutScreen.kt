@@ -86,13 +86,12 @@ fun AboutScreen(
     Column(
         Modifier
             .fillMaxSize()
-            .statusBarsPadding()
-            .navigationBarsPadding()
             .background(WeatherYouTheme.colorScheme.background)
             .verticalScroll(rememberScrollState())
             .padding(bottom = 100.dp)
     ) {
         var clicks by remember { mutableIntStateOf(0) }
+        Spacer(Modifier.statusBarsPadding())
         Image(
             painter = painterResource(R.drawable.ic_about),
             contentDescription = stringResource(Strings.string.image_of_developer),

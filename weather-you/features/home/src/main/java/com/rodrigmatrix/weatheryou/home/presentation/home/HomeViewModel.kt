@@ -172,7 +172,7 @@ class HomeViewModel(
 
     fun selectLocation(weatherLocation: WeatherLocation? = null) {
         setState {
-            it.copy(selectedWeatherLocation = getSelectedLocation(weatherLocation))
+            it.copy(selectedWeatherLocation = weatherLocation)
         }
     }
 

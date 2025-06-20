@@ -6,7 +6,10 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.MaterialExpressiveTheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MotionScheme
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
@@ -20,6 +23,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun WeatherYouTheme(
     themeMode: ThemeMode = ThemeMode.System,
@@ -95,15 +99,6 @@ fun WeatherYouTheme(
         labelMedium = MaterialTheme.typography.labelMedium,
         labelSmall = MaterialTheme.typography.labelSmall,
     )
-    val view = LocalView.current
-    if (!view.isInEditMode) {
-        SideEffect {
-            (view.context as? Activity?)?.window?.apply {
-                statusBarColor = Color.Transparent.toArgb()
-                WindowCompat.getInsetsController(this, view).isAppearanceLightStatusBars = darkTheme
-            }
-        }
-    }
     CompositionLocalProvider(
         LocalWeatherYouColorScheme provides colorScheme.toWeatherYouColors(),
         LocalWeatherYouTypography provides typography,
@@ -111,8 +106,9 @@ fun WeatherYouTheme(
         LocalWeatherYouColorMode provides colorMode,
         LocalWeatherYouThemeSettingsEnabled provides themeSettings,
     ) {
-        MaterialTheme(
+        MaterialExpressiveTheme(
             colorScheme = colorScheme,
+            motionScheme = MotionScheme.expressive(),
             content = content,
         )
     }
