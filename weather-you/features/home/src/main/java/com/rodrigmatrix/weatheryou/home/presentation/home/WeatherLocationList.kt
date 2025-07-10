@@ -4,20 +4,29 @@ import android.content.res.Configuration
 import android.os.Build
 import android.view.HapticFeedbackConstants
 import android.view.View
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsTopHeight
+import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,30 +46,36 @@ import com.rodrigmatrix.weatheryou.components.theme.md_theme_dark_secondaryConta
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import sh.calvin.reorderable.ReorderableItem
 import androidx.compose.runtime.setValue
+import androidx.compose.material3.adaptive.WindowAdaptiveInfo
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.window.core.layout.WindowWidthSizeClass
 import com.rodrigmatrix.weatheryou.components.theme.ThemeMode
 import sh.calvin.reorderable.rememberReorderableLazyGridState
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun WeatherLocationList(
     weatherLocationList: List<WeatherLocation>,
+    particleTick: Long,
     isRefreshingLocations: Boolean,
     selectedLocation: WeatherLocation?,
     onItemClick: (WeatherLocation) -> Unit,
     onDismiss: (WeatherLocation) -> Unit,
     onOrderChanged: (List<WeatherLocation>) -> Unit,
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    sharedTransitionScope: SharedTransitionScope,
     modifier: Modifier = Modifier,
 ) {
     val view = LocalView.current
     var list by remember {
         mutableStateOf(weatherLocationList)
     }.apply { value = weatherLocationList }
-
+    val adaptiveInfo = currentWindowAdaptiveInfo()
     val listState = rememberLazyGridState()
     val reorderableLazyListState = rememberReorderableLazyGridState(
         lazyGridState = listState,
         scrollThresholdPadding = WindowInsets.statusBars.asPaddingValues(),
     ) { from, to ->
-
         list = list.toMutableList().apply {
             val fromIndex = indexOfFirst { it.id == from.key }
             val toIndex = indexOfFirst { it.id == to.key }
@@ -76,7 +91,7 @@ fun WeatherLocationList(
         modifier = modifier,
     ) {
         item {
-            Spacer(Modifier.height(4.dp))
+            Spacer(Modifier.windowInsetsTopHeight(WindowInsets.statusBars))
         }
         items(
             items = list,
@@ -85,10 +100,13 @@ fun WeatherLocationList(
             if (item.isCurrentLocation) {
                 WeatherLocation(
                     weatherLocation = item,
+                    particleTick = particleTick,
                     isRefreshingLocations = isRefreshingLocations,
                     isSelected = selectedLocation == item,
                     onItemClick = onItemClick,
                     onDismiss = onDismiss,
+                    animatedVisibilityScope = animatedVisibilityScope,
+                    sharedTransitionScope = sharedTransitionScope,
                 )
             } else {
                 ReorderableItem(
@@ -98,35 +116,48 @@ fun WeatherLocationList(
                     val scale by animateFloatAsState(if (isDragging) 1.1f else 1f, label = "")
                     WeatherLocation(
                         weatherLocation = item,
+                        particleTick = particleTick,
                         isRefreshingLocations = isRefreshingLocations,
                         isSelected = selectedLocation == item,
                         onItemClick = onItemClick,
                         onDismiss = onDismiss,
-                        modifier = Modifier.longPressDraggableHandle(
-                            onDragStarted = {
-                                view.performHapticAction(HapticAction.DragStart)
-                            },
-                            onDragStopped = {
-                                view.performHapticAction(HapticAction.DragEnd)
-                            },
-                        ).scale(scale),
+                        animatedVisibilityScope = animatedVisibilityScope,
+                        sharedTransitionScope = sharedTransitionScope,
+                        modifier = Modifier
+                            .longPressDraggableHandle(
+                                onDragStarted = {
+                                    view.performHapticAction(HapticAction.DragStart)
+                                },
+                                onDragStopped = {
+                                    view.performHapticAction(HapticAction.DragEnd)
+                                },
+                            )
+                            .scale(scale),
                     )
                 }
             }
         }
         item {
-            Spacer(Modifier.height(4.dp))
+            if (adaptiveInfo.windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT) {
+                Spacer(Modifier.height(100.dp))
+            } else {
+                Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.systemBars.only(WindowInsetsSides.Bottom)))
+            }
         }
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun WeatherLocation(
     weatherLocation: WeatherLocation,
+    particleTick: Long,
     isSelected: Boolean,
     isRefreshingLocations: Boolean,
     onItemClick: (WeatherLocation) -> Unit,
     onDismiss: (WeatherLocation) -> Unit,
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    sharedTransitionScope: SharedTransitionScope,
     modifier: Modifier = Modifier,
 ) {
     WeatherYouTheme(
@@ -138,46 +169,50 @@ fun WeatherLocation(
         colorMode = WeatherYouTheme.colorMode,
         themeSettings = WeatherYouTheme.themeSettings,
     ) {
-        WeatherYouCard(
-            color = if (WeatherYouTheme.themeSettings.showWeatherAnimations) {
-                if (WeatherYouTheme.themeSettings.enableThemeColorForWeatherAnimations) {
-                    if (isSelected) {
-                        WeatherYouTheme.colorScheme.primaryContainer
+        with(sharedTransitionScope) {
+            WeatherYouCard(
+                color = if (WeatherYouTheme.themeSettings.showWeatherAnimations) {
+                    if (WeatherYouTheme.themeSettings.enableThemeColorForWeatherAnimations) {
+                        if (isSelected) {
+                            WeatherYouTheme.colorScheme.primaryContainer
+                        } else {
+                            WeatherYouTheme.colorScheme.secondaryContainer
+                        }.copy(alpha = 0.4f)
                     } else {
-                        WeatherYouTheme.colorScheme.secondaryContainer
-                    }.copy(alpha = 0.4f)
+                        if (isSelected) {
+                            md_theme_dark_primaryContainer
+                        } else {
+                            md_theme_dark_secondaryContainer
+                        }.copy(alpha = 0.4f)
+                    }
                 } else {
-                    if (isSelected) {
-                        md_theme_dark_primaryContainer
-                    } else {
-                        md_theme_dark_secondaryContainer
-                    }.copy(alpha = 0.4f)
-                }
-            } else {
-                WeatherYouTheme.colorScheme.secondaryContainer
-            },
-            isDismissible = false,
-            onClick = {
-                onItemClick(weatherLocation)
-            },
-            onDismiss = {
-                onDismiss(weatherLocation)
-            },
-            modifier = modifier
-                .padding(horizontal = 16.dp)
-                .fillMaxWidth()
-        ) {
-            Box{
-                if (WeatherYouTheme.themeSettings.showWeatherAnimations) {
-                    WeatherAnimationsBackground(
+                    WeatherYouTheme.colorScheme.secondaryContainer
+                },
+                isDismissible = false,
+                onClick = {
+                    onItemClick(weatherLocation)
+                },
+                onDismiss = {
+                    onDismiss(weatherLocation)
+                },
+                modifier = modifier
+                    .padding(horizontal = 16.dp)
+                    .fillMaxWidth()
+
+            ) {
+                Box{
+                    if (WeatherYouTheme.themeSettings.showWeatherAnimations) {
+                        WeatherAnimationsBackground(
+                            weatherLocation = weatherLocation,
+                            particleTick = particleTick,
+                            modifier = Modifier.height(130.dp),
+                        )
+                    }
+                    WeatherLocationCardContent(
                         weatherLocation = weatherLocation,
-                        modifier = Modifier.height(130.dp),
+                        isRefreshingLocations = isRefreshingLocations,
                     )
                 }
-                WeatherLocationCardContent(
-                    weatherLocation = weatherLocation,
-                    isRefreshingLocations = isRefreshingLocations,
-                )
             }
         }
     }
@@ -201,20 +236,4 @@ enum class HapticAction {
     VirtualKey,
     DragStart,
     DragEnd,
-}
-
-@Preview
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable
-fun WeatherLocationPreview() {
-    WeatherYouTheme {
-        WeatherLocationList(
-            weatherLocationList = PreviewWeatherList,
-            isRefreshingLocations = false,
-            selectedLocation = null,
-            onItemClick = { },
-            onDismiss = { },
-            onOrderChanged = { },
-        )
-    }
 }

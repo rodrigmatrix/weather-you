@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.app.ActivityCompat
+import androidx.core.os.bundleOf
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.rodrigmatrix.weatheryou.data.local.UserLocationDataSource
 import com.rodrigmatrix.weatheryou.data.local.WeatherLocalDataSource
 import com.rodrigmatrix.weatheryou.data.local.model.WeatherLocationEntity
@@ -31,6 +33,7 @@ class WeatherRepositoryImpl(
     private val userLocationDataSource: UserLocationDataSource,
     private val searchRepository: SearchRepository,
     private val applicationContext: Context,
+    private val firebaseAnalytics: FirebaseAnalytics,
 ) : WeatherRepository {
 
     override fun addLocation(
@@ -310,6 +313,7 @@ class WeatherRepositoryImpl(
             ).map {
                 Result.success<WeatherLocation?>(it)
             }.catch {
+                firebaseAnalytics.logEvent("FETCH_LOCATION_ERROR", bundleOf("error" to it.localizedMessage))
                 emit(Result.success(null))
             }.map {
                 it.getOrNull()
@@ -353,6 +357,7 @@ class WeatherRepositoryImpl(
             ).map {
                 Result.success<WeatherLocation?>(it)
             }.catch {
+                firebaseAnalytics.logEvent("FETCH_LOCATION_ERROR", bundleOf("error" to it.localizedMessage))
                 emit(Result.success(null))
             }.map {
                 it.getOrNull()

@@ -15,6 +15,7 @@ object WeatherYouAdsModule {
         factory<AdsManager> {
             AdsManagerImpl(
                 remoteConfigRepository = get(),
+                settingsRepository = get(),
             )
         }
     }

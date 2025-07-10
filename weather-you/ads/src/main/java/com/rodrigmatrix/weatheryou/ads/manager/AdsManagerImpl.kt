@@ -8,12 +8,15 @@ import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAd
 import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAdLoadCallback
 import com.rodrigmatrix.weatheryou.domain.repository.RemoteConfigRepository
+import com.rodrigmatrix.weatheryou.domain.repository.SettingsRepository
+import kotlinx.coroutines.flow.firstOrNull
 
 class AdsManagerImpl(
     private val remoteConfigRepository: RemoteConfigRepository,
+    private val settingsRepository: SettingsRepository,
 ) : AdsManager {
 
-    override fun showRewardedInterstitial(
+    override suspend fun showRewardedInterstitial(
         activity: Activity,
         showAd: Boolean,
         flagId: String,
@@ -35,12 +38,13 @@ class AdsManagerImpl(
         }
     }
 
-    private fun showAd(
+    private suspend fun showAd(
         showAd: Boolean,
         rewardGrantedCallback: () -> Unit,
         adContent : () -> Unit,
     ) {
-        if (showAd && remoteConfigRepository.getBoolean("show_ads")) {
+        if (showAd && remoteConfigRepository.getBoolean("show_ads") &&
+            settingsRepository.getIsPremiumUser().firstOrNull() == false) {
             adContent()
         } else {
             rewardGrantedCallback()

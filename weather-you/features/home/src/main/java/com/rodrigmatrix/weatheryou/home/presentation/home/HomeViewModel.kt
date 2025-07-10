@@ -8,7 +8,7 @@ import com.rodrigmatrix.weatheryou.core.viewmodel.ViewModel
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.domain.usecase.DeleteLocationUseCase
 import com.rodrigmatrix.weatheryou.domain.usecase.UpdateLocationsUseCase
-import com.rodrigmatrix.weatheryou.components.R
+import com.rodrigmatrix.weatheryou.domain.R
 import com.rodrigmatrix.weatheryou.domain.usecase.GetAppSettingsUseCase
 import com.rodrigmatrix.weatheryou.domain.usecase.GetLocationByLatLongUseCase
 import com.rodrigmatrix.weatheryou.domain.usecase.GetLocationsUseCase
@@ -65,10 +65,7 @@ class HomeViewModel(
         viewModelScope.launch {
             getLocationsUseCase()
                 .flowOn(coroutineDispatcher)
-                .catch { exception ->
-                    firebaseAnalytics.logEvent("LOAD_LOCATIONS_ERROR", bundleOf("error" to exception.localizedMessage))
-                    exception.handleError()
-                }
+
                 .onStart { setState { it.copy(isLoading = true) } }
                 .collect { weatherLocationsList ->
                     firebaseAnalytics.logEvent("LOADED_LOCATIONS",
@@ -172,7 +169,7 @@ class HomeViewModel(
 
     fun selectLocation(weatherLocation: WeatherLocation? = null) {
         setState {
-            it.copy(selectedWeatherLocation = getSelectedLocation(weatherLocation))
+            it.copy(selectedWeatherLocation = weatherLocation)
         }
     }
 

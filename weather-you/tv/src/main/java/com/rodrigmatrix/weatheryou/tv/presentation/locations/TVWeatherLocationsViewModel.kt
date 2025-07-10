@@ -1,7 +1,7 @@
 package com.rodrigmatrix.weatheryou.tv.presentation.locations
 
 import androidx.lifecycle.viewModelScope
-import com.rodrigmatrix.weatheryou.components.R
+import com.rodrigmatrix.weatheryou.domain.R
 import com.rodrigmatrix.weatheryou.components.ScreenNavigationType
 import com.rodrigmatrix.weatheryou.core.viewmodel.ViewModel
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation

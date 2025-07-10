@@ -121,6 +121,7 @@ object WeatherYouDataModules {
                 userLocationDataSource = get(),
                 searchRepository = get(),
                 applicationContext = androidApplication(),
+                firebaseAnalytics = get(),
             )
         }
         factory<SearchRepository> {

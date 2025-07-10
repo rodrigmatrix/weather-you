@@ -70,6 +70,7 @@ dependencies {
     implementation(libs.accompanist.adaptive)
     implementation platform(libs.firebase.bom)
     implementation(libs.firebase.analytics)
+    implementation(libs.compose.animation)
 
     implementation(libs.koin.android)
     implementation(libs.koin.compose)

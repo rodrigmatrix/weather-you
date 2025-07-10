@@ -34,7 +34,11 @@ class WeatherKitRemoteDataSourceImpl(
                 )
             )
         }.map { response ->
-            weatherKitRemoteMapper.map(response, latitude, longitude, timezone, countryCode)
+            try {
+                weatherKitRemoteMapper.map(response, latitude, longitude, timezone, countryCode)
+            } catch (e: Exception) {
+                throw e
+            }
         }
     }
 

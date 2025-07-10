@@ -1,7 +1,7 @@
 package com.rodrigmatrix.weatheryou.settings.presentation.settings.model
 
 import androidx.annotation.StringRes
-import com.rodrigmatrix.weatheryou.components.R
+import com.rodrigmatrix.weatheryou.domain.R
 import com.rodrigmatrix.weatheryou.components.theme.ColorMode
 
 enum class AppColorPreferenceOption(

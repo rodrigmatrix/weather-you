@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.Icon
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import androidx.compose.material3.Text
@@ -21,7 +22,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.rodrigmatrix.weatheryou.components.R
+import com.rodrigmatrix.weatheryou.domain.R
 import com.rodrigmatrix.weatheryou.components.WeatherIcon
 import com.rodrigmatrix.weatheryou.components.extensions.getString
 import com.rodrigmatrix.weatheryou.components.preview.PreviewWeatherLocation
@@ -68,7 +69,7 @@ fun CurrentWeatherContent(
 
             if (weatherLocation.isCurrentLocation) {
                 Icon(
-                    painter = painterResource(R.drawable.ic_my_location),
+                    painter = painterResource(com.rodrigmatrix.weatheryou.components.R.drawable.ic_my_location),
                     tint = WeatherYouTheme.colorScheme.onSecondaryContainer,
                     contentDescription = stringResource(R.string.current_location),
                     modifier = Modifier
@@ -98,7 +99,7 @@ fun CurrentWeatherContent(
                     text = weatherLocation.currentWeather.temperatureString(),
                     color = WeatherYouTheme.colorScheme.weatherTextColor,
                     style = WeatherYouTheme.typography.headlineLarge,
-                    fontSize = 80.sp
+                    autoSize = TextAutoSize.StepBased(minFontSize = 10.sp, maxFontSize = 70.sp, stepSize = 10.sp)
                 )
                 Text(
                     text = stringResource(

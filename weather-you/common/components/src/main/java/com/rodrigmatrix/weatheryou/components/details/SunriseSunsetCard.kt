@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
@@ -23,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.core.extensions.getHourWithMinutesString
 import com.rodrigmatrix.weatheryou.core.extensions.getHoursAndMinutesDiff
 import com.rodrigmatrix.weatheryou.core.extensions.getLocalTime
-import com.rodrigmatrix.weatheryou.components.R
+import com.rodrigmatrix.weatheryou.domain.R
 import com.rodrigmatrix.weatheryou.components.WeatherYouCard
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.components.theme.weatherTextColor
@@ -128,7 +129,7 @@ fun SunriseSunsetCardContent(
             val remainingDaylightString = if (remainingHours > 0) {
                 stringResource(R.string.hours_minutes_x_y, remainingHours, remainingMinutes)
             } else {
-                 stringResource(R.string.minutes_x, dayLengthMinutes)
+                stringResource(R.string.minutes_x, dayLengthMinutes)
             }
             Text(
                 text = stringResource(R.string.remaining_daylight_x) + remainingDaylightString,
@@ -167,24 +168,32 @@ private fun SunriseSunsetVisualizer(
         interval *= 24f * scaleX
         interval2 *= 24f * scaleX
         start *= 24f * scaleX
-        // sun
+
         if (isDaylight) {
-            val daylightHalf = (sunsetHour - sunriseHour)
-            val sunScaleY = if (currentHour >= daylightHalf) {
-                scaleY - (currentHour - sunsetHour)
-            } else {
-                scaleY + (currentHour / 24) * 2
-            }
-            drawCircle(
-                color = Color.Yellow,
-                radius = 30f,
-                center = Offset(
-                    x = scaleX * currentHour,
-                    y = sunScaleY / 2,
+            val totalDaylightHours = sunsetHour - sunriseHour
+            val progress = ((currentHour - sunriseHour).toFloat() / totalDaylightHours).coerceIn(0f, 1f)
+            val sunX = scaleX * currentHour
+
+            val p0 = Offset(scaleX * sunriseHour, scaleY)
+            val p2 = Offset(scaleX * sunsetHour, scaleY)
+            val p1 = Offset((p0.x + p2.x) / 2f, 0f)
+
+            val sunY = bezierY(progress, p0, p1, p2)
+
+            clipRect(
+                top = 0f,
+                left = 0f,
+                right = size.width,
+                bottom = scaleY
+            ) {
+                drawCircle(
+                    color = Color.Yellow,
+                    radius = 30f,
+                    center = Offset(sunX, sunY),
                 )
-            )
+            }
         }
-        // horizon line
+
         drawLine(
             color = colorPrimary,
             start = Offset(0f, canvasHeight / 2),
@@ -222,6 +231,13 @@ private fun SunriseSunsetVisualizer(
             canvas.drawRect(scaleX * currentHour, 0f, canvasWidth, canvasHeight, futurePaint)
         }
     }
+}
+
+private fun bezierY(t: Float, p0: Offset, p1: Offset, p2: Offset): Float {
+    val oneMinusT = 1 - t
+    return (oneMinusT * oneMinusT * p0.y +
+            2 * oneMinusT * t * p1.y +
+            t * t * p2.y)
 }
 
 @Preview

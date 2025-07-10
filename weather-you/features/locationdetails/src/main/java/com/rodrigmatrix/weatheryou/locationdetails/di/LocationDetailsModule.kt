@@ -1,9 +1,10 @@
 package com.rodrigmatrix.weatheryou.locationdetails.di
 
+import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.locationdetails.presentaion.conditions.ConditionsViewModel
 import com.rodrigmatrix.weatheryou.locationdetails.presentaion.details.WeatherDetailsViewModel
-import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.loadKoinModules
+import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 object LocationDetailsModule {
@@ -13,7 +14,12 @@ object LocationDetailsModule {
     }
 
     private val presentationModule = module {
-        viewModel { WeatherDetailsViewModel(getAppSettingsUseCase = get()) }
+        viewModel { (weatherLocation: WeatherLocation?) ->
+            WeatherDetailsViewModel(
+                weatherLocation = weatherLocation,
+                getAppSettingsUseCase = get(),
+            )
+        }
         viewModel { ConditionsViewModel() }
     }
 }

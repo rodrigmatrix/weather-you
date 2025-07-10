@@ -38,14 +38,14 @@ import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.core.compose.LaunchViewEffect
 import com.rodrigmatrix.weatheryou.core.extensions.toast
 import com.rodrigmatrix.weatheryou.domain.model.City
-import com.rodrigmatrix.weatheryou.components.R as Strings
+import com.rodrigmatrix.weatheryou.domain.R as Strings
 import com.rodrigmatrix.weatheryou.domain.model.SearchAutocompleteLocation
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun AddLocationScreen(
     navController: NavController,
-    viewModel: AddLocationViewModel = getViewModel()
+    viewModel: AddLocationViewModel = koinViewModel()
 ) {
     val viewState by viewModel.viewState.collectAsState()
     val context = LocalContext.current

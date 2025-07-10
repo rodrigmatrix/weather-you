@@ -45,7 +45,7 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.await
-import com.rodrigmatrix.weatheryou.components.R
+import com.rodrigmatrix.weatheryou.domain.R
 import com.rodrigmatrix.weatheryou.components.WeatherIcon
 import com.rodrigmatrix.weatheryou.components.preview.PreviewWeatherList
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
@@ -58,14 +58,14 @@ import com.rodrigmatrix.weatheryou.presentation.widget.CurrentWeatherWidgetConfi
 import com.rodrigmatrix.weatheryou.widgets.weather.CurrentWeatherWidget
 import com.rodrigmatrix.weatheryou.widgets.weather.animated.CurrentAnimatedWeatherWidget
 import com.rodrigmatrix.weatheryou.worker.UpdateWidgetWeatherDataWorker
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @ExperimentalMaterial3Api
 @Composable
 fun CurrentWeatherWidgetConfigurationScreen(
     widgetId: String,
     modifier: Modifier = Modifier,
-    viewModel: CurrentWeatherWidgetConfigurationViewModel = getViewModel(),
+    viewModel: CurrentWeatherWidgetConfigurationViewModel = koinViewModel(),
     onConfigurationCancelled: () -> Unit,
     onConfigurationComplete: () -> Unit,
 ) {
@@ -226,7 +226,7 @@ private fun LocationRow(
                 )
                 if (weatherLocation.isCurrentLocation) {
                     Icon(
-                        painter = painterResource(R.drawable.ic_my_location),
+                        painter = painterResource(com.rodrigmatrix.weatheryou.components.R.drawable.ic_my_location),
                         tint = WeatherYouTheme.colorScheme.primary,
                         contentDescription = stringResource(R.string.current_location),
                         modifier = Modifier.align(Alignment.TopEnd)

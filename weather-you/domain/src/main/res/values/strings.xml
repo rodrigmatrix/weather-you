@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">WeatherYou</string>
+    <string name="app_name" translatable="false">Weather You</string>
     <string name="feels_like_x">Feels Like %s</string>
     <string name="high_lowercase_x">H%s</string>
     <string name="low_lowercase_x">L%s</string>
@@ -87,11 +87,18 @@
     <string name="light">Light</string>
     <string name="dark">Dark</string>
     <string name="system_default">System default</string>
-    <string name="new_york" translatable="false">New York</string>
-    <string name="vancouver" translatable="false">Vancouver</string>
-    <string name="los_angeles" translatable="false">Los Angeles</string>
-    <string name="toronto" translatable="false">Toronto</string>
-    <string name="rio_de_janeiro" translatable="false">Rio de Janeiro</string>
+    <string name="new_york">New York</string>
+    <string name="vancouver">Vancouver</string>
+    <string name="los_angeles">Los Angeles</string>
+    <string name="toronto">Toronto</string>
+    <string name="rio_de_janeiro">Rio de Janeiro</string>
+    <string name="paris">Paris</string>
+    <string name="london">London</string>
+    <string name="hong_kong">Hong Kong</string>
+    <string name="seoul">Seoul</string>
+    <string name="new_delhi">New Delhi</string>
+    <string name="sydney">Sydney</string>
+    <string name="tokyo">Tokyo</string>
     <string name="sao_paulo">Sao Paulo</string>
     <string name="add_location_error">Could not add this location. Try again later</string>
     <string name="add_location_limit_error">You have reached the limit of locations allowed. Delete a location and try adding this again</string>
