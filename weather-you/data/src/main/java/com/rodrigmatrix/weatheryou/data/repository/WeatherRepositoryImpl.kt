@@ -6,6 +6,7 @@ import android.os.Build
 import androidx.core.app.ActivityCompat
 import androidx.core.os.bundleOf
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.rodrigmatrix.weatheryou.data.exception.CurrentLocationNotFoundException
 import com.rodrigmatrix.weatheryou.data.local.UserLocationDataSource
 import com.rodrigmatrix.weatheryou.data.local.WeatherLocalDataSource
 import com.rodrigmatrix.weatheryou.data.local.model.WeatherLocationEntity
@@ -22,6 +23,7 @@ import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.domain.repository.SearchRepository
 import com.rodrigmatrix.weatheryou.domain.repository.WeatherRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import org.joda.time.DateTime
 import org.joda.time.Minutes
@@ -86,10 +88,32 @@ class WeatherRepositoryImpl(
     override fun fetchLocationsList(forceUpdate: Boolean): Flow<Unit> {
         return weatherLocalDataSource.getAllLocations()
             .map { weatherLocations ->
-                getOrUpdateCurrentLocation(
-                    forceUpdate = forceUpdate,
-                    hasLocationPermission = hasLocationPermission()
-                )
+                // Try to get current location with retry mechanism
+                var currentLocationUpdated = false
+                var retryCount = 0
+                val maxRetries = 3
+                
+                while (!currentLocationUpdated && retryCount < maxRetries) {
+                    try {
+                        getOrUpdateCurrentLocation(
+                            forceUpdate = forceUpdate,
+                            hasLocationPermission = hasLocationPermission()
+                        )
+                        currentLocationUpdated = true
+                    } catch (e: Exception) {
+                        retryCount++
+                        if (retryCount < maxRetries) {
+                            // Wait a bit before retrying (exponential backoff)
+                            kotlinx.coroutines.delay(1000L * retryCount)
+                        } else {
+                            // Log the final failure
+                            firebaseAnalytics.logEvent("CURRENT_LOCATION_RETRY_FAILED", bundleOf(
+                                "retry_count" to retryCount,
+                                "error" to e.localizedMessage
+                            ))
+                        }
+                    }
+                }
 
                 val fetchedLocations = weatherLocations.mapNotNull { weatherEntity ->
                     getOrUpdateLocation(
@@ -277,10 +301,19 @@ class WeatherRepositoryImpl(
         return if (hasLocationPermission && (forceUpdate || minutesBetween.minutes > 60 || currentLocationEntity == null)) {
             try {
                 userLocationDataSource.getCurrentLocation()
-                   .firstOrNull() ?:
-                userLocationDataSource.getLastKnownLocation().firstOrNull()
-            } catch (_: Exception) {
-                currentLocationEntity
+                    .firstOrNull()
+            } catch (e: Exception) {
+                try {
+                    userLocationDataSource.getLastKnownLocation().firstOrNull()
+                } catch (e2: Exception) {
+                    currentLocationEntity?.also {
+                        firebaseAnalytics.logEvent("LOCATION_SERVICES_ERROR", bundleOf(
+                            "error" to "Both current and last known location failed",
+                            "current_location_error" to e.localizedMessage,
+                            "last_known_error" to e2.localizedMessage
+                        ))
+                    }
+                }
             }
         } else {
             currentLocationEntity
@@ -339,7 +372,16 @@ class WeatherRepositoryImpl(
         val currentLocation = getCurrentLocation(
             forceUpdate = forceUpdate,
             hasLocationPermission = hasLocationPermission,
-        ) ?: return null
+        )
+
+        if (currentLocation == null) {
+            firebaseAnalytics.logEvent("CURRENT_LOCATION_NULL", bundleOf(
+                "force_update" to forceUpdate,
+                "has_location_permission" to hasLocationPermission
+            ))
+            return null
+        }
+        
         val currentLocationData = weatherLocalDataSource.getCurrentLocationWeather()
             .firstOrNull()?.toWeatherLocation(
                 id = -1,

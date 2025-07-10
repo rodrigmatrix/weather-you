@@ -21,6 +21,7 @@ object HomeModule {
                 updateLocationsListOrderUseCase = get(),
                 getLocationByLatLongUseCase = get(),
                 firebaseAnalytics = get(),
+                userLocationDataSource = get(),
             )
         }
     }

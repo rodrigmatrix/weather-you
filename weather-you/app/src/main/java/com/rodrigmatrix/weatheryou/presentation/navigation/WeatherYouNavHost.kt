@@ -62,7 +62,7 @@ fun WeatherHomeNavHost(
                     onAddLocation = {
                         navController.navigate(NavigationEntries.ADD_LOCATION_ROUTE)
                     },
-                    onPermissionGranted = homeViewModel::updateLocations,
+                    onPermissionGranted = homeViewModel::onLocationPermissionGranted,
                     onDialogStateChanged = homeViewModel::onDialogStateChanged,
                     onSwipeRefresh = homeViewModel::loadLocations,
                     onLocationSelected = homeViewModel::selectLocation,
