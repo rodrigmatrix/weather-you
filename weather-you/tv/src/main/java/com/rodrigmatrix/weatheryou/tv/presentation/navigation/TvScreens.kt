@@ -7,7 +7,7 @@ import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
-import com.rodrigmatrix.weatheryou.components.R
+import com.rodrigmatrix.weatheryou.domain.R
 import kotlinx.serialization.Serializable
 
 enum class TvScreenEntry(

@@ -55,7 +55,7 @@ import androidx.window.core.layout.WindowWidthSizeClass
 import com.rodrigmatrix.weatheryou.components.WeatherYouLargeAppBar
 import com.rodrigmatrix.weatheryou.components.WeatherYouSmallAppBar
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
-import com.rodrigmatrix.weatheryou.components.R
+import com.rodrigmatrix.weatheryou.domain.R
 import com.rodrigmatrix.weatheryou.components.details.FutureDaysForecast
 import com.rodrigmatrix.weatheryou.components.extensions.toGradientList
 import com.rodrigmatrix.weatheryou.components.particle.WeatherAnimationsBackground

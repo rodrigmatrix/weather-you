@@ -45,7 +45,7 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.await
-import com.rodrigmatrix.weatheryou.components.R
+import com.rodrigmatrix.weatheryou.domain.R
 import com.rodrigmatrix.weatheryou.components.WeatherIcon
 import com.rodrigmatrix.weatheryou.components.preview.PreviewWeatherList
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
@@ -226,7 +226,7 @@ private fun LocationRow(
                 )
                 if (weatherLocation.isCurrentLocation) {
                     Icon(
-                        painter = painterResource(R.drawable.ic_my_location),
+                        painter = painterResource(com.rodrigmatrix.weatheryou.components.R.drawable.ic_my_location),
                         tint = WeatherYouTheme.colorScheme.primary,
                         contentDescription = stringResource(R.string.current_location),
                         modifier = Modifier.align(Alignment.TopEnd)

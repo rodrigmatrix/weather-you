@@ -4,7 +4,7 @@ import android.app.Activity
 
 interface AdsManager {
 
-    fun showRewardedInterstitial(
+    suspend fun showRewardedInterstitial(
         activity: Activity,
         showAd: Boolean,
         flagId: String,

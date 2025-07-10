@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.rodrigmatrix.weatheryou.components.R
+import com.rodrigmatrix.weatheryou.domain.R
 import com.rodrigmatrix.weatheryou.components.WeatherIcon
 import com.rodrigmatrix.weatheryou.components.WeatherYouDivider
 import com.rodrigmatrix.weatheryou.components.theme.weatherTextColor

@@ -1,6 +1,6 @@
-package com.rodrigmatrix.weatheryou.locationdetails.presentaion.extensions
+package com.rodrigmatrix.weatheryou.components.details.extensions
 
-import com.rodrigmatrix.weatheryou.components.R
+import com.rodrigmatrix.weatheryou.domain.R
 
 fun Double.visibilityConditionsStringRes(): Int {
     return when(this) {

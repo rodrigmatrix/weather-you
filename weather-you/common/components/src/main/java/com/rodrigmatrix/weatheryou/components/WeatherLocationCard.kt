@@ -24,6 +24,7 @@ import com.rodrigmatrix.weatheryou.core.extensions.getHourWithMinutesString
 import com.rodrigmatrix.weatheryou.core.extensions.getTimeZoneHourAndMinutes
 import com.rodrigmatrix.weatheryou.core.extensions.temperatureString
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
+import com.rodrigmatrix.weatheryou.domain.R as StringR
 
 @Composable
 fun WeatherLocationCardContent(
@@ -78,7 +79,7 @@ fun WeatherLocationCardContent(
                 Icon(
                     painter = painterResource(R.drawable.ic_my_location),
                     tint = WeatherYouTheme.colorScheme.onSecondaryContainer,
-                    contentDescription = stringResource(R.string.current_location),
+                    contentDescription = stringResource(StringR.string.current_location),
                     modifier = Modifier.align(Alignment.TopEnd)
                 )
             }

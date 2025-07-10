@@ -25,9 +25,9 @@ class WeatherDetailsViewModel(
                         it.copy(
                             weatherLocation = weatherLocation,
                             todayWeatherHoursList = weatherLocation?.hours.orEmpty(),
+                            isFutureWeatherExpanded = true,
                             futureDaysList = weatherLocation
                                 ?.days
-                                ?.getFutureDaysList(it.isFutureWeatherExpanded)
                                 .orEmpty(),
                             enableThemeColorWithWeatherAnimations = settings.enableThemeColorWithWeatherAnimations,
                             enableWeatherAnimations = settings.enableWeatherAnimations,
@@ -40,7 +40,7 @@ class WeatherDetailsViewModel(
     fun onFutureWeatherButtonClick(isExpanded: Boolean) {
         setState {
             it.copy(
-                futureDaysList = it.weatherLocation?.days?.getFutureDaysList(isExpanded).orEmpty(),
+                futureDaysList = it.weatherLocation?.days.orEmpty(),
                 isFutureWeatherExpanded = isExpanded
             )
         }

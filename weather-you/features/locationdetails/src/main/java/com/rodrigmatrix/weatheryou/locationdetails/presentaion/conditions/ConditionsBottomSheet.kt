@@ -5,6 +5,9 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.FlingBehavior
+import androidx.compose.foundation.gestures.ScrollScope
+import androidx.compose.foundation.gestures.ScrollableDefaults
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,6 +33,7 @@ import androidx.compose.material3.SheetState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -83,6 +87,7 @@ fun ConditionsBottomSheet(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ConditionsContent(
     viewState: ConditionsViewState,
@@ -94,10 +99,19 @@ fun ConditionsContent(
 ) {
     val weatherLocation = viewState.weatherLocation ?: return
     val day = viewState.day ?: return
+
+    val flingBehavior = remember<FlingBehavior> {
+        object : FlingBehavior {
+            override suspend fun ScrollScope.performFling(initialVelocity: Float): Float {
+                return 0f
+            }
+        }
+    }
+
     Column(
         modifier
             .fillMaxHeight(0.92f)
-            .verticalScroll(scrollState)
+            .verticalScroll(scrollState, flingBehavior = flingBehavior)
     ) {
         Surface(
             color = WeatherYouTheme.colorScheme.surface,
@@ -134,7 +148,17 @@ fun ConditionsContent(
                 viewState = viewState,
                 onTemperatureTypeChange = onTemperatureTypeChange,
             )
+            ConditionType.UvIndex -> UvIndexContent(
+                day = day,
+                viewState = viewState,
+                weatherLocation = weatherLocation,
+            )
             ConditionType.SunriseSunset -> Unit
+            ConditionType.Wind -> Unit
+            ConditionType.Precipitation -> Unit
+            ConditionType.Humidity -> Unit
+            ConditionType.Visibility -> Unit
+            ConditionType.Pressure -> Unit
         }
 
         Spacer(Modifier.height(200.dp))

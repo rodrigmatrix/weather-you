@@ -39,7 +39,7 @@ import androidx.tv.material3.CardDefaults
 import androidx.tv.material3.ClickableSurfaceDefaults
 import androidx.tv.material3.Glow
 import androidx.tv.material3.Surface
-import com.rodrigmatrix.weatheryou.components.R
+import com.rodrigmatrix.weatheryou.domain.R
 import com.rodrigmatrix.weatheryou.components.WeatherYouDivider
 import com.rodrigmatrix.weatheryou.components.details.CurrentWeatherContent
 import com.rodrigmatrix.weatheryou.components.details.DayContent
@@ -63,6 +63,7 @@ import com.rodrigmatrix.weatheryou.tv.presentation.theme.md_theme_dark_secondary
 @Composable
 fun TvWeatherDetailsScreen(
     weatherLocation: WeatherLocation,
+    particleTick: Long,
     onExpandDay: (WeatherDay) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -77,6 +78,7 @@ fun TvWeatherDetailsScreen(
         if (WeatherYouTheme.themeSettings.showWeatherAnimations) {
             WeatherAnimationsBackground(
                 weatherLocation = weatherLocation,
+                particleTick = particleTick,
             )
         }
         TvWeatherLocationScreen(

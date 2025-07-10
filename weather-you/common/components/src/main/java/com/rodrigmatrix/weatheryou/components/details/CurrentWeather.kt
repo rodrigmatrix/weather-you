@@ -22,7 +22,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.rodrigmatrix.weatheryou.components.R
+import com.rodrigmatrix.weatheryou.domain.R
 import com.rodrigmatrix.weatheryou.components.WeatherIcon
 import com.rodrigmatrix.weatheryou.components.extensions.getString
 import com.rodrigmatrix.weatheryou.components.preview.PreviewWeatherLocation
@@ -69,7 +69,7 @@ fun CurrentWeatherContent(
 
             if (weatherLocation.isCurrentLocation) {
                 Icon(
-                    painter = painterResource(R.drawable.ic_my_location),
+                    painter = painterResource(com.rodrigmatrix.weatheryou.components.R.drawable.ic_my_location),
                     tint = WeatherYouTheme.colorScheme.onSecondaryContainer,
                     contentDescription = stringResource(R.string.current_location),
                     modifier = Modifier

@@ -19,7 +19,7 @@ import androidx.wear.watchface.complications.data.SmallImageComplicationData
 import androidx.wear.watchface.complications.data.SmallImageType
 import androidx.wear.watchface.complications.datasource.ComplicationRequest
 import androidx.wear.watchface.complications.datasource.SuspendingComplicationDataSourceService
-import com.rodrigmatrix.weatheryou.components.temperature.getTemperatureGradient
+import com.rodrigmatrix.weatheryou.components.extensions.getTemperatureGradient
 import com.rodrigmatrix.weatheryou.wearos.R
 
 class DayWeatherComplicationProviderService : SuspendingComplicationDataSourceService() {

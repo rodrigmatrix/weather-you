@@ -37,7 +37,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.rodrigmatrix.weatheryou.components.R
+import com.rodrigmatrix.weatheryou.domain.R
 import com.rodrigmatrix.weatheryou.components.WeatherIcon
 import com.rodrigmatrix.weatheryou.components.extensions.getTemperatureGradient
 import com.rodrigmatrix.weatheryou.components.extensions.toGradientList
@@ -68,7 +68,6 @@ import ir.ehsannarmani.compose_charts.models.LabelHelperProperties
 import ir.ehsannarmani.compose_charts.models.Line
 import ir.ehsannarmani.compose_charts.models.PopupProperties
 import ir.ehsannarmani.compose_charts.models.StrokeStyle
-import org.joda.time.Minutes
 import kotlin.math.roundToInt
 
 @Composable
@@ -113,7 +112,10 @@ fun ConditionsContent(
         }
     }
     Spacer(Modifier.height(20.dp))
-    Box {
+    CurrentDayGraphBox(
+        weatherLocation = weatherLocation,
+        day = day,
+    ) {
         when (viewState.temperatureType) {
             TemperatureType.Actual -> ActualTemperatureChart(
                 weatherLocation = weatherLocation,
@@ -125,46 +127,6 @@ fun ConditionsContent(
                 day = day,
                 onPopupDisplay = { temperaturePopup = it },
             )
-        }
-        if (temperaturePopup != null) {
-//                VerticalDivider(
-//                    color = WeatherYouTheme.colorScheme.onBackground.copy(alpha = 0.8f),
-//                    modifier = Modifier
-//                        .height(200.dp)
-//                        .offset(x = (popup?.position?.x!!).dp)
-//                )
-        }
-        if (weatherLocation.days.indexOf(day) == 0) {
-            val now = weatherLocation.timeZone.getDateTimeFromTimezone().getLocalTime()
-            val start = weatherLocation.timeZone.getDateTimeFromTimezone().getLocalTime()
-                .withHourOfDay(0)
-                .withMinuteOfHour(0)
-                .withSecondOfMinute(0)
-            val end = weatherLocation.timeZone.getDateTimeFromTimezone().getLocalTime()
-                .withHourOfDay(23)
-                .withMinuteOfHour(59)
-                .withSecondOfMinute(0)
-            val totalMinutes = Minutes.minutesBetween(start, end).minutes
-            val minutesPassed = Minutes.minutesBetween(start, now).minutes
-            val percentage = try {
-                ((minutesPassed * 100f) / totalMinutes) / 100f
-            } catch (_: Exception) {
-                0f
-            }
-            WeatherYouTheme(
-                themeMode = ThemeMode.Dark,
-                colorMode = WeatherYouTheme.colorMode,
-                themeSettings = WeatherYouTheme.themeSettings,
-            ) {
-                Box(
-                    modifier = Modifier
-                        .padding(start = 55.dp, end = 20.dp)
-                        .fillMaxWidth(percentage)
-                        .height(200.dp)
-                        .background(WeatherYouTheme.colorScheme.surface.copy(alpha = 0.7f))
-                        .clip(RectangleShape),
-                ) { }
-            }
         }
     }
 

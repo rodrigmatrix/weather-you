@@ -48,7 +48,7 @@ import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.domain.model.AppSettings
 import com.rodrigmatrix.weatheryou.home.presentation.home.HomeUiState
 import kotlinx.coroutines.launch
-import com.rodrigmatrix.weatheryou.components.R
+import com.rodrigmatrix.weatheryou.domain.R
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable

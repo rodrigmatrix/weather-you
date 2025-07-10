@@ -36,7 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.about.R
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
-import com.rodrigmatrix.weatheryou.components.R as Strings
+import com.rodrigmatrix.weatheryou.domain.R as Strings
 import com.rodrigmatrix.weatheryou.presentation.about.model.SocialNetwork
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
