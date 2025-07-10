@@ -90,7 +90,7 @@ internal fun TvWeatherLocationsScreen(
             Manifest.permission.ACCESS_FINE_LOCATION,
         ),
         onPermissionsResult = {
-            viewModel.updateLocations()
+            viewModel.onLocationPermissionGranted()
         }
     ),
     scrollState: ScrollState = rememberScrollState(),

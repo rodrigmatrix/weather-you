@@ -155,6 +155,7 @@ fun HomeScreen(
         onPermissionsResult = {
             if (it.all { it.value }) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    onPermissionGranted()
                     onDialogStateChanged(HomeDialogState.BackgroundLocation)
                 } else {
                     onPermissionGranted()

@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
 import com.rodrigmatrix.weatheryou.core.viewmodel.ViewModel
+import com.rodrigmatrix.weatheryou.data.local.UserLocationDataSource
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.domain.usecase.DeleteLocationUseCase
 import com.rodrigmatrix.weatheryou.domain.usecase.UpdateLocationsUseCase
@@ -25,6 +26,7 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.IOException
 
@@ -38,6 +40,7 @@ class HomeViewModel(
     private val getLocationByLatLongUseCase: GetLocationByLatLongUseCase,
     private val updateLocationsListOrderUseCase: UpdateLocationsListOrderUseCase,
     private val firebaseAnalytics: FirebaseAnalytics,
+    private val userLocationDataSource: UserLocationDataSource,
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ): ViewModel<HomeUiState, HomeViewEffect>(HomeUiState()) {
 
@@ -118,6 +121,13 @@ class HomeViewModel(
                     }
                 delay(FIVE_MINUTES_MILLI)
             }
+        }
+    }
+
+    fun onLocationPermissionGranted() {
+        viewModelScope.launch {
+            setState { it.copy(isRefreshingLocations = true, isLoading = true) }
+            updateLocations()
         }
     }
 

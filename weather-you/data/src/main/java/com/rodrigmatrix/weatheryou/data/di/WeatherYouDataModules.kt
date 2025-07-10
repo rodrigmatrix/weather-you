@@ -1,7 +1,9 @@
 package com.rodrigmatrix.weatheryou.data.di
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.location.Geocoder
+import android.location.LocationManager
 import androidx.datastore.preferences.SharedPreferencesMigration
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.preferencesDataStoreFile
@@ -175,8 +177,9 @@ object WeatherYouDataModules {
         }
         factory<UserLocationDataSource> {
             UserLocationDataSourceImpl(
-                get(),
-                get()
+                locationServices = get(),
+                locationManager = androidContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager,
+                geoCoder = get(),
             )
         }
         factory<RemoteConfigDataSource> {
