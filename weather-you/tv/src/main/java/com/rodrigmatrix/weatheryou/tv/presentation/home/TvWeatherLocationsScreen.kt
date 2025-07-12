@@ -2,6 +2,7 @@ package com.rodrigmatrix.weatheryou.tv.presentation.home
 
 import android.Manifest
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
@@ -52,7 +53,7 @@ import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
-import com.rodrigmatrix.weatheryou.components.R
+import com.rodrigmatrix.weatheryou.domain.R
 import com.rodrigmatrix.weatheryou.components.WeatherIcon
 import com.rodrigmatrix.weatheryou.components.WeatherLocationCardContent
 import com.rodrigmatrix.weatheryou.components.extensions.shimmerLoadingAnimation
@@ -74,23 +75,25 @@ import com.rodrigmatrix.weatheryou.tv.presentation.locations.TvWeatherLocationsU
 import com.rodrigmatrix.weatheryou.tv.presentation.locations.TVWeatherLocationsViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
 internal fun TvWeatherLocationsScreen(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel,
-    conditionsViewModel: ConditionsViewModel = getViewModel(),
+    particleTick: Long,
+    conditionsViewModel: ConditionsViewModel = koinViewModel(),
     locationPermissionState: MultiplePermissionsState = rememberMultiplePermissionsState(
         permissions = listOf(
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_FINE_LOCATION,
         ),
         onPermissionsResult = {
-            viewModel.updateLocations()
+            viewModel.onLocationPermissionGranted()
         }
     ),
+    scrollState: ScrollState = rememberScrollState(),
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     scaffoldState: SheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
@@ -115,6 +118,7 @@ internal fun TvWeatherLocationsScreen(
     }
     TvWeatherLocationsScreen(
         uiState = uiState,
+        particleTick = particleTick,
         showLocationPermissionRequest = uiState.showLocationPermissionRequest(locationPermissionState),
         onRequestPermission = locationPermissionState::launchMultiplePermissionRequest,
         onWeatherLocationClicked = viewModel::selectLocation,
@@ -146,6 +150,7 @@ internal fun TvWeatherLocationsScreen(
                     )
                 },
                 onTemperatureTypeChange = conditionsViewModel::onTemperatureTypeChange,
+                scrollState = scrollState,
                 onDismissRequest = {
                     coroutineScope.launch {
                         conditionsViewModel.hideConditions()
@@ -160,6 +165,7 @@ internal fun TvWeatherLocationsScreen(
 @Composable
 private fun TvWeatherLocationsScreen(
     uiState: HomeUiState,
+    particleTick: Long,
     showLocationPermissionRequest: Boolean,
     onRequestPermission: () -> Unit,
     onWeatherLocationClicked: (WeatherLocation) -> Unit,
@@ -190,6 +196,7 @@ private fun TvWeatherLocationsScreen(
                 } else {
                     TvWeatherLocationsContent(
                         locationsList = uiState.locationsList,
+                        particleTick = particleTick,
                         currentLocation = uiState.selectedWeatherLocation,
                         onWeatherLocationClicked = onWeatherLocationClicked,
                         onDeleteLocation = onDeleteLocation,
@@ -272,6 +279,7 @@ private fun WeatherLocationsLoadingState(
 @Composable
 private fun TvWeatherLocationsContent(
     locationsList: List<WeatherLocation>,
+    particleTick: Long,
     currentLocation: WeatherLocation?,
     onWeatherLocationClicked: (WeatherLocation) -> Unit,
     onDeleteLocation: (WeatherLocation) -> Unit,
@@ -283,6 +291,7 @@ private fun TvWeatherLocationsContent(
     ) {
         WeatherLocationsList(
             weatherLocationsList = locationsList,
+            particleTick = particleTick,
             currentLocation = currentLocation,
             onWeatherLocationClicked = onWeatherLocationClicked,
             onDeleteLocation = onDeleteLocation,
@@ -291,6 +300,7 @@ private fun TvWeatherLocationsContent(
         currentLocation?.let { selectedLocation ->
             TvWeatherDetailsScreen(
                 weatherLocation = selectedLocation,
+                particleTick = particleTick,
                 onExpandDay = onExpandDay,
                 modifier = Modifier.weight(1f),
             )
@@ -379,6 +389,7 @@ fun WeatherLocationsEmptyState(
 @Composable
 private fun WeatherLocationsList(
     weatherLocationsList: List<WeatherLocation>,
+    particleTick: Long,
     currentLocation: WeatherLocation?,
     onWeatherLocationClicked: (WeatherLocation) -> Unit,
     onDeleteLocation: (WeatherLocation) -> Unit,
@@ -406,6 +417,7 @@ private fun WeatherLocationsList(
                 Box {
                     if (WeatherYouTheme.themeSettings.showWeatherAnimations) {
                         WeatherAnimationsBackground(
+                            particleTick = particleTick,
                             weatherLocation = weatherLocation,
                             modifier = Modifier.height(130.dp),
                         )

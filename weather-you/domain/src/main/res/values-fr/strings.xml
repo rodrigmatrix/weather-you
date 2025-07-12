@@ -85,11 +85,11 @@
   <string name="light">Lumière</string>
   <string name="dark">Sombre</string>
   <string name="system_default">Défaut du système</string>
-  <string name="new_york"></string>
-  <string name="vancouver"></string>
-  <string name="los_angeles"></string>
-  <string name="toronto"></string>
-  <string name="rio_de_janeiro"></string>
+  <string name="new_york">New York</string>
+  <string name="vancouver">Vancouver</string>
+  <string name="los_angeles">Los Angeles</string>
+  <string name="toronto">Toronto</string>
+  <string name="rio_de_janeiro">Rio de Janeiro</string>
   <string name="sao_paulo">Sao Paulo</string>
   <string name="add_location_error">Impossible d\'ajouter cet emplacement. Réessayez plus tard</string>
   <string name="add_location_limit_error">Vous avez atteint la limite de lieux autorisés. Supprimez un lieu et essayez de l\'ajouter à nouveau</string>

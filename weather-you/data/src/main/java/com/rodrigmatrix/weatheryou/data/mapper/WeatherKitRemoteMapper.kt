@@ -172,7 +172,11 @@ class WeatherKitRemoteMapper(
     private fun Double?.round(): Double {
         val df = DecimalFormat("#.##")
         df.roundingMode = RoundingMode.CEILING
-        return df.format(this ?: 0.0).toDouble()
+        return try {
+            df.format(this ?: 0.0).toDouble()
+        } catch (e: Exception) {
+            this ?: 0.0
+        }
     }
 
     private fun String?.toDateTime(timezone: String): DateTime {

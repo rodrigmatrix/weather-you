@@ -21,6 +21,7 @@ object AddLocationModule {
                 adsManager = get(),
                 firebaseAnalytics = get(),
                 firebaseCrashlytics = FirebaseCrashlytics.getInstance(),
+                getLocationSizeUseCase = get(),
             )
         }
     }

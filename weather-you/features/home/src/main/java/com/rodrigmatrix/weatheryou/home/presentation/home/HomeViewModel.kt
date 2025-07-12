@@ -5,10 +5,11 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
 import com.rodrigmatrix.weatheryou.core.viewmodel.ViewModel
+import com.rodrigmatrix.weatheryou.data.local.UserLocationDataSource
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.domain.usecase.DeleteLocationUseCase
 import com.rodrigmatrix.weatheryou.domain.usecase.UpdateLocationsUseCase
-import com.rodrigmatrix.weatheryou.components.R
+import com.rodrigmatrix.weatheryou.domain.R
 import com.rodrigmatrix.weatheryou.domain.usecase.GetAppSettingsUseCase
 import com.rodrigmatrix.weatheryou.domain.usecase.GetLocationByLatLongUseCase
 import com.rodrigmatrix.weatheryou.domain.usecase.GetLocationsUseCase
@@ -25,6 +26,7 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.IOException
 
@@ -38,6 +40,7 @@ class HomeViewModel(
     private val getLocationByLatLongUseCase: GetLocationByLatLongUseCase,
     private val updateLocationsListOrderUseCase: UpdateLocationsListOrderUseCase,
     private val firebaseAnalytics: FirebaseAnalytics,
+    private val userLocationDataSource: UserLocationDataSource,
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ): ViewModel<HomeUiState, HomeViewEffect>(HomeUiState()) {
 
@@ -65,10 +68,7 @@ class HomeViewModel(
         viewModelScope.launch {
             getLocationsUseCase()
                 .flowOn(coroutineDispatcher)
-                .catch { exception ->
-                    firebaseAnalytics.logEvent("LOAD_LOCATIONS_ERROR", bundleOf("error" to exception.localizedMessage))
-                    exception.handleError()
-                }
+
                 .onStart { setState { it.copy(isLoading = true) } }
                 .collect { weatherLocationsList ->
                     firebaseAnalytics.logEvent("LOADED_LOCATIONS",
@@ -124,6 +124,13 @@ class HomeViewModel(
         }
     }
 
+    fun onLocationPermissionGranted() {
+        viewModelScope.launch {
+            setState { it.copy(isRefreshingLocations = true, isLoading = true) }
+            updateLocations()
+        }
+    }
+
     private fun getSelectedWeatherLocation(locationsList: List<WeatherLocation>): WeatherLocation? {
         return locationsList.find { location ->
             location.name == viewState.value.selectedWeatherLocation?.name
@@ -172,7 +179,7 @@ class HomeViewModel(
 
     fun selectLocation(weatherLocation: WeatherLocation? = null) {
         setState {
-            it.copy(selectedWeatherLocation = getSelectedLocation(weatherLocation))
+            it.copy(selectedWeatherLocation = weatherLocation)
         }
     }
 

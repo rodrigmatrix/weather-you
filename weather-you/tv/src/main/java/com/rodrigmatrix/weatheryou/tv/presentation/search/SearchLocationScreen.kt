@@ -1,7 +1,9 @@
 package com.rodrigmatrix.weatheryou.tv.presentation.search
 
 import android.app.Activity
+import android.content.pm.ApplicationInfo
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,7 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.rodrigmatrix.weatheryou.components.R as Strings
+import com.rodrigmatrix.weatheryou.domain.R as Strings
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
@@ -34,12 +36,14 @@ import androidx.navigation.NavController
 import androidx.tv.material3.CardDefaults
 import androidx.tv.material3.Icon
 import androidx.tv.material3.Text
+import com.google.android.play.core.review.ReviewManagerFactory
+import com.google.android.play.core.review.testing.FakeReviewManager
 import com.rodrigmatrix.weatheryou.addlocation.AddLocationViewEffect
 import com.rodrigmatrix.weatheryou.addlocation.AddLocationViewModel
 import com.rodrigmatrix.weatheryou.addlocation.AddLocationViewState
 import com.rodrigmatrix.weatheryou.addlocation.LocationSelectList
 import com.rodrigmatrix.weatheryou.addlocation.LocationSuggestions
-import com.rodrigmatrix.weatheryou.components.R
+import com.rodrigmatrix.weatheryou.domain.R
 import com.rodrigmatrix.weatheryou.components.SearchBar
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.core.compose.LaunchViewEffect
@@ -47,15 +51,16 @@ import com.rodrigmatrix.weatheryou.core.extensions.toast
 import com.rodrigmatrix.weatheryou.domain.model.City
 import com.rodrigmatrix.weatheryou.domain.model.SearchAutocompleteLocation
 import com.rodrigmatrix.weatheryou.tv.components.TvCard
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 internal fun SearchLocationScreen(
     navController: NavController,
-    viewModel: AddLocationViewModel = getViewModel(),
+    viewModel: AddLocationViewModel = koinViewModel(),
 ) {
     val viewState by viewModel.viewState.collectAsState()
     val context = LocalContext.current
+    val activity = LocalActivity.current
     val keyboardController = LocalSoftwareKeyboardController.current
     BackHandler {
         keyboardController?.hide()
@@ -74,13 +79,31 @@ internal fun SearchLocationScreen(
             is AddLocationViewEffect.ShowErrorString -> {
                 context.toast(viewEffect.string)
             }
+            AddLocationViewEffect.RequestInAppReview -> {
+                runCatching {
+                    if (activity != null) {
+                        val manager = if (0 != context.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) {
+                            FakeReviewManager(activity)
+                        } else {
+                            ReviewManagerFactory.create(activity)
+                        }
+                        val request = manager.requestReviewFlow()
+                        request.addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                val reviewInfo = task.result
+                                manager.launchReviewFlow(activity, reviewInfo)
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
     SearchLocationScreen(
         viewState,
         onQueryChanged = viewModel::onQueryChanged,
         onLocationClick = { location ->
-            viewModel.addLocation(location, context as Activity, false)
+            viewModel.addLocation(location, context as Activity, showAds = false)
         },
         onClearQuery = {
             if (viewState.searchText.isNotEmpty()) {
@@ -88,7 +111,7 @@ internal fun SearchLocationScreen(
             }
         },
         onFamousLocationClicked = { city ->
-            viewModel.addFamousLocation(city, context as Activity, false)
+            viewModel.addFamousLocation(city, context as Activity, showAds = false)
         },
         onSearchButtonClicked = viewModel::search
     )

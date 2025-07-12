@@ -17,7 +17,7 @@ import androidx.wear.watchface.complications.data.SmallImage
 import androidx.wear.watchface.complications.data.SmallImageComplicationData
 import androidx.wear.watchface.complications.data.SmallImageType
 import androidx.wear.watchface.complications.datasource.ComplicationRequest
-import com.rodrigmatrix.weatheryou.components.R
+import com.rodrigmatrix.weatheryou.domain.R
 import com.rodrigmatrix.weatheryou.components.details.getUvIndexGradientList
 import com.rodrigmatrix.weatheryou.components.extensions.getStaticIcon
 import com.rodrigmatrix.weatheryou.components.extensions.getString

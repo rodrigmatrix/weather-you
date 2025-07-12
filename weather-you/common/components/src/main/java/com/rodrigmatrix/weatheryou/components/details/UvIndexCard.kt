@@ -21,7 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.rodrigmatrix.weatheryou.components.R
+import com.rodrigmatrix.weatheryou.domain.R
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.rodrigmatrix.weatheryou.components.theme.weatherTextColor
 import com.rodrigmatrix.weatheryou.locationdetails.presentaion.color.level_10_uv_index_color
@@ -34,8 +34,9 @@ import com.rodrigmatrix.weatheryou.locationdetails.presentaion.color.level_6_uv_
 import com.rodrigmatrix.weatheryou.locationdetails.presentaion.color.level_7_uv_index_color
 import com.rodrigmatrix.weatheryou.locationdetails.presentaion.color.level_8_uv_index_color
 import com.rodrigmatrix.weatheryou.locationdetails.presentaion.color.level_9_uv_index_color
-import com.rodrigmatrix.weatheryou.locationdetails.presentaion.extensions.uvIndexAlertStringRes
-import com.rodrigmatrix.weatheryou.locationdetails.presentaion.extensions.uvIndexStringRes
+import com.rodrigmatrix.weatheryou.components.details.extensions.uvIndexAlertStringRes
+import com.rodrigmatrix.weatheryou.components.details.extensions.uvIndexStringRes
+import com.rodrigmatrix.weatheryou.domain.model.WeatherHour
 
 @Composable
 fun UvIndexCardContent(
@@ -139,6 +140,56 @@ private fun UvIndexBar(
                     )
                 }
         )
+    }
+}
+
+fun List<Double>.toUvIndexGradientList(): List<Color> {
+    return this.map {
+        when (it.toInt()) {
+            in (0..0) -> level_1_uv_index_color
+            in (1..1) -> level_2_uv_index_color
+            in (2..2) -> level_3_uv_index_color
+            in (3..4) -> level_4_uv_index_color
+            in (4..5) -> level_5_uv_index_color
+            in (5..6) -> level_6_uv_index_color
+            in (6..7) -> level_6_uv_index_color
+            in (8..9) -> level_8_uv_index_color
+            in (9..10) -> level_9_uv_index_color
+            else -> level_10_uv_index_color
+        }
+    }
+}
+
+
+fun getUvIndexGradient(
+    hours: List<WeatherHour>,
+): List<Color> {
+    val colors = mutableListOf<Color>()
+    listOf(
+        hours.minOf { it.uvIndex },
+        hours.find { it.dateTime.hourOfDay == 12 }?.uvIndex ?: 0.0,
+        hours.maxOf { it.uvIndex },
+    ).forEach {
+        when (it.toInt()) {
+            in (0..0) -> colors.add(level_1_uv_index_color)
+            in (1..1) -> colors.add(level_2_uv_index_color)
+            in (2..2) -> colors.add(level_3_uv_index_color)
+            in (3..4) -> colors.add(level_4_uv_index_color)
+            in (4..5) -> colors.add(level_5_uv_index_color)
+            in (5..6) -> colors.add(level_6_uv_index_color)
+            in (6..7) -> colors.add(level_7_uv_index_color)
+            in (8..9) -> colors.add(level_8_uv_index_color)
+            in (9..10) -> colors.add(level_9_uv_index_color)
+            else -> colors.add(level_10_uv_index_color)
+        }
+    }
+    return if (colors.size == 1) {
+        colors.add(colors[0])
+        colors
+    } else if (colors.isEmpty()) {
+        listOf(level_1_uv_index_color, level_1_uv_index_color)
+    } else {
+        colors
     }
 }
 

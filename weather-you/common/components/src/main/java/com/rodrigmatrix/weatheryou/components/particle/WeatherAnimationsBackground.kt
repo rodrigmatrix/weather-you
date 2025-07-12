@@ -1,16 +1,12 @@
 package com.rodrigmatrix.weatheryou.components.particle
 
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
@@ -19,37 +15,33 @@ import androidx.compose.ui.graphics.ColorFilter
 import com.rodrigmatrix.weatheryou.components.extensions.getGradientList
 import com.rodrigmatrix.weatheryou.domain.model.WeatherCondition
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
-import kotlinx.coroutines.android.awaitFrame
 
 @Composable
 fun WeatherAnimationsBackground(
     weatherLocation: WeatherLocation,
+    particleTick: Long,
     modifier: Modifier = Modifier,
 ) {
-    //val particle = fps().longValue
-    var particle by rememberSaveable { mutableLongStateOf(0L) }
-    LaunchedEffect(Unit) {
-        while (true) {
-            val nextFrame = awaitFrame() / 100_000L
-            particle = nextFrame
-        }
-    }
-
-    key(weatherLocation) {
-        val gradientList = weatherLocation.getGradientList()
-        val modifierWithBackground = modifier
+    Crossfade(
+        targetState = weatherLocation,
+        animationSpec = tween(durationMillis = 1200),
+        modifier = modifier,
+    ) { targetWeatherLocation ->
+        val gradientList = targetWeatherLocation.getGradientList()
+        val contentModifier = Modifier
             .fillMaxSize()
             .background(Brush.linearGradient(gradientList))
+
         var cloudCount = 0
         var starCount = 20
-        var cloudsFraction = (weatherLocation.cloudCover / 100.0).toFloat()
+        var cloudsFraction = (targetWeatherLocation.cloudCover / 100.0).toFloat()
         var starsFraction = 0.25f
-        var rainIntensity = 0.0f
         var isRaining = false
         var isSnowing = false
         var isHailing = false
         var isThunderstorm = false
-        when (weatherLocation.currentCondition) {
+
+        when (targetWeatherLocation.currentCondition) {
             WeatherCondition.Clear -> {
                 starCount = 50
             }
@@ -87,10 +79,10 @@ fun WeatherAnimationsBackground(
                 isThunderstorm = true
             }
             WeatherCondition.Smoke -> {
-
+                // No specific particle changes
             }
             WeatherCondition.Breezy -> {
-
+                // No specific particle changes
             }
             WeatherCondition.Windy -> {
                 starCount = 20
@@ -100,18 +92,17 @@ fun WeatherAnimationsBackground(
             }
             WeatherCondition.HeavyRain -> {
                 cloudCount = 25
-                rainIntensity = 1f
+                // rainIntensity = 1f // Not used directly in private fun call
                 isRaining = true
             }
             WeatherCondition.Rain -> {
                 cloudCount = 20
-                rainIntensity = 0.5f
+                // rainIntensity = 0.5f // Not used directly in private fun call
                 isRaining = true
             }
             WeatherCondition.Showers -> {
-                // clouds have light colors
                 cloudCount = 20
-                rainIntensity = 0.5f
+                // rainIntensity = 0.5f // Not used directly in private fun call
                 isRaining = true
             }
             WeatherCondition.Flurries -> {
@@ -124,18 +115,18 @@ fun WeatherAnimationsBackground(
             }
             WeatherCondition.MixedRainAndSleet -> {
                 isRaining = true
-                rainIntensity = 0.5f
+                // rainIntensity = 0.5f
                 starCount = 0
                 cloudCount = 20
             }
             WeatherCondition.MixedRainAndSnow -> {
                 isRaining = true
-                rainIntensity = 0.5f
+                // rainIntensity = 0.5f
                 starCount = 0
                 cloudCount = 20
                 isSnowing = true
             }
-            WeatherCondition.MixedRainfall -> {
+            WeatherCondition.MixedRainfall -> { // Potentially ambiguous, default to some clouds
                 starCount = 0
                 cloudCount = 20
             }
@@ -146,44 +137,49 @@ fun WeatherAnimationsBackground(
                 isRaining = true
             }
             WeatherCondition.ScatteredSnowShowers -> {
-                isRaining = true
+                // isRaining = true; // Was previously set, ensure if intended
                 isSnowing = true
             }
             WeatherCondition.Sleet -> {
-
+                // No specific particle changes, consider if it should have hail/snow
             }
             WeatherCondition.Snow -> {
                 isSnowing = true
                 cloudCount = 5
             }
             WeatherCondition.SnowShowers -> {
-                isRaining = true
+                // isRaining = true; // Was previously set, ensure if intended
                 isSnowing = true
             }
             WeatherCondition.Blizzard -> {
                 isSnowing = true
+                cloudCount = 150 // More clouds for blizzard
+                cloudsFraction = 1f
             }
             WeatherCondition.BlowingSnow -> {
                 isSnowing = true
             }
             WeatherCondition.FreezingDrizzle -> {
-                isSnowing = true
+                isSnowing = true // Or isHailing = true for ice pellets
             }
             WeatherCondition.FreezingRain -> {
                 isRaining = true
                 isHailing = true
             }
             WeatherCondition.Frigid -> {
-
+                // No specific particle changes
             }
             WeatherCondition.Hail -> {
                 isHailing = true
             }
             WeatherCondition.Hot -> {
-
+                // No specific particle changes
             }
             WeatherCondition.Hurricane -> {
-
+                 isRaining = true
+                 isThunderstorm = true // Hurricanes often have thunderstorms
+                 cloudCount = 200
+                 cloudsFraction = 1f
             }
             WeatherCondition.IsolatedThunderstorms -> {
                 isThunderstorm = true
@@ -191,6 +187,7 @@ fun WeatherAnimationsBackground(
             WeatherCondition.SevereThunderstorm -> {
                 isThunderstorm = true
                 isRaining = true
+                cloudCount = 150
             }
             WeatherCondition.Thunderstorm, WeatherCondition.Thunderstorms -> {
                 isThunderstorm = true
@@ -198,26 +195,30 @@ fun WeatherAnimationsBackground(
                 isRaining = true
             }
             WeatherCondition.Tornado -> {
-
+                cloudCount = 200 // Dense clouds
+                cloudsFraction = 1f
+                // Could add a specific tornado visual if available
             }
             WeatherCondition.TropicalStorm -> {
-
+                isRaining = true
+                cloudCount = 100
+                // Consider if thunderstorms are typical
             }
         }
 
         WeatherAnimationsBackground(
-            particle = particle,
-            modifier = modifierWithBackground,
+            particle = particleTick,
+            modifier = contentModifier, // Use the new contentModifier
             cloudsFraction = cloudsFraction,
             starsFraction = starsFraction,
-            rainIntensity = rainIntensity,
+            // rainIntensity = rainIntensity, // rainIntensity is not a param of the private fun
             cloudCount = cloudCount,
             starsCount = starCount,
             isRaining = isRaining,
             isSnowing = isSnowing,
             isThunderstorm = isThunderstorm,
             isHailing = isHailing,
-            isDaylight = weatherLocation.isDaylight,
+            isDaylight = targetWeatherLocation.isDaylight,
         )
     }
 }
@@ -228,7 +229,7 @@ private fun WeatherAnimationsBackground(
     modifier: Modifier = Modifier,
     cloudsFraction: Float,
     starsFraction: Float,
-    rainIntensity: Float,
+    // rainIntensity: Float, // This parameter does not exist
     cloudCount: Int,
     starsCount: Int,
     isRaining: Boolean,
@@ -264,14 +265,16 @@ private fun WeatherAnimationsBackground(
        if (isThunderstorm) {
            Thunder(
                particleAnimationIteration = particle,
-               width = 400,
+               width = 400, // Consider making these dynamic or passed as params
                height = 600
            )
        }
        if (isRaining) {
+           // The rainIntensity parameter was removed from the private function,
+           // so we use a default or derive it if needed inside Particles
            Particles(
                iteration = particle,
-               parameters = rainParameters,
+               parameters = rainParameters, // If rainParameters needs intensity, it must be part of the object
            )
        }
        if (isHailing) {

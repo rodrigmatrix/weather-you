@@ -1,10 +1,10 @@
 package com.rodrigmatrix.weatheryou.data.di
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.location.Geocoder
-import androidx.datastore.preferences.SharedPreferencesMigration
-import androidx.datastore.preferences.core.PreferenceDataStoreFactory
-import androidx.datastore.preferences.preferencesDataStoreFile
+import android.location.LocationManager
+import androidx.datastore.preferences.preferencesDataStore
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
@@ -30,17 +30,14 @@ import com.rodrigmatrix.weatheryou.data.remote.interceptor.NinjasApiInterceptor
 import com.rodrigmatrix.weatheryou.data.remote.interceptor.OpenWeatherInterceptor
 import com.rodrigmatrix.weatheryou.data.remote.interceptor.VisualCrossingInterceptor
 import com.rodrigmatrix.weatheryou.data.remote.interceptor.WeatherKitInterceptor
-import com.rodrigmatrix.weatheryou.data.remote.openweather.OpenWeatherRemoteDataSourceImpl
 import com.rodrigmatrix.weatheryou.data.remote.remoteconfig.WeatherYouRemoteConfigKeys.LOCATION_IQ_API_KEY
 import com.rodrigmatrix.weatheryou.data.remote.remoteconfig.WeatherYouRemoteConfigKeys.NINJAS_API_KEY
 import com.rodrigmatrix.weatheryou.data.remote.remoteconfig.WeatherYouRemoteConfigKeys.OPEN_WEATHER_API_KEY
 import com.rodrigmatrix.weatheryou.data.remote.remoteconfig.WeatherYouRemoteConfigKeys.VISUAL_CROSSING_API_KEY
-import com.rodrigmatrix.weatheryou.data.remote.remoteconfig.WeatherYouRemoteConfigKeys.WEATHER_PROVIDER
 import com.rodrigmatrix.weatheryou.data.remote.search.SearchLocalDataSource
 import com.rodrigmatrix.weatheryou.data.remote.search.SearchLocalDataSourceImpl
 import com.rodrigmatrix.weatheryou.data.remote.search.SearchRemoteDataSource
 import com.rodrigmatrix.weatheryou.data.remote.search.SearchRemoteDataSourceImpl
-import com.rodrigmatrix.weatheryou.data.remote.visualcrossing.VisualCrossingRemoteDataSourceImpl
 import com.rodrigmatrix.weatheryou.data.remote.weatherkit.WeatherKitRemoteDataSourceImpl
 import com.rodrigmatrix.weatheryou.data.remote.weatherkit.jwt.WeatherKitTokenGenerator
 import com.rodrigmatrix.weatheryou.data.repository.RemoteConfigRepositoryImpl
@@ -68,6 +65,8 @@ import org.koin.core.context.loadKoinModules
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import java.util.*
+
+private val Context.weatherYouDataStore by preferencesDataStore("weather_you_data_store")
 
 object WeatherYouDataModules {
 
@@ -123,6 +122,7 @@ object WeatherYouDataModules {
                 userLocationDataSource = get(),
                 searchRepository = get(),
                 applicationContext = androidApplication(),
+                firebaseAnalytics = get(),
             )
         }
         factory<SearchRepository> {
@@ -176,8 +176,9 @@ object WeatherYouDataModules {
         }
         factory<UserLocationDataSource> {
             UserLocationDataSourceImpl(
-                get(),
-                get()
+                locationServices = get(),
+                locationManager = androidContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager,
+                geoCoder = get(),
             )
         }
         factory<RemoteConfigDataSource> {
@@ -194,16 +195,7 @@ object WeatherYouDataModules {
             SearchLocalDataSourceImpl(context = androidContext())
         }
         single {
-            PreferenceDataStoreFactory.create(
-                migrations = listOf(
-                    SharedPreferencesMigration(
-                        context = androidApplication(),
-                        sharedPreferencesName = WEATHER_YOU_SHARED_PREFERENCES,
-                    ),
-                )
-            ) {
-                androidApplication().preferencesDataStoreFile("weather_you_data_store")
-            }
+            androidApplication().weatherYouDataStore
         }
         factory<SettingsLocalDataSource> {
             SettingsLocalDataSourceImpl(

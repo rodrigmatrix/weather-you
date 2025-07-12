@@ -53,7 +53,7 @@ import com.rodrigmatrix.weatheryou.wearos.R
 import com.rodrigmatrix.weatheryou.wearos.presentation.home.viewmodel.HomeViewModel
 import com.rodrigmatrix.weatheryou.wearos.presentation.home.viewmodel.HomeViewState
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.style.TextOverflow
@@ -73,7 +73,7 @@ import com.rodrigmatrix.weatheryou.wearos.presentation.navigation.WeatherYouNavi
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel = getViewModel(),
+    viewModel: HomeViewModel = koinViewModel(),
     backgroundLocationPermissionState: PermissionState = rememberPermissionState(
         permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
@@ -101,6 +101,7 @@ fun HomeScreen(
             }
         }
     ),
+    particleTick: Long,
     navController: NavController,
 ) {
     val viewState by viewModel.viewState.collectAsStateWithLifecycle()
@@ -111,6 +112,7 @@ fun HomeScreen(
         viewState = viewState,
         locationPermissionState = locationPermissionState,
         pagerState = pagerState,
+        particleTick = particleTick,
         onRefreshLocation = viewModel::fetchLocations,
         onAddLocationChipClicked = {
             navController.navigate(WeatherYouNavigation.AddLocation.route)
@@ -139,6 +141,7 @@ fun HomeScreen(
     viewState: HomeViewState,
     locationPermissionState: MultiplePermissionsState,
     pagerState: PagerState,
+    particleTick: Long,
     onRefreshLocation: () -> Unit,
     onAddLocationChipClicked: () -> Unit,
     onSettingsChipClicked: () -> Unit,
@@ -177,7 +180,10 @@ fun HomeScreen(
                         )
                     }
                     is HomePage.Weather -> {
-                        WeatherContent(pageItem.weatherLocation)
+                        WeatherContent(
+                            weatherLocation = pageItem.weatherLocation,
+                            particleTick = particleTick,
+                        )
                     }
                 }
             }
@@ -330,7 +336,8 @@ fun EmptyState(
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun WeatherContent(
-    weatherLocation: WeatherLocation
+    weatherLocation: WeatherLocation,
+    particleTick: Long,
 ) {
     val context = LocalContext.current
     val haptic = LocalHapticFeedback.current
@@ -344,7 +351,8 @@ fun WeatherContent(
     ) {
         Box {
             WeatherAnimationsBackground(
-                weatherLocation,
+                particleTick = particleTick,
+                weatherLocation = weatherLocation,
             )
             ScalingLazyColumn(
                 modifier = Modifier

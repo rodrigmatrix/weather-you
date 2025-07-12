@@ -36,6 +36,7 @@ android {
 dependencies {
     implementation project(LocalModules.domain)
     implementation project(LocalModules.core)
+    implementation project(LocalModules.data)
     implementation project(LocalModules.components)
     implementation project(LocalModules.weatherIcons)
 
@@ -70,6 +71,7 @@ dependencies {
     implementation(libs.accompanist.adaptive)
     implementation platform(libs.firebase.bom)
     implementation(libs.firebase.analytics)
+    implementation(libs.compose.animation)
 
     implementation(libs.koin.android)
     implementation(libs.koin.compose)

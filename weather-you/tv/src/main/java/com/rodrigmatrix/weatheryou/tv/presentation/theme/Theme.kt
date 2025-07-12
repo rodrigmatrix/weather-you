@@ -127,17 +127,6 @@ fun WeatherYouTvTheme(
         labelMedium = MaterialTheme.typography.labelMedium,
         labelSmall = MaterialTheme.typography.labelSmall,
     )
-    val view = LocalView.current
-    if (!view.isInEditMode) {
-        val currentWindow = (view.context as? Activity)?.window
-        SideEffect {
-            currentWindow?.let {
-                currentWindow.statusBarColor = colorScheme.primary.toArgb()
-                WindowCompat.getInsetsController(currentWindow, view).isAppearanceLightStatusBars =
-                    darkTheme
-            }
-        }
-    }
     CompositionLocalProvider(
         LocalWeatherYouColorScheme provides colorScheme.toWeatherYouColors(),
         LocalWeatherYouTypography provides typography,

@@ -5,7 +5,7 @@ import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.rodrigmatrix.weatheryou.domain.model.AppThemePreference
-import com.rodrigmatrix.weatheryou.components.R
+import com.rodrigmatrix.weatheryou.domain.R
 import com.rodrigmatrix.weatheryou.components.theme.ThemeMode
 
 enum class AppThemePreferenceOption(

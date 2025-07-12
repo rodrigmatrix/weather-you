@@ -2,6 +2,7 @@ package com.rodrigmatrix.weatheryou.addlocation
 
 import android.app.Activity
 import android.content.Context
+import android.content.pm.ApplicationInfo
 import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.*
@@ -29,20 +30,22 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.google.android.play.core.review.ReviewManagerFactory
+import com.google.android.play.core.review.testing.FakeReviewManager
 import com.rodrigmatrix.weatheryou.addlocation.preview.PreviewFamousCities
 import com.rodrigmatrix.weatheryou.components.SearchBar
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.core.compose.LaunchViewEffect
 import com.rodrigmatrix.weatheryou.core.extensions.toast
 import com.rodrigmatrix.weatheryou.domain.model.City
-import com.rodrigmatrix.weatheryou.components.R as Strings
+import com.rodrigmatrix.weatheryou.domain.R as Strings
 import com.rodrigmatrix.weatheryou.domain.model.SearchAutocompleteLocation
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun AddLocationScreen(
     navController: NavController,
-    viewModel: AddLocationViewModel = getViewModel()
+    viewModel: AddLocationViewModel = koinViewModel()
 ) {
     val viewState by viewModel.viewState.collectAsState()
     val context = LocalContext.current
@@ -64,13 +67,33 @@ fun AddLocationScreen(
             is AddLocationViewEffect.ShowErrorString -> {
                 context.toast(viewEffect.string)
             }
+
+            AddLocationViewEffect.RequestInAppReview -> {
+                runCatching {
+                    val activity = context as? Activity
+                    if (activity != null) {
+                        val manager = if (0 != context.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) {
+                            FakeReviewManager(activity)
+                        } else {
+                            ReviewManagerFactory.create(activity)
+                        }
+                        val request = manager.requestReviewFlow()
+                        request.addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                val reviewInfo = task.result
+                                manager.launchReviewFlow(activity, reviewInfo)
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
     AddLocationScreen(
         viewState,
         onQueryChanged = viewModel::onQueryChanged,
         onLocationClick = { location ->
-            viewModel.addLocation(location, context as Activity, showAds = false)
+            viewModel.addLocation(location, context as Activity)
         },
         onClearQuery = {
             if (viewState.searchText.isNotEmpty()) {
@@ -81,7 +104,7 @@ fun AddLocationScreen(
             }
         },
         onFamousLocationClicked = { city ->
-            viewModel.addFamousLocation(city, context as Activity, showAds = false)
+            viewModel.addFamousLocation(city, context as Activity)
         },
         onSearchButtonClicked = viewModel::search,
     )

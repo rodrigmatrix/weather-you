@@ -36,17 +36,19 @@ import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Scaffold
 import androidx.wear.compose.material.TimeText
 import androidx.wear.compose.material.dialog.Alert
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun EditLocationsScreen(
     modifier: Modifier = Modifier,
-    viewModel: EditLocationsViewModel = getViewModel(),
+    viewModel: EditLocationsViewModel = koinViewModel(),
+    particleTick: Long,
 ) {
     val viewState by viewModel.viewState.collectAsStateWithLifecycle()
 
     EditLocationsScreen(
         viewState = viewState,
+        particleTick = particleTick,
         onDeleteClicked = viewModel::showDeleteLocation,
         modifier = modifier,
     )
@@ -89,6 +91,7 @@ fun EditLocationsScreen(
 fun EditLocationsScreen(
     viewState: EditLocationsViewState,
     onDeleteClicked: (WeatherLocation) -> Unit,
+    particleTick: Long,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -110,6 +113,7 @@ fun EditLocationsScreen(
                 items(viewState.weatherLocations) { item ->
                     EditLocationItem(
                         weatherLocation = item,
+                        particleTick = particleTick,
                         onDeleteClicked = onDeleteClicked,
                     )
                 }
@@ -121,6 +125,7 @@ fun EditLocationsScreen(
 @Composable
 fun EditLocationItem(
     weatherLocation: WeatherLocation,
+    particleTick: Long,
     onDeleteClicked: (WeatherLocation) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -138,6 +143,7 @@ fun EditLocationItem(
     ) {
         WeatherAnimationsBackground(
             weatherLocation = weatherLocation,
+            particleTick = particleTick,
             modifier = Modifier.clip(CircleShape),
         )
         Row(
@@ -178,6 +184,7 @@ private fun EditLocationsScreenPreview() {
             viewState = EditLocationsViewState(
                 weatherLocations = PreviewWeatherList
             ),
+            particleTick = 0L,
             onDeleteClicked = { },
         )
     }

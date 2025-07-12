@@ -12,14 +12,15 @@ import com.rodrigmatrix.weatheryou.wearos.presentation.home.HomeScreen
 import com.rodrigmatrix.weatheryou.wearos.presentation.location.AddLocationScreen
 import com.rodrigmatrix.weatheryou.wearos.presentation.location.AddLocationViewModel
 import com.rodrigmatrix.weatheryou.wearos.presentation.location.SearchLocationScreen
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun WeatherYouWearNavHost(
     modifier: Modifier = Modifier,
+    particleTick: Long,
     navController: NavHostController = rememberSwipeDismissableNavController(),
-    addLocationViewModel: AddLocationViewModel = getViewModel<AddLocationViewModel>(),
+    addLocationViewModel: AddLocationViewModel = koinViewModel<AddLocationViewModel>(),
 ) {
     SwipeDismissableNavHost(
         navController = navController,
@@ -27,7 +28,10 @@ fun WeatherYouWearNavHost(
         modifier = modifier,
     ) {
         composable(WeatherYouNavigation.Home.route) {
-            HomeScreen(navController = navController)
+            HomeScreen(
+                navController = navController,
+                particleTick = particleTick,
+            )
         }
         composable(WeatherYouNavigation.AddLocation.route) {
             AddLocationScreen(
@@ -42,11 +46,15 @@ fun WeatherYouWearNavHost(
             )
         }
         composable(WeatherYouNavigation.EditLocations.route) {
-            EditLocationsScreen()
+            EditLocationsScreen(
+                particleTick = particleTick,
+            )
         }
 
         composable(WeatherYouNavigation.Settings.route) {
-            EditLocationsScreen()
+            EditLocationsScreen(
+                particleTick = particleTick,
+            )
         }
     }
 }
