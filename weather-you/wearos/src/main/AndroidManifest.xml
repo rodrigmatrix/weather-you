@@ -28,6 +28,7 @@
         <activity
             android:name="com.rodrigmatrix.weatheryou.wearos.presentation.MainActivity"
             android:exported="true"
+            android:taskAffinity=""
             android:theme="@style/Theme.AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -37,9 +38,9 @@
         </activity>
 
         <!-- Complications -->
-        <service android:name=".complications.DayWeatherComplicationProviderService"
+        <service android:name=".complications.CurrentWeatherComplicationProviderService"
             android:exported="true"
-            android:icon="@drawable/ic_sunny"
+            android:icon="@drawable/ic_weather_partly_cloudy"
             android:label="@string/day_weather_complication_label"
             android:permission="com.google.android.wearable.permission.BIND_COMPLICATION_PROVIDER">
             <intent-filter>
@@ -53,6 +54,51 @@
                 android:name="android.support.wearable.complications.SUPPORTED_TYPES"
                 android:value="ICON,SMALL_IMAGE, RANGED_VALUE" />
         </service>
+
+        <service android:name=".complications.UvIndexComplicationProviderService"
+            android:exported="true"
+            android:icon="@drawable/ic_sunny"
+            android:label="@string/uv_index_complication_label"
+            android:permission="com.google.android.wearable.permission.BIND_COMPLICATION_PROVIDER">
+
+            <intent-filter>
+                <action android:name="android.support.wearable.complications.ACTION_COMPLICATION_UPDATE_REQUEST" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.support.wearable.complications.UPDATE_PERIOD_SECONDS"
+                android:value="0"/>
+
+            <meta-data
+                android:name="android.support.wearable.complications.SUPPORTED_TYPES"
+                android:value="RANGED_VALUE" />
+        </service>
+
+        <service android:name=".complications.PrecipitationChanceComplicationProviderService"
+            android:exported="true"
+            android:icon="@drawable/ic_weather_rainyday"
+            android:label="@string/precipitation_chance_complication_label"
+            android:permission="com.google.android.wearable.permission.BIND_COMPLICATION_PROVIDER">
+
+            <intent-filter>
+                <action android:name="android.support.wearable.complications.ACTION_COMPLICATION_UPDATE_REQUEST" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.support.wearable.complications.UPDATE_PERIOD_SECONDS"
+                android:value="0"/>
+
+            <meta-data
+                android:name="android.support.wearable.complications.SUPPORTED_TYPES"
+                android:value="RANGED_VALUE" />
+        </service>
+
     </application>
+
+    <queries>
+        <intent>
+            <action android:name="android.speech.RecognitionService" />
+        </intent>
+    </queries>
 
 </manifest>

@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.components.R
 import com.rodrigmatrix.weatheryou.components.extensions.getGradientList
 import com.rodrigmatrix.weatheryou.components.preview.PreviewWeatherLocation
+import com.rodrigmatrix.weatheryou.core.state.produceParticleTick
 import kotlin.math.absoluteValue
 
 @Composable
@@ -442,16 +443,7 @@ val starsParameters = PrecipitationsParameters(
 @Preview
 @Composable
 fun RainPreview() {
-    val infiniteTransition = rememberInfiniteTransition(label = "particleTick")
-    val particleTick by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 1_000_000f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 100_000, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "particleTick"
-    )
+    val particleTick = produceParticleTick()
     Box(
         modifier = Modifier.background(
             Brush.linearGradient(
@@ -466,16 +458,7 @@ fun RainPreview() {
 @Preview
 @Composable
 fun SnowPreview() {
-    val infiniteTransition = rememberInfiniteTransition(label = "particleTick")
-    val particleTick by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 1_000_000f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 100_000, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "particleTick"
-    )
+    val particleTick = produceParticleTick()
     Box(
         modifier = Modifier.background(
             Brush.linearGradient(
@@ -491,16 +474,7 @@ fun SnowPreview() {
 @Preview
 @Composable
 fun CloudsPreview() {
-    val infiniteTransition = rememberInfiniteTransition(label = "particleTick")
-    val particleTick by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 1_000_000f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 100_000, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "particleTick"
-    )
+    val particleTick = produceParticleTick()
     Box(
         modifier = Modifier.background(
             Brush.linearGradient(
@@ -523,16 +497,7 @@ fun CloudsPreview() {
 @Preview
 @Composable
 fun ThunderstormPreview() {
-    val infiniteTransition = rememberInfiniteTransition(label = "particleTick")
-    val particleTick by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 1_000_000f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 100_000, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "particleTick"
-    )
+    val particleTick = produceParticleTick()
     Box(
         modifier = Modifier.background(
             Brush.linearGradient(

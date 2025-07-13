@@ -17,7 +17,15 @@ fun String.toDateTime(timezone: String): DateTime {
 }
 
 fun String.toDateTime(): DateTime {
-    return DateTime.parse(this, DateTimeFormat.forPattern(DATE_PATTERN))
+    return try {
+        DateTime.parse(this, DateTimeFormat.forPattern(DATE_PATTERN))
+    } catch (_: Exception) {
+        try {
+            DateTimeFormat.forPattern(DATE_PATTERN).parseLocalDateTime(this).toDateTime()
+        } catch (_: Exception) {
+            DateTime.now()
+        }
+    }
 }
 
 fun String?.getCurrentTime(): DateTime {
