@@ -4,25 +4,15 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.MenuOpen
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MediumExtendedFloatingActionButton
-import androidx.compose.material3.MediumFloatingActionButton
-import androidx.compose.material3.NavigationDrawerItem
-import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailDefaults
-import androidx.compose.material3.NavigationRailItem
-import androidx.compose.material3.PermanentDrawerSheet
-import androidx.compose.material3.PermanentNavigationDrawer
 import androidx.compose.material3.SmallExtendedFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.WideNavigationRail
@@ -45,10 +35,10 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.rodrigmatrix.weatheryou.components.extensions.getGradientList
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
+import com.rodrigmatrix.weatheryou.domain.R
 import com.rodrigmatrix.weatheryou.domain.model.AppSettings
 import com.rodrigmatrix.weatheryou.home.presentation.home.HomeUiState
 import kotlinx.coroutines.launch
-import com.rodrigmatrix.weatheryou.domain.R
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -109,16 +99,18 @@ fun HomeNavigationRail(
                         text = {
                             Text(
                                 text = stringResource(R.string.search_location),
-                                color = WeatherYouTheme.colorScheme.onSurface,
+                                color = WeatherYouTheme.colorScheme.onPrimaryContainer,
                                 style = WeatherYouTheme.typography.labelLarge,
                             )
                         },
                         icon = {
                             Icon(
                                 imageVector = Icons.Default.Search,
-                                contentDescription = stringResource(R.string.search_location)
+                                tint = WeatherYouTheme.colorScheme.onPrimaryContainer,
+                                contentDescription = stringResource(R.string.search_location),
                             )
                         },
+                        containerColor = WeatherYouTheme.colorScheme.primaryContainer,
                         expanded = state.targetValue == WideNavigationRailValue.Expanded,
                         onClick = {
                             navController.navigate(NavigationEntries.ADD_LOCATION_ROUTE)

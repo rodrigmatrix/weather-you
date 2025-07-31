@@ -48,6 +48,7 @@ import sh.calvin.reorderable.ReorderableItem
 import androidx.compose.runtime.setValue
 import androidx.compose.material3.adaptive.WindowAdaptiveInfo
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.runtime.LaunchedEffect
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.rodrigmatrix.weatheryou.components.theme.ThemeMode
 import sh.calvin.reorderable.rememberReorderableLazyGridState
@@ -67,21 +68,27 @@ fun WeatherLocationList(
     modifier: Modifier = Modifier,
 ) {
     val view = LocalView.current
-    var list by remember {
-        mutableStateOf(weatherLocationList)
-    }.apply { value = weatherLocationList }
+    var reorderableDataList by remember {
+        mutableStateOf(weatherLocationList.filter { !it.isCurrentLocation })
+    }
+    LaunchedEffect(weatherLocationList) {
+        reorderableDataList = weatherLocationList.filter { !it.isCurrentLocation }
+    }
     val adaptiveInfo = currentWindowAdaptiveInfo()
     val listState = rememberLazyGridState()
     val reorderableLazyListState = rememberReorderableLazyGridState(
         lazyGridState = listState,
         scrollThresholdPadding = WindowInsets.statusBars.asPaddingValues(),
     ) { from, to ->
-        list = list.toMutableList().apply {
+        reorderableDataList = reorderableDataList.toMutableList().apply {
             val fromIndex = indexOfFirst { it.id == from.key }
             val toIndex = indexOfFirst { it.id == to.key }
-            add(toIndex, removeAt(fromIndex))
+            if (fromIndex != -1 && toIndex != -1) {
+                add(toIndex, removeAt(fromIndex))
+            }
         }
-        onOrderChanged(list)
+        val fullOrderedList = weatherLocationList.filter { it.isCurrentLocation } + reorderableDataList
+        onOrderChanged(fullOrderedList)
         view.performHapticAction(HapticAction.VirtualKey)
     }
     LazyVerticalGrid(
@@ -94,7 +101,7 @@ fun WeatherLocationList(
             Spacer(Modifier.windowInsetsTopHeight(WindowInsets.statusBars))
         }
         items(
-            items = list,
+            items = reorderableDataList,
             key = { it.id },
         ) { item ->
             if (item.isCurrentLocation) {
