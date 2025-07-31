@@ -10,14 +10,14 @@ object Sdk {
     // Phone/Tablet
     const val phoneVersionMajor = 5
     const val phoneVersionMinor = 1
-    const val phoneVersionPatch = 0
+    const val phoneVersionPatch = 1
 
     // TV
     const val tvVersionMajor = 3
     const val tvVersionMinor = 4
-    const val tvVersionPatch = 0
+    const val tvVersionPatch = 1
 
-    const val localVersionCode = 51
+    const val localVersionCode = 52
 
     const val applicationId = "com.rodrigmatrix.weatheryou"
 }
