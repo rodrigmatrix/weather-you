@@ -18,6 +18,7 @@ object LocationDetailsModule {
             WeatherDetailsViewModel(
                 weatherLocation = weatherLocation,
                 getAppSettingsUseCase = get(),
+                getLocationUseCase = get(),
             )
         }
         viewModel { ConditionsViewModel() }

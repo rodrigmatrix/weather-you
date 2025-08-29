@@ -1,6 +1,9 @@
 package com.rodrigmatrix.weatheryou.home.presentation.navigation
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
@@ -49,9 +52,11 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.rodrigmatrix.weatheryou.domain.R
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 
-@OptIn(ExperimentalMaterial3AdaptiveApi::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3AdaptiveApi::class, ExperimentalMaterial3ExpressiveApi::class,
+    ExperimentalSharedTransitionApi::class
+)
 @Composable
-fun HomeNavigationSuite(
+fun SharedTransitionScope.HomeNavigationSuite(
     navController: NavController,
     currentDestination: String,
     onSearchClick: () -> Unit,
@@ -114,6 +119,7 @@ fun HomeNavigationSuite(
                     contentColor = WeatherYouTheme.colorScheme.onSecondaryContainer,
                     shape = RoundedCornerShape(fabCornerRadius),
                     interactionSource = fabInteractionSource,
+
                 ) {
                     Icon(
                         imageVector = Icons.Default.Search,

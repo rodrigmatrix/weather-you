@@ -33,6 +33,8 @@ interface WeatherRepository {
 
     fun getLocationsSize(): Flow<Int>
 
+    fun getLocation(id: Int): Flow<WeatherLocation>
+
     fun getLocation(latitude: Double, longitude: Double): Flow<WeatherLocation?>
 
     fun setSavedLocation(weatherLocation: WeatherLocation, widgetId: String): Flow<Unit>

@@ -187,10 +187,6 @@ fun HomeScreen(
         }
     }
 
-    BackHandler(enabled = homeUiState.isLocationSelected()) {
-        onLocationSelected(null)
-    }
-
     when (homeUiState.dialogState) {
         HomeDialogState.BackgroundLocation -> {
             RequestBackgroundLocationDialog(

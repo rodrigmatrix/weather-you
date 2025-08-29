@@ -4,6 +4,7 @@ package com.rodrigmatrix.weatheryou.presentation.navigation
 
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
 import androidx.compose.material3.adaptive.navigation.ThreePaneScaffoldNavigator
@@ -30,7 +31,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun WeatherHomeNavHost(
+fun SharedTransitionScope.WeatherHomeNavHost(
     navController: NavHostController,
     homeViewModel: HomeViewModel,
     homeViewState: HomeUiState,
@@ -54,26 +55,24 @@ fun WeatherHomeNavHost(
                     )
                 }
             }
-            SharedTransitionLayout {
-                HomeScreen(
-                    navController = navController,
-                    homeUiState = homeViewState,
-                    navigator = homeScreenNavigator,
-                    onAddLocation = {
-                        navController.navigate(NavigationEntries.ADD_LOCATION_ROUTE)
-                    },
-                    onPermissionGranted = homeViewModel::onLocationPermissionGranted,
-                    onDialogStateChanged = homeViewModel::onDialogStateChanged,
-                    onSwipeRefresh = homeViewModel::loadLocations,
-                    onLocationSelected = homeViewModel::selectLocation,
-                    onDeleteLocation = homeViewModel::deleteLocation,
-                    onDeleteLocationConfirmButtonClicked = homeViewModel::deleteLocation,
-                    onOrderChanged = homeViewModel::orderLocations,
-                    onNavigateToLocation = onNavigateToLocation,
-                    animatedVisibilityScope = this@composable,
-                    sharedTransitionScope = this,
-                )
-            }
+            HomeScreen(
+                navController = navController,
+                homeUiState = homeViewState,
+                navigator = homeScreenNavigator,
+                onAddLocation = {
+                    navController.navigate(NavigationEntries.ADD_LOCATION_ROUTE)
+                },
+                onPermissionGranted = homeViewModel::onLocationPermissionGranted,
+                onDialogStateChanged = homeViewModel::onDialogStateChanged,
+                onSwipeRefresh = homeViewModel::loadLocations,
+                onLocationSelected = homeViewModel::selectLocation,
+                onDeleteLocation = homeViewModel::deleteLocation,
+                onDeleteLocationConfirmButtonClicked = homeViewModel::deleteLocation,
+                onOrderChanged = homeViewModel::orderLocations,
+                onNavigateToLocation = onNavigateToLocation,
+                animatedVisibilityScope = this@composable,
+                sharedTransitionScope = this@WeatherHomeNavHost,
+            )
             LaunchedEffect(homeViewModel) {
                 homeViewModel.viewEffect.collect { viewEffect ->
                     when (viewEffect) {
@@ -84,6 +83,7 @@ fun WeatherHomeNavHost(
                         HomeViewEffect.ShowInAppReview -> {
 
                         }
+
                         HomeViewEffect.UpdateWidgets -> {
                             onUpdateWidgets()
                         }
@@ -96,7 +96,7 @@ fun WeatherHomeNavHost(
             }
         }
         composable(HomeEntry.Settings.route) {
-            SettingsScreen(onFetchLocations = {  })
+            SettingsScreen(onFetchLocations = { })
         }
         composable(HomeEntry.About.route) {
             AboutScreen()

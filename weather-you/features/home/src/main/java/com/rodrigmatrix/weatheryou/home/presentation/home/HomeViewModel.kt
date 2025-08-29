@@ -68,7 +68,6 @@ class HomeViewModel(
         viewModelScope.launch {
             getLocationsUseCase()
                 .flowOn(coroutineDispatcher)
-
                 .onStart { setState { it.copy(isLoading = true) } }
                 .collect { weatherLocationsList ->
                     firebaseAnalytics.logEvent("LOADED_LOCATIONS",

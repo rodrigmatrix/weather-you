@@ -283,6 +283,19 @@ class WeatherRepositoryImpl(
         }
     }
 
+    override fun getLocation(id: Int): Flow<WeatherLocation> {
+        return weatherLocalDataSource.getLocation(id = id)
+            .flatMapLatest { locationEntity ->
+                weatherLocalDataSource.getWeather(latitude = locationEntity.latitude, longitude = locationEntity.longitude)
+                    .map { weather ->
+                        weather?.toWeatherLocation(
+                            id = locationEntity.id,
+                            orderIndex = locationEntity.orderIndex,
+                        ) ?: throw Exception("Weather not found")
+                    }
+            }
+    }
+
     override fun getWidgetLocationsSize(): Flow<Int> {
         return weatherLocalDataSource.getWidgetWeatherList().map { it.size }
     }
@@ -299,22 +312,17 @@ class WeatherRepositoryImpl(
             DateTime.now(),
         )
         return if (hasLocationPermission && (forceUpdate || minutesBetween.minutes > 60 || currentLocationEntity == null)) {
-            try {
-                userLocationDataSource.getCurrentLocation()
-                    .firstOrNull()
-            } catch (e: Exception) {
-                try {
+            userLocationDataSource.getCurrentLocation()
+                .firstOrNull() ?: try {
                     userLocationDataSource.getLastKnownLocation().firstOrNull()
-                } catch (e2: Exception) {
+                } catch (e: Exception) {
                     currentLocationEntity?.also {
                         firebaseAnalytics.logEvent("LOCATION_SERVICES_ERROR", bundleOf(
                             "error" to "Both current and last known location failed",
-                            "current_location_error" to e.localizedMessage,
-                            "last_known_error" to e2.localizedMessage
+                            "last_known_error" to e.localizedMessage
                         ))
                     }
                 }
-            }
         } else {
             currentLocationEntity
         }

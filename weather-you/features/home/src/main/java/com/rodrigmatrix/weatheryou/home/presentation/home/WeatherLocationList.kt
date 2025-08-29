@@ -52,7 +52,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.rodrigmatrix.weatheryou.components.theme.ThemeMode
 import sh.calvin.reorderable.rememberReorderableLazyGridState
-
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun WeatherLocationList(
@@ -68,12 +67,13 @@ fun WeatherLocationList(
     modifier: Modifier = Modifier,
 ) {
     val view = LocalView.current
-    var reorderableDataList by remember {
-        mutableStateOf(weatherLocationList.filter { !it.isCurrentLocation })
-    }
+    var reorderableDataList by remember { mutableStateOf(emptyList<WeatherLocation>()) }
+
+    val currentLocation = weatherLocationList.firstOrNull { it.isCurrentLocation }
     LaunchedEffect(weatherLocationList) {
         reorderableDataList = weatherLocationList.filter { !it.isCurrentLocation }
     }
+
     val adaptiveInfo = currentWindowAdaptiveInfo()
     val listState = rememberLazyGridState()
     val reorderableLazyListState = rememberReorderableLazyGridState(
@@ -87,10 +87,12 @@ fun WeatherLocationList(
                 add(toIndex, removeAt(fromIndex))
             }
         }
-        val fullOrderedList = weatherLocationList.filter { it.isCurrentLocation } + reorderableDataList
+        val fullOrderedList =
+            (if (currentLocation != null) listOf(currentLocation) else emptyList()) + reorderableDataList
         onOrderChanged(fullOrderedList)
         view.performHapticAction(HapticAction.VirtualKey)
     }
+
     LazyVerticalGrid(
         columns = GridCells.Fixed(1),
         verticalArrangement = Arrangement.spacedBy(10.dp),
@@ -100,11 +102,31 @@ fun WeatherLocationList(
         item {
             Spacer(Modifier.windowInsetsTopHeight(WindowInsets.statusBars))
         }
+
+        if (currentLocation != null) {
+            item(key = currentLocation.id) {
+                WeatherLocation(
+                    weatherLocation = currentLocation,
+                    particleTick = particleTick,
+                    isRefreshingLocations = isRefreshingLocations,
+                    isSelected = selectedLocation == currentLocation,
+                    onItemClick = onItemClick,
+                    onDismiss = onDismiss,
+                    animatedVisibilityScope = animatedVisibilityScope,
+                    sharedTransitionScope = sharedTransitionScope,
+                )
+            }
+        }
+
         items(
             items = reorderableDataList,
             key = { it.id },
         ) { item ->
-            if (item.isCurrentLocation) {
+            ReorderableItem(
+                state = reorderableLazyListState,
+                key = item.id,
+            ) { isDragging ->
+                val scale by animateFloatAsState(if (isDragging) 1.1f else 1f, label = "")
                 WeatherLocation(
                     weatherLocation = item,
                     particleTick = particleTick,
@@ -114,36 +136,20 @@ fun WeatherLocationList(
                     onDismiss = onDismiss,
                     animatedVisibilityScope = animatedVisibilityScope,
                     sharedTransitionScope = sharedTransitionScope,
+                    modifier = Modifier
+                        .longPressDraggableHandle(
+                            onDragStarted = {
+                                view.performHapticAction(HapticAction.DragStart)
+                            },
+                            onDragStopped = {
+                                view.performHapticAction(HapticAction.DragEnd)
+                            },
+                        )
+                        .scale(scale),
                 )
-            } else {
-                ReorderableItem(
-                    state = reorderableLazyListState,
-                    key = item.id,
-                ) { isDragging ->
-                    val scale by animateFloatAsState(if (isDragging) 1.1f else 1f, label = "")
-                    WeatherLocation(
-                        weatherLocation = item,
-                        particleTick = particleTick,
-                        isRefreshingLocations = isRefreshingLocations,
-                        isSelected = selectedLocation == item,
-                        onItemClick = onItemClick,
-                        onDismiss = onDismiss,
-                        animatedVisibilityScope = animatedVisibilityScope,
-                        sharedTransitionScope = sharedTransitionScope,
-                        modifier = Modifier
-                            .longPressDraggableHandle(
-                                onDragStarted = {
-                                    view.performHapticAction(HapticAction.DragStart)
-                                },
-                                onDragStopped = {
-                                    view.performHapticAction(HapticAction.DragEnd)
-                                },
-                            )
-                            .scale(scale),
-                    )
-                }
             }
         }
+
         item {
             if (adaptiveInfo.windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT) {
                 Spacer(Modifier.height(100.dp))
@@ -205,7 +211,12 @@ fun WeatherLocation(
                 modifier = modifier
                     .padding(horizontal = 16.dp)
                     .fillMaxWidth()
-
+                    .sharedElement(
+                        sharedContentState = rememberSharedContentState(
+                            key = weatherLocation.id
+                        ),
+                        animatedVisibilityScope = animatedVisibilityScope,
+                    )
             ) {
                 Box{
                     if (WeatherYouTheme.themeSettings.showWeatherAnimations) {
