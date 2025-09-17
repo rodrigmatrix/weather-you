@@ -5,6 +5,7 @@ package com.rodrigmatrix.weatheryou.presentation.navigation
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
 import androidx.compose.material3.adaptive.navigation.ThreePaneScaffoldNavigator
@@ -39,25 +40,16 @@ fun SharedTransitionScope.WeatherHomeNavHost(
     homeScreenNavigator: ThreePaneScaffoldNavigator<Int>,
     modifier: Modifier = Modifier,
 ) {
-    val coroutineScope = rememberCoroutineScope()
     NavHost(
         navController = navController,
         startDestination = HomeEntry.Locations.route,
         modifier = modifier,
     ) {
         composable(HomeEntry.Locations.route) {
-            val context = LocalContext.current
-            val onNavigateToLocation: (Int) -> Unit = { id ->
-                coroutineScope.launch {
-                    homeScreenNavigator.navigateTo(
-                        pane = ListDetailPaneScaffoldRole.Detail,
-                        contentKey = id,
-                    )
-                }
-            }
             HomeScreen(
                 navController = navController,
                 homeUiState = homeViewState,
+                homeViewEffect = homeViewModel.viewEffect,
                 navigator = homeScreenNavigator,
                 onAddLocation = {
                     navController.navigate(NavigationEntries.ADD_LOCATION_ROUTE)
@@ -69,31 +61,10 @@ fun SharedTransitionScope.WeatherHomeNavHost(
                 onDeleteLocation = homeViewModel::deleteLocation,
                 onDeleteLocationConfirmButtonClicked = homeViewModel::deleteLocation,
                 onOrderChanged = homeViewModel::orderLocations,
-                onNavigateToLocation = onNavigateToLocation,
+                onUpdateWidgets = onUpdateWidgets,
                 animatedVisibilityScope = this@composable,
                 sharedTransitionScope = this@WeatherHomeNavHost,
             )
-            LaunchedEffect(homeViewModel) {
-                homeViewModel.viewEffect.collect { viewEffect ->
-                    when (viewEffect) {
-                        is HomeViewEffect.Error -> {
-                            context.toast(viewEffect.stringRes)
-                        }
-
-                        HomeViewEffect.ShowInAppReview -> {
-
-                        }
-
-                        HomeViewEffect.UpdateWidgets -> {
-                            onUpdateWidgets()
-                        }
-
-                        is HomeViewEffect.OpenLocation -> {
-                            onNavigateToLocation(viewEffect.id)
-                        }
-                    }
-                }
-            }
         }
         composable(HomeEntry.Settings.route) {
             SettingsScreen(onFetchLocations = { })

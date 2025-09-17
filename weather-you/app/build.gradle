@@ -171,7 +171,6 @@ dependencies {
     implementation(libs.firebase.crashlytics)
     implementation(libs.firebase.analytics)
 
-    implementation(libs.workManager)
 
     implementation(libs.google.play.location)
     implementation(libs.google.play.review)

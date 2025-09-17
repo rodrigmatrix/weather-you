@@ -33,7 +33,7 @@ interface WeatherRepository {
 
     fun getLocationsSize(): Flow<Int>
 
-    fun getLocation(id: Int): Flow<WeatherLocation>
+    fun getLocation(id: Int, isCurrentLocation: Boolean): Flow<WeatherLocation>
 
     fun getLocation(latitude: Double, longitude: Double): Flow<WeatherLocation?>
 

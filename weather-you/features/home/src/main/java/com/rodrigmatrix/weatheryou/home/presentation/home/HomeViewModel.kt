@@ -194,7 +194,12 @@ class HomeViewModel(
                         setState {
                             it.copy(selectedWeatherLocation = weatherLocation)
                         }
-                        setEffect { HomeViewEffect.OpenLocation(weatherLocation.id) }
+                        setEffect {
+                            HomeViewEffect.OpenLocation(
+                                id = weatherLocation.id,
+                                page = viewState.value.locationsList.indexOfFirst { it.id == weatherLocation.id },
+                            )
+                        }
                     }
                     return@firstOrNull true
                 }

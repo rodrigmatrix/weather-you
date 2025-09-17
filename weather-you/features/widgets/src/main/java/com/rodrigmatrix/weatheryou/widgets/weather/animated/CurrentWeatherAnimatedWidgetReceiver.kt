@@ -2,21 +2,17 @@ package com.rodrigmatrix.weatheryou.widgets.weather.animated
 
 import android.appwidget.AppWidgetManager
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
-import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.glance.GlanceId
 import androidx.glance.appwidget.GlanceAppWidget
-import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
-import androidx.glance.appwidget.state.updateAppWidgetState
-import androidx.glance.state.PreferencesGlanceStateDefinition
-import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
-import com.rodrigmatrix.weatheryou.domain.usecase.GetWidgetTemperatureUseCase
-import kotlinx.coroutines.DelicateCoroutinesApi
+import androidx.glance.appwidget.updateAll
+import com.rodrigmatrix.weatheryou.domain.usecase.UpdateLocationsUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import org.koin.core.component.KoinComponent
@@ -27,8 +23,7 @@ class CurrentWeatherAnimatedWidgetReceiver: GlanceAppWidgetReceiver(), KoinCompo
     override val glanceAppWidget: GlanceAppWidget = CurrentAnimatedWeatherWidget()
 
     private val coroutineScope = MainScope()
-
-    private val getWidgetTemperatureUseCase by inject<GetWidgetTemperatureUseCase>()
+    private val updateLocationsUseCase by inject<UpdateLocationsUseCase>()
 
     override fun onUpdate(
         context: Context,
@@ -36,7 +31,35 @@ class CurrentWeatherAnimatedWidgetReceiver: GlanceAppWidgetReceiver(), KoinCompo
         appWidgetIds: IntArray
     ) {
         super.onUpdate(context, appWidgetManager, appWidgetIds)
-        observeData(context)
+        updateLocations(context)
+    }
+
+    override fun onReceive(context: Context, intent: Intent) {
+        super.onReceive(context, intent)
+        when (intent.action) {
+            Intent.ACTION_TIME_CHANGED,
+            Intent.ACTION_TIMEZONE_CHANGED -> updateLocations(context)
+        }
+    }
+
+    private fun updateLocations(context: Context) {
+        coroutineScope.launch(Dispatchers.IO) {
+            try {
+                // Fetch fresh weather data first
+                updateLocationsUseCase(forceUpdate = true)
+                    .flowOn(Dispatchers.IO)
+                    .firstOrNull()
+                
+                // Then update all widgets
+                glanceAppWidget.updateAll(context)
+            } catch (e: Exception) {
+                // Even if data fetch fails, try to update with cached data
+                try {
+                    glanceAppWidget.updateAll(context)
+                } catch (updateError: Exception) {
+                }
+            }
+        }
     }
 
     override fun onAppWidgetOptionsChanged(
@@ -46,38 +69,12 @@ class CurrentWeatherAnimatedWidgetReceiver: GlanceAppWidgetReceiver(), KoinCompo
         newOptions: Bundle
     ) {
         super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
+        // Update the widget when options change
         coroutineScope.launch(Dispatchers.IO) {
-            val glanceWidgetManager = GlanceAppWidgetManager(context)
-            updateWidgetState(context, glanceWidgetManager.getGlanceIdBy(appWidgetId))
-        }
-    }
-
-    @OptIn(DelicateCoroutinesApi::class)
-    private fun observeData(context: Context) {
-        coroutineScope.launch(Dispatchers.IO) {
-            val glanceWidgetManager = GlanceAppWidgetManager(context)
-            glanceWidgetManager.getGlanceIds(
-                CurrentAnimatedWeatherWidget::class.java
-            ).forEach { widgetId ->
-                updateWidgetState(context, widgetId)
+            try {
+                glanceAppWidget.updateAll(context)
+            } catch (e: Exception) {
             }
         }
-    }
-
-    private suspend fun updateWidgetState(context: Context, widgetId: GlanceId) {
-        val glanceWidgetManager = GlanceAppWidgetManager(context)
-        val appWidgetId = glanceWidgetManager.getAppWidgetId(widgetId).toString()
-        val weather = getWidgetTemperatureUseCase(appWidgetId)
-            .firstOrNull()
-        updateAppWidgetState(context, PreferencesGlanceStateDefinition, widgetId) { pref ->
-            pref.toMutablePreferences().apply {
-                this[currentWeather] = weather.toString()
-            }
-        }
-        glanceAppWidget.update(context, widgetId)
-    }
-
-    companion object {
-        val currentWeather = stringPreferencesKey("currentWeather")
     }
 }

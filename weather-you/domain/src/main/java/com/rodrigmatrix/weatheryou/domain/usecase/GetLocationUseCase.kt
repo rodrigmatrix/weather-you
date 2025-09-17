@@ -8,7 +8,7 @@ class GetLocationUseCase(
     private val weatherRepository: WeatherRepository
 ) {
 
-    operator fun invoke(id: Int): Flow<WeatherLocation> {
-        return weatherRepository.getLocation(id)
+    operator fun invoke(id: Int, isCurrentLocation: Boolean): Flow<WeatherLocation> {
+        return weatherRepository.getLocation(id, isCurrentLocation)
     }
 }

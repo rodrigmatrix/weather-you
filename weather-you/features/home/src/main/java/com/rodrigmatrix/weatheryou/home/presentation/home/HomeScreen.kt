@@ -70,6 +70,7 @@ import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
+import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
 import androidx.compose.material3.adaptive.layout.PaneAdaptedValue
 import androidx.compose.material3.adaptive.layout.PaneExpansionAnchor
 import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirectiveWithTwoPanesOnMediumWidth
@@ -97,6 +98,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
@@ -115,9 +117,11 @@ import com.rodrigmatrix.weatheryou.components.location.RequestBackgroundLocation
 import com.rodrigmatrix.weatheryou.components.particle.WeatherAnimationsBackground
 import com.rodrigmatrix.weatheryou.components.preview.PreviewWeatherList
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
+import com.rodrigmatrix.weatheryou.core.extensions.toast
 import com.rodrigmatrix.weatheryou.domain.model.WeatherCondition
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.locationdetails.presentaion.details.WeatherDetailsScreen
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 
@@ -128,6 +132,7 @@ import kotlin.math.abs
 fun HomeScreen(
     navController: NavController,
     homeUiState: HomeUiState,
+    homeViewEffect: Flow<HomeViewEffect>,
     navigator: ThreePaneScaffoldNavigator<Int>,
     onLocationSelected: (WeatherLocation?) -> Unit,
     onDialogStateChanged: (HomeDialogState) -> Unit,
@@ -165,12 +170,22 @@ fun HomeScreen(
             }
         }
     ),
-    onNavigateToLocation: (Int) -> Unit,
+    onUpdateWidgets: () -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
     sharedTransitionScope: SharedTransitionScope,
 ) {
+    val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState {
         homeUiState.locationsList.size
+    }
+    val context = LocalContext.current
+    val onNavigateToLocation: (Int) -> Unit = { id ->
+        coroutineScope.launch {
+            navigator.navigateTo(
+                pane = ListDetailPaneScaffoldRole.Detail,
+                contentKey = id,
+            )
+        }
     }
 
     LaunchedEffect(pagerState, homeUiState.locationsList) {
@@ -229,6 +244,29 @@ fun HomeScreen(
         animatedVisibilityScope = animatedVisibilityScope,
         sharedTransitionScope = sharedTransitionScope,
     )
+
+    LaunchedEffect(navigator) {
+        homeViewEffect.collect { viewEffect ->
+            when (viewEffect) {
+                is HomeViewEffect.Error -> {
+                    context.toast(viewEffect.stringRes)
+                }
+
+                HomeViewEffect.ShowInAppReview -> {
+
+                }
+
+                HomeViewEffect.UpdateWidgets -> {
+                    onUpdateWidgets()
+                }
+
+                is HomeViewEffect.OpenLocation -> {
+                    onNavigateToLocation(viewEffect.id)
+                    pagerState.animateScrollToPage(viewEffect.page)
+                }
+            }
+        }
+    }
 }
 
 @OptIn(
@@ -378,7 +416,7 @@ fun HomeScreen(
                         coroutineScope.launch {
                             onLocationSelected(location)
                             onNavigateToLocation(location.id)
-                            pagerState.scrollToPage(homeUiState.locationsList.indexOf(location))
+                            pagerState.scrollToPage(homeUiState.locationsList.indexOfFirst { it.id == location.id })
                         }
                     },
                     onSwipeRefresh = onSwipeRefresh,

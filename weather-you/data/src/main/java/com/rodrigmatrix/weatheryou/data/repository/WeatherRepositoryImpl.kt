@@ -88,7 +88,6 @@ class WeatherRepositoryImpl(
     override fun fetchLocationsList(forceUpdate: Boolean): Flow<Unit> {
         return weatherLocalDataSource.getAllLocations()
             .map { weatherLocations ->
-                // Try to get current location with retry mechanism
                 var currentLocationUpdated = false
                 var retryCount = 0
                 val maxRetries = 3
@@ -103,8 +102,7 @@ class WeatherRepositoryImpl(
                     } catch (e: Exception) {
                         retryCount++
                         if (retryCount < maxRetries) {
-                            // Wait a bit before retrying (exponential backoff)
-                            kotlinx.coroutines.delay(1000L * retryCount)
+                            delay(1000L * retryCount)
                         } else {
                             // Log the final failure
                             firebaseAnalytics.logEvent("CURRENT_LOCATION_RETRY_FAILED", bundleOf(
@@ -209,7 +207,7 @@ class WeatherRepositoryImpl(
                     if (weatherWidget.isCurrentLocation) {
                         getWidgetCurrentLocation(
                             widgetId = widgetId,
-                            forceUpdate = false,
+                            forceUpdate = true,
                         )
                     } else {
                         getOrUpdateLocation(
@@ -218,7 +216,7 @@ class WeatherRepositoryImpl(
                             longitude = weatherWidget.longitude,
                             countryCode = weatherWidget.countryCode,
                             timeZone = weatherWidget.timeZone,
-                            forceUpdate = false,
+                            forceUpdate = true,
                             widgetId = widgetId,
                         )?.copy(
                             widgetId = widgetId,
@@ -228,7 +226,7 @@ class WeatherRepositoryImpl(
                 } ?: if (hasLocationPermission()) {
                     getWidgetCurrentLocation(
                         widgetId = widgetId,
-                        forceUpdate = false,
+                        forceUpdate = true,
                     )?.also {
                         setSavedLocation(it, widgetId)
                     }
@@ -240,7 +238,7 @@ class WeatherRepositoryImpl(
                             longitude = location.longitude,
                             countryCode = location.countryCode,
                             timeZone = location.timeZone,
-                            forceUpdate = false,
+                            forceUpdate = true,
                             widgetId = widgetId,
                         )?.copy(
                             widgetId = widgetId,
@@ -283,17 +281,30 @@ class WeatherRepositoryImpl(
         }
     }
 
-    override fun getLocation(id: Int): Flow<WeatherLocation> {
-        return weatherLocalDataSource.getLocation(id = id)
-            .flatMapLatest { locationEntity ->
-                weatherLocalDataSource.getWeather(latitude = locationEntity.latitude, longitude = locationEntity.longitude)
-                    .map { weather ->
-                        weather?.toWeatherLocation(
-                            id = locationEntity.id,
-                            orderIndex = locationEntity.orderIndex,
-                        ) ?: throw Exception("Weather not found")
-                    }
-            }
+    override fun getLocation(id: Int, isCurrentLocation: Boolean): Flow<WeatherLocation> {
+        return if (isCurrentLocation) {
+            weatherLocalDataSource.getCurrentLocation()
+                .flatMapLatest { locationEntity ->
+                    weatherLocalDataSource.getCurrentLocationWeather()
+                        .map { weather ->
+                            weather?.toWeatherLocation(
+                                id = 0,
+                                orderIndex = 0,
+                            ) ?: throw Exception("Weather not found")
+                        }
+                }
+        } else {
+            weatherLocalDataSource.getLocation(id = id)
+                .flatMapLatest { locationEntity ->
+                    weatherLocalDataSource.getWeather(latitude = locationEntity.latitude, longitude = locationEntity.longitude)
+                        .map { weather ->
+                            weather?.toWeatherLocation(
+                                id = locationEntity.id,
+                                orderIndex = locationEntity.orderIndex,
+                            ) ?: throw Exception("Weather not found")
+                        }
+                }
+        }
     }
 
     override fun getWidgetLocationsSize(): Flow<Int> {
@@ -355,7 +366,7 @@ class WeatherRepositoryImpl(
                 Result.success<WeatherLocation?>(it)
             }.catch {
                 firebaseAnalytics.logEvent("FETCH_LOCATION_ERROR", bundleOf("error" to it.localizedMessage))
-                emit(Result.success(null))
+                emit(Result.success(location))
             }.map {
                 it.getOrNull()
             }
@@ -408,7 +419,7 @@ class WeatherRepositoryImpl(
                 Result.success<WeatherLocation?>(it)
             }.catch {
                 firebaseAnalytics.logEvent("FETCH_LOCATION_ERROR", bundleOf("error" to it.localizedMessage))
-                emit(Result.success(null))
+                emit(Result.success(currentLocationData))
             }.map {
                 it.getOrNull()
             }.firstOrNull()?.copy(

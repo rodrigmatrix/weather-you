@@ -38,7 +38,10 @@ class WeatherDetailsViewModel(
 
     private fun getLocation() {
         viewModelScope.launch {
-            getLocationUseCase(weatherLocation?.id ?: return@launch)
+            getLocationUseCase(
+                id = weatherLocation?.id ?: return@launch,
+                isCurrentLocation = weatherLocation.isCurrentLocation,
+            )
                 .onStart {
                     setState {
                         it.copy(
