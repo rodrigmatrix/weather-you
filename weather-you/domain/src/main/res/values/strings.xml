@@ -158,4 +158,7 @@
 
     <string name="millimeters">mm</string>
     <string name="centimeters">cm</string>
+
+    <string name="weather_trend_up">Warmer tomorrow, with a high of %s</string>
+    <string name="weather_trend_down">Cooler tomorrow, with a high of %s</string>
 </resources>

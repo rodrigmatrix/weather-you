@@ -68,7 +68,6 @@ class HomeViewModel(
         viewModelScope.launch {
             getLocationsUseCase()
                 .flowOn(coroutineDispatcher)
-
                 .onStart { setState { it.copy(isLoading = true) } }
                 .collect { weatherLocationsList ->
                     firebaseAnalytics.logEvent("LOADED_LOCATIONS",
@@ -195,7 +194,12 @@ class HomeViewModel(
                         setState {
                             it.copy(selectedWeatherLocation = weatherLocation)
                         }
-                        setEffect { HomeViewEffect.OpenLocation(weatherLocation.id) }
+                        setEffect {
+                            HomeViewEffect.OpenLocation(
+                                id = weatherLocation.id,
+                                page = viewState.value.locationsList.indexOfFirst { it.id == weatherLocation.id },
+                            )
+                        }
                     }
                     return@firstOrNull true
                 }

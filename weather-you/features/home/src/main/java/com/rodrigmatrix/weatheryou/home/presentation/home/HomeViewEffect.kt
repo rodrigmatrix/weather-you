@@ -11,5 +11,5 @@ sealed class HomeViewEffect : ViewEffect {
 
     data object UpdateWidgets : HomeViewEffect()
 
-    data class OpenLocation(val id: Int) : HomeViewEffect()
+    data class OpenLocation(val id: Int, val page: Int) : HomeViewEffect()
 }

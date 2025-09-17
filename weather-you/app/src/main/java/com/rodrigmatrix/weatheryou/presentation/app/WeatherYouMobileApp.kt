@@ -1,6 +1,10 @@
 package com.rodrigmatrix.weatheryou.presentation.app
 
 import android.app.Activity
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -50,7 +54,9 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3AdaptiveApi::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3AdaptiveApi::class,
+    ExperimentalSharedTransitionApi::class
+)
 @Composable
 fun WeatherYouMobileApp(
     getAppSettingsUseCase: GetAppSettingsUseCase = koinInject<GetAppSettingsUseCase>(),
@@ -152,28 +158,30 @@ fun WeatherYouMobileApp(
                     }
                 ) {
                     Box {
-                        WeatherHomeNavHost(
-                            homeViewModel = homeViewModel,
-                            homeViewState = homeViewState,
-                            navController = navController,
-                            onUpdateWidgets = {
-                                coroutineScope.launch {
-                                    CurrentWeatherWidget().updateAll(context)
-                                    CurrentAnimatedWeatherWidget().updateAll(context)
-                                }
-                            },
-                            homeScreenNavigator = homeScreenNavigator,
-                        )
-                        if (navSuiteType != NavigationSuiteType.NavigationRail) {
-                            HomeNavigationSuite(
+                        SharedTransitionLayout {
+                            WeatherHomeNavHost(
+                                homeViewModel = homeViewModel,
+                                homeViewState = homeViewState,
                                 navController = navController,
-                                currentDestination = currentDestination,
-                                homeScreenNavigator = homeScreenNavigator,
-                                onSearchClick = {
-                                    navController.navigate(NavigationEntries.ADD_LOCATION_ROUTE)
+                                onUpdateWidgets = {
+                                    coroutineScope.launch {
+                                        CurrentWeatherWidget().updateAll(context)
+                                        CurrentAnimatedWeatherWidget().updateAll(context)
+                                    }
                                 },
-                                modifier = Modifier.align(Alignment.BottomCenter),
+                                homeScreenNavigator = homeScreenNavigator,
                             )
+                            if (navSuiteType != NavigationSuiteType.NavigationRail) {
+                                HomeNavigationSuite(
+                                    navController = navController,
+                                    currentDestination = currentDestination,
+                                    homeScreenNavigator = homeScreenNavigator,
+                                    onSearchClick = {
+                                        navController.navigate(NavigationEntries.ADD_LOCATION_ROUTE)
+                                    },
+                                    modifier = Modifier.align(Alignment.BottomCenter),
+                                )
+                            }
                         }
                     }
                 }

@@ -12,8 +12,10 @@ import com.google.android.gms.tasks.CancellationToken
 import com.google.android.gms.tasks.OnTokenCanceledListener
 import com.rodrigmatrix.weatheryou.data.exception.CurrentLocationNotFoundException
 import com.rodrigmatrix.weatheryou.domain.model.CurrentLocation
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
@@ -40,6 +42,8 @@ class UserLocationDataSourceImpl(
         return flow {
             val location = (getLocationManagerLocation() ?: getPlayServicesLocation().firstOrNull()) ?: throw CurrentLocationNotFoundException()
             emit(getGeocoderLocation(location).firstOrNull()?.toCurrentLocation() ?: throw CurrentLocationNotFoundException())
+        }.catch {
+            throw CurrentLocationNotFoundException()
         }
     }
 
@@ -83,24 +87,33 @@ class UserLocationDataSourceImpl(
     private fun getGeocoderLocation(location: Location): Flow<Address?> {
         return callbackFlow {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                val listener = Geocoder.GeocodeListener { addresses ->
+                    trySend(addresses.firstOrNull())
+                    close()
+                }
                 geoCoder.getFromLocation(
                     location.latitude,
                     location.longitude,
                     1,
-                ) { addresses ->
-                    trySend(addresses.firstOrNull())
-                    close()
-                }
-            } else {
-                @Suppress("DEPRECATION")
-                val addresses = geoCoder.getFromLocation(
-                    location.latitude,
-                    location.longitude,
-                    1,
+                    listener
                 )
-                send(addresses?.firstOrNull())
-                close()
+            } else {
+                try {
+                    @Suppress("DEPRECATION")
+                    val addresses = geoCoder.getFromLocation(
+                        location.latitude,
+                        location.longitude,
+                        1,
+                    )
+                    send(addresses?.firstOrNull())
+                    close()
+                } catch (e: Exception) {
+                    close(e)
+                }
             }
+            awaitClose { }
+        }.catch {
+            emit(null)
         }
     }
 

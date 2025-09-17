@@ -112,6 +112,7 @@ object WeatherYouDataModules {
         factory { GetLocationByLatLongUseCase(weatherRepository = get()) }
         factory { GetAppSettingsUseCase(settingsRepository = get()) }
         factory { SetAppSettingsUseCase(settingsRepository = get()) }
+        factory { GetLocationUseCase(weatherRepository = get()) }
     }
 
     private val repositoryModule = module {

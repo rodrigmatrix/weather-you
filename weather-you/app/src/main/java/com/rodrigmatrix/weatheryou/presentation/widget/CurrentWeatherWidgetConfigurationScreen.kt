@@ -40,11 +40,6 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.glance.appwidget.updateAll
-import androidx.work.Constraints
-import androidx.work.NetworkType
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
-import androidx.work.await
 import com.rodrigmatrix.weatheryou.domain.R
 import com.rodrigmatrix.weatheryou.components.WeatherIcon
 import com.rodrigmatrix.weatheryou.components.preview.PreviewWeatherList
@@ -57,7 +52,6 @@ import com.rodrigmatrix.weatheryou.locationdetails.presentaion.details.SmallScre
 import com.rodrigmatrix.weatheryou.presentation.widget.CurrentWeatherWidgetConfigurationUiAction.OnConfigurationCompleted
 import com.rodrigmatrix.weatheryou.widgets.weather.CurrentWeatherWidget
 import com.rodrigmatrix.weatheryou.widgets.weather.animated.CurrentAnimatedWeatherWidget
-import com.rodrigmatrix.weatheryou.worker.UpdateWidgetWeatherDataWorker
 import org.koin.androidx.compose.koinViewModel
 
 @ExperimentalMaterial3Api

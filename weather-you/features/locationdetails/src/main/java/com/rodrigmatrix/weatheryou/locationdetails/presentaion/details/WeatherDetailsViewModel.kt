@@ -5,13 +5,17 @@ import com.rodrigmatrix.weatheryou.core.viewmodel.ViewModel
 import com.rodrigmatrix.weatheryou.domain.model.WeatherDay
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.domain.usecase.GetAppSettingsUseCase
+import com.rodrigmatrix.weatheryou.domain.usecase.GetLocationUseCase
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
 private const val EXPANDED_LIST_SIZE = 15
 private const val COLLAPSED_LIST_SIZE = 7
 
 class WeatherDetailsViewModel(
-    weatherLocation: WeatherLocation?,
+    private val weatherLocation: WeatherLocation?,
+    private val getLocationUseCase: GetLocationUseCase,
     private val getAppSettingsUseCase: GetAppSettingsUseCase,
 ) : ViewModel<WeatherDetailsViewState, WeatherDetailsViewEffect>(
     WeatherDetailsViewState()
@@ -23,14 +27,48 @@ class WeatherDetailsViewModel(
                 .collect { settings ->
                     setState {
                         it.copy(
-                            weatherLocation = weatherLocation,
-                            todayWeatherHoursList = weatherLocation?.hours.orEmpty(),
-                            isFutureWeatherExpanded = true,
-                            futureDaysList = weatherLocation
-                                ?.days
-                                .orEmpty(),
                             enableThemeColorWithWeatherAnimations = settings.enableThemeColorWithWeatherAnimations,
                             enableWeatherAnimations = settings.enableWeatherAnimations,
+                        )
+                    }
+                }
+        }
+        getLocation()
+    }
+
+    private fun getLocation() {
+        viewModelScope.launch {
+            getLocationUseCase(
+                id = weatherLocation?.id ?: return@launch,
+                isCurrentLocation = weatherLocation.isCurrentLocation,
+            )
+                .onStart {
+                    setState {
+                        it.copy(
+                            weatherLocation = weatherLocation,
+                            todayWeatherHoursList = weatherLocation.hours,
+                            isFutureWeatherExpanded = true,
+                            futureDaysList = weatherLocation.days,
+                        )
+                    }
+                }
+                .catch {
+                    setState {
+                        it.copy(
+                            weatherLocation = weatherLocation,
+                            todayWeatherHoursList = weatherLocation.hours,
+                            isFutureWeatherExpanded = true,
+                            futureDaysList = weatherLocation.days,
+                        )
+                    }
+                }
+                .collect { location ->
+                    setState {
+                        it.copy(
+                            weatherLocation = location,
+                            todayWeatherHoursList = location.hours,
+                            isFutureWeatherExpanded = true,
+                            futureDaysList = location.days,
                         )
                     }
                 }

@@ -1,6 +1,9 @@
 package com.rodrigmatrix.weatheryou.home.presentation.navigation
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
@@ -10,6 +13,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -24,10 +28,12 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MediumFloatingActionButton
+import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.navigation.ThreePaneScaffoldNavigator
 import androidx.compose.runtime.Composable
@@ -39,15 +45,18 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.rodrigmatrix.weatheryou.domain.R
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 
-@OptIn(ExperimentalMaterial3AdaptiveApi::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3AdaptiveApi::class, ExperimentalMaterial3ExpressiveApi::class,
+    ExperimentalSharedTransitionApi::class
+)
 @Composable
-fun HomeNavigationSuite(
+fun SharedTransitionScope.HomeNavigationSuite(
     navController: NavController,
     currentDestination: String,
     onSearchClick: () -> Unit,
@@ -96,7 +105,7 @@ fun HomeNavigationSuite(
                 val fabInteractionSource = remember { MutableInteractionSource() }
                 val isFabPressed by fabInteractionSource.collectIsPressedAsState()
                 val fabCornerRadius by animateDpAsState(
-                    targetValue = if (isFabPressed) 20.dp else 28.dp,
+                    targetValue = if (isFabPressed) 12.dp else 28.dp,
                     animationSpec = spring(
                         dampingRatio = 0.6f,
                         stiffness = 500f
@@ -110,9 +119,11 @@ fun HomeNavigationSuite(
                     contentColor = WeatherYouTheme.colorScheme.onSecondaryContainer,
                     shape = RoundedCornerShape(fabCornerRadius),
                     interactionSource = fabInteractionSource,
+
                 ) {
                     Icon(
                         imageVector = Icons.Default.Search,
+                        tint = WeatherYouTheme.colorScheme.onSecondaryContainer,
                         contentDescription = stringResource(R.string.search_location),
                     )
                 }
@@ -133,7 +144,7 @@ fun RowScope.NavigationItem(
     val indicatorColor by animateColorAsState(
         targetValue = when {
             isPressed -> WeatherYouTheme.colorScheme.onSurface.copy(alpha = 0.2f)
-            isSelected -> WeatherYouTheme.colorScheme.onSurface.copy(alpha = 0.1f)
+            isSelected -> WeatherYouTheme.colorScheme.primary.copy(alpha = 0.1f)
             else -> Color.Transparent
         },
         animationSpec = spring(stiffness = 500f),
@@ -168,10 +179,22 @@ fun RowScope.NavigationItem(
                 )
         )
 
-        Icon(
-            painter = painterResource(screen.icon),
-            contentDescription = screen.route,
-            tint = WeatherYouTheme.colorScheme.onSurfaceVariant,
-        )
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Icon(
+                painter = painterResource(screen.icon),
+                contentDescription = screen.route,
+                tint = WeatherYouTheme.colorScheme.onSurfaceVariant,
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = stringResource(screen.stringRes),
+                style = WeatherYouTheme.typography.labelSmall,
+                textAlign = TextAlign.Center,
+                color = WeatherYouTheme.colorScheme.onSurfaceVariant,
+            )
+        }
     }
 }
