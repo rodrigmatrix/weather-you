@@ -50,6 +50,7 @@ import com.rodrigmatrix.weatheryou.core.extensions.getFullDayString
 import com.rodrigmatrix.weatheryou.core.extensions.getHourString
 import com.rodrigmatrix.weatheryou.core.extensions.getLocalTime
 import com.rodrigmatrix.weatheryou.core.extensions.percentageString
+import com.rodrigmatrix.weatheryou.core.extensions.precipitationString
 import com.rodrigmatrix.weatheryou.core.extensions.temperatureString
 import com.rodrigmatrix.weatheryou.core.extensions.toTemperatureString
 import com.rodrigmatrix.weatheryou.core.state.WeatherYouAppState
@@ -223,21 +224,6 @@ fun  PrecipitationAmount(
 }
 
 @Composable
-fun Double.toPrecipitationAmount(
-    precipitationType: PrecipitationType
-): String {
-    val unit = when (precipitationType) {
-        PrecipitationType.Snow -> R.string.centimeters
-        else -> R.string.millimeters
-    }
-    val value = when (precipitationType) {
-        PrecipitationType.Snow -> (this / 10).roundToInt()
-        else -> this.roundToInt()
-    }.toString()
-    return value + " " + stringResource(unit)
-}
-
-@Composable
 fun PrecipitationType.asString(): String {
     return stringResource(
         when (this) {
@@ -296,7 +282,7 @@ fun PrecipitationItem(
         Spacer(Modifier.weight(1f))
 
         Text(
-            text = amount.toPrecipitationAmount(type),
+            text = amount.precipitationString(type),
             style = WeatherYouTheme.typography.titleMedium,
             color = WeatherYouTheme.colorScheme.onBackground,
         )

@@ -156,8 +156,23 @@
     <string name="day_chance">%s\'s chance: %s</string>
     <string name="actual_temperature">Actual: %s</string>
 
-    <string name="millimeters">mm</string>
     <string name="centimeters">cm</string>
+
+    <string name="miles">mi</string>
+    <string name="kilometers">km</string>
+
+    <string name="inches">in</string>
+    <string name="milimeters_centimeters">mm, cm</string>
+
+    <string name="miles_per_hour">mph</string>
+    <string name="kilometers_per_hour">km/h</string>
+    <string name="meters_per_second">m/s</string>
+    <string name="knots">kn</string>
+
+    <string name="temperature_unit">Temperature</string>
+    <string name="wind_speed_unit">Wind Speed</string>
+    <string name="precipitation_unit">Precipitation</string>
+    <string name="distance_unit">Distance</string>
 
     <string name="weather_trend_up">Warmer tomorrow, with a high of %s</string>
     <string name="weather_trend_down">Cooler tomorrow, with a high of %s</string>

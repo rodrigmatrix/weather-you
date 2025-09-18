@@ -4,22 +4,19 @@ import android.content.res.Configuration
 import android.view.Gravity
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.runtime.Composable
@@ -50,16 +47,18 @@ import androidx.tv.material3.SurfaceDefaults
 import androidx.tv.material3.Switch
 import androidx.tv.material3.SwitchDefaults
 import androidx.tv.material3.Text
-import com.rodrigmatrix.weatheryou.domain.R
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
+import com.rodrigmatrix.weatheryou.domain.R
+import com.rodrigmatrix.weatheryou.domain.model.AppSettings
+import com.rodrigmatrix.weatheryou.domain.model.DistanceUnitPreference
+import com.rodrigmatrix.weatheryou.domain.model.PrecipitationUnitPreference
+import com.rodrigmatrix.weatheryou.domain.model.TemperaturePreference
+import com.rodrigmatrix.weatheryou.domain.model.WindUnitPreference
 import com.rodrigmatrix.weatheryou.settings.presentation.settings.SettingsDialogState
 import com.rodrigmatrix.weatheryou.settings.presentation.settings.SettingsViewModel
 import com.rodrigmatrix.weatheryou.settings.presentation.settings.SettingsViewState
-import com.rodrigmatrix.weatheryou.settings.presentation.settings.component.SwitchWithDescription
 import com.rodrigmatrix.weatheryou.settings.presentation.settings.model.AppColorPreferenceOption
 import com.rodrigmatrix.weatheryou.settings.presentation.settings.model.AppThemePreferenceOption
-import com.rodrigmatrix.weatheryou.settings.presentation.settings.model.TemperaturePreferenceOption
-import com.rodrigmatrix.weatheryou.settings.presentation.settings.model.toOption
 import com.rodrigmatrix.weatheryou.tv.presentation.theme.WeatherYouTvTheme
 import org.koin.androidx.compose.koinViewModel
 
@@ -75,8 +74,8 @@ fun TvSettingsScreen(
         onClose = viewmodel::hideDialogs,
         onColorChange = viewmodel::onNewColorTheme,
         onThemeModeChange = viewmodel::onNewTheme,
-        onNewUnit = viewmodel::onNewUnit,
-        onEditUnits = viewmodel::onEditUnit,
+        onSettingsChange = viewmodel::onSettingsUpdate,
+        onDialogStateChange = viewmodel::onDialogStateChanged,
         onEditTheme = viewmodel::onEditTheme,
         onDismissDialog = viewmodel::hideDialogs,
         onWeatherAnimationsChange = viewmodel::onWeatherAnimationsChange,
@@ -88,11 +87,11 @@ fun TvSettingsScreen(
 fun TvSettingsScreen(
     viewState: SettingsViewState,
     onClose: () -> Unit,
+    onDialogStateChange: (SettingsDialogState) -> Unit,
     onColorChange: (AppColorPreferenceOption) -> Unit,
-    onNewUnit: (TemperaturePreferenceOption) -> Unit,
+    onSettingsChange: (AppSettings) -> Unit,
     onThemeModeChange: (AppThemePreferenceOption) -> Unit,
     onWeatherAnimationsChange: (Boolean) -> Unit,
-    onEditUnits: () -> Unit,
     onEditTheme: () -> Unit,
     onDismissDialog: () -> Unit,
     modifier: Modifier = Modifier,
@@ -100,16 +99,51 @@ fun TvSettingsScreen(
     when (viewState.dialogState) {
         SettingsDialogState.HIDDEN -> Unit
         SettingsDialogState.THEME -> TvThemeAndColorModeSelector(
-            themeMode = viewState.appSettings.appThemePreference.toOption().option,
-            colorMode = viewState.appSettings.appColorPreference.toOption().option,
+            themeMode = viewState.appSettings.appThemePreference,
+            colorMode = viewState.appSettings.appColorPreference,
             onClose = onClose,
             onColorChange = onColorChange,
             onThemeModeChange = onThemeModeChange,
         )
-        SettingsDialogState.UNITS -> UnitsDialog(
-            selected = viewState.appSettings.temperaturePreference.toOption(),
-            onNewUnit = onNewUnit,
-            onDismissRequest = onDismissDialog
+        SettingsDialogState.TemperatureUnit -> UnitsDialog(
+            title = R.string.temperature_unit,
+            entries = TemperaturePreference.entries,
+            selected = viewState.appSettings.temperaturePreference,
+            onNewUnit = {
+                onSettingsChange(viewState.appSettings.copy(temperaturePreference = it))
+            },
+            itemTitle = { it.title },
+            onDismissRequest = onDismissDialog,
+        )
+        SettingsDialogState.WindSpeedUnit -> UnitsDialog(
+            title = R.string.wind_speed_unit,
+            entries = WindUnitPreference.entries,
+            selected = viewState.appSettings.windUnitPreference,
+            onNewUnit = {
+                onSettingsChange(viewState.appSettings.copy(windUnitPreference = it))
+            },
+            itemTitle = { it.title },
+            onDismissRequest = onDismissDialog,
+        )
+        SettingsDialogState.PrecipitationUnit -> UnitsDialog(
+            title = R.string.precipitation_unit,
+            entries = PrecipitationUnitPreference.entries,
+            selected = viewState.appSettings.precipitationUnitPreference,
+            onNewUnit = {
+                onSettingsChange(viewState.appSettings.copy(precipitationUnitPreference = it))
+            },
+            itemTitle = { it.title },
+            onDismissRequest = onDismissDialog,
+        )
+        SettingsDialogState.DistanceUnit -> UnitsDialog(
+            title = R.string.distance_unit,
+            entries = DistanceUnitPreference.entries,
+            selected = viewState.appSettings.distanceUnitPreference,
+            onNewUnit = {
+                onSettingsChange(viewState.appSettings.copy(distanceUnitPreference = it))
+            },
+            itemTitle = { it.title },
+            onDismissRequest = onDismissDialog,
         )
 
         SettingsDialogState.BackgroundLocation -> Unit
@@ -119,15 +153,48 @@ fun TvSettingsScreen(
             .fillMaxSize()
             .padding(28.dp)
             .background(WeatherYouTheme.colorScheme.background)
+            .verticalScroll(rememberScrollState())
     ) {
         Spacer(Modifier.height(10.dp))
         SettingTitle(stringResource(R.string.units))
         Spacer(Modifier.height(10.dp))
         SettingWithOption(
-            title = stringResource(R.string.units),
-            selected = stringResource(viewState.appSettings.temperaturePreference.toOption().title),
-            onClick = onEditUnits,
-            icon = com.rodrigmatrix.weatheryou.settings.R.drawable.ic_square_foot,
+            title = stringResource(R.string.temperature_unit),
+            selected = stringResource(viewState.appSettings.temperaturePreference.title),
+            onClick = {
+                onDialogStateChange(SettingsDialogState.TemperatureUnit)
+            },
+            icon = com.rodrigmatrix.weatheryou.settings.R.drawable.ic_thermostat,
+            modifier = Modifier
+        )
+        Spacer(Modifier.height(10.dp))
+        SettingWithOption(
+            title = stringResource(R.string.wind_speed_unit),
+            selected = stringResource(viewState.appSettings.windUnitPreference.title),
+            onClick = {
+                onDialogStateChange(SettingsDialogState.WindSpeedUnit)
+            },
+            icon = com.rodrigmatrix.weatheryou.settings.R.drawable.ic_air,
+            modifier = Modifier
+        )
+        Spacer(Modifier.height(10.dp))
+        SettingWithOption(
+            title = stringResource(R.string.precipitation_unit),
+            selected = stringResource(viewState.appSettings.precipitationUnitPreference.title),
+            onClick = {
+                onDialogStateChange(SettingsDialogState.PrecipitationUnit)
+            },
+            icon = com.rodrigmatrix.weatheryou.settings.R.drawable.ic_rainy,
+            modifier = Modifier
+        )
+        Spacer(Modifier.height(10.dp))
+        SettingWithOption(
+            title = stringResource(R.string.distance_unit),
+            selected = stringResource(viewState.appSettings.distanceUnitPreference.title),
+            onClick = {
+                onDialogStateChange(SettingsDialogState.DistanceUnit)
+            },
+            icon = com.rodrigmatrix.weatheryou.settings.R.drawable.ic_distance,
             modifier = Modifier
         )
         Spacer(Modifier.height(10.dp))
@@ -136,9 +203,7 @@ fun TvSettingsScreen(
         SettingWithOption(
             title = stringResource(R.string.theme_and_color_mode),
             selected = stringResource(R.string.app_theme) + ": " +
-                    stringResource(viewState.appSettings.appThemePreference.toOption().title) + " " +
-                    stringResource(R.string.color_mode) + ": " +
-                    stringResource(viewState.appSettings.appColorPreference.toOption().title),
+                    stringResource(viewState.appSettings.appThemePreference.title),
             icon = com.rodrigmatrix.weatheryou.settings.R.drawable.ic_palette,
             onClick = onEditTheme,
             modifier = Modifier
@@ -210,9 +275,12 @@ fun SettingTitle(
 }
 
 @Composable
-fun UnitsDialog(
-    selected: TemperaturePreferenceOption,
-    onNewUnit: (TemperaturePreferenceOption) -> Unit,
+fun <T>UnitsDialog(
+    title: Int,
+    selected: T,
+    itemTitle: (T) -> Int,
+    onNewUnit: (T) -> Unit,
+    entries: List<T>,
     onDismissRequest: () -> Unit
 ) {
     Dialog(
@@ -245,7 +313,7 @@ fun UnitsDialog(
                 ) {
                     item {
                         Text(
-                            text = stringResource(R.string.units),
+                            text = stringResource(title),
                             color = WeatherYouTheme.colorScheme.onSurface,
                             style = MaterialTheme.typography.titleMedium,
                             modifier = Modifier.padding(20.dp),
@@ -255,12 +323,11 @@ fun UnitsDialog(
 
                     item {
                         Column {
-
                             Column(
                                 Modifier.selectableGroup()
                             ) {
-                                TemperaturePreferenceOption.entries.toTypedArray().forEach {
-                                    val isSelected = it.option == selected.option
+                                entries.forEach {
+                                    val isSelected = it == selected
                                     ListItem(
                                         selected = isSelected,
                                         onClick = { onNewUnit(it) },
@@ -280,7 +347,7 @@ fun UnitsDialog(
                                         },
                                         headlineContent = {
                                             Text(
-                                                text = stringResource(it.title),
+                                                text = stringResource(itemTitle(it)),
                                                 style = MaterialTheme.typography.bodyMedium,
                                             )
                                         }
@@ -298,39 +365,39 @@ fun UnitsDialog(
         }
     }
 }
-
-@Composable
-fun UnitChoiceItem(
-    option: TemperaturePreferenceOption,
-    selected: Boolean,
-    onClick: (TemperaturePreferenceOption) -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .selectable(
-                selected = selected,
-                onClick = {
-                    onClick(option)
-                }
-            )
-    ) {
-        Text(
-            text = stringResource(option.title),
-            style = WeatherYouTheme.typography.titleMedium,
-            modifier = Modifier
-                .padding(start = 16.dp)
-                .align(Alignment.CenterVertically)
-        )
-        RadioButton(
-            selected = selected,
-            onClick = {
-                onClick(option)
-            },
-            modifier = Modifier.align(Alignment.CenterVertically)
-        )
-    }
-}
+//
+//@Composable
+//fun <T>UnitChoiceItem(
+//    option: T,
+//    selected: Boolean,
+//    onClick: (T) -> Unit,
+//) {
+//    Row(
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .selectable(
+//                selected = selected,
+//                onClick = {
+//                    onClick(option)
+//                }
+//            )
+//    ) {
+//        Text(
+//            text = stringResource(option.title),
+//            style = WeatherYouTheme.typography.titleMedium,
+//            modifier = Modifier
+//                .padding(start = 16.dp)
+//                .align(Alignment.CenterVertically)
+//        )
+//        RadioButton(
+//            selected = selected,
+//            onClick = {
+//                onClick(option)
+//            },
+//            modifier = Modifier.align(Alignment.CenterVertically)
+//        )
+//    }
+//}
 
 @Composable
 private fun SettingWithOption(
