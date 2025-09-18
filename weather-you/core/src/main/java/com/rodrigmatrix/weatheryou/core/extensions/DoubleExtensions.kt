@@ -54,7 +54,7 @@ fun Double.precipitationString(
 ): String {
     return when(preference) {
         PrecipitationUnitPreference.MM_CM -> when {
-            this < 10 -> this.roundToInt().toString() + " " + stringResource(R.string.millimeters)
+            this < 10 -> this.roundToInt().toString() + " " + stringResource(R.string.milimeters)
             else -> (this / 10).roundToInt().toString() + " " + stringResource(R.string.centimeters)
         }
         PrecipitationUnitPreference.IN -> (this * 0.0393701).roundToInt().toString() + " " + stringResource(R.string.inches)

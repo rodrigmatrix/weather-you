@@ -109,4 +109,35 @@
   <string name="condition_thunderstorm">Regen</string>
   <string name="weather_widget_disclaimer">Bitte wählen Sie den Ort aus, der im Wetter-Widget angezeigt werden soll. Wenn Sie einen anderen Ort möchten, öffnen Sie die App, fügen Sie ihn hinzu und kommen Sie hierher zurück. Wenn Sie immer den aktuellen Standort anzeigen möchten, wählen Sie ihn bitte aus</string>
   <string name="widget_location">Widget-Standort</string>
+
+  <string name="location">Standort</string>
+  <string name="keep_typing">Weiter tippen…</string>
+  <string name="updating_location">Standort wird aktualisiert…</string>
+  <string name="apple_weather">Apple Weather</string>
+  <string name="for_more_information">Für weitere Informationen, </string>
+  <string name="visit_apple_weather">besuchen Sie Apple Weather</string>
+  <string name="actual">Tatsächlich</string>
+  <string name="feels_like">Fühlt sich an wie</string>
+  <string name="celsius">Celsius (°C)</string>
+  <string name="fahrenheit">Fahrenheit (°F)</string>
+  <string name="chance_of_precipitation_title">Niederschlagswahrscheinlichkeit</string>
+  <string name="precipitation_total">Gesamtniederschlag</string>
+  <string name="precipitation">Niederschlag</string>
+  <string name="day_chance">%s Wahrscheinlichkeit: %s</string>
+  <string name="actual_temperature">Tatsächlich: %s</string>
+  <string name="centimeters">cm</string>
+  <string name="miles">mi</string>
+  <string name="kilometers">km</string>
+  <string name="inches">Zoll</string>
+  <string name="milimeters_centimeters">mm, cm</string>
+  <string name="miles_per_hour">mph</string>
+  <string name="kilometers_per_hour">km/h</string>
+  <string name="meters_per_second">m/s</string>
+  <string name="knots">kn</string>
+  <string name="temperature_unit">Temperatur</string>
+  <string name="wind_speed_unit">Windgeschwindigkeit</string>
+  <string name="precipitation_unit">Niederschlag</string>
+  <string name="distance_unit">Entfernung</string>
+  <string name="weather_trend_up">Wärmer morgen, mit einem Höchstwert von %s</string>
+  <string name="weather_trend_down">Kühler morgen, mit einem Höchstwert von %s</string>
 </resources>

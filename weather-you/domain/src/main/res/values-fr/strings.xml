@@ -109,4 +109,35 @@
   <string name="condition_thunderstorm">Pluie</string>
   <string name="weather_widget_disclaimer">Veuillez sélectionner l\'emplacement que vous souhaitez afficher sur le widget météo. Si vous souhaitez un emplacement différent, ouvrez l\'application, ajoutez-la et revenez ici. Si vous souhaitez toujours afficher l\'emplacement actuel, veuillez le sélectionner</string>
   <string name="widget_location">Emplacement du widget</string>
+
+  <string name="location">Emplacement</string>
+  <string name="keep_typing">Continuez à taper…</string>
+  <string name="updating_location">Mise à jour de l\'emplacement…</string>
+  <string name="apple_weather">Apple Weather</string>
+  <string name="for_more_information">Pour plus d\'informations, </string>
+  <string name="visit_apple_weather">visitez Apple Weather</string>
+  <string name="actual">Réel</string>
+  <string name="feels_like">Ressenti</string>
+  <string name="celsius">Celsius (°C)</string>
+  <string name="fahrenheit">Fahrenheit (°F)</string>
+  <string name="chance_of_precipitation_title">Probabilité de précipitation</string>
+  <string name="precipitation_total">Précipitations totales</string>
+  <string name="precipitation">Précipitations</string>
+  <string name="day_chance">Probabilité de %s : %s</string>
+  <string name="actual_temperature">Réel : %s</string>
+  <string name="centimeters">cm</string>
+  <string name="miles">mi</string>
+  <string name="kilometers">km</string>
+  <string name="inches">po</string>
+  <string name="milimeters_centimeters">mm, cm</string>
+  <string name="miles_per_hour">mph</string>
+  <string name="kilometers_per_hour">km/h</string>
+  <string name="meters_per_second">m/s</string>
+  <string name="knots">nœuds</string>
+  <string name="temperature_unit">Température</string>
+  <string name="wind_speed_unit">Vitesse du Vent</string>
+  <string name="precipitation_unit">Précipitations</string>
+  <string name="distance_unit">Distance</string>
+  <string name="weather_trend_up">Plus chaud demain, avec un maximum de %s</string>
+  <string name="weather_trend_down">Plus frais demain, avec un maximum de %s</string>
 </resources>

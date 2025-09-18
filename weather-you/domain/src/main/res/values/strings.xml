@@ -162,6 +162,7 @@
     <string name="kilometers">km</string>
 
     <string name="inches">in</string>
+    <string name="milimeters">mm</string>
     <string name="milimeters_centimeters">mm, cm</string>
 
     <string name="miles_per_hour">mph</string>

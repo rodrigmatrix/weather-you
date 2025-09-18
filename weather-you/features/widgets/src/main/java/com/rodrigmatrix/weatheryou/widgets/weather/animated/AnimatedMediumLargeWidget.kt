@@ -57,6 +57,7 @@ import androidx.glance.Image
 import androidx.glance.GlanceTheme
 import androidx.core.graphics.createBitmap
 import androidx.glance.text.TextAlign
+import org.joda.time.DateTime
 
 @Composable
 fun AnimatedMediumLargeWidget(
@@ -80,6 +81,7 @@ fun AnimatedMediumLargeWidget(
         TemperatureTrend(
             maxToday = weather.maxTemperature,
             maxTomorrow = weather.days.drop(1).firstOrNull()?.maxTemperature ?: weather.maxTemperature,
+            currentTime = weather.currentTime,
         )
         Spacer(modifier = GlanceModifier.defaultWeight())
         HoursList(
@@ -349,6 +351,7 @@ private fun DayRow(
 fun TemperatureTrend(
     maxToday: Double,
     maxTomorrow: Double,
+    currentTime: DateTime,
     modifier: GlanceModifier = GlanceModifier,
 ) {
     val context = LocalContext.current
@@ -369,7 +372,7 @@ fun TemperatureTrend(
             com.rodrigmatrix.weatheryou.components.R.drawable.ic_thermostat_arrow_down,
         )
     } else null
-    if (trend != null) {
+    if (trend != null && currentTime.hourOfDay >= 19) {
         Column(modifier = modifier.fillMaxWidth().padding(horizontal = 8.dp)) {
             Image(
                 provider = ImageProvider(trend.second),

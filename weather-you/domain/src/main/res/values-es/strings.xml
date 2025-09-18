@@ -109,4 +109,35 @@
   <string name="condition_thunderstorm">Lluvia</string>
   <string name="weather_widget_disclaimer">Seleccione la ubicación que desea que se muestre en el widget del clima. Si desea una ubicación diferente, abra la aplicación y agréguela y vuelva aquí. Si siempre quiere mostrar la ubicación actual, por favor selecciónela</string>
   <string name="widget_location">Ubicación del widget</string>
+
+  <string name="location">Ubicación</string>
+  <string name="keep_typing">Sigue escribiendo…</string>
+  <string name="updating_location">Actualizando ubicación…</string>
+  <string name="apple_weather">Apple Weather</string>
+  <string name="for_more_information">Para más información, </string>
+  <string name="visit_apple_weather">visita Apple Weather</string>
+  <string name="actual">Real</string>
+  <string name="feels_like">Se siente como</string>
+  <string name="celsius">Celsius (°C)</string>
+  <string name="fahrenheit">Fahrenheit (°F)</string>
+  <string name="chance_of_precipitation_title">Probabilidad de precipitación</string>
+  <string name="precipitation_total">Precipitación total</string>
+  <string name="precipitation">Precipitación</string>
+  <string name="day_chance">Probabilidad de %s: %s</string>
+  <string name="actual_temperature">Real: %s</string>
+  <string name="centimeters">cm</string>
+  <string name="miles">mi</string>
+  <string name="kilometers">km</string>
+  <string name="inches">pulg</string>
+  <string name="milimeters_centimeters">mm, cm</string>
+  <string name="miles_per_hour">mph</string>
+  <string name="kilometers_per_hour">km/h</string>
+  <string name="meters_per_second">m/s</string>
+  <string name="knots">nudos</string>
+  <string name="temperature_unit">Temperatura</string>
+  <string name="wind_speed_unit">Velocidad del Viento</string>
+  <string name="precipitation_unit">Precipitación</string>
+  <string name="distance_unit">Distancia</string>
+  <string name="weather_trend_up">Más cálido mañana, con máxima de %s</string>
+  <string name="weather_trend_down">Más fresco mañana, con máxima de %s</string>
 </resources>
