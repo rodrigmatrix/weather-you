@@ -129,6 +129,7 @@
   <string name="miles">英里</string>
   <string name="kilometers">公里</string>
   <string name="inches">英吋</string>
+  <string name="milimeters">公釐</string>
   <string name="milimeters_centimeters">公釐，公分</string>
   <string name="miles_per_hour">英里/小時</string>
   <string name="kilometers_per_hour">公里/小時</string>

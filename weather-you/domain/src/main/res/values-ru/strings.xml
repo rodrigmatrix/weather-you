@@ -128,6 +128,7 @@
   <string name="miles">ми</string>
   <string name="kilometers">км</string>
   <string name="inches">дюйм</string>
+  <string name="milimeters">мм</string>
   <string name="milimeters_centimeters">мм, см</string>
   <string name="miles_per_hour">миль/ч</string>
   <string name="kilometers_per_hour">км/ч</string>

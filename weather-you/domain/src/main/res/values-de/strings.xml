@@ -129,6 +129,7 @@
   <string name="miles">mi</string>
   <string name="kilometers">km</string>
   <string name="inches">Zoll</string>
+  <string name="milimeters">mm</string>
   <string name="milimeters_centimeters">mm, cm</string>
   <string name="miles_per_hour">mph</string>
   <string name="kilometers_per_hour">km/h</string>

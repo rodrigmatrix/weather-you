@@ -129,6 +129,7 @@
   <string name="miles">ميل</string>
   <string name="kilometers">كم</string>
   <string name="inches">بوصة</string>
+  <string name="milimeters">مم</string>
   <string name="milimeters_centimeters">مم، سم</string>
   <string name="miles_per_hour">ميل/ساعة</string>
   <string name="kilometers_per_hour">كم/ساعة</string>
