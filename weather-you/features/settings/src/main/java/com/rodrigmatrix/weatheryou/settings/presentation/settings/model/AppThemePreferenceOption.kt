@@ -9,12 +9,12 @@ import com.rodrigmatrix.weatheryou.domain.R
 import com.rodrigmatrix.weatheryou.components.theme.ThemeMode
 
 enum class AppThemePreferenceOption(
-    @StringRes val title: Int,
-    @DrawableRes val icon: Int,
-    val option: ThemeMode,
+    @field:StringRes val title: Int,
+    @field:DrawableRes val icon: Int,
+    val option: AppThemePreference,
 ) {
 
-    SYSTEM_DEFAULT(R.string.system_default, com.rodrigmatrix.weatheryou.settings.R.drawable.ic_nightlight, ThemeMode.System),
-    LIGHT(R.string.light, com.rodrigmatrix.weatheryou.settings.R.drawable.ic_light_mode, ThemeMode.Light),
-    DARK(R.string.dark, com.rodrigmatrix.weatheryou.settings.R.drawable.ic_dark_mode, ThemeMode.Dark)
+    SYSTEM_DEFAULT(R.string.system_default, com.rodrigmatrix.weatheryou.settings.R.drawable.ic_nightlight, AppThemePreference.SYSTEM_DEFAULT),
+    LIGHT(R.string.light, com.rodrigmatrix.weatheryou.settings.R.drawable.ic_light_mode, AppThemePreference.LIGHT),
+    DARK(R.string.dark, com.rodrigmatrix.weatheryou.settings.R.drawable.ic_dark_mode, AppThemePreference.DARK)
 }

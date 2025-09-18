@@ -109,4 +109,36 @@
   <string name="condition_thunderstorm">مطر</string>
   <string name="weather_widget_disclaimer">يرجى اختيار الموقع الذي تريد عرضه على واجهة الطقس. إذا كنت تريد موقعًا مختلفًا، افتح التطبيق وأضفه ثم عد هنا. إذا كنت تريد عرض الموقع الحالي دائمًا، يرجى اختياره</string>
   <string name="widget_location">موقع القطعة</string>
+
+  <string name="location">الموقع</string>
+  <string name="keep_typing">استمر في الكتابة…</string>
+  <string name="updating_location">تحديث الموقع…</string>
+  <string name="apple_weather">Apple Weather</string>
+  <string name="for_more_information">لمزيد من المعلومات، </string>
+  <string name="visit_apple_weather">زر Apple Weather</string>
+  <string name="actual">فعلي</string>
+  <string name="feels_like">الإحساس</string>
+  <string name="celsius">سيلزيوس (°C)</string>
+  <string name="fahrenheit">فهرنهايت (°F)</string>
+  <string name="chance_of_precipitation_title">احتمال الهطول</string>
+  <string name="precipitation_total">إجمالي الهطول</string>
+  <string name="precipitation">الهطول</string>
+  <string name="day_chance">احتمال %s: %s</string>
+  <string name="actual_temperature">فعلي: %s</string>
+  <string name="centimeters">سم</string>
+  <string name="miles">ميل</string>
+  <string name="kilometers">كم</string>
+  <string name="inches">بوصة</string>
+  <string name="milimeters">مم</string>
+  <string name="milimeters_centimeters">مم، سم</string>
+  <string name="miles_per_hour">ميل/ساعة</string>
+  <string name="kilometers_per_hour">كم/ساعة</string>
+  <string name="meters_per_second">م/ث</string>
+  <string name="knots">عقدة</string>
+  <string name="temperature_unit">درجة الحرارة</string>
+  <string name="wind_speed_unit">سرعة الرياح</string>
+  <string name="precipitation_unit">الهطول</string>
+  <string name="distance_unit">المسافة</string>
+  <string name="weather_trend_up">أدفأ غداً، مع حد أقصى %s</string>
+  <string name="weather_trend_down">أبرد غداً، مع حد أقصى %s</string>
 </resources>

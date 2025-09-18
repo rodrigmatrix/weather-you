@@ -15,7 +15,10 @@ import androidx.compose.ui.unit.Density
 import com.rodrigmatrix.weatheryou.domain.model.AppColorPreference
 import com.rodrigmatrix.weatheryou.domain.model.AppSettings
 import com.rodrigmatrix.weatheryou.domain.model.AppThemePreference
+import com.rodrigmatrix.weatheryou.domain.model.DistanceUnitPreference
+import com.rodrigmatrix.weatheryou.domain.model.PrecipitationUnitPreference
 import com.rodrigmatrix.weatheryou.domain.model.TemperaturePreference
+import com.rodrigmatrix.weatheryou.domain.model.WindUnitPreference
 
 val LocalWeatherYouAppSettings = compositionLocalOf {
     AppSettings(
@@ -24,6 +27,9 @@ val LocalWeatherYouAppSettings = compositionLocalOf {
         appColorPreference = AppColorPreference.DEFAULT,
         enableWeatherAnimations = false,
         enableThemeColorWithWeatherAnimations = false,
+        windUnitPreference = WindUnitPreference.KPH,
+        precipitationUnitPreference = PrecipitationUnitPreference.MM_CM,
+        distanceUnitPreference = DistanceUnitPreference.KM,
     )
 }
 

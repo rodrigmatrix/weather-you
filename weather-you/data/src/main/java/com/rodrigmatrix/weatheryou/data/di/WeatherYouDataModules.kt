@@ -201,7 +201,6 @@ object WeatherYouDataModules {
         factory<SettingsLocalDataSource> {
             SettingsLocalDataSourceImpl(
                 dataStore = get(),
-                unitLocale = UnitLocale(Locale.getDefault()),
             )
         }
         factory<WeatherYouAnalytics> {

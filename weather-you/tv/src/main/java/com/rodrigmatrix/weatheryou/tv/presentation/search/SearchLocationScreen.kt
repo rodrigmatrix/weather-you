@@ -100,7 +100,7 @@ internal fun SearchLocationScreen(
         }
     }
     SearchLocationScreen(
-        viewState,
+        viewState = viewState,
         onQueryChanged = viewModel::onQueryChanged,
         onLocationClick = { location ->
             viewModel.addLocation(location, context as Activity, showAds = false)

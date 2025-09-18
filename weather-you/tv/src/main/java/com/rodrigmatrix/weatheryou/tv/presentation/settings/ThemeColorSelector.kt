@@ -68,8 +68,8 @@ import com.rodrigmatrix.weatheryou.tv.presentation.theme.peruTanLightScheme
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun TvThemeAndColorModeSelector(
-    themeMode: ThemeMode,
-    colorMode: ColorMode,
+    themeMode: AppThemePreference,
+    colorMode: AppColorPreference,
     onClose: () -> Unit,
     onColorChange: (AppColorPreferenceOption) -> Unit,
     onThemeModeChange: (AppThemePreferenceOption) -> Unit,

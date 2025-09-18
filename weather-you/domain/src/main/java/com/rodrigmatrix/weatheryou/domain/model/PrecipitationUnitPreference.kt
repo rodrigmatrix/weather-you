@@ -2,9 +2,9 @@ package com.rodrigmatrix.weatheryou.domain.model
 
 import com.rodrigmatrix.weatheryou.domain.R
 
-enum class TemperaturePreference(
+enum class PrecipitationUnitPreference(
     val title: Int,
 ) {
-    METRIC(R.string.metric_preference),
-    IMPERIAL(R.string.imperial_preference),
+    IN(R.string.inches),
+    MM_CM(R.string.milimeters_centimeters),
 }

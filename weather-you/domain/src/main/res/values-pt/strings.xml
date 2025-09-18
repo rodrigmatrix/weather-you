@@ -132,6 +132,25 @@
   <string name="day_chance">Probabilidade %s: %s</string>
   <string name="actual_temperature">Real: %s</string>
 
-  <string name="millimeters">mm</string>
   <string name="centimeters">cm</string>
+
+  <string name="miles">mi</string>
+  <string name="kilometers">km</string>
+
+  <string name="inches">pol</string>
+  <string name="milimeters">mm</string>
+  <string name="milimeters_centimeters">mm, cm</string>
+
+  <string name="miles_per_hour">mph</string>
+  <string name="kilometers_per_hour">km/h</string>
+  <string name="meters_per_second">m/s</string>
+  <string name="knots">nós</string>
+
+  <string name="temperature_unit">Temperatura</string>
+  <string name="wind_speed_unit">Velocidade do Vento</string>
+  <string name="precipitation_unit">Precipitação</string>
+  <string name="distance_unit">Distância</string>
+
+  <string name="weather_trend_up">Mais quente amanhã, com máxima de %s</string>
+  <string name="weather_trend_down">Mais frio amanhã, com máxima de %s</string>
 </resources>

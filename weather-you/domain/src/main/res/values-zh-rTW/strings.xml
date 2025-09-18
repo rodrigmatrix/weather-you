@@ -109,4 +109,36 @@
   <string name="condition_thunderstorm">雨</string>
   <string name="weather_widget_disclaimer">請選擇您希望在天氣小工具上顯示的位置。如果您想要一個不同的位置，請打開應用程式並添加它，然後回到這裡。如果您希望始終顯示當前位置，請選擇它</string>
   <string name="widget_location">小部件位置</string>
+
+  <string name="location">位置</string>
+  <string name="keep_typing">繼續輸入…</string>
+  <string name="updating_location">更新位置中…</string>
+  <string name="apple_weather">Apple Weather</string>
+  <string name="for_more_information">更多資訊，</string>
+  <string name="visit_apple_weather">請造訪 Apple Weather</string>
+  <string name="actual">實際</string>
+  <string name="feels_like">體感</string>
+  <string name="celsius">攝氏（°C）</string>
+  <string name="fahrenheit">華氏（°F）</string>
+  <string name="chance_of_precipitation_title">降雨機率</string>
+  <string name="precipitation_total">總降雨量</string>
+  <string name="precipitation">降雨</string>
+  <string name="day_chance">%s的機率：%s</string>
+  <string name="actual_temperature">實際：%s</string>
+  <string name="centimeters">公分</string>
+  <string name="miles">英里</string>
+  <string name="kilometers">公里</string>
+  <string name="inches">英吋</string>
+  <string name="milimeters">公釐</string>
+  <string name="milimeters_centimeters">公釐，公分</string>
+  <string name="miles_per_hour">英里/小時</string>
+  <string name="kilometers_per_hour">公里/小時</string>
+  <string name="meters_per_second">公尺/秒</string>
+  <string name="knots">節</string>
+  <string name="temperature_unit">溫度</string>
+  <string name="wind_speed_unit">風速</string>
+  <string name="precipitation_unit">降雨</string>
+  <string name="distance_unit">距離</string>
+  <string name="weather_trend_up">明天會更溫暖，最高溫度%s</string>
+  <string name="weather_trend_down">明天會更涼爽，最高溫度%s</string>
 </resources>

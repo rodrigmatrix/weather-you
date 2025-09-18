@@ -128,4 +128,24 @@
   <string name="precipitation">Precipitazioni</string>
   <string name="day_chance">Probabilità di %s: %s</string>
   <string name="actual_temperature">Reale: %s</string>
+
+  <string name="location">Località</string>
+  <string name="celsius">Celsius (°C)</string>
+  <string name="fahrenheit">Fahrenheit (°F)</string>
+  <string name="centimeters">cm</string>
+  <string name="miles">mi</string>
+  <string name="kilometers">km</string>
+  <string name="inches">pollici</string>
+  <string name="milimeters">mm</string>
+  <string name="milimeters_centimeters">mm, cm</string>
+  <string name="miles_per_hour">mph</string>
+  <string name="kilometers_per_hour">km/h</string>
+  <string name="meters_per_second">m/s</string>
+  <string name="knots">nodi</string>
+  <string name="temperature_unit">Temperatura</string>
+  <string name="wind_speed_unit">Velocità del Vento</string>
+  <string name="precipitation_unit">Precipitazioni</string>
+  <string name="distance_unit">Distanza</string>
+  <string name="weather_trend_up">Più caldo domani, con massima di %s</string>
+  <string name="weather_trend_down">Più fresco domani, con massima di %s</string>
 </resources>
