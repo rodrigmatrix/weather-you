@@ -1,6 +1,9 @@
 package com.rodrigmatrix.weatheryou.locationdetails.presentaion.details
 
 import android.net.Uri
+import android.os.Build
+import android.view.HapticFeedbackConstants
+import android.view.View
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.Crossfade
@@ -10,6 +13,7 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.EaseInOutCubic
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -20,6 +24,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
@@ -31,18 +40,23 @@ import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -68,9 +82,13 @@ import com.rodrigmatrix.weatheryou.components.theme.ThemeMode
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.core.extensions.getDateTimeFromTimezone
 import com.rodrigmatrix.weatheryou.core.state.WeatherYouAppState
+import com.rodrigmatrix.weatheryou.domain.model.PressureTrend
+import com.rodrigmatrix.weatheryou.domain.model.WeatherCard
 import com.rodrigmatrix.weatheryou.domain.model.WeatherDay
+import com.rodrigmatrix.weatheryou.locationdetails.presentaion.conditions.ConditionType
 import com.rodrigmatrix.weatheryou.locationdetails.presentaion.conditions.ConditionsBottomSheet
 import com.rodrigmatrix.weatheryou.locationdetails.presentaion.conditions.ConditionsViewModel
+import com.rodrigmatrix.weatheryou.locationdetails.presentaion.conditions.TemperatureType
 import ir.ehsannarmani.compose_charts.LineChart
 import ir.ehsannarmani.compose_charts.models.AnimationMode
 import ir.ehsannarmani.compose_charts.models.DotProperties
@@ -83,6 +101,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
+import sh.calvin.reorderable.ReorderableItem
+import sh.calvin.reorderable.rememberReorderableLazyGridState
+import kotlin.collections.toMutableList
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -129,11 +150,13 @@ fun WeatherDetailsScreen(
                 onExpandedButtonClick = viewModel::onFutureWeatherButtonClick,
                 onCloseClick = onCloseClick,
                 onDeleteClick = onDeleteLocationClicked,
-                onExpandDay = {
+                onOpenConditionsClick = { day, type, temperatureType ->
                     coroutineScope.launch {
                         conditionsViewModel.setConditions(
                             weatherLocation = viewState.weatherLocation!!,
-                            day = it,
+                            day = day,
+                            type = type,
+                            temperatureType = temperatureType,
                         )
                         scrollState.scrollTo(0)
                         scaffoldState.expand()
@@ -143,6 +166,7 @@ fun WeatherDetailsScreen(
                     viewModel.onFullScreenModeChange(it)
                     onFullScreenModeChange(it)
                 },
+                onWeatherCardListOrderChange = viewModel::onWeatherCardListOrderChange,
                 modifier = modifier,
             )
         }
@@ -153,6 +177,7 @@ fun WeatherDetailsScreen(
             viewState = conditionsViewState,
             bottomSheetState = scaffoldState,
             scrollState = scrollState,
+            onTypeChange = conditionsViewModel::onTypeChange,
             onClick = {
                 conditionsViewModel.setConditions(
                     weatherLocation = viewState.weatherLocation!!,
@@ -176,8 +201,13 @@ fun WeatherDetailsScreen(
     viewState: WeatherDetailsViewState,
     isUpdating: Boolean,
     onExpandedButtonClick: (Boolean) -> Unit,
-    onExpandDay: (WeatherDay) -> Unit,
+    onOpenConditionsClick: (
+        WeatherDay,
+        ConditionType,
+        TemperatureType,
+    ) -> Unit,
     onFullScreenModeChange: (Boolean) -> Unit,
+    onWeatherCardListOrderChange: (List<WeatherCard>) -> Unit,
     onCloseClick: () -> Unit,
     onDeleteClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -194,11 +224,12 @@ fun WeatherDetailsScreen(
             viewState = viewState,
             isUpdating = isUpdating,
             onExpandedButtonClick = onExpandedButtonClick,
-            onExpandDay = onExpandDay,
+            onOpenConditionsClick = onOpenConditionsClick,
             onCloseClick = onCloseClick,
             onDeleteClick = onDeleteClick,
             paddingValues = paddingValues,
             onFullScreenModeChange = onFullScreenModeChange,
+            onWeatherCardListOrderChange = onWeatherCardListOrderChange,
         )
     }
 }
@@ -210,21 +241,49 @@ private fun WeatherDetailsContent(
     isUpdating: Boolean,
     onExpandedButtonClick: (Boolean) -> Unit,
     onFullScreenModeChange: (Boolean) -> Unit,
-    onExpandDay: (WeatherDay) -> Unit,
+    onOpenConditionsClick: (
+        WeatherDay,
+        ConditionType,
+        TemperatureType,
+    ) -> Unit,
+    onWeatherCardListOrderChange: (List<WeatherCard>) -> Unit,
     onCloseClick: () -> Unit,
     onDeleteClick: () -> Unit,
     paddingValues: PaddingValues,
 ) {
-    val scrollState = rememberLazyListState()
-    LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(20.dp),
-        state = scrollState,
+    val view = LocalView.current
+    var weatherCardDataList by remember { mutableStateOf(WeatherCard.entries.toList()) }
+    LaunchedEffect(viewState.weatherCardList) {
+        weatherCardDataList = viewState.weatherCardList
+    }
+    val listState = rememberLazyGridState()
+    val reorderableLazyListState = rememberReorderableLazyGridState(
+        lazyGridState = listState,
+        scrollThresholdPadding = WindowInsets.statusBars.asPaddingValues(),
+    ) { from, to ->
+        weatherCardDataList = weatherCardDataList.toMutableList().apply {
+            val fromIndex = indexOfFirst { it.name == from.key }
+            val toIndex = indexOfFirst { it.name == to.key }
+            if (fromIndex != -1 && toIndex != -1) {
+                add(toIndex, removeAt(fromIndex))
+            }
+        }
+        onWeatherCardListOrderChange(weatherCardDataList)
+        view.performHapticAction(HapticAction.VirtualKey)
+    }
+
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+        state = listState,
+        modifier = Modifier.padding(horizontal = 16.dp),
     ) {
-        item {
+        item(span = { GridItemSpan(2) }) {
             Spacer(Modifier.windowInsetsTopHeight(WindowInsets.statusBars))
         }
         if (isUpdating) {
-            stickyHeader {
+            item(span = { GridItemSpan(2) }) {
                 Text(
                     text = stringResource(R.string.updating_location),
                     style = WeatherYouTheme.typography.bodyMedium,
@@ -232,87 +291,168 @@ private fun WeatherDetailsContent(
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .windowInsetsTopHeight(WindowInsets.statusBars)
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
+                        .fillMaxWidth(),
                 )
             }
         }
-        item {
-            viewState.weatherLocation?.let {
-                CurrentWeather(
-                    it,
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                )
-            }
-        }
-        item {
-            HourlyForecast(
-                hoursList = viewState.todayWeatherHoursList,
-                onClick = { onExpandDay(viewState.weatherLocation?.days?.first()!!) },
-                modifier = Modifier.padding(horizontal = 16.dp),
+        item(span = { GridItemSpan(2) }) {
+            CurrentWeather(
+                weatherLocation = viewState.weatherLocation!!,
             )
         }
-        item {
-            FutureDaysForecast(
-                futureDaysList = viewState.futureDaysList,
-                maxWeekTemperature = viewState.weatherLocation?.maxWeekTemperature ?: 0.0,
-                minWeekTemperature = viewState.weatherLocation?.minWeekTemperature ?: 0.0,
-                currentTemperature = viewState.weatherLocation?.currentWeather ?: 0.0,
-                isExpanded = viewState.isFutureWeatherExpanded,
-                onExpandedButtonClick = onExpandedButtonClick,
-                onExpandDay = onExpandDay,
-                modifier = Modifier.padding(horizontal = 16.dp),
-            )
-        }
-        item {
-            Row {
-                Column(Modifier.weight(1f)) {
-                    WindCard(
-                        viewState.weatherLocation?.windSpeed ?: 0.0,
-                        viewState.weatherLocation?.windDirection ?: 0.0,
-                        modifier = Modifier.padding(start = 16.dp, end = 8.dp),
-                    )
+        items(
+            items = weatherCardDataList,
+            span = { item ->
+                if (item.fullSpan) {
+                    GridItemSpan(2)
+                } else {
+                    GridItemSpan(1)
                 }
-                Column(Modifier.weight(1f)) {
-                    HumidityCard(
-                        viewState.weatherLocation?.humidity ?: 0.0,
-                        viewState.weatherLocation?.dewPoint ?: 0.0,
-                        modifier = Modifier.padding(start = 8.dp, end = 16.dp),
-                    )
-                }
-            }
-        }
-        item {
-            Row {
-                Column(Modifier.weight(1f)) {
-                    VisibilityCard(
-                        viewState.weatherLocation?.visibility ?: 0.0,
-                        modifier = Modifier.padding(start = 16.dp, end = 8.dp),
-                    )
-                }
-                Column(Modifier.weight(1f)) {
-                    UvIndexCard(
-                        viewState.weatherLocation?.uvIndex ?: 0.0,
-                        modifier = Modifier.padding(start = 8.dp, end = 16.dp),
-                    )
-                }
-            }
-        }
-        item {
-            viewState.weatherLocation?.let { weatherLocation ->
-                SunriseSunsetCard(
-                    sunrise = weatherLocation.sunrise,
-                    sunset = weatherLocation.sunset,
-                    currentTime = weatherLocation.timeZone.getDateTimeFromTimezone(),
-                    isDaylight = weatherLocation.isDaylight,
-                    modifier = Modifier.padding(horizontal = 16.dp),
+            },
+            key = { item -> item.name },
+        ) { item ->
+            ReorderableItem(
+                state = reorderableLazyListState,
+                key = item.name,
+            ) { isDragging ->
+                val scale by animateFloatAsState(if (isDragging) 1.1f else 1f, label = "")
+                WeatherCardItem(
+                    item = item,
+                    viewState = viewState,
+                    onOpenConditionsClick = onOpenConditionsClick,
+                    modifier = Modifier
+                        .longPressDraggableHandle(
+                            onDragStarted = {
+                                view.performHapticAction(HapticAction.DragStart)
+                            },
+                            onDragStopped = {
+                                view.performHapticAction(HapticAction.DragEnd)
+                            },
+                        )
+                        .scale(scale),
                 )
             }
-            Spacer(Modifier.height(10.dp))
         }
-        item {
+        item(span = { GridItemSpan(2) }) {
             AppleWeatherAttribution()
         }
+    }
+}
+
+@Composable
+fun WeatherCardItem(
+    item: WeatherCard,
+    viewState: WeatherDetailsViewState,
+    onOpenConditionsClick: (
+        WeatherDay,
+        ConditionType,
+        TemperatureType
+    ) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val weatherLocation = viewState.weatherLocation!!
+    when (item) {
+        WeatherCard.Hours -> HourlyForecast(
+            hoursList = viewState.todayWeatherHoursList,
+            onClick = {
+                onOpenConditionsClick(
+                    viewState.weatherLocation.days.first(),
+                    ConditionType.Conditions,
+                    TemperatureType.Actual,
+                )
+            },
+            modifier = modifier,
+        )
+        WeatherCard.FutureDays -> FutureDaysForecast(
+            futureDaysList = viewState.futureDaysList,
+            maxWeekTemperature = viewState.weatherLocation.maxWeekTemperature,
+            minWeekTemperature = viewState.weatherLocation.minWeekTemperature,
+            currentTemperature = viewState.weatherLocation.currentWeather,
+            isExpanded = viewState.isFutureWeatherExpanded,
+            onExpandedButtonClick = { },
+            onExpandDay = {
+                onOpenConditionsClick(it, ConditionType.Conditions, TemperatureType.Actual)
+            },
+            modifier = modifier,
+        )
+        WeatherCard.Wind -> WindCard(
+            windSpeed = viewState.weatherLocation.windSpeed,
+            windDirection = viewState.weatherLocation.windDirection,
+            windGustSpeed = viewState.weatherLocation.windGust,
+            onClick = {
+                onOpenConditionsClick(
+                    viewState.weatherLocation.days.first(),
+                    ConditionType.Wind,
+                    TemperatureType.Actual,
+                )
+            },
+            modifier = modifier,
+        )
+        WeatherCard.FeelsLike -> FeelsLikeCard(
+            actual = viewState.weatherLocation.currentWeather,
+            feelsLike = viewState.weatherLocation.feelsLike,
+            onClick = {
+                onOpenConditionsClick(
+                    viewState.weatherLocation.days.first(),
+                    ConditionType.Conditions,
+                    TemperatureType.FeelsLike,
+                )
+            },
+            modifier = modifier,
+        )
+        WeatherCard.Visibility -> VisibilityCard(
+            visibility = viewState.weatherLocation.visibility,
+            onClick = {
+//                onOpenConditionsClick(
+//                    viewState.weatherLocation.days.first(),
+//                    ConditionType.Visibility,
+//                    TemperatureType.Actual,
+//                )
+            },
+            modifier = modifier,
+        )
+        WeatherCard.UvIndex -> UvIndexCard(
+            uvIndex = viewState.weatherLocation.uvIndex,
+            onClick = {
+                onOpenConditionsClick(
+                    viewState.weatherLocation.days.first(),
+                    ConditionType.UvIndex,
+                    TemperatureType.Actual,
+                )
+            },
+            modifier = modifier,
+        )
+        WeatherCard.Pressure -> PressureCard(
+            pressure = viewState.weatherLocation.pressure,
+            trend = viewState.weatherLocation.pressureTrend,
+            onClick = {
+//                onOpenConditionsClick(
+//                    viewState.weatherLocation.days.first(),
+//                    ConditionType.Pressure,
+//                    TemperatureType.Actual,
+//                )
+            },
+            modifier = modifier,
+        )
+        WeatherCard.Humidity -> HumidityCard(
+            humidity = viewState.weatherLocation.humidity,
+            dewPoint = viewState.weatherLocation.dewPoint,
+            onClick = {
+//                onOpenConditionsClick(
+//                    viewState.weatherLocation.days.first(),
+//                    ConditionType.Humidity,
+//                    TemperatureType.Actual,
+//                )
+            },
+            modifier = modifier,
+        )
+        WeatherCard.SunriseSunset -> SunriseSunsetCard(
+            sunrise = weatherLocation.sunrise,
+            sunset = weatherLocation.sunset,
+            currentTime = weatherLocation.timeZone.getDateTimeFromTimezone(),
+            isDaylight = weatherLocation.isDaylight,
+            modifier = modifier,
+        )
     }
 }
 
@@ -483,6 +623,26 @@ fun ExpandedTopAppBar(
     )
 }
 
+private fun View.performHapticAction(action: HapticAction) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+        performHapticFeedback(
+            when (action) {
+                HapticAction.VirtualKey -> HapticFeedbackConstants.VIRTUAL_KEY
+                HapticAction.DragStart -> HapticFeedbackConstants.DRAG_START
+                HapticAction.DragEnd -> HapticFeedbackConstants.GESTURE_END
+            }
+        )
+    } else {
+        performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+    }
+}
+
+enum class HapticAction {
+    VirtualKey,
+    DragStart,
+    DragEnd,
+}
+
 @ExperimentalMaterial3Api
 @PreviewLightDark
 @Composable
@@ -498,8 +658,9 @@ fun WeatherDetailsScreenPreview() {
             onExpandedButtonClick = { },
             onCloseClick = {},
             onDeleteClick = {},
-            onExpandDay = { },
+            onOpenConditionsClick = { _, _, _ -> },
             onFullScreenModeChange = { },
+            onWeatherCardListOrderChange = { },
             modifier = Modifier.background(WeatherYouTheme.colorScheme.background)
         )
     }

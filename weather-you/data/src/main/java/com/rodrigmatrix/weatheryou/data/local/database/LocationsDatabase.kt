@@ -34,7 +34,7 @@ abstract class LocationsDatabase : RoomDatabase() {
             context.applicationContext,
             LocationsDatabase::class.java,
             "weather_you_locations_database.db")
-            .fallbackToDestructiveMigration()
+            .fallbackToDestructiveMigration(false)
             .build()
     }
 }

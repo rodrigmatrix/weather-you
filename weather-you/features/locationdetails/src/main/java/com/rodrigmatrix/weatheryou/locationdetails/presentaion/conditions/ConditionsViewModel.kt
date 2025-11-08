@@ -5,6 +5,7 @@ import com.rodrigmatrix.weatheryou.domain.model.WeatherDay
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 
 class ConditionsViewModel : ViewModel() {
 
@@ -22,12 +23,24 @@ class ConditionsViewModel : ViewModel() {
     fun setConditions(
         weatherLocation: WeatherLocation,
         day: WeatherDay,
+        type: ConditionType? = null,
+        temperatureType: TemperatureType? = null,
     ) {
         _viewState.value = _viewState.value.copy(
             weatherLocation = weatherLocation,
             day = day,
             isCurrentDay = weatherLocation.days.indexOf(day) == 0,
+            type = type ?: _viewState.value.type,
+            temperatureType = temperatureType ?: _viewState.value.temperatureType,
         )
+    }
+
+    fun onTypeChange(type: ConditionType) {
+        _viewState.update { viewState ->
+            viewState.copy(
+                type = type,
+            )
+        }
     }
 
     fun onTemperatureTypeChange(temperatureType: TemperatureType) {

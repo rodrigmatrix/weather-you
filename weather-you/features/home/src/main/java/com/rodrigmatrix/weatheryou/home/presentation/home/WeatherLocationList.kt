@@ -1,6 +1,5 @@
 package com.rodrigmatrix.weatheryou.home.presentation.home
 
-import android.content.res.Configuration
 import android.os.Build
 import android.view.HapticFeedbackConstants
 import android.view.View
@@ -8,11 +7,12 @@ import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,38 +20,36 @@ import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
+import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.foundation.pager.PagerState
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.window.core.layout.WindowWidthSizeClass
 import com.rodrigmatrix.weatheryou.components.WeatherLocationCardContent
 import com.rodrigmatrix.weatheryou.components.WeatherYouCard
 import com.rodrigmatrix.weatheryou.components.particle.WeatherAnimationsBackground
-import com.rodrigmatrix.weatheryou.components.preview.PreviewWeatherList
+import com.rodrigmatrix.weatheryou.components.theme.ThemeMode
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.components.theme.md_theme_dark_primaryContainer
 import com.rodrigmatrix.weatheryou.components.theme.md_theme_dark_secondaryContainer
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import sh.calvin.reorderable.ReorderableItem
-import androidx.compose.runtime.setValue
-import androidx.compose.material3.adaptive.WindowAdaptiveInfo
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
-import androidx.compose.runtime.LaunchedEffect
-import androidx.window.core.layout.WindowWidthSizeClass
-import com.rodrigmatrix.weatheryou.components.theme.ThemeMode
 import sh.calvin.reorderable.rememberReorderableLazyGridState
+
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun WeatherLocationList(
@@ -200,6 +198,13 @@ fun WeatherLocation(
                     }
                 } else {
                     WeatherYouTheme.colorScheme.secondaryContainer
+                },
+                border = if (isSelected) {
+                    BorderStroke(4.dp, Color.Gray.copy(alpha = 0.6f))
+                } else {
+                    if (WeatherYouTheme.themeSettings.showWeatherAnimations) {
+                        BorderStroke(0.5.dp, Color.Gray.copy(alpha = 0.6f))
+                    } else null
                 },
                 isDismissible = false,
                 onClick = {

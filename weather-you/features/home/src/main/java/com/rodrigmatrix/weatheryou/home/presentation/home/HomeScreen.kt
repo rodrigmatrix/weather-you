@@ -8,13 +8,7 @@ import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
@@ -33,9 +27,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
@@ -94,8 +86,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
@@ -110,14 +100,14 @@ import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
-import com.rodrigmatrix.weatheryou.domain.R
 import com.rodrigmatrix.weatheryou.components.WeatherIcon
-import com.rodrigmatrix.weatheryou.components.extensions.getGradientList
 import com.rodrigmatrix.weatheryou.components.location.RequestBackgroundLocationDialog
 import com.rodrigmatrix.weatheryou.components.particle.WeatherAnimationsBackground
 import com.rodrigmatrix.weatheryou.components.preview.PreviewWeatherList
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.core.extensions.toast
+import com.rodrigmatrix.weatheryou.core.state.WeatherYouAppState
+import com.rodrigmatrix.weatheryou.domain.R
 import com.rodrigmatrix.weatheryou.domain.model.WeatherCondition
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.locationdetails.presentaion.details.WeatherDetailsScreen
@@ -382,181 +372,163 @@ fun HomeScreen(
         }
     }
 
-    val infiniteTransition = rememberInfiniteTransition(label = "particleTick")
-    val particleTick by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 1_000_000f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(
-                durationMillis = 100_000,
-                easing = LinearEasing,
-            ),
-            repeatMode = RepeatMode.Restart,
-        ),
-        label = "particleTick",
-    )
     val exitAlwaysScrollBehavior = FloatingToolbarDefaults.exitAlwaysScrollBehavior(
         exitDirection = FloatingToolbarExitDirection.Bottom,
         snapAnimationSpec = spring(),
     )
-    ListDetailPaneScaffold(
-        value = navigator.scaffoldValue,
-        directive = navigator.scaffoldDirective,
-        listPane = {
-            AnimatedPane(
-                modifier = Modifier
-                    .preferredWidth(260.dp)
-            ) {
-                WeatherLocationsListScreen(
-                    uiState = homeUiState,
-                    particleTick = particleTick.toLong(),
-                    navigator = navigator,
-                    showLocationPermissionRequest = showLocationPermissionRequest,
-                    onItemClick = { location ->
-                        coroutineScope.launch {
-                            onLocationSelected(location)
-                            onNavigateToLocation(location.id)
-                            pagerState.scrollToPage(homeUiState.locationsList.indexOfFirst { it.id == location.id })
-                        }
-                    },
-                    onSwipeRefresh = onSwipeRefresh,
-                    onDeleteLocation = onDeleteLocation,
-                    onSearchLocationClick = onAddLocation,
-                    onRequestPermission = onRequestPermission,
-                    onOrderChanged = onOrderChanged,
-                    onNavigateToLocation = onNavigateToLocation,
-                    animatedVisibilityScope = animatedVisibilityScope,
-                    sharedTransitionScope = sharedTransitionScope,
-                )
-            }
-        },
-        detailPane = {
-            if (navigator.currentDestination?.contentKey != null) {
+    Box {
+        ListDetailPaneScaffold(
+            value = navigator.scaffoldValue,
+            directive = navigator.scaffoldDirective,
+            listPane = {
                 AnimatedPane(
-                    enterTransition = slideInHorizontally() + fadeIn(),
-                    exitTransition = slideOutHorizontally() + fadeOut()
+                    modifier = Modifier
+                        .preferredWidth(260.dp)
                 ) {
-                    Box(
-                        Modifier
-                            .fillMaxSize()
-                            .nestedScroll(exitAlwaysScrollBehavior),
+                    WeatherLocationsListScreen(
+                        uiState = homeUiState,
+                        particleTick = WeatherYouAppState.particleTick,
+                        navigator = navigator,
+                        showLocationPermissionRequest = showLocationPermissionRequest,
+                        onItemClick = { location ->
+                            coroutineScope.launch {
+                                onLocationSelected(location)
+                                onNavigateToLocation(location.id)
+                                pagerState.scrollToPage(homeUiState.locationsList.indexOfFirst { it.id == location.id })
+                            }
+                        },
+                        onSwipeRefresh = onSwipeRefresh,
+                        onDeleteLocation = onDeleteLocation,
+                        onSearchLocationClick = onAddLocation,
+                        onRequestPermission = onRequestPermission,
+                        onOrderChanged = onOrderChanged,
+                        onNavigateToLocation = onNavigateToLocation,
+                        animatedVisibilityScope = animatedVisibilityScope,
+                        sharedTransitionScope = sharedTransitionScope,
+                    )
+                }
+            },
+            detailPane = {
+                if (navigator.currentDestination?.contentKey != null) {
+                    AnimatedPane(
+                        enterTransition = slideInHorizontally() + fadeIn(),
+                        exitTransition = slideOutHorizontally() + fadeOut()
                     ) {
-                        if (WeatherYouTheme.themeSettings.showWeatherAnimations) {
-                            homeUiState.locationsList.getOrNull(pagerState.currentPage)?.let {
-                                WeatherAnimationsBackground(
-                                    weatherLocation = it,
-                                    particleTick = particleTick.toLong(),
-                                )
+                        Box(
+                            Modifier
+                                .fillMaxSize()
+                                .nestedScroll(exitAlwaysScrollBehavior),
+                        ) {
+                            if (WeatherYouTheme.themeSettings.showWeatherAnimations && navSuiteType != NavigationSuiteType.NavigationRail) {
+                                homeUiState.locationsList.getOrNull(pagerState.currentPage)?.let {
+                                    WeatherAnimationsBackground(
+                                        weatherLocation = it,
+                                        particleTick = WeatherYouAppState.particleTick,
+                                    )
+                                }
                             }
-                        }
-                        HorizontalPager(
-                            state = pagerState,
-                            beyondViewportPageCount = 3,
-                            modifier = Modifier,
-                        ) { page ->
-                            val alpha = 1f - abs(pagerState.currentPageOffsetFraction - (page - pagerState.currentPage)) * 0.7f
-                            homeUiState.locationsList.getOrNull(page)?.let {
-                                WeatherDetailsScreen(
-                                    weatherLocation = it,
-                                    isUpdating = homeUiState.isRefreshingLocations,
-                                    onCloseClick = {
-                                        coroutineScope.launch {
-                                            navigator.navigateBack()
-                                            onLocationSelected(null)
-                                        }
-                                    },
-                                    onFullScreenModeChange = { fullScreen ->
-                                        showDragHandle = fullScreen.not()
-                                        if (fullScreen) {
-                                            paneExpansionState.setFirstPaneProportion(0f)
-                                        } else {
-                                            paneExpansionState.setFirstPaneProportion(0.35f)
-                                        }
-                                    },
-                                    animatedVisibilityScope = animatedVisibilityScope,
-                                    sharedTransitionScope = sharedTransitionScope,
-                                    onDeleteLocationClicked = onDeleteLocationClicked,
-                                    modifier = Modifier.alpha(alpha),
-                                )
+                            HorizontalPager(
+                                state = pagerState,
+                                beyondViewportPageCount = 3,
+                                modifier = Modifier,
+                            ) { page ->
+                                val alpha = 1f - abs(pagerState.currentPageOffsetFraction - (page - pagerState.currentPage)) * 0.7f
+                                homeUiState.locationsList.getOrNull(page)?.let {
+                                    WeatherDetailsScreen(
+                                        weatherLocation = it,
+                                        isUpdating = homeUiState.isRefreshingLocations,
+                                        onCloseClick = {
+                                            coroutineScope.launch {
+                                                navigator.navigateBack()
+                                                onLocationSelected(null)
+                                            }
+                                        },
+                                        onFullScreenModeChange = { fullScreen ->
+                                            showDragHandle = fullScreen.not()
+                                            if (fullScreen) {
+                                                paneExpansionState.setFirstPaneProportion(0f)
+                                            } else {
+                                                paneExpansionState.setFirstPaneProportion(0.35f)
+                                            }
+                                        },
+                                        animatedVisibilityScope = animatedVisibilityScope,
+                                        sharedTransitionScope = sharedTransitionScope,
+                                        onDeleteLocationClicked = onDeleteLocationClicked,
+                                        modifier = Modifier.alpha(alpha),
+                                    )
+                                }
                             }
+                            LocationBottomToolbar(
+                                isCurrentLocation = homeUiState.selectedWeatherLocation?.isCurrentLocation == true,
+                                canNavigateBack = pagerState.canScrollBackward,
+                                canNavigateForward = pagerState.canScrollForward,
+                                onNavigateBack = {
+                                    coroutineScope.launch {
+                                        navigator.navigateBack()
+                                        onLocationSelected(null)
+                                    }
+                                },
+                                scrollBehavior = exitAlwaysScrollBehavior,
+                                onDeleteLocationClicked = onDeleteLocationClicked,
+                                onPreviousLocationClicked = {
+                                    coroutineScope.launch {
+                                        pagerState.animateScrollToPage(pagerState.currentPage - 1)
+                                    }
+                                },
+                                navSuiteType = navSuiteType,
+                                onNextLocationClicked = {
+                                    coroutineScope.launch {
+                                        pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                                    }
+                                },
+                                modifier = Modifier
+                                    .align(Alignment.BottomCenter)
+                                    .padding(bottom = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding()),
+                            )
                         }
-                        LocationBottomToolbar(
-                            isCurrentLocation = homeUiState.selectedWeatherLocation?.isCurrentLocation == true,
-                            canNavigateBack = pagerState.canScrollBackward,
-                            canNavigateForward = pagerState.canScrollForward,
-                            onNavigateBack = {
-                                coroutineScope.launch {
-                                    navigator.navigateBack()
-                                    onLocationSelected(null)
-                                }
-                            },
-                            scrollBehavior = exitAlwaysScrollBehavior,
-                            onDeleteLocationClicked = onDeleteLocationClicked,
-                            onPreviousLocationClicked = {
-                                coroutineScope.launch {
-                                    pagerState.animateScrollToPage(pagerState.currentPage - 1)
-                                }
-                            },
-                            navSuiteType = navSuiteType,
-                            onNextLocationClicked = {
-                                coroutineScope.launch {
-                                    pagerState.animateScrollToPage(pagerState.currentPage + 1)
-                                }
-                            },
-                            modifier = Modifier
-                                .align(Alignment.BottomCenter)
-                                .padding(bottom = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding()),
-                        )
                     }
                 }
-            }
-        },
-        paneExpansionDragHandle = {
-            if (navigator.scaffoldValue.primary != PaneAdaptedValue.Hidden && showDragHandle) {
-                Surface(
-                    onClick = { },
-                    shape = WeatherYouTheme.shapes.large,
-                    shadowElevation = 6.dp,
-                    interactionSource = paneInteractionSource,
-                    color = if (WeatherYouTheme.themeSettings.showWeatherAnimations) {
-                        WeatherYouTheme.colorScheme.surface.copy(alpha = 0.4f)
-                    } else {
-                        WeatherYouTheme.colorScheme.primary
-                    },
-                    modifier = Modifier
-                        .scale(
-                            if (isPaneDragging) {
-                                1.5f
-                            } else {
-                                1f
-                            }
-                        )
-                        .size(
-                            height = 40.dp,
-                            width = 10.dp,
-                        )
-                        .paneExpansionDraggable(
-                            state = paneExpansionState,
-                            minTouchTargetSize = 0.dp,
-                            interactionSource = paneInteractionSource,
-                        ),
-                ) { }
-            }
-        },
-        paneExpansionState = paneExpansionState,
-        modifier = if (WeatherYouTheme.themeSettings.showWeatherAnimations && navSuiteType == NavigationSuiteType.NavigationRail) {
-            Modifier.background(
-                Brush.verticalGradient(
-                    homeUiState.getSelectedOrFirstLocation()?.getGradientList() ?: listOf(
-                        WeatherYouTheme.colorScheme.background,
-                        WeatherYouTheme.colorScheme.background,
-                    )
-                )
-            )
-        } else {
-            Modifier.background(WeatherYouTheme.colorScheme.background)
-        },
-    )
+            },
+            paneExpansionDragHandle = {
+                if (navigator.scaffoldValue.primary != PaneAdaptedValue.Hidden && showDragHandle) {
+                    Surface(
+                        onClick = { },
+                        shape = WeatherYouTheme.shapes.large,
+                        shadowElevation = 6.dp,
+                        interactionSource = paneInteractionSource,
+                        color = if (WeatherYouTheme.themeSettings.showWeatherAnimations) {
+                            WeatherYouTheme.colorScheme.surface.copy(alpha = 0.4f)
+                        } else {
+                            WeatherYouTheme.colorScheme.primary
+                        },
+                        modifier = Modifier
+                            .scale(
+                                if (isPaneDragging) {
+                                    1.5f
+                                } else {
+                                    1f
+                                }
+                            )
+                            .size(
+                                height = 40.dp,
+                                width = 10.dp,
+                            )
+                            .paneExpansionDraggable(
+                                state = paneExpansionState,
+                                minTouchTargetSize = 0.dp,
+                                interactionSource = paneInteractionSource,
+                            ),
+                    ) { }
+                }
+            },
+            paneExpansionState = paneExpansionState,
+            modifier = if (WeatherYouTheme.themeSettings.showWeatherAnimations && navSuiteType == NavigationSuiteType.NavigationRail) {
+                Modifier
+            } else {
+                Modifier.background(WeatherYouTheme.colorScheme.background)
+            },
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)

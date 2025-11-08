@@ -96,13 +96,14 @@ android {
     packagingOptions {
         resources {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
+            excludes += "/META-INF/versions/9/OSGI-INF/MANIFEST.MF"
         }
     }
     namespace 'com.rodrigmatrix.weatheryou'
 }
 
 static def computeVersionName() {
-    return String.format('%d.%d.%d', Sdk.phoneVersionMajor, Sdk.phoneVersionMinor, Sdk.phoneVersionPatch)
+    return String.format('%d.%d.%d', Sdk.phoneVersionMajor, Sdk.phoneVersionMinor, Sdk.phoneVersionPatch) + "_mobile"
 }
 
 static def computeVersionCode() {

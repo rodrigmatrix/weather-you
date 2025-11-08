@@ -29,6 +29,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.IOException
+import kotlin.collections.firstOrNull
 
 private const val FIVE_MINUTES_MILLI = 300000L
 

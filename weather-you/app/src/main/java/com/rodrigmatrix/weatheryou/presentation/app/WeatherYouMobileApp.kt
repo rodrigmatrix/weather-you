@@ -5,8 +5,15 @@ import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
@@ -33,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.glance.appwidget.updateAll
 import androidx.navigation.compose.rememberNavController
 import androidx.window.core.layout.WindowWidthSizeClass
+import com.rodrigmatrix.weatheryou.components.particle.WeatherAnimationsBackground
 import com.rodrigmatrix.weatheryou.components.theme.ColorMode
 import com.rodrigmatrix.weatheryou.components.theme.ThemeMode
 import com.rodrigmatrix.weatheryou.components.theme.ThemeSettings
@@ -121,11 +129,34 @@ fun WeatherYouMobileApp(
     val homeScreenNavigator = rememberListDetailPaneScaffoldNavigator<Int>(
         calculatePaneScaffoldDirectiveWithTwoPanesOnMediumWidth(currentWindowAdaptiveInfo())
     )
-    Box(Modifier.blur(blurValue)) {
+    val infiniteTransition = rememberInfiniteTransition(label = "particleTick")
+    val particleTick by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1_000_000f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(
+                durationMillis = 100_000,
+                easing = LinearEasing,
+            ),
+            repeatMode = RepeatMode.Restart,
+        ),
+        label = "particleTick",
+    )
+    val adaptiveInfo = currentWindowAdaptiveInfo()
+    val customNavSuiteType = with (adaptiveInfo) {
+        if (windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.EXPANDED) {
+            NavigationSuiteType.NavigationDrawer
+        } else {
+            NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(adaptiveInfo)
+        }
+    }
+    val navSuiteType = NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(adaptiveInfo)
+    Box(Modifier.blur(blurValue).fillMaxSize()) {
         WeatherYouAppState(
             appSettings = appSettings,
             currentDestination = currentDestination,
             conditionsScaffoldState = conditionsScaffoldState,
+            particleTick = particleTick.toLong(),
         ) {
             WeatherYouTheme(
                 themeMode = themeMode,
@@ -135,15 +166,16 @@ fun WeatherYouMobileApp(
                     enableThemeColorForWeatherAnimations = appSettings.enableThemeColorWithWeatherAnimations,
                 )
             ) {
-                val adaptiveInfo = currentWindowAdaptiveInfo()
-                val customNavSuiteType = with (adaptiveInfo) {
-                    if (windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.EXPANDED) {
-                        NavigationSuiteType.NavigationDrawer
-                    } else {
-                        NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(adaptiveInfo)
+                if (WeatherYouTheme.themeSettings.showWeatherAnimations && navSuiteType == NavigationSuiteType.NavigationRail) {
+                    homeViewState.getSelectedOrFirstLocation()?.let {
+                        WeatherAnimationsBackground(
+                            weatherLocation = it,
+                            particleTick = WeatherYouAppState.particleTick,
+                            modifier = Modifier.fillMaxSize(),
+                        )
                     }
                 }
-                val navSuiteType = NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(adaptiveInfo)
+
                 NavigationSuiteScaffoldLayout(
                     layoutType = customNavSuiteType,
                     navigationSuite = {

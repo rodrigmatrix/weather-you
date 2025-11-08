@@ -2,12 +2,14 @@ package com.rodrigmatrix.weatheryou.locationdetails.presentaion.conditions
 
 import android.os.Build
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.gestures.ScrollScope
 import androidx.compose.foundation.gestures.ScrollableDefaults
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,6 +20,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -25,7 +28,15 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ButtonShapes
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
@@ -33,10 +44,15 @@ import androidx.compose.material3.SheetState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -47,6 +63,7 @@ import com.rodrigmatrix.weatheryou.core.extensions.getDayString
 import com.rodrigmatrix.weatheryou.core.extensions.getFullDate
 import com.rodrigmatrix.weatheryou.domain.model.WeatherDay
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
+import com.rodrigmatrix.weatheryou.domain.R as StringR
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -55,6 +72,7 @@ fun ConditionsBottomSheet(
     bottomSheetState: SheetState,
     scrollState: ScrollState,
     onDismissRequest: () -> Unit,
+    onTypeChange: (ConditionType) -> Unit,
     onClick: (WeatherDay) -> Unit,
     onTemperatureTypeChange: (TemperatureType) -> Unit,
     modifier: Modifier = Modifier,
@@ -82,17 +100,19 @@ fun ConditionsBottomSheet(
             onClick = onClick,
             onTemperatureTypeChange = onTemperatureTypeChange,
             onCloseClicked = onDismissRequest,
+            onTypeChange = onTypeChange,
             modifier = modifier,
         )
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ConditionsContent(
     viewState: ConditionsViewState,
     scrollState: ScrollState,
     onClick: (WeatherDay) -> Unit,
+    onTypeChange: (ConditionType) -> Unit,
     onTemperatureTypeChange: (TemperatureType) -> Unit,
     onCloseClicked: () -> Unit,
     modifier: Modifier = Modifier,
@@ -107,6 +127,12 @@ fun ConditionsContent(
             }
         }
     }
+    var expandedMenu by remember { mutableStateOf(false) }
+    var popupExpanded by remember { mutableStateOf(false) }
+    val menuIconRotation by animateFloatAsState(
+        targetValue = if (expandedMenu) 180f else 0f,
+        label = "",
+    )
 
     Column(
         modifier
@@ -141,28 +167,153 @@ fun ConditionsContent(
         )
         Spacer(Modifier.height(10.dp))
 
-        when (viewState.type) {
-            ConditionType.Conditions -> ConditionsContent(
-                weatherLocation = weatherLocation,
-                day = day,
-                viewState = viewState,
-                onTemperatureTypeChange = onTemperatureTypeChange,
-            )
-            ConditionType.UvIndex -> UvIndexContent(
-                day = day,
-                viewState = viewState,
-                weatherLocation = weatherLocation,
-            )
-            ConditionType.SunriseSunset -> Unit
-            ConditionType.Wind -> Unit
-            ConditionType.Precipitation -> Unit
-            ConditionType.Humidity -> Unit
-            ConditionType.Visibility -> Unit
-            ConditionType.Pressure -> Unit
+        Box(Modifier.fillMaxWidth()) {
+            when (viewState.type) {
+                ConditionType.Conditions -> ConditionsContent(
+                    weatherLocation = weatherLocation,
+                    day = day,
+                    viewState = viewState,
+                    onPopupStateChange = {
+                        popupExpanded = it
+                    },
+                    onTemperatureTypeChange = onTemperatureTypeChange,
+                )
+                ConditionType.UvIndex -> UvIndexContent(
+                    day = day,
+                    viewState = viewState,
+                    onPopupStateChange = {
+                        popupExpanded = it
+                    },
+                    weatherLocation = weatherLocation,
+                )
+                ConditionType.Wind -> WindContent(
+                    day = day,
+                    viewState = viewState,
+                    onPopupStateChange = {
+                        popupExpanded = it
+                    },
+                    weatherLocation = weatherLocation,
+                )
+                ConditionType.Precipitation -> PrecipitationContent(
+                    day = viewState.day,
+                    onPopupStateChange = {
+                        popupExpanded = it
+                    },
+                )
+                ConditionType.Humidity -> HumidityContent(
+                    day = day,
+                    viewState = viewState,
+                    onPopupStateChange = {
+                        popupExpanded = it
+                    },
+                    weatherLocation = weatherLocation,
+                )
+                ConditionType.Visibility -> Unit
+                ConditionType.Pressure -> Unit
+            }
+            val interactionSource by remember { mutableStateOf(MutableInteractionSource()) }
+            if (!popupExpanded) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(horizontal = 16.dp)
+                ) {
+                    Button(
+                        shapes = ButtonDefaults.shapes(),
+                        onClick = {
+                            expandedMenu = !expandedMenu
+                        },
+                        interactionSource = interactionSource,
+                        modifier = Modifier.size(
+                            width = 80.dp,
+                            height = 36.dp,
+                        ),
+                    ) {
+                        Row(
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Icon(
+                                painterResource(viewState.type.getIcon()),
+                                when (viewState.type) {
+                                    ConditionType.Conditions -> stringResource(StringR.string.conditions)
+                                    ConditionType.UvIndex -> stringResource(StringR.string.uv_index)
+                                    ConditionType.Wind -> stringResource(StringR.string.wind)
+                                    ConditionType.Precipitation -> stringResource(StringR.string.precipitation)
+                                    ConditionType.Humidity -> stringResource(StringR.string.humidity)
+                                    ConditionType.Visibility -> stringResource(StringR.string.visibility)
+                                    ConditionType.Pressure -> stringResource(StringR.string.pressure)
+                                },
+                                modifier = Modifier.size(24.dp)
+                            )
+                            Spacer(Modifier.width(8.dp))
+                            Icon(
+                                painterResource(R.drawable.ic_arrow_down),
+                                contentDescription = null,
+                                modifier = Modifier.rotate(menuIconRotation),
+                            )
+                        }
+                    }
+                    DropdownMenu(
+                        expanded = expandedMenu,
+                        shape = WeatherYouTheme.shapes.large,
+                        onDismissRequest = {
+                            expandedMenu = false
+                        },
+                    ) {
+                        listOf(
+                            ConditionType.Conditions,
+                            ConditionType.UvIndex,
+                            ConditionType.Wind,
+                            ConditionType.Precipitation
+                        ).forEach {
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        text = it.name,
+                                        style = WeatherYouTheme.typography.bodyMedium,
+                                        color = WeatherYouTheme.colorScheme.onSurface,
+                                    )
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        painterResource(it.getIcon()),
+                                        when (it) {
+                                            ConditionType.Conditions -> stringResource(StringR.string.conditions)
+                                            ConditionType.UvIndex -> stringResource(StringR.string.uv_index)
+                                            ConditionType.Wind -> stringResource(StringR.string.wind)
+                                            ConditionType.Precipitation -> stringResource(StringR.string.precipitation)
+                                            ConditionType.Humidity -> stringResource(StringR.string.humidity)
+                                            ConditionType.Visibility -> stringResource(StringR.string.visibility)
+                                            ConditionType.Pressure -> stringResource(StringR.string.pressure)
+                                        },
+                                        modifier = Modifier.size(24.dp),
+                                    )
+                                },
+                                onClick = {
+                                    onTypeChange(it)
+                                    expandedMenu = false
+                                },
+                                contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                            )
+                        }
+                    }
+                }
+            }
         }
-
         Spacer(Modifier.height(200.dp))
     }
+}
+
+@Composable
+fun ConditionType.getIcon(): Int = when (this) {
+    ConditionType.Conditions -> R.drawable.ic_thermostat
+    ConditionType.UvIndex -> com.rodrigmatrix.weatheryou.weathericons.R.drawable.ic_sunny
+    ConditionType.Wind -> com.rodrigmatrix.weatheryou.weathericons.R.drawable.ic_air
+    ConditionType.Precipitation -> com.rodrigmatrix.weatheryou.weathericons.R.drawable.ic_weather_rainyday
+    ConditionType.Humidity -> com.rodrigmatrix.weatheryou.weathericons.R.drawable.ic_water_drop
+    ConditionType.Visibility -> com.rodrigmatrix.weatheryou.locationdetails.R.drawable.ic_visibility
+    ConditionType.Pressure -> com.rodrigmatrix.weatheryou.weathericons.R.drawable.ic_pressure
 }
 
 @Composable

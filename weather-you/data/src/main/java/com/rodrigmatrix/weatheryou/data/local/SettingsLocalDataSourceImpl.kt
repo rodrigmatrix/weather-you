@@ -12,7 +12,9 @@ import com.rodrigmatrix.weatheryou.domain.model.AppSettings
 import com.rodrigmatrix.weatheryou.domain.model.AppThemePreference
 import com.rodrigmatrix.weatheryou.domain.model.DistanceUnitPreference
 import com.rodrigmatrix.weatheryou.domain.model.PrecipitationUnitPreference
+import com.rodrigmatrix.weatheryou.domain.model.PressureUnitPreference
 import com.rodrigmatrix.weatheryou.domain.model.TemperaturePreference
+import com.rodrigmatrix.weatheryou.domain.model.WeatherCard
 import com.rodrigmatrix.weatheryou.domain.model.WindUnitPreference
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -32,6 +34,8 @@ internal const val IS_PREMIUM_USER_KEY = "is_premium_user_key"
 internal const val WIND_UNIT_KEY = "wind_unit_pref"
 internal const val PRECIPITATION_UNIT_KEY = "precipitation_unit_pref"
 internal const val DISTANCE_UNIT_KEY = "distance_unit_pref"
+internal const val PRESSURE_UNIT_KEY = "pressure_unit_pref"
+internal const val WEATHER_CARD_LIST_KEY = "weather_card_list_key"
 
 class SettingsLocalDataSourceImpl(
     private val dataStore: DataStore<Preferences>,
@@ -70,6 +74,7 @@ class SettingsLocalDataSourceImpl(
             preferences[stringPreferencesKey(COLOR_KEY)] = settings.appColorPreference.name
             preferences[booleanPreferencesKey(WEATHER_ANIMATIONS_KEY)] = settings.enableWeatherAnimations
             preferences[booleanPreferencesKey(THEME_COLOR_WEATHER_ANIMATIONS_KEY)] = settings.enableThemeColorWithWeatherAnimations
+            preferences[stringPreferencesKey(WEATHER_CARD_LIST_KEY)] = settings.weatherCardList.joinToString(",") { it.name }
         }
         emit(Unit)
     }
@@ -114,6 +119,10 @@ class SettingsLocalDataSourceImpl(
             DistanceUnitPreference.KM
         }
 
+        val pressure = preferences[stringPreferencesKey(PRESSURE_UNIT_KEY)]?.let {
+            safeEnumValueOf(it, PressureUnitPreference.MBAR)
+        } ?: PressureUnitPreference.MBAR
+
         return AppSettings(
             temperaturePreference = temperature,
             windUnitPreference = wind,
@@ -128,8 +137,24 @@ class SettingsLocalDataSourceImpl(
                 AppColorPreference.DYNAMIC
             ),
             enableWeatherAnimations = preferences[booleanPreferencesKey(WEATHER_ANIMATIONS_KEY)] ?: true,
-            enableThemeColorWithWeatherAnimations = preferences[booleanPreferencesKey(THEME_COLOR_WEATHER_ANIMATIONS_KEY)] ?: false
+            enableThemeColorWithWeatherAnimations = preferences[booleanPreferencesKey(THEME_COLOR_WEATHER_ANIMATIONS_KEY)] ?: false,
+            pressureUnitPreference = pressure,
+            weatherCardList = getWeatherCardList(preferences),
         )
+    }
+
+    private fun getWeatherCardList(preferences: Preferences): List<WeatherCard> {
+        val savedOrderString = preferences[stringPreferencesKey(WEATHER_CARD_LIST_KEY)]
+
+        if (savedOrderString.isNullOrBlank()) {
+            return WeatherCard.entries
+        }
+
+        val orderMap = savedOrderString.split(',').withIndex().associate { (index, name) -> name to index }
+
+        return WeatherCard.entries.sortedBy { card ->
+            orderMap[card.name] ?: Int.MAX_VALUE
+        }
     }
 
 

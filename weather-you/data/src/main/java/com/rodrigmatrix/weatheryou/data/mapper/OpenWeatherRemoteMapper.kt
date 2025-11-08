@@ -5,6 +5,7 @@ import com.rodrigmatrix.weatheryou.data.model.openweather.OpenWeatherHourly
 import com.rodrigmatrix.weatheryou.data.model.openweather.OpenWeatherLocationResponse
 import com.rodrigmatrix.weatheryou.domain.model.MoonPhase
 import com.rodrigmatrix.weatheryou.domain.model.PrecipitationType
+import com.rodrigmatrix.weatheryou.domain.model.PressureTrend
 import com.rodrigmatrix.weatheryou.domain.model.TemperaturePreference
 import com.rodrigmatrix.weatheryou.domain.model.WeatherDay
 import com.rodrigmatrix.weatheryou.domain.model.WeatherHour
@@ -51,6 +52,8 @@ class OpenWeatherRemoteMapper(
             maxWeekTemperature = daysList.maxOf { it.maxTemperature },
             cloudCover = 0.0,
             countryCode = "",
+            pressureTrend = PressureTrend.Steady,
+            windGust = 0.0,
         )
     }
 
@@ -97,12 +100,15 @@ class OpenWeatherRemoteMapper(
                 cloudCover = it.clouds?.toDouble() ?: 0.0,
                 feelsLike = it.feelsLike ?: 0.0,
                 humidity = it.humidity ?: 0.0,
-                visibility = it.visibility?.toDouble() ?: 0.0,
+                visibility = it.visibility ?: 0.0,
                 windSpeed = it.windSpeed ?: 0.0,
                 windDirection = it.windDeg ?: 0,
                 uvIndex = it.uvi ?: 0.0,
                 snowfallIntensity = 0.0,
                 precipitationAmount = 0.0,
+                pressureTrend = PressureTrend.Steady,
+                pressure = it.pressure?.toDouble() ?: 0.0,
+                windGust = it.windGust ?: 0.0,
             )
         }
     }

@@ -21,16 +21,7 @@ import com.rodrigmatrix.weatheryou.domain.model.TemperaturePreference
 import com.rodrigmatrix.weatheryou.domain.model.WindUnitPreference
 
 val LocalWeatherYouAppSettings = compositionLocalOf {
-    AppSettings(
-        temperaturePreference = TemperaturePreference.METRIC,
-        appThemePreference = AppThemePreference.SYSTEM_DEFAULT,
-        appColorPreference = AppColorPreference.DEFAULT,
-        enableWeatherAnimations = false,
-        enableThemeColorWithWeatherAnimations = false,
-        windUnitPreference = WindUnitPreference.KPH,
-        precipitationUnitPreference = PrecipitationUnitPreference.MM_CM,
-        distanceUnitPreference = DistanceUnitPreference.KM,
-    )
+    AppSettings.DEFAULT
 }
 
 val LocalWeatherYouCurrentDestination = compositionLocalOf {
@@ -42,17 +33,24 @@ val LocalWeatherYouConditionsScaffoldState = compositionLocalOf<SheetState?> {
     null
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+val LocalWeatherYouParticleState = compositionLocalOf<Long> {
+    0
+}
+
 @Composable
 fun WeatherYouAppState(
     appSettings: AppSettings,
     currentDestination: String,
     conditionsScaffoldState: SheetState?,
+    particleTick: Long,
     content: @Composable () -> Unit,
 ) {
     CompositionLocalProvider(
         LocalWeatherYouAppSettings provides appSettings,
         LocalWeatherYouCurrentDestination provides currentDestination,
-        LocalWeatherYouConditionsScaffoldState provides conditionsScaffoldState
+        LocalWeatherYouConditionsScaffoldState provides conditionsScaffoldState,
+        LocalWeatherYouParticleState provides particleTick,
     ) {
         content()
     }
@@ -72,4 +70,8 @@ object WeatherYouAppState {
     val conditionsScaffoldState: SheetState?
         @Composable
         get() = LocalWeatherYouConditionsScaffoldState.current
+
+    val particleTick: Long
+        @Composable
+        get() = LocalWeatherYouParticleState.current
 }

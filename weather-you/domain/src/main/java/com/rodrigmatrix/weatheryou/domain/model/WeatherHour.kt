@@ -16,6 +16,9 @@ data class WeatherHour(
     val precipitationAmount: Double,
     val windSpeed: Double,
     val windDirection: Int,
+    val windGust: Double,
     val uvIndex: Double,
     val snowfallIntensity: Double,
+    val pressure: Double,
+    val pressureTrend: PressureTrend,
 )

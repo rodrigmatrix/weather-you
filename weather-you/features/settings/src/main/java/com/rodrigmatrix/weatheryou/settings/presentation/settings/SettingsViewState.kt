@@ -18,4 +18,5 @@ sealed interface SettingsDialogState {
     data object DistanceUnit : SettingsDialogState
     data object THEME : SettingsDialogState
     data object BackgroundLocation : SettingsDialogState
+    data object PressureUnit: SettingsDialogState
 }

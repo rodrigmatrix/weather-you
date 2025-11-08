@@ -58,7 +58,7 @@ fun VisibilityCardContent(
         Text(
             text = stringResource(visibility.visibilityConditionsStringRes()),
             color = WeatherYouTheme.colorScheme.weatherTextColor,
-            style = WeatherYouTheme.typography.bodyLarge
+            style = WeatherYouTheme.typography.bodyLarge,
         )
     }
 }

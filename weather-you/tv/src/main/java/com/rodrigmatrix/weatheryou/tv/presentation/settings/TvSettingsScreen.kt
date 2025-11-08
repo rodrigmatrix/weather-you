@@ -52,6 +52,7 @@ import com.rodrigmatrix.weatheryou.domain.R
 import com.rodrigmatrix.weatheryou.domain.model.AppSettings
 import com.rodrigmatrix.weatheryou.domain.model.DistanceUnitPreference
 import com.rodrigmatrix.weatheryou.domain.model.PrecipitationUnitPreference
+import com.rodrigmatrix.weatheryou.domain.model.PressureUnitPreference
 import com.rodrigmatrix.weatheryou.domain.model.TemperaturePreference
 import com.rodrigmatrix.weatheryou.domain.model.WindUnitPreference
 import com.rodrigmatrix.weatheryou.settings.presentation.settings.SettingsDialogState
@@ -147,6 +148,16 @@ fun TvSettingsScreen(
         )
 
         SettingsDialogState.BackgroundLocation -> Unit
+        SettingsDialogState.PressureUnit -> UnitsDialog(
+            title = R.string.pressure,
+            entries = PressureUnitPreference.entries,
+            selected = viewState.appSettings.pressureUnitPreference,
+            onNewUnit = {
+                onSettingsChange(viewState.appSettings.copy(pressureUnitPreference = it))
+            },
+            itemTitle = { it.title },
+            onDismissRequest = onDismissDialog,
+        )
     }
     Column(
         modifier
@@ -196,6 +207,16 @@ fun TvSettingsScreen(
             },
             icon = com.rodrigmatrix.weatheryou.settings.R.drawable.ic_distance,
             modifier = Modifier
+        )
+        Spacer(Modifier.height(10.dp))
+        SettingWithOption(
+            title = stringResource(R.string.pressure),
+            selected = stringResource(viewState.appSettings.pressureUnitPreference.title),
+            onClick = {
+                onDialogStateChange(SettingsDialogState.PressureUnit)
+            },
+            icon = com.rodrigmatrix.weatheryou.settings.R.drawable.ic_pressure,
+            modifier = Modifier,
         )
         Spacer(Modifier.height(10.dp))
         SettingTitle(stringResource(R.string.appearance))

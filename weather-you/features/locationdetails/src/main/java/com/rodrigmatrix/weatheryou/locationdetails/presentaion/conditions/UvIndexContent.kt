@@ -57,54 +57,57 @@ fun UvIndexContent(
     viewState: ConditionsViewState,
     weatherLocation: WeatherLocation,
     day: WeatherDay,
+    onPopupStateChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var uvIndexPopup: PopupValue? by remember { mutableStateOf(null) }
-    if (uvIndexPopup != null) {
-        PopupUvIndex(
-            popup = uvIndexPopup!!,
-            hour = day.hours[uvIndexPopup!!.dataIndex],
-        )
-    } else {
-        if (weatherLocation.days.indexOf(day) != 0) {
-            ConditionHeader(
-                day = day,
-                temperatureType = viewState.temperatureType,
+    val now = weatherLocation.timeZone.getDateTimeFromTimezone().getLocalTime()
+    val currentUvIndex = day.hours.find { it.dateTime.hourOfDay == now.hourOfDay }?.uvIndex?.toInt() ?: 1
+    Column {
+        if (uvIndexPopup != null) {
+            PopupUvIndex(
+                popup = uvIndexPopup!!,
+                hour = day.hours[uvIndexPopup!!.dataIndex],
             )
         } else {
-            TodayConditionHeader(
-                weatherLocation = weatherLocation,
+            if (weatherLocation.days.indexOf(day) == 0) {
+                ConditionHeader(
+                    uvIndex = currentUvIndex,
+                    modifier = Modifier.padding(horizontal = 24.dp),
+                )
+            } else {
+                Spacer(Modifier.height(40.dp))
+            }
+        }
+        Spacer(Modifier.height(40.dp))
+        CurrentDayGraphBox(
+            weatherLocation = weatherLocation,
+            day = day,
+        ) {
+            UvIndexChart(
                 day = day,
-                temperatureType = viewState.temperatureType,
+                onPopupDisplay = {
+                    uvIndexPopup = it
+                    onPopupStateChange(it != null)
+                },
             )
         }
-    }
-    Spacer(Modifier.height(20.dp))
-    CurrentDayGraphBox(
-        weatherLocation = weatherLocation,
-        day = day,
-    ) {
-        UvIndexChart(
-            day = day,
-            onPopupDisplay = { uvIndexPopup = it },
-        )
-    }
 
-    Spacer(Modifier.height(20.dp))
+        Spacer(Modifier.height(20.dp))
 
-    if (weatherLocation.days.indexOf(day) != 0) {
-        val now = weatherLocation.timeZone.getDateTimeFromTimezone().getLocalTime()
-        Text(
-            text = stringResource(
-                (day.hours.find { it.dateTime.hourOfDay == now.hourOfDay }?.uvIndex?.toInt() ?: 1).uvIndexAlertStringRes()
-            ),
-            color = WeatherYouTheme.colorScheme.weatherTextColor,
-            style = WeatherYouTheme.typography.bodyLarge,
-            modifier = Modifier.padding(horizontal = 16.dp),
-        )
+        if (weatherLocation.days.indexOf(day) == 0) {
+            Text(
+                text = stringResource(
+                    (currentUvIndex).uvIndexAlertStringRes()
+                ),
+                color = WeatherYouTheme.colorScheme.weatherTextColor,
+                style = WeatherYouTheme.typography.bodyLarge,
+                modifier = Modifier.padding(horizontal = 16.dp),
+            )
+        }
+
+        Spacer(Modifier.height(20.dp))
     }
-
-    Spacer(Modifier.height(20.dp))
 }
 
 @Composable
@@ -168,7 +171,7 @@ private fun UvIndexChart(
 }
 
 @Composable
-fun PopupUvIndex(
+private fun PopupUvIndex(
     popup: PopupValue,
     hour: WeatherHour,
     modifier: Modifier = Modifier,
@@ -190,23 +193,34 @@ fun PopupUvIndex(
             style = WeatherYouTheme.typography.bodySmall,
             color = WeatherYouTheme.colorScheme.onBackground.copy(alpha = 0.8f),
         )
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = popup.value.toInt().toString(),
-                style = WeatherYouTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                color = WeatherYouTheme.colorScheme.onBackground,
-            )
-            Spacer(Modifier.width(4.dp))
-            Text(
-                text = stringResource(popup.value.toInt().uvIndexStringRes()),
-                style = WeatherYouTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                color = WeatherYouTheme.colorScheme.onBackground,
-            )
-        }
+        ConditionHeader(
+            uvIndex = popup.value.toInt(),
+        )
+    }
+}
+
+@Composable
+private fun ConditionHeader(
+    uvIndex: Int,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier,
+    ) {
+        Text(
+            text = uvIndex.toString(),
+            style = WeatherYouTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold,
+            color = WeatherYouTheme.colorScheme.onBackground,
+        )
+        Spacer(Modifier.width(4.dp))
+        Text(
+            text = stringResource(uvIndex.uvIndexStringRes()),
+            style = WeatherYouTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold,
+            color = WeatherYouTheme.colorScheme.onBackground,
+        )
     }
 }
 
@@ -217,6 +231,7 @@ fun UvIndexContentPreview() {
     UvIndexContent(
         viewState = ConditionsViewState(),
         weatherLocation = PreviewWeatherLocation,
+        onPopupStateChange = { },
         day = PreviewWeatherLocation.days.first(),
     )
 }
