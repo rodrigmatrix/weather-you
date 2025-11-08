@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "0e4b177837daeaf1f878a63c72a3c97e",
+    "identityHash": "85193103e100c83615e136e967ae138c",
     "entities": [
       {
         "tableName": "weather",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, `latitude` REAL NOT NULL, `longitude` REAL NOT NULL, `isCurrentLocation` INTEGER NOT NULL, `currentWeather` REAL NOT NULL, `currentCondition` TEXT NOT NULL, `maxTemperature` REAL NOT NULL, `lowestTemperature` REAL NOT NULL, `feelsLike` REAL NOT NULL, `currentTime` TEXT NOT NULL, `isDaylight` INTEGER NOT NULL, `expirationDate` TEXT NOT NULL, `timeZone` TEXT NOT NULL, `precipitationProbability` REAL NOT NULL, `precipitationType` TEXT NOT NULL, `humidity` REAL NOT NULL, `dewPoint` REAL NOT NULL, `windSpeed` REAL NOT NULL, `windDirection` REAL NOT NULL, `uvIndex` REAL NOT NULL, `sunrise` TEXT NOT NULL, `sunset` TEXT NOT NULL, `visibility` REAL NOT NULL, `pressure` REAL NOT NULL, `countryCode` TEXT NOT NULL, `minWeekTemperature` REAL NOT NULL, `maxWeekTemperature` REAL NOT NULL, `cloudCover` REAL NOT NULL, `days` TEXT NOT NULL, `hours` TEXT NOT NULL, PRIMARY KEY(`latitude`, `longitude`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, `latitude` REAL NOT NULL, `longitude` REAL NOT NULL, `isCurrentLocation` INTEGER NOT NULL, `currentWeather` REAL NOT NULL, `currentCondition` TEXT NOT NULL, `maxTemperature` REAL NOT NULL, `lowestTemperature` REAL NOT NULL, `feelsLike` REAL NOT NULL, `currentTime` TEXT NOT NULL, `isDaylight` INTEGER NOT NULL, `expirationDate` TEXT NOT NULL, `timeZone` TEXT NOT NULL, `precipitationProbability` REAL NOT NULL, `precipitationType` TEXT NOT NULL, `humidity` REAL NOT NULL, `dewPoint` REAL NOT NULL, `windSpeed` REAL NOT NULL, `windDirection` REAL NOT NULL, `uvIndex` REAL NOT NULL, `sunrise` TEXT NOT NULL, `sunset` TEXT NOT NULL, `visibility` REAL NOT NULL, `pressure` REAL NOT NULL, `countryCode` TEXT NOT NULL, `minWeekTemperature` REAL NOT NULL, `maxWeekTemperature` REAL NOT NULL, `cloudCover` REAL NOT NULL, `pressureTrend` TEXT NOT NULL, `days` TEXT NOT NULL, `hours` TEXT NOT NULL, PRIMARY KEY(`latitude`, `longitude`))",
         "fields": [
           {
             "fieldPath": "name",
@@ -177,6 +177,12 @@
             "notNull": true
           },
           {
+            "fieldPath": "pressureTrend",
+            "columnName": "pressureTrend",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
             "fieldPath": "days",
             "columnName": "days",
             "affinity": "TEXT",
@@ -195,15 +201,12 @@
             "latitude",
             "longitude"
           ]
-        },
-        "indices": [],
-        "foreignKeys": []
+        }
       }
     ],
-    "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0e4b177837daeaf1f878a63c72a3c97e')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '85193103e100c83615e136e967ae138c')"
     ]
   }
 }

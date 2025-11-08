@@ -36,6 +36,8 @@ data class WeatherEntity(
     val minWeekTemperature: Double,
     val maxWeekTemperature: Double,
     val cloudCover: Double,
+    val pressureTrend: String,
+    val windGust: Double,
     @ColumnInfo("days") val days: List<WeatherDayEntity>,
     @ColumnInfo("hours") val hours: List<WeatherHourEntity>,
 )
@@ -84,4 +86,7 @@ data class WeatherHourEntity(
     val windDirection: Int,
     val uvIndex: Double,
     val snowfallIntensity: Double,
+    val pressureTrend: String,
+    val pressure: Double,
+    val windGust: Double,
 )

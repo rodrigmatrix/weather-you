@@ -46,7 +46,6 @@ dependencies {
     implementation(libs.kotlin.stdlib)
     implementation(libs.kotlin.coroutines.android)
     implementation(libs.kotlin.serialization)
-    implementation (libs.compose.charts)
 
     implementation platform(libs.compose.bom)
     implementation(libs.compose.ui)
@@ -70,12 +69,14 @@ dependencies {
 
     implementation(libs.koin.android)
     implementation(libs.koin.compose)
+    implementation(libs.reorderable)
 
     implementation(libs.jodaTime)
 
     implementation(libs.coil)
 
     implementation(libs.lottie.compose)
+    implementation fileTree(dir: 'libs', include: ['*.aar'])
 
     debugImplementation(libs.composeUiTooling)
     debugImplementation(libs.composeTestManifest)

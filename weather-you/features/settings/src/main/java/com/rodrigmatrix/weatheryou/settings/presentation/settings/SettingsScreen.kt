@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.os.Build
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,12 +17,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,20 +44,25 @@ import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
-import com.rodrigmatrix.weatheryou.components.R
-import com.rodrigmatrix.weatheryou.components.ScreenNavigationType
 import com.rodrigmatrix.weatheryou.components.location.RequestBackgroundLocationDialog
+import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
+import com.rodrigmatrix.weatheryou.core.state.WeatherYouAppState
+import com.rodrigmatrix.weatheryou.domain.R
+import com.rodrigmatrix.weatheryou.domain.model.AppSettings
+import com.rodrigmatrix.weatheryou.domain.model.DistanceUnitPreference
+import com.rodrigmatrix.weatheryou.domain.model.PrecipitationUnitPreference
+import com.rodrigmatrix.weatheryou.domain.model.PressureUnitPreference
+import com.rodrigmatrix.weatheryou.domain.model.TemperaturePreference
+import com.rodrigmatrix.weatheryou.domain.model.WindUnitPreference
 import com.rodrigmatrix.weatheryou.settings.presentation.settings.component.SwitchWithDescription
 import com.rodrigmatrix.weatheryou.settings.presentation.settings.model.AppColorPreferenceOption
 import com.rodrigmatrix.weatheryou.settings.presentation.settings.model.AppThemePreferenceOption
-import com.rodrigmatrix.weatheryou.settings.presentation.settings.model.TemperaturePreferenceOption
-import com.rodrigmatrix.weatheryou.settings.presentation.settings.model.toOption
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun SettingsScreen(
-    viewModel: SettingsViewModel = getViewModel(),
+    viewModel: SettingsViewModel = koinViewModel(),
     onFetchLocations: () -> Unit,
     backgroundLocationPermissionState: PermissionState = rememberPermissionState(
         permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -84,27 +92,21 @@ fun SettingsScreen(
     val viewState by viewModel.viewState.collectAsState()
 
     SettingsScreen(
-        viewState,
-        onEditUnits = viewModel::onEditUnit,
+        viewState = viewState,
         onEditTheme = viewModel::onEditTheme,
-        onNewUnit = {
-            viewModel.onNewUnit(it)
+        onSettingsUpdate = {
+            viewModel.onSettingsUpdate(it)
             onFetchLocations()
+            viewModel.onDialogStateChanged(SettingsDialogState.HIDDEN)
         },
         onNewColor = viewModel::onNewColorTheme,
         onNewTheme = viewModel::onNewTheme,
         onWeatherAnimationsChange = viewModel::onWeatherAnimationsChange,
         onDismissDialog = viewModel::hideDialogs,
         onDialogStateChanged = viewModel::onDialogStateChanged,
-        requestBackgroundPermission = {
-            backgroundLocationPermissionState.launchPermissionRequest()
-        },
-        requestLocationPermission = {
-            locationPermissionState.launchMultiplePermissionRequest()
-        },
-        onPermissionChanged = {
-            viewModel.onPermissionChanged()
-        },
+        requestBackgroundPermission = backgroundLocationPermissionState::launchPermissionRequest,
+        requestLocationPermission = locationPermissionState::launchMultiplePermissionRequest,
+        onPermissionChanged = viewModel::onPermissionChanged,
     )
 
     LaunchedEffect(Unit) {
@@ -131,9 +133,8 @@ fun SettingsScreen(
 @Composable
 fun SettingsScreen(
     viewState: SettingsViewState,
-    onEditUnits: () -> Unit,
     onEditTheme: () -> Unit,
-    onNewUnit: (TemperaturePreferenceOption) -> Unit,
+    onSettingsUpdate: (AppSettings) -> Unit,
     onNewTheme: (AppThemePreferenceOption) -> Unit,
     onNewColor: (AppColorPreferenceOption) -> Unit,
     onWeatherAnimationsChange: (Boolean) -> Unit,
@@ -146,15 +147,50 @@ fun SettingsScreen(
     when (viewState.dialogState) {
         SettingsDialogState.HIDDEN -> Unit
         SettingsDialogState.THEME -> ThemeAndColorModeSelector(
-            themeMode = viewState.appSettings.appThemePreference.toOption().option,
-            colorMode = viewState.appSettings.appColorPreference.toOption().option,
+            themeMode = viewState.appSettings.appThemePreference,
+            colorMode = viewState.appSettings.appColorPreference,
             onThemeModeChange = onNewTheme,
             onColorChange = onNewColor,
             onClose = onDismissDialog,
         )
-        SettingsDialogState.UNITS -> UnitsDialog(
-            selected = viewState.appSettings.temperaturePreference.toOption(),
-            onNewUnit = onNewUnit,
+        SettingsDialogState.TemperatureUnit -> UnitsDialog(
+            title = R.string.temperature_unit,
+            itemTitle = { it.title },
+            selected = viewState.appSettings.temperaturePreference,
+            entries = TemperaturePreference.entries,
+            onNewUnit = {
+                onSettingsUpdate(viewState.appSettings.copy(temperaturePreference = it))
+            },
+            onDismissRequest = onDismissDialog
+        )
+        SettingsDialogState.WindSpeedUnit -> UnitsDialog(
+            title = R.string.wind_speed_unit,
+            itemTitle = { it.title },
+            selected = viewState.appSettings.windUnitPreference,
+            entries = WindUnitPreference.entries,
+            onNewUnit = {
+                onSettingsUpdate(viewState.appSettings.copy(windUnitPreference = it))
+            },
+            onDismissRequest = onDismissDialog
+        )
+        SettingsDialogState.PrecipitationUnit -> UnitsDialog(
+            title = R.string.precipitation_unit,
+            itemTitle = { it.title },
+            selected = viewState.appSettings.precipitationUnitPreference,
+            entries = PrecipitationUnitPreference.entries,
+            onNewUnit = {
+                onSettingsUpdate(viewState.appSettings.copy(precipitationUnitPreference = it))
+            },
+            onDismissRequest = onDismissDialog
+        )
+        SettingsDialogState.DistanceUnit -> UnitsDialog(
+            title = R.string.distance_unit,
+            itemTitle = { it.title },
+            selected = viewState.appSettings.distanceUnitPreference,
+            entries = DistanceUnitPreference.entries,
+            onNewUnit = {
+                onSettingsUpdate(viewState.appSettings.copy(distanceUnitPreference = it))
+            },
             onDismissRequest = onDismissDialog
         )
 
@@ -170,6 +206,16 @@ fun SettingsScreen(
             },
         )
 
+        SettingsDialogState.PressureUnit -> UnitsDialog(
+            title = R.string.pressure,
+            itemTitle = { it.title },
+            selected = viewState.appSettings.pressureUnitPreference,
+            entries = PressureUnitPreference.entries,
+            onNewUnit = {
+                onSettingsUpdate(viewState.appSettings.copy(pressureUnitPreference = it))
+            },
+            onDismissRequest = onDismissDialog
+        )
     }
     Column(
         Modifier
@@ -177,14 +223,53 @@ fun SettingsScreen(
             .background(WeatherYouTheme.colorScheme.background)
             .statusBarsPadding()
             .navigationBarsPadding()
+            .verticalScroll(rememberScrollState())
     ) {
         Spacer(Modifier.height(10.dp))
         SettingTitle(stringResource(R.string.units))
         Spacer(Modifier.height(10.dp))
         SettingWithOption(
-            title = stringResource(R.string.units),
-            selected = stringResource(viewState.appSettings.temperaturePreference.toOption().title),
-            onClick = onEditUnits,
+            title = stringResource(R.string.temperature_unit),
+            selected = stringResource(viewState.appSettings.temperaturePreference.title),
+            onClick = {
+                onDialogStateChanged(SettingsDialogState.TemperatureUnit)
+            },
+            modifier = Modifier
+        )
+        Spacer(Modifier.height(10.dp))
+        SettingWithOption(
+            title = stringResource(R.string.wind_speed_unit),
+            selected = stringResource(viewState.appSettings.windUnitPreference.title),
+            onClick = {
+                onDialogStateChanged(SettingsDialogState.WindSpeedUnit)
+            },
+            modifier = Modifier
+        )
+        Spacer(Modifier.height(10.dp))
+        SettingWithOption(
+            title = stringResource(R.string.precipitation_unit),
+            selected = stringResource(viewState.appSettings.precipitationUnitPreference.title),
+            onClick = {
+                onDialogStateChanged(SettingsDialogState.PrecipitationUnit)
+            },
+            modifier = Modifier
+        )
+        Spacer(Modifier.height(10.dp))
+        SettingWithOption(
+            title = stringResource(R.string.distance_unit),
+            selected = stringResource(viewState.appSettings.distanceUnitPreference.title),
+            onClick = {
+                onDialogStateChanged(SettingsDialogState.DistanceUnit)
+            },
+            modifier = Modifier
+        )
+        Spacer(Modifier.height(10.dp))
+        SettingWithOption(
+            title = stringResource(R.string.pressure),
+            selected = stringResource(viewState.appSettings.pressureUnitPreference.title),
+            onClick = {
+                onDialogStateChanged(SettingsDialogState.PressureUnit)
+            },
             modifier = Modifier
         )
         Spacer(Modifier.height(10.dp))
@@ -192,7 +277,7 @@ fun SettingsScreen(
         Spacer(Modifier.height(10.dp))
         SettingWithOption(
             title = stringResource(R.string.app_theme),
-            selected = stringResource(viewState.appSettings.appThemePreference.toOption().title),
+            selected = stringResource(viewState.appSettings.appThemePreference.title),
             onClick = onEditTheme,
             modifier = Modifier
         )
@@ -245,7 +330,7 @@ fun SettingsScreen(
                 )
             }
         }
-//        Spacer(Modifier.height(10.dp))
+        Spacer(Modifier.height(100.dp))
 //        SwitchWithDescription(
 //            checked = viewState.appSettings.enableThemeColorWithWeatherAnimations,
 //            description = stringResource(R.string.enable_theme_color_inside_weather_animations),
@@ -268,10 +353,13 @@ fun SettingTitle(
 }
 
 @Composable
-fun UnitsDialog(
-    selected: TemperaturePreferenceOption,
-    onNewUnit: (TemperaturePreferenceOption) -> Unit,
-    onDismissRequest: () -> Unit
+fun <T>UnitsDialog(
+    @StringRes title: Int,
+    selected: T,
+    onNewUnit: (T) -> Unit,
+    itemTitle: (T) -> Int,
+    entries: List<T>,
+    onDismissRequest: () -> Unit,
 ) {
     Dialog(
         onDismissRequest = onDismissRequest
@@ -286,15 +374,16 @@ fun UnitsDialog(
                 Modifier.padding(16.dp)
             ) {
                 Text(
-                    text = stringResource(R.string.units),
+                    text = stringResource(title),
                     style = WeatherYouTheme.typography.headlineSmall
                 )
                 LazyColumn(modifier = Modifier.padding(top = 16.dp)) {
-                    items(TemperaturePreferenceOption.entries.toTypedArray()) {
+                    items(entries) {
                         UnitChoiceItem(
+                            title = itemTitle,
                             option = it,
                             selected = it == selected,
-                            onNewUnit
+                            onNewUnit,
                         )
                     }
                 }
@@ -324,10 +413,11 @@ private fun hasLocationPermission(context: Context): Boolean {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UnitChoiceItem(
-    option: TemperaturePreferenceOption,
+fun <T>UnitChoiceItem(
+    title: (T) -> Int,
+    option: T,
     selected: Boolean,
-    onClick: (TemperaturePreferenceOption) -> Unit
+    onClick: (T) -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -340,7 +430,7 @@ fun UnitChoiceItem(
             )
     ) {
         Text(
-            text = stringResource(option.title),
+            text = stringResource(title(option)),
             style = WeatherYouTheme.typography.titleMedium,
             modifier = Modifier
                 .padding(start = 16.dp)
@@ -397,9 +487,8 @@ fun UvIndexCardPreview() {
     WeatherYouTheme {
         SettingsScreen(
             viewState = SettingsViewState(),
-            onEditUnits = { },
             onEditTheme = { },
-            onNewUnit = { },
+            onSettingsUpdate = { },
             onNewTheme = { },
             onNewColor = { },
             onDismissDialog = { },

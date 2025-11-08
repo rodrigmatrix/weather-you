@@ -1,37 +1,60 @@
-@file:OptIn(ExperimentalMaterial3AdaptiveApi::class)
-
 package com.rodrigmatrix.weatheryou.home.presentation.home
 
 import android.content.res.Configuration
 import android.os.Build
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsDraggedAsState
-import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Place
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.FloatingToolbarDefaults
+import androidx.compose.material3.FloatingToolbarExitDirection
+import androidx.compose.material3.FloatingToolbarScrollBehavior
+import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -39,34 +62,33 @@ import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
+import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
 import androidx.compose.material3.adaptive.layout.PaneAdaptedValue
 import androidx.compose.material3.adaptive.layout.PaneExpansionAnchor
 import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirectiveWithTwoPanesOnMediumWidth
-import androidx.compose.material3.adaptive.layout.calculateThreePaneScaffoldValue
 import androidx.compose.material3.adaptive.layout.rememberPaneExpansionState
 import androidx.compose.material3.adaptive.navigation.ThreePaneScaffoldNavigator
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
-import androidx.compose.material3.rememberTopAppBarState
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.res.integerResource
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
@@ -78,22 +100,29 @@ import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
-import com.rodrigmatrix.weatheryou.components.R
 import com.rodrigmatrix.weatheryou.components.WeatherIcon
-import com.rodrigmatrix.weatheryou.components.extensions.getGradientList
 import com.rodrigmatrix.weatheryou.components.location.RequestBackgroundLocationDialog
+import com.rodrigmatrix.weatheryou.components.particle.WeatherAnimationsBackground
 import com.rodrigmatrix.weatheryou.components.preview.PreviewWeatherList
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
+import com.rodrigmatrix.weatheryou.core.extensions.toast
+import com.rodrigmatrix.weatheryou.core.state.WeatherYouAppState
+import com.rodrigmatrix.weatheryou.domain.R
 import com.rodrigmatrix.weatheryou.domain.model.WeatherCondition
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.locationdetails.presentaion.details.WeatherDetailsScreen
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import kotlin.math.abs
 
-@OptIn(ExperimentalPermissionsApi::class)
+@OptIn(ExperimentalPermissionsApi::class, ExperimentalSharedTransitionApi::class,
+    ExperimentalMaterial3AdaptiveApi::class
+)
 @Composable
 fun HomeScreen(
     navController: NavController,
     homeUiState: HomeUiState,
+    homeViewEffect: Flow<HomeViewEffect>,
     navigator: ThreePaneScaffoldNavigator<Int>,
     onLocationSelected: (WeatherLocation?) -> Unit,
     onDialogStateChanged: (HomeDialogState) -> Unit,
@@ -121,6 +150,7 @@ fun HomeScreen(
         onPermissionsResult = {
             if (it.all { it.value }) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    onPermissionGranted()
                     onDialogStateChanged(HomeDialogState.BackgroundLocation)
                 } else {
                     onPermissionGranted()
@@ -130,11 +160,36 @@ fun HomeScreen(
             }
         }
     ),
-    onNavigateToLocation: (Int) -> Unit,
+    onUpdateWidgets: () -> Unit,
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    sharedTransitionScope: SharedTransitionScope,
 ) {
+    val coroutineScope = rememberCoroutineScope()
+    val pagerState = rememberPagerState {
+        homeUiState.locationsList.size
+    }
+    val context = LocalContext.current
+    val onNavigateToLocation: (Int) -> Unit = { id ->
+        coroutineScope.launch {
+            navigator.navigateTo(
+                pane = ListDetailPaneScaffoldRole.Detail,
+                contentKey = id,
+            )
+        }
+    }
 
-    BackHandler(enabled = homeUiState.isLocationSelected()) {
-        onLocationSelected(null)
+    LaunchedEffect(pagerState, homeUiState.locationsList) {
+        snapshotFlow { pagerState.currentPage }.collect { page ->
+            if (page < homeUiState.locationsList.size) {
+                onLocationSelected(homeUiState.locationsList.getOrNull(page))
+            }
+        }
+    }
+
+    LaunchedEffect(homeUiState.locationsList) {
+        if (homeUiState.locationsList.isEmpty() && navigator.canNavigateBack()) {
+            navigator.navigateBack()
+        }
     }
 
     when (homeUiState.dialogState) {
@@ -160,8 +215,10 @@ fun HomeScreen(
         }
         HomeDialogState.Hidden -> Unit
     }
+
     HomeScreen(
         homeUiState = homeUiState,
+        pagerState = pagerState,
         navigator = navigator,
         showLocationPermissionRequest = homeUiState.showLocationPermissionRequest(locationPermissionState),
         onLocationSelected = onLocationSelected,
@@ -174,13 +231,44 @@ fun HomeScreen(
         onRequestPermission = locationPermissionState::launchMultiplePermissionRequest,
         onOrderChanged = onOrderChanged,
         onNavigateToLocation = onNavigateToLocation,
+        animatedVisibilityScope = animatedVisibilityScope,
+        sharedTransitionScope = sharedTransitionScope,
     )
+
+    LaunchedEffect(navigator) {
+        homeViewEffect.collect { viewEffect ->
+            when (viewEffect) {
+                is HomeViewEffect.Error -> {
+                    context.toast(viewEffect.stringRes)
+                }
+
+                HomeViewEffect.ShowInAppReview -> {
+
+                }
+
+                HomeViewEffect.UpdateWidgets -> {
+                    onUpdateWidgets()
+                }
+
+                is HomeViewEffect.OpenLocation -> {
+                    onNavigateToLocation(viewEffect.id)
+                    pagerState.animateScrollToPage(viewEffect.page)
+                }
+            }
+        }
+    }
 }
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
+@OptIn(
+    ExperimentalMaterialApi::class,
+    ExperimentalMaterial3Api::class,
+    ExperimentalSharedTransitionApi::class, ExperimentalMaterial3ExpressiveApi::class,
+    ExperimentalMaterial3AdaptiveApi::class
+)
 @Composable
 fun WeatherLocationsListScreen(
     uiState: HomeUiState,
+    particleTick: Long,
     navigator: ThreePaneScaffoldNavigator<Int>,
     showLocationPermissionRequest: Boolean,
     onItemClick: (WeatherLocation) -> Unit,
@@ -190,85 +278,66 @@ fun WeatherLocationsListScreen(
     onRequestPermission: () -> Unit,
     onOrderChanged: (List<WeatherLocation>) -> Unit,
     onNavigateToLocation: (Int) -> Unit,
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    sharedTransitionScope: SharedTransitionScope,
     modifier: Modifier = Modifier,
 ) {
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = uiState.isLoading,
+    val pullToRefreshState = rememberPullToRefreshState()
+    PullToRefreshBox(
+        state = pullToRefreshState,
+        isRefreshing = uiState.isLoading,
         onRefresh = onSwipeRefresh,
-    )
-
-    Box {
-        Scaffold(
-            topBar = {
-                SearchLocationBar(
-                    onSearchLocationClick = onSearchLocationClick,
+        indicator = {
+            PullToRefreshDefaults.LoadingIndicator(
+                isRefreshing = uiState.isLoading,
+                state = pullToRefreshState,
+                modifier = Modifier.align(Alignment.TopCenter),
+            )
+        },
+        modifier = modifier,
+    ) {
+        when {
+            showLocationPermissionRequest -> {
+                RequestLocationPermission(
+                    onRequestPermission = onRequestPermission,
                 )
-            },
-            containerColor = Color.Transparent,
-            modifier = modifier.background(Color.Transparent)
-        ) { paddingValues ->
-            Box(
-//            modifier = Modifier.background(brush = if (uiState.enableWeatherAnimations && uiState.selectedWeatherLocation != null) {
-//            Brush.linearGradient(uiState.selectedWeatherLocation.getGradientList().map {
-//                it.copy(alpha = 0.4f)
-//            })
-//            } else {
-//                Brush.linearGradient(listOf(WeatherYouTheme.colorScheme.background, WeatherYouTheme.colorScheme.background))
-//            })
-                modifier = Modifier.padding(top = paddingValues.calculateTopPadding())
-            ) {
-                when {
-                    showLocationPermissionRequest -> {
-                        RequestLocationPermission(
-                            onRequestPermission = onRequestPermission,
-                        )
-                    }
+            }
 
-                    uiState.isLoading.not() && uiState.locationsList.isEmpty() -> {
-                        WeatherLocationsEmptyState(
-                            Modifier
-                                .padding(paddingValues)
-                        )
-                    }
-
-                    else -> {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .pullRefresh(pullRefreshState)
-                        ) {
-                            WeatherLocationList(
-                                weatherLocationList = uiState.locationsList,
-                                isRefreshingLocations = uiState.isRefreshingLocations,
-                                selectedLocation = uiState.selectedWeatherLocation,
-                                onItemClick = onItemClick,
-                                onDismiss = onDeleteLocation,
-                                onOrderChanged = onOrderChanged,
-                                modifier = Modifier,
-                            )
-
-                            PullRefreshIndicator(
-                                refreshing = uiState.isLoading,
-                                state = pullRefreshState,
-                                backgroundColor = WeatherYouTheme.colorScheme.primary,
-                                contentColor = WeatherYouTheme.colorScheme.secondaryContainer,
-                                scale = true,
-                                modifier = Modifier.align(Alignment.TopCenter),
-                            )
-                        }
-                    }
+            uiState.isLoading.not() && uiState.locationsList.isEmpty() -> {
+                WeatherLocationsEmptyState(
+                    Modifier
+                )
+            }
+            else -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                ) {
+                    WeatherLocationList(
+                        weatherLocationList = uiState.locationsList,
+                        particleTick = particleTick,
+                        isRefreshingLocations = uiState.isRefreshingLocations,
+                        selectedLocation = uiState.selectedWeatherLocation,
+                        onItemClick = onItemClick,
+                        onDismiss = onDeleteLocation,
+                        onOrderChanged = onOrderChanged,
+                        animatedVisibilityScope = animatedVisibilityScope,
+                        sharedTransitionScope = sharedTransitionScope,
+                        modifier = Modifier,
+                    )
                 }
             }
         }
     }
-
 }
 
-
-@OptIn(ExperimentalMaterial3AdaptiveApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3AdaptiveApi::class, ExperimentalMaterial3Api::class,
+    ExperimentalMaterial3ExpressiveApi::class, ExperimentalSharedTransitionApi::class
+)
 @Composable
 fun HomeScreen(
     homeUiState: HomeUiState,
+    pagerState: PagerState,
     showLocationPermissionRequest: Boolean,
     navigator: ThreePaneScaffoldNavigator<Int>,
     onLocationSelected: (WeatherLocation?) -> Unit,
@@ -279,6 +348,8 @@ fun HomeScreen(
     onRequestPermission: () -> Unit,
     onOrderChanged: (List<WeatherLocation>) -> Unit,
     onNavigateToLocation: (Int) -> Unit,
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    sharedTransitionScope: SharedTransitionScope,
 ) {
     val coroutineScope = rememberCoroutineScope()
     val adaptiveInfo = currentWindowAdaptiveInfo()
@@ -293,6 +364,7 @@ fun HomeScreen(
     val paneInteractionSource = remember { MutableInteractionSource() }
     val isPaneDragging by paneInteractionSource.collectIsDraggedAsState()
     val navSuiteType = NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(adaptiveInfo)
+
     BackHandler(navigator.canNavigateBack()) {
         coroutineScope.launch {
             navigator.navigateBack()
@@ -300,100 +372,236 @@ fun HomeScreen(
         }
     }
 
-    ListDetailPaneScaffold(
-        value = navigator.scaffoldValue,
-        directive = navigator.scaffoldDirective,
-        listPane = {
-            AnimatedPane(
-                modifier = Modifier
-                    .preferredWidth(260.dp)
-                    .statusBarsPadding()
-            ) {
-                WeatherLocationsListScreen(
-                    uiState = homeUiState,
-                    navigator = navigator,
-                    showLocationPermissionRequest = showLocationPermissionRequest,
-                    onItemClick = {
-                        onLocationSelected(it)
-                        onNavigateToLocation(it.id)
-                    },
-                    onSwipeRefresh = onSwipeRefresh,
-                    onDeleteLocation = onDeleteLocation,
-                    onSearchLocationClick = onAddLocation,
-                    onRequestPermission = onRequestPermission,
-                    onOrderChanged = onOrderChanged,
-                    onNavigateToLocation = onNavigateToLocation,
-                )
-            }
-        },
-        detailPane = {
-            homeUiState.selectedWeatherLocation?.let {
-                AnimatedPane {
-                    WeatherDetailsScreen(
-                        weatherLocation = homeUiState.selectedWeatherLocation,
-                        isUpdating = homeUiState.isRefreshingLocations,
-                        onCloseClick = {
+    val exitAlwaysScrollBehavior = FloatingToolbarDefaults.exitAlwaysScrollBehavior(
+        exitDirection = FloatingToolbarExitDirection.Bottom,
+        snapAnimationSpec = spring(),
+    )
+    Box {
+        ListDetailPaneScaffold(
+            value = navigator.scaffoldValue,
+            directive = navigator.scaffoldDirective,
+            listPane = {
+                AnimatedPane(
+                    modifier = Modifier
+                        .preferredWidth(260.dp)
+                ) {
+                    WeatherLocationsListScreen(
+                        uiState = homeUiState,
+                        particleTick = WeatherYouAppState.particleTick,
+                        navigator = navigator,
+                        showLocationPermissionRequest = showLocationPermissionRequest,
+                        onItemClick = { location ->
                             coroutineScope.launch {
-                                navigator.navigateBack()
-                                onLocationSelected(null)
+                                onLocationSelected(location)
+                                onNavigateToLocation(location.id)
+                                pagerState.scrollToPage(homeUiState.locationsList.indexOfFirst { it.id == location.id })
                             }
                         },
-                        onFullScreenModeChange = { fullScreen ->
-                            showDragHandle = fullScreen.not()
-                            if (fullScreen) {
-                                paneExpansionState.setFirstPaneProportion(0f)
-                            } else {
-                                paneExpansionState.setFirstPaneProportion(0.35f)
+                        onSwipeRefresh = onSwipeRefresh,
+                        onDeleteLocation = onDeleteLocation,
+                        onSearchLocationClick = onAddLocation,
+                        onRequestPermission = onRequestPermission,
+                        onOrderChanged = onOrderChanged,
+                        onNavigateToLocation = onNavigateToLocation,
+                        animatedVisibilityScope = animatedVisibilityScope,
+                        sharedTransitionScope = sharedTransitionScope,
+                    )
+                }
+            },
+            detailPane = {
+                if (navigator.currentDestination?.contentKey != null) {
+                    AnimatedPane(
+                        enterTransition = slideInHorizontally() + fadeIn(),
+                        exitTransition = slideOutHorizontally() + fadeOut()
+                    ) {
+                        Box(
+                            Modifier
+                                .fillMaxSize()
+                                .nestedScroll(exitAlwaysScrollBehavior),
+                        ) {
+                            if (WeatherYouTheme.themeSettings.showWeatherAnimations && navSuiteType != NavigationSuiteType.NavigationRail) {
+                                homeUiState.locationsList.getOrNull(pagerState.currentPage)?.let {
+                                    WeatherAnimationsBackground(
+                                        weatherLocation = it,
+                                        particleTick = WeatherYouAppState.particleTick,
+                                    )
+                                }
                             }
+                            HorizontalPager(
+                                state = pagerState,
+                                beyondViewportPageCount = 3,
+                                modifier = Modifier,
+                            ) { page ->
+                                val alpha = 1f - abs(pagerState.currentPageOffsetFraction - (page - pagerState.currentPage)) * 0.7f
+                                homeUiState.locationsList.getOrNull(page)?.let {
+                                    WeatherDetailsScreen(
+                                        weatherLocation = it,
+                                        isUpdating = homeUiState.isRefreshingLocations,
+                                        onCloseClick = {
+                                            coroutineScope.launch {
+                                                navigator.navigateBack()
+                                                onLocationSelected(null)
+                                            }
+                                        },
+                                        onFullScreenModeChange = { fullScreen ->
+                                            showDragHandle = fullScreen.not()
+                                            if (fullScreen) {
+                                                paneExpansionState.setFirstPaneProportion(0f)
+                                            } else {
+                                                paneExpansionState.setFirstPaneProportion(0.35f)
+                                            }
+                                        },
+                                        animatedVisibilityScope = animatedVisibilityScope,
+                                        sharedTransitionScope = sharedTransitionScope,
+                                        onDeleteLocationClicked = onDeleteLocationClicked,
+                                        modifier = Modifier.alpha(alpha),
+                                    )
+                                }
+                            }
+                            LocationBottomToolbar(
+                                isCurrentLocation = homeUiState.selectedWeatherLocation?.isCurrentLocation == true,
+                                canNavigateBack = pagerState.canScrollBackward,
+                                canNavigateForward = pagerState.canScrollForward,
+                                onNavigateBack = {
+                                    coroutineScope.launch {
+                                        navigator.navigateBack()
+                                        onLocationSelected(null)
+                                    }
+                                },
+                                scrollBehavior = exitAlwaysScrollBehavior,
+                                onDeleteLocationClicked = onDeleteLocationClicked,
+                                onPreviousLocationClicked = {
+                                    coroutineScope.launch {
+                                        pagerState.animateScrollToPage(pagerState.currentPage - 1)
+                                    }
+                                },
+                                navSuiteType = navSuiteType,
+                                onNextLocationClicked = {
+                                    coroutineScope.launch {
+                                        pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                                    }
+                                },
+                                modifier = Modifier
+                                    .align(Alignment.BottomCenter)
+                                    .padding(bottom = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding()),
+                            )
+                        }
+                    }
+                }
+            },
+            paneExpansionDragHandle = {
+                if (navigator.scaffoldValue.primary != PaneAdaptedValue.Hidden && showDragHandle) {
+                    Surface(
+                        onClick = { },
+                        shape = WeatherYouTheme.shapes.large,
+                        shadowElevation = 6.dp,
+                        interactionSource = paneInteractionSource,
+                        color = if (WeatherYouTheme.themeSettings.showWeatherAnimations) {
+                            WeatherYouTheme.colorScheme.surface.copy(alpha = 0.4f)
+                        } else {
+                            WeatherYouTheme.colorScheme.primary
                         },
-                        onDeleteLocationClicked = onDeleteLocationClicked,
+                        modifier = Modifier
+                            .scale(
+                                if (isPaneDragging) {
+                                    1.5f
+                                } else {
+                                    1f
+                                }
+                            )
+                            .size(
+                                height = 40.dp,
+                                width = 10.dp,
+                            )
+                            .paneExpansionDraggable(
+                                state = paneExpansionState,
+                                minTouchTargetSize = 0.dp,
+                                interactionSource = paneInteractionSource,
+                            ),
+                    ) { }
+                }
+            },
+            paneExpansionState = paneExpansionState,
+            modifier = if (WeatherYouTheme.themeSettings.showWeatherAnimations && navSuiteType == NavigationSuiteType.NavigationRail) {
+                Modifier
+            } else {
+                Modifier.background(WeatherYouTheme.colorScheme.background)
+            },
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+fun LocationBottomToolbar(
+    isCurrentLocation: Boolean,
+    canNavigateBack: Boolean,
+    canNavigateForward: Boolean,
+    onNavigateBack: () -> Unit,
+    navSuiteType: NavigationSuiteType ,
+    scrollBehavior: FloatingToolbarScrollBehavior,
+    onDeleteLocationClicked: () -> Unit,
+    onPreviousLocationClicked: () -> Unit,
+    onNextLocationClicked: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    HorizontalFloatingToolbar(
+        expanded = true,
+        leadingContent = {
+            AnimatedVisibility(navSuiteType != NavigationSuiteType.NavigationRail) {
+                FilledIconButton(
+                    onClick = onNavigateBack,
+                    shapes = IconButtonDefaults.shapes(),
+                ) {
+                    Icon(
+                        Icons.AutoMirrored.Filled.List,
+                        tint = MaterialTheme.colorScheme.onPrimary,
+                        contentDescription = "Locations",
                     )
                 }
             }
         },
-        paneExpansionDragHandle = {
-            if (navigator.scaffoldValue.primary != PaneAdaptedValue.Hidden && showDragHandle) {
-                Surface(
-                    onClick = { },
-                    shape = WeatherYouTheme.shapes.large,
-                    shadowElevation = 6.dp,
-                    interactionSource = paneInteractionSource,
-                    color = if (WeatherYouTheme.themeSettings.showWeatherAnimations) {
-                        WeatherYouTheme.colorScheme.surface.copy(alpha = 0.4f)
-                    } else {
-                        WeatherYouTheme.colorScheme.primary
-                    },
-                    modifier = Modifier
-                        .scale( if (isPaneDragging) {
-                            1.5f
-                        } else {
-                            1f
-                        })
-                        .size(
-                            height = 40.dp,
-                            width = 10.dp,
-                        ).paneExpansionDraggable(
-                            state = paneExpansionState,
-                            minTouchTargetSize = 0.dp,
-                            interactionSource = paneInteractionSource,
-                        ),
-                ) { }
+        trailingContent = {
+            AnimatedVisibility(!isCurrentLocation) {
+                IconButton(
+                    onClick = onDeleteLocationClicked,
+                    shapes = IconButtonDefaults.shapes(),
+                ) {
+                    Icon(
+                        Icons.Filled.Delete,
+                        contentDescription = "Delete location"
+                    )
+                }
             }
         },
-        paneExpansionState = paneExpansionState,
-        modifier = if (WeatherYouTheme.themeSettings.showWeatherAnimations && navSuiteType == NavigationSuiteType.NavigationRail) {
-            Modifier.background(
-                Brush.verticalGradient(
-                    homeUiState.getSelectedOrFirstLocation()?.getGradientList() ?: listOf(
-                        WeatherYouTheme.colorScheme.background,
-                        WeatherYouTheme.colorScheme.background,
-                    )
-                )
+        colors = FloatingToolbarDefaults.standardFloatingToolbarColors(
+            toolbarContainerColor = WeatherYouTheme.colorScheme.background.copy(alpha = 0.3f),
+        ),
+        expandedShadowElevation = 15.dp,
+        scrollBehavior = scrollBehavior,
+        modifier = modifier.padding(bottom = 16.dp),
+    ) {
+        IconButton(
+            onClick = onPreviousLocationClicked,
+            enabled = canNavigateBack,
+            shapes = IconButtonDefaults.shapes(),
+        ) {
+            Icon(
+                Icons.AutoMirrored.Filled.ArrowBack,
+                contentDescription = "Previous location"
             )
-        } else {
-            Modifier.background(WeatherYouTheme.colorScheme.background)
-        },
-    )
+        }
+        IconButton(
+            onClick = onNextLocationClicked,
+            enabled = canNavigateForward,
+            shapes = IconButtonDefaults.shapes(),
+        ) {
+            Icon(
+                Icons.AutoMirrored.Filled.ArrowForward,
+                contentDescription = "Next location"
+            )
+        }
+    }
 }
 
 @Composable
@@ -439,7 +647,7 @@ fun RequestLocationPermission(
             .padding(start = 16.dp, end = 16.dp, bottom = 200.dp)
     ) {
         Image(
-            painter = painterResource(R.drawable.ic_place),
+            imageVector = Icons.Filled.Place,
             contentDescription = stringResource(R.string.location_image),
             modifier = Modifier
                 .size(120.dp)
@@ -514,14 +722,14 @@ fun SearchLocationBar(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                painter = painterResource(id = com.rodrigmatrix.weatheryou.home.R.drawable.ic_search),
+                imageVector = Icons.Default.Search,
                 contentDescription = null,
                 modifier = Modifier.padding(start = 16.dp),
                 tint = WeatherYouTheme.colorScheme.primary,
             )
 
             Text(
-                text = stringResource(id = com.rodrigmatrix.weatheryou.components.R.string.search_location),
+                text = stringResource(id = R.string.search_location),
                 modifier = Modifier
                     .weight(1f)
                     .padding(16.dp),
@@ -532,54 +740,66 @@ fun SearchLocationBar(
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3AdaptiveApi::class)
 @Preview
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun HomeScreenPreview() {
     WeatherYouTheme {
-        HomeScreen(
-            homeUiState = HomeUiState(
-                locationsList = PreviewWeatherList,
-                selectedWeatherLocation = PreviewWeatherList.first(),
-            ),
-            navigator = rememberListDetailPaneScaffoldNavigator<Int>(
-                calculatePaneScaffoldDirectiveWithTwoPanesOnMediumWidth(currentWindowAdaptiveInfo())
-            ),
-            showLocationPermissionRequest = false,
-            onLocationSelected = { },
-            onSwipeRefresh = { },
-            onDeleteLocation = { },
-            onDeleteLocationClicked = { },
-            onAddLocation = { },
-            onRequestPermission = { },
-            onOrderChanged = { },
-            onNavigateToLocation = { }
-        )
+        SharedTransitionLayout {
+            HomeScreen(
+                homeUiState = HomeUiState(
+                    locationsList = PreviewWeatherList,
+                    selectedWeatherLocation = PreviewWeatherList.first(),
+                ),
+                pagerState = rememberPagerState { 0 },
+                navigator = rememberListDetailPaneScaffoldNavigator<Int>(
+                    calculatePaneScaffoldDirectiveWithTwoPanesOnMediumWidth(currentWindowAdaptiveInfo())
+                ),
+                showLocationPermissionRequest = false,
+                onLocationSelected = { },
+                onSwipeRefresh = { },
+                onDeleteLocation = { },
+                onDeleteLocationClicked = { },
+                onAddLocation = { },
+                onRequestPermission = { },
+                onOrderChanged = { },
+                onNavigateToLocation = { },
+                animatedVisibilityScope = this@SharedTransitionLayout as AnimatedVisibilityScope,
+                sharedTransitionScope = this,
+            )
+        }
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3AdaptiveApi::class)
 @Preview(device = Devices.PIXEL_C)
 @Preview(device = Devices.PIXEL_C, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun HomeScreenWithLocationPreview() {
     WeatherYouTheme {
-        HomeScreen(
-            homeUiState = HomeUiState(
-                locationsList = PreviewWeatherList,
-                selectedWeatherLocation = PreviewWeatherList.first(),
-            ),
-            navigator = rememberListDetailPaneScaffoldNavigator<Int>(
-                calculatePaneScaffoldDirectiveWithTwoPanesOnMediumWidth(currentWindowAdaptiveInfo())
-            ),
-            showLocationPermissionRequest = false,
-            onLocationSelected = { },
-            onSwipeRefresh = { },
-            onDeleteLocation = { },
-            onDeleteLocationClicked = { },
-            onAddLocation = { },
-            onRequestPermission = { },
-            onOrderChanged = { },
-            onNavigateToLocation = { }
-        )
+        SharedTransitionLayout {
+            HomeScreen(
+                homeUiState = HomeUiState(
+                    locationsList = PreviewWeatherList,
+                    selectedWeatherLocation = PreviewWeatherList.first(),
+                ),
+                pagerState = rememberPagerState { 0 },
+                navigator = rememberListDetailPaneScaffoldNavigator<Int>(
+                    calculatePaneScaffoldDirectiveWithTwoPanesOnMediumWidth(currentWindowAdaptiveInfo())
+                ),
+                showLocationPermissionRequest = false,
+                onLocationSelected = { },
+                onSwipeRefresh = { },
+                onDeleteLocation = { },
+                onDeleteLocationClicked = { },
+                onAddLocation = { },
+                onRequestPermission = { },
+                onOrderChanged = { },
+                onNavigateToLocation = { },
+                animatedVisibilityScope = this@SharedTransitionLayout as AnimatedVisibilityScope,
+                sharedTransitionScope = this,
+            )
+        }
     }
 }

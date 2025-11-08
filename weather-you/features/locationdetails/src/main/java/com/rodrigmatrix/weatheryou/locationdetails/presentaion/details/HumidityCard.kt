@@ -12,9 +12,13 @@ import com.rodrigmatrix.weatheryou.components.details.HumidityCardContent
 fun HumidityCard(
     humidity: Double,
     dewPoint: Double,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    WeatherYouCard(modifier) {
+    WeatherYouCard(
+        onClick = onClick,
+        modifier = modifier
+    ) {
         HumidityCardContent(
             humidity = humidity,
             dewPoint = dewPoint,
@@ -29,7 +33,8 @@ fun HumidityCardPreview() {
     WeatherYouTheme {
         HumidityCard(
             humidity = 80.0,
-            dewPoint = 22.0
+            dewPoint = 22.0,
+            onClick = {},
         )
     }
 }

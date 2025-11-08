@@ -13,13 +13,12 @@ data class ConditionsViewState(
 
 enum class ConditionType {
     Conditions,
-    SunriseSunset,
-//    UvIndex,
-//    Wind,
-//    Precipitation,
-//    Humidity,
-//    Visibility,
-//    Pressure,
+    UvIndex,
+    Wind,
+    Precipitation,
+    Humidity,
+    Visibility,
+    Pressure,
 }
 
 enum class TemperatureType {

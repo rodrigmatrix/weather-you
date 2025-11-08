@@ -13,10 +13,10 @@ val PreviewWeatherLocation = WeatherLocation(
     longitude = 0.0,
     isCurrentLocation = true,
     currentWeather = 10.0,
-    feelsLike = -2.0,
-    maxTemperature = 10.0,
-    lowestTemperature = 0.0,
-    currentCondition = WeatherCondition.Snow,
+    feelsLike = 11.0,
+    maxTemperature = 15.0,
+    lowestTemperature = 5.0,
+    currentCondition = WeatherCondition.Clear,
     currentTime = DateTime(),
     timeZone = "",
     precipitationProbability = 60.0,
@@ -25,7 +25,7 @@ val PreviewWeatherLocation = WeatherLocation(
     dewPoint = 22.0,
     windSpeed = 0.0,
     windDirection = 0.0,
-    uvIndex = 0.0,
+    uvIndex = 7.0,
     sunrise = DateTime(),
     sunset = DateTime(),
     visibility = 0.0,
@@ -35,6 +35,8 @@ val PreviewWeatherLocation = WeatherLocation(
     maxWeekTemperature = 0.0,
     cloudCover = 0.0,
     countryCode = "",
+    pressureTrend = PressureTrend.Steady,
+    windGust = 40.0,
 )
 
 val PreviewWeatherList = listOf(
@@ -69,6 +71,8 @@ val PreviewWeatherList = listOf(
         maxWeekTemperature = 0.0,
         cloudCover = 0.0,
         countryCode = "",
+        pressureTrend = PressureTrend.Steady,
+        windGust = 40.0,
     ),
     WeatherLocation(
         id = 1,
@@ -101,6 +105,8 @@ val PreviewWeatherList = listOf(
         maxWeekTemperature = 0.0,
         cloudCover = 0.0,
         countryCode = "",
+        pressureTrend = PressureTrend.Steady,
+        windGust = 40.0,
     ),
     WeatherLocation(
         id = 2,
@@ -133,6 +139,8 @@ val PreviewWeatherList = listOf(
         maxWeekTemperature = 0.0,
         cloudCover = 0.0,
         countryCode = "",
+        pressureTrend = PressureTrend.Steady,
+        windGust = 40.0,
     ),
     WeatherLocation(
         id = 3,
@@ -165,6 +173,8 @@ val PreviewWeatherList = listOf(
         maxWeekTemperature = 0.0,
         cloudCover = 0.0,
         countryCode = "",
+        pressureTrend = PressureTrend.Steady,
+        windGust = 40.0,
     ),
     WeatherLocation(
         id = 4,
@@ -197,6 +207,8 @@ val PreviewWeatherList = listOf(
         maxWeekTemperature = 0.0,
         cloudCover = 0.0,
         countryCode = "",
+        pressureTrend = PressureTrend.Steady,
+        windGust = 40.0,
     ),
     WeatherLocation(
         id = 5,
@@ -229,6 +241,8 @@ val PreviewWeatherList = listOf(
         maxWeekTemperature = 0.0,
         cloudCover = 0.0,
         countryCode = "",
+        pressureTrend = PressureTrend.Steady,
+        windGust = 40.0,
     ),
     WeatherLocation(
         id = 6,
@@ -261,6 +275,8 @@ val PreviewWeatherList = listOf(
         maxWeekTemperature = 0.0,
         cloudCover = 0.0,
         countryCode = "",
+        pressureTrend = PressureTrend.Steady,
+        windGust = 40.0,
     ),
     WeatherLocation(
         id = 7,
@@ -293,6 +309,8 @@ val PreviewWeatherList = listOf(
         maxWeekTemperature = 0.0,
         cloudCover = 0.0,
         countryCode = "",
+        pressureTrend = PressureTrend.Steady,
+        windGust = 40.0,
     ),
     WeatherLocation(
         id = 8,
@@ -325,6 +343,8 @@ val PreviewWeatherList = listOf(
         maxWeekTemperature = 0.0,
         cloudCover = 0.0,
         countryCode = "",
+        pressureTrend = PressureTrend.Steady,
+        windGust = 40.0,
     )
 )
 
@@ -344,6 +364,9 @@ val PreviewHourlyForecast = listOf(
         uvIndex = 0.0,
         snowfallIntensity = 0.0,
         precipitationAmount = 0.0,
+        pressureTrend = PressureTrend.Steady,
+        pressure = 1000.0,
+        windGust = 40.0,
     ),
     WeatherHour(
         temperature = 9.0,
@@ -360,6 +383,9 @@ val PreviewHourlyForecast = listOf(
         uvIndex = 0.0,
         snowfallIntensity = 0.0,
         precipitationAmount = 0.0,
+        pressureTrend = PressureTrend.Steady,
+        pressure = 1000.0,
+        windGust = 40.0,
     ),
     WeatherHour(
         temperature = 9.0,
@@ -376,6 +402,9 @@ val PreviewHourlyForecast = listOf(
         uvIndex = 0.0,
         snowfallIntensity = 0.0,
         precipitationAmount = 0.0,
+        pressureTrend = PressureTrend.Steady,
+        pressure = 1000.0,
+        windGust = 40.0,
     ),
     WeatherHour(
         temperature = 8.0,
@@ -392,6 +421,9 @@ val PreviewHourlyForecast = listOf(
         uvIndex = 0.0,
         snowfallIntensity = 0.0,
         precipitationAmount = 0.0,
+        pressureTrend = PressureTrend.Steady,
+        pressure = 1000.0,
+        windGust = 40.0,
     ),
     WeatherHour(
         temperature = 6.0,
@@ -408,6 +440,9 @@ val PreviewHourlyForecast = listOf(
         uvIndex = 0.0,
         snowfallIntensity = 0.0,
         precipitationAmount = 0.0,
+        pressureTrend = PressureTrend.Steady,
+        pressure = 1000.0,
+        windGust = 40.0,
     ),
     WeatherHour(
         temperature = 6.0,
@@ -424,6 +459,9 @@ val PreviewHourlyForecast = listOf(
         uvIndex = 0.0,
         snowfallIntensity = 0.0,
         precipitationAmount = 0.0,
+        pressureTrend = PressureTrend.Steady,
+        pressure = 1000.0,
+        windGust = 40.0,
     ),
     WeatherHour(
         temperature = 5.0,
@@ -440,6 +478,9 @@ val PreviewHourlyForecast = listOf(
         uvIndex = 0.0,
         snowfallIntensity = 0.0,
         precipitationAmount = 0.0,
+        pressureTrend = PressureTrend.Steady,
+        pressure = 1000.0,
+        windGust = 40.0,
     ),
     WeatherHour(
         temperature = 2.0,
@@ -456,6 +497,9 @@ val PreviewHourlyForecast = listOf(
         uvIndex = 0.0,
         snowfallIntensity = 0.0,
         precipitationAmount = 0.0,
+        pressureTrend = PressureTrend.Steady,
+        pressure = 1000.0,
+        windGust = 40.0,
     )
 )
 

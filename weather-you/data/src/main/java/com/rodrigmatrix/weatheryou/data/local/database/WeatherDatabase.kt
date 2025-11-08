@@ -12,7 +12,7 @@ import com.rodrigmatrix.weatheryou.data.local.model.WeatherEntity
     entities = [
         WeatherEntity::class,
     ],
-    version = 2,
+    version = 4,
     exportSchema = true,
 )
 @TypeConverters(WeatherDatabaseConverters::class)
@@ -32,7 +32,7 @@ abstract class WeatherDatabase : RoomDatabase() {
             context.applicationContext,
             WeatherDatabase::class.java,
             "weather_you_weather_database.db")
-            .fallbackToDestructiveMigration()
+            .fallbackToDestructiveMigration(false)
             .build()
     }
 }

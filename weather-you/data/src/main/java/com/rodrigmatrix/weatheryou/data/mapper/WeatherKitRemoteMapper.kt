@@ -4,6 +4,7 @@ import com.rodrigmatrix.weatheryou.data.model.weatherkit.Day
 import com.rodrigmatrix.weatheryou.data.model.weatherkit.Hour
 import com.rodrigmatrix.weatheryou.data.model.weatherkit.WeatherKitLocationResponse
 import com.rodrigmatrix.weatheryou.domain.model.MoonPhase
+import com.rodrigmatrix.weatheryou.domain.model.PressureTrend
 import com.rodrigmatrix.weatheryou.domain.model.WeatherDay
 import com.rodrigmatrix.weatheryou.domain.model.WeatherHour
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
@@ -11,6 +12,8 @@ import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import java.math.RoundingMode
 import java.text.DecimalFormat
+import java.util.Locale
+import java.util.Locale.getDefault
 
 class WeatherKitRemoteMapper(
     private val weatherKitConditionMapper: WeatherKitConditionMapper
@@ -50,6 +53,7 @@ class WeatherKitRemoteMapper(
             dewPoint = source.currentWeather?.temperatureDewPoint ?: 0.0,
             windSpeed = source.currentWeather?.windSpeed ?: 0.0,
             windDirection = source.currentWeather?.windDirection?.toDouble() ?: 0.0,
+            windGust = source.currentWeather?.windGust ?: 0.0,
             uvIndex = source.currentWeather?.uvIndex?.toDouble() ?: 0.0,
             sunrise = source.forecastDaily?.days?.first()?.sunrise.toDateTime(timezone),
             sunset = source.forecastDaily?.days?.first()?.sunset.toDateTime(timezone),
@@ -61,6 +65,7 @@ class WeatherKitRemoteMapper(
             maxWeekTemperature = daysList.maxOf { it.maxTemperature },
             minWeekTemperature = daysList.minOf { it.minTemperature },
             cloudCover = source.currentWeather?.cloudCover.toPercentage(),
+            pressureTrend = source.currentWeather?.pressureTrend.toPressureTrend(),
         )
     }
 
@@ -126,6 +131,9 @@ class WeatherKitRemoteMapper(
                 windDirection = it.windDirection ?: 0,
                 uvIndex = it.uvIndex?.toDouble() ?: 0.0,
                 snowfallIntensity = it.snowfallIntensity ?: 0.0,
+                pressureTrend = it.pressureTrend.toPressureTrend(),
+                pressure = it.pressure ?: 0.0,
+                windGust = it.windGust ?: 0.0,
             )
         }
     }
@@ -159,6 +167,9 @@ class WeatherKitRemoteMapper(
                 windDirection = it.windDirection ?: 0,
                 uvIndex = it.uvIndex?.toDouble() ?: 0.0,
                 snowfallIntensity = it.snowfallIntensity ?: 0.0,
+                pressureTrend = it.pressureTrend.toPressureTrend(),
+                pressure = it.pressure ?: 0.0,
+                windGust = it.windGust ?: 0.0,
             )
         }
     }
@@ -172,7 +183,11 @@ class WeatherKitRemoteMapper(
     private fun Double?.round(): Double {
         val df = DecimalFormat("#.##")
         df.roundingMode = RoundingMode.CEILING
-        return df.format(this ?: 0.0).toDouble()
+        return try {
+            df.format(this ?: 0.0).toDouble()
+        } catch (e: Exception) {
+            this ?: 0.0
+        }
     }
 
     private fun String?.toDateTime(timezone: String): DateTime {
@@ -189,5 +204,13 @@ class WeatherKitRemoteMapper(
 
     private fun Double?.toPercentage(): Double {
         return this?.times(100.0) ?: 0.0
+    }
+
+    private fun String?.toPressureTrend(): PressureTrend {
+        return try {
+            PressureTrend.valueOf(this.orEmpty().replaceFirstChar { if (it.isLowerCase()) it.titlecase(getDefault()) else it.toString() })
+        } catch (_: Exception) {
+            PressureTrend.Steady
+        }
     }
 }

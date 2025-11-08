@@ -1,6 +1,20 @@
-package com.rodrigmatrix.weatheryou.locationdetails.presentaion.color
+package com.rodrigmatrix.weatheryou.components.details.color
 
 import androidx.compose.ui.graphics.Color
+
+val bft_0_color = Color(0xFF39A8DB)
+val bft_1_color = Color(0xFF36C1C8)
+val bft_2_color = Color(0xFF4DBB99)
+val bft_3_color = Color(0xFF51B86A)
+val bft_4_color = Color(0xFF84C243)
+val bft_5_color = Color(0xFFC2D333)
+val bft_6_color = Color(0xFFE4C72B)
+val bft_7_color = Color(0xFFE5A827)
+val bft_8_color = Color(0xFFE68A25)
+val bft_9_color = Color(0xFFE66825)
+val bft_10_color = Color(0xFFE43825)
+val bft_11_color = Color(0xFFD22E30)
+val bft_12_color = Color(0xFFC12C3C)
 
 val level_1_uv_index_color = Color(0xff41d925)
 val level_2_uv_index_color = Color(0xffafcc23)

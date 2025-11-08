@@ -6,6 +6,11 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ButtonDefaults.IconSize
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
+import androidx.compose.material.icons.outlined.ArrowBack
+import androidx.compose.material.icons.outlined.Clear
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -13,7 +18,6 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.key.*
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -21,7 +25,7 @@ import androidx.compose.ui.text.input.PlatformImeOptions
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
-import com.rodrigmatrix.weatheryou.components.R
+import com.rodrigmatrix.weatheryou.domain.R
 
 @Composable
 fun SearchBar(
@@ -67,14 +71,14 @@ fun SearchBar(
                     .wrapContentHeight()
             ) {
                 val icon = if (query.isNotEmpty()) {
-                    R.drawable.ic_close
+                    Icons.Outlined.Clear
                 } else {
-                    R.drawable.ic_arrow_back
+                    Icons.AutoMirrored.Outlined.ArrowBack
                 }
                 if (showBackButton) {
                     IconButton(onClick = onClearQuery) {
                         Icon(
-                            painter = painterResource(icon),
+                            icon,
                             tint = WeatherYouTheme.colorScheme.primary,
                             contentDescription = stringResource(R.string.back)
                         )
@@ -82,7 +86,7 @@ fun SearchBar(
                 } else if (query.isNotEmpty()) {
                     IconButton(onClick = onClearQuery) {
                         Icon(
-                            painter = painterResource(R.drawable.ic_arrow_back),
+                            imageVector =  Icons.Outlined.Clear,
                             tint = WeatherYouTheme.colorScheme.primary,
                             contentDescription = stringResource(R.string.back)
                         )
@@ -114,7 +118,7 @@ fun SearchBar(
                 } else if (query.isNotEmpty()) {
                     IconButton(onClick = onSearchButtonClicked) {
                         Icon(
-                            painter = painterResource(R.drawable.ic_search),
+                            imageVector =  Icons.Outlined.Search,
                             tint = WeatherYouTheme.colorScheme.primary,
                             contentDescription = stringResource(R.string.label_search)
                         )
@@ -136,7 +140,7 @@ private fun SearchHint() {
             .wrapContentSize()
     ) {
         Icon(
-            painter = painterResource(R.drawable.ic_search),
+            imageVector = Icons.Outlined.Search,
             tint = WeatherYouTheme.colorScheme.onSurfaceVariant,
             contentDescription = stringResource(R.string.label_search)
         )

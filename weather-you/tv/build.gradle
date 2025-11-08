@@ -74,19 +74,17 @@ android {
     packagingOptions {
         resources {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
+            excludes += "/META-INF/versions/9/OSGI-INF/MANIFEST.MF"
         }
     }
 }
 
 static def computeVersionName() {
-    return String.format('%d.%d.%d', Sdk.tvVersionMajor, Sdk.tvVersionMinor, Sdk.tvVersionPatch)
+    return String.format('%d.%d.%d', Sdk.tvVersionMajor, Sdk.tvVersionMinor, Sdk.tvVersionPatch) + "_tv"
 }
 
 static def computeVersionCode() {
-    return ((Sdk.tvVersionMajor * 100000)
-    + (Sdk.tvVersionMinor * 10000)
-    + (Sdk.tvVersionPatch * 1000)
-    + Integer.valueOf(System.getenv("CIRCLE_BUILD_NUM") ?: Sdk.localVersionCode))
+    return System.getenv("CIRCLE_BUILD_NUM") ?: Sdk.localVersionCode
 }
 
 dependencies {
@@ -109,6 +107,7 @@ dependencies {
     implementation(libs.androidx.ktx)
     implementation(libs.androidx.lifecycle)
     implementation(libs.androidx.window)
+    implementation(libs.google.play.review)
 
     implementation(libs.kotlin.stdlib)
     implementation(libs.kotlin.coroutines.android)

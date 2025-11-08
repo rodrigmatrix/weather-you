@@ -37,7 +37,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.rodrigmatrix.weatheryou.components.R
+import com.rodrigmatrix.weatheryou.domain.R
 import com.rodrigmatrix.weatheryou.components.WeatherIcon
 import com.rodrigmatrix.weatheryou.components.extensions.getTemperatureGradient
 import com.rodrigmatrix.weatheryou.components.extensions.toGradientList
@@ -50,6 +50,7 @@ import com.rodrigmatrix.weatheryou.core.extensions.getFullDayString
 import com.rodrigmatrix.weatheryou.core.extensions.getHourString
 import com.rodrigmatrix.weatheryou.core.extensions.getLocalTime
 import com.rodrigmatrix.weatheryou.core.extensions.percentageString
+import com.rodrigmatrix.weatheryou.core.extensions.precipitationString
 import com.rodrigmatrix.weatheryou.core.extensions.temperatureString
 import com.rodrigmatrix.weatheryou.core.extensions.toTemperatureString
 import com.rodrigmatrix.weatheryou.core.state.WeatherYouAppState
@@ -68,7 +69,6 @@ import ir.ehsannarmani.compose_charts.models.LabelHelperProperties
 import ir.ehsannarmani.compose_charts.models.Line
 import ir.ehsannarmani.compose_charts.models.PopupProperties
 import ir.ehsannarmani.compose_charts.models.StrokeStyle
-import org.joda.time.Minutes
 import kotlin.math.roundToInt
 
 @Composable
@@ -77,157 +77,138 @@ fun ConditionsContent(
     day: WeatherDay,
     viewState: ConditionsViewState,
     onTemperatureTypeChange: (TemperatureType) -> Unit,
+    onPopupStateChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var temperaturePopup: PopupValue? by remember { mutableStateOf(null) }
-    var precipitationPopup: PopupValue? by remember { mutableStateOf(null) }
-    if (temperaturePopup != null) {
-        when (viewState.temperatureType) {
-            TemperatureType.Actual -> {
-                PopupCondition(
-                    popup = temperaturePopup!!,
-                    hour = day.hours[temperaturePopup!!.dataIndex],
-                )
+    Column {
+        var temperaturePopup: PopupValue? by remember { mutableStateOf(null) }
+        if (temperaturePopup != null) {
+            when (viewState.temperatureType) {
+                TemperatureType.Actual -> {
+                    PopupCondition(
+                        popup = temperaturePopup!!,
+                        hour = day.hours[temperaturePopup!!.dataIndex],
+                    )
+                }
+                TemperatureType.FeelsLike -> {
+                    val hour = day.hours[temperaturePopup!!.dataIndex]
+                    PopupCondition(
+                        popup = temperaturePopup!!,
+                        hour = hour,
+                        actualTemperature = hour.temperature,
+                    )
+                }
             }
-            TemperatureType.FeelsLike -> {
-                val hour = day.hours[temperaturePopup!!.dataIndex]
-                PopupCondition(
-                    popup = temperaturePopup!!,
-                    hour = hour,
-                    actualTemperature = hour.temperature,
+        } else {
+            if (weatherLocation.days.indexOf(day) != 0) {
+                ConditionHeader(
+                    day = day,
+                    temperatureType = viewState.temperatureType,
+                )
+            } else {
+                TodayConditionHeader(
+                    weatherLocation = weatherLocation,
+                    day = day,
+                    temperatureType = viewState.temperatureType,
                 )
             }
         }
-    } else {
-        if (weatherLocation.days.indexOf(day) != 0) {
-            ConditionHeader(
-                day = day,
-                temperatureType = viewState.temperatureType,
+        Spacer(Modifier.height(20.dp))
+        CurrentDayGraphBox(
+            weatherLocation = weatherLocation,
+            day = day,
+        ) {
+            when (viewState.temperatureType) {
+                TemperatureType.Actual -> ActualTemperatureChart(
+                    weatherLocation = weatherLocation,
+                    day = day,
+                    onPopupDisplay = { temperaturePopup = it },
+                )
+                TemperatureType.FeelsLike -> FeelsLikeChart(
+                    weatherLocation = weatherLocation,
+                    day = day,
+                    onPopupDisplay = { temperaturePopup = it },
+                )
+            }
+        }
+
+        Spacer(Modifier.height(20.dp))
+        TemperatureTypeSelector(
+            temperatureType = viewState.temperatureType,
+            onClick = onTemperatureTypeChange,
+            modifier = Modifier.padding(horizontal = 16.dp),
+        )
+
+        Spacer(Modifier.height(20.dp))
+
+        HorizontalDivider(
+            color = WeatherYouTheme.colorScheme.onBackground.copy(alpha = 0.12f),
+        )
+
+        Spacer(Modifier.height(20.dp))
+
+        PrecipitationContent(
+            day = viewState.day!!,
+            onPopupStateChange = onPopupStateChange,
+        )
+    }
+}
+
+@Composable
+fun PrecipitationContent(
+    day: WeatherDay,
+    onPopupStateChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    var precipitationPopup: PopupValue? by remember { mutableStateOf(null) }
+    Column {
+        if (precipitationPopup == null) {
+            Text(
+                text = stringResource(R.string.chance_of_precipitation_title),
+                style = WeatherYouTheme.typography.titleLarge,
+                color = WeatherYouTheme.colorScheme.onBackground,
+                modifier = Modifier.padding(horizontal = 16.dp),
+            )
+            Text(
+                text = stringResource(
+                    R.string.day_chance,
+                    day.dateTime.getFullDayString(),
+                    day.precipitationProbability.percentageString(),
+                ),
+                style = WeatherYouTheme.typography.bodyMedium,
+                color = WeatherYouTheme.colorScheme.onBackground,
+                modifier = Modifier.padding(horizontal = 16.dp),
             )
         } else {
-            TodayConditionHeader(
-                weatherLocation = weatherLocation,
-                day = day,
-                temperatureType = viewState.temperatureType,
+            PopupPrecipitation(
+                popup = precipitationPopup!!,
+                hour = day.hours[precipitationPopup!!.dataIndex],
             )
         }
-    }
-    Spacer(Modifier.height(20.dp))
-    Box {
-        when (viewState.temperatureType) {
-            TemperatureType.Actual -> ActualTemperatureChart(
-                weatherLocation = weatherLocation,
-                day = day,
-                onPopupDisplay = { temperaturePopup = it },
-            )
-            TemperatureType.FeelsLike -> FeelsLikeChart(
-                weatherLocation = weatherLocation,
-                day = day,
-                onPopupDisplay = { temperaturePopup = it },
-            )
-        }
-        if (temperaturePopup != null) {
-//                VerticalDivider(
-//                    color = WeatherYouTheme.colorScheme.onBackground.copy(alpha = 0.8f),
-//                    modifier = Modifier
-//                        .height(200.dp)
-//                        .offset(x = (popup?.position?.x!!).dp)
-//                )
-        }
-        if (weatherLocation.days.indexOf(day) == 0) {
-            val now = weatherLocation.timeZone.getDateTimeFromTimezone().getLocalTime()
-            val start = weatherLocation.timeZone.getDateTimeFromTimezone().getLocalTime()
-                .withHourOfDay(0)
-                .withMinuteOfHour(0)
-                .withSecondOfMinute(0)
-            val end = weatherLocation.timeZone.getDateTimeFromTimezone().getLocalTime()
-                .withHourOfDay(23)
-                .withMinuteOfHour(59)
-                .withSecondOfMinute(0)
-            val totalMinutes = Minutes.minutesBetween(start, end).minutes
-            val minutesPassed = Minutes.minutesBetween(start, now).minutes
-            val percentage = try {
-                ((minutesPassed * 100f) / totalMinutes) / 100f
-            } catch (_: Exception) {
-                0f
+
+        Spacer(Modifier.height(20.dp))
+
+        PrecipitationChart(
+            day = day,
+            onPopupDisplay = {
+                precipitationPopup = it
+                onPopupStateChange(it != null)
             }
-            WeatherYouTheme(
-                themeMode = ThemeMode.Dark,
-                colorMode = WeatherYouTheme.colorMode,
-                themeSettings = WeatherYouTheme.themeSettings,
-            ) {
-                Box(
-                    modifier = Modifier
-                        .padding(start = 55.dp, end = 20.dp)
-                        .fillMaxWidth(percentage)
-                        .height(200.dp)
-                        .background(WeatherYouTheme.colorScheme.surface.copy(alpha = 0.7f))
-                        .clip(RectangleShape),
-                ) { }
-            }
-        }
-    }
+        )
+        Spacer(Modifier.height(20.dp))
 
-    Spacer(Modifier.height(20.dp))
-    TemperatureTypeSelector(
-        temperatureType = viewState.temperatureType,
-        onClick = onTemperatureTypeChange,
-        modifier = Modifier.padding(horizontal = 16.dp),
-    )
-
-    Spacer(Modifier.height(20.dp))
-
-    HorizontalDivider(
-        color = WeatherYouTheme.colorScheme.onBackground.copy(alpha = 0.12f),
-    )
-
-    Spacer(Modifier.height(20.dp))
-
-    if (precipitationPopup == null) {
         Text(
-            text = stringResource(R.string.chance_of_precipitation_title),
+            text = stringResource(R.string.precipitation_total),
             style = WeatherYouTheme.typography.titleLarge,
             color = WeatherYouTheme.colorScheme.onBackground,
             modifier = Modifier.padding(horizontal = 16.dp),
         )
-        Text(
-            text = stringResource(
-                R.string.day_chance,
-                day.dateTime.getFullDayString(),
-                day.precipitationProbability.percentageString(),
-            ),
-            style = WeatherYouTheme.typography.bodyMedium,
-            color = WeatherYouTheme.colorScheme.onBackground,
+        Spacer(Modifier.height(20.dp))
+        PrecipitationAmount(
+            day = day,
             modifier = Modifier.padding(horizontal = 16.dp),
         )
-    } else {
-        PopupPrecipitation(
-            popup = precipitationPopup!!,
-            hour = day.hours[precipitationPopup!!.dataIndex],
-        )
     }
-
-    Spacer(Modifier.height(20.dp))
-
-    PrecipitationChart(
-        day = day,
-        onPopupDisplay = {
-            precipitationPopup = it
-        }
-    )
-    Spacer(Modifier.height(20.dp))
-
-    Text(
-        text = stringResource(R.string.precipitation_total),
-        style = WeatherYouTheme.typography.titleLarge,
-        color = WeatherYouTheme.colorScheme.onBackground,
-        modifier = Modifier.padding(horizontal = 16.dp),
-    )
-    Spacer(Modifier.height(20.dp))
-    PrecipitationAmount(
-        day = day,
-        modifier = Modifier.padding(horizontal = 16.dp),
-    )
 }
 
 
@@ -258,21 +239,6 @@ fun  PrecipitationAmount(
             )
         }
     }
-}
-
-@Composable
-fun Double.toPrecipitationAmount(
-    precipitationType: PrecipitationType
-): String {
-    val unit = when (precipitationType) {
-        PrecipitationType.Snow -> R.string.centimeters
-        else -> R.string.millimeters
-    }
-    val value = when (precipitationType) {
-        PrecipitationType.Snow -> (this / 10).roundToInt()
-        else -> this.roundToInt()
-    }.toString()
-    return value + " " + stringResource(unit)
 }
 
 @Composable
@@ -334,7 +300,7 @@ fun PrecipitationItem(
         Spacer(Modifier.weight(1f))
 
         Text(
-            text = amount.toPrecipitationAmount(type),
+            text = amount.precipitationString(type),
             style = WeatherYouTheme.typography.titleMedium,
             color = WeatherYouTheme.colorScheme.onBackground,
         )
@@ -408,7 +374,6 @@ fun ActualTemperatureChart(
         onPopupDisplay = onPopupDisplay,
     )
 }
-
 
 @Composable
 fun FeelsLikeChart(
@@ -494,45 +459,41 @@ fun PopupCondition(
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
-    val configuration = LocalConfiguration.current
-    val screenWidth = configuration.screenWidthDp
-    val xOffset = (popup.position.x / 2.4)
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier.offset(x = if (xOffset <= screenWidth) {
-            xOffset.dp
-        } else {
-            (screenWidth - 100).dp
-        })
+    ChartPopupHeader(
+        popupValue = popup,
     ) {
-        Text(
-            text = hour.dateTime.getHourString(context),
-            style = WeatherYouTheme.typography.bodySmall,
-            color = WeatherYouTheme.colorScheme.onBackground.copy(alpha = 0.8f),
-        )
-        Row(
-            verticalAlignment = Alignment.CenterVertically
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            WeatherIcon(
-                weatherCondition = hour.weatherCondition,
-                isDaylight = hour.isDaylight,
-                alwaysStatic = true,
-                modifier = Modifier.size(34.dp)
-            )
-            Spacer(Modifier.width(4.dp))
             Text(
-                text = popup.value.temperatureString(),
-                style = WeatherYouTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                color = WeatherYouTheme.colorScheme.onBackground,
-            )
-        }
-        if (actualTemperature != null) {
-            Text(
-                text = "Actual: " + actualTemperature.temperatureString(),
+                text = hour.dateTime.getHourString(context),
                 style = WeatherYouTheme.typography.bodySmall,
                 color = WeatherYouTheme.colorScheme.onBackground.copy(alpha = 0.8f),
             )
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                WeatherIcon(
+                    weatherCondition = hour.weatherCondition,
+                    isDaylight = hour.isDaylight,
+                    alwaysStatic = true,
+                    modifier = Modifier.size(34.dp)
+                )
+                Spacer(Modifier.width(4.dp))
+                Text(
+                    text = popup.value.temperatureString(),
+                    style = WeatherYouTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = WeatherYouTheme.colorScheme.onBackground,
+                )
+            }
+            if (actualTemperature != null) {
+                Text(
+                    text = "Actual: " + actualTemperature.temperatureString(),
+                    style = WeatherYouTheme.typography.bodySmall,
+                    color = WeatherYouTheme.colorScheme.onBackground.copy(alpha = 0.8f),
+                )
+            }
         }
     }
 }
@@ -666,8 +627,8 @@ fun ConditionHeader(
                 text = when (WeatherYouAppState.appSettings.temperaturePreference) {
                     TemperaturePreference.METRIC -> stringResource(R.string.celsius)
                     TemperaturePreference.IMPERIAL -> stringResource(R.string.fahrenheit)
+                    TemperaturePreference.KELVIN -> stringResource(R.string.kelvin)
                 },
-
                 style = WeatherYouTheme.typography.bodyMedium,
                 color = WeatherYouTheme.colorScheme.onBackground,
             )

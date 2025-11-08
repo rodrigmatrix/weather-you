@@ -9,4 +9,7 @@ data class AppSettingsEntity(
     val appColorPreference: String = "",
     val enableWeatherAnimations: Boolean = false,
     val enableThemeColorWithWeatherAnimations: Boolean = false,
+    val windUnitPreference: String = "",
+    val precipitationUnitPreference: String = "",
+    val distanceUnitPreference: String = "",
 )

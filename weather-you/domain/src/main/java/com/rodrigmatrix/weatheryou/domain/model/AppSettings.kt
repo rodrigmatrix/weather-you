@@ -6,4 +6,24 @@ data class AppSettings(
     val appColorPreference: AppColorPreference,
     val enableWeatherAnimations: Boolean,
     val enableThemeColorWithWeatherAnimations: Boolean,
-)
+    val windUnitPreference: WindUnitPreference,
+    val precipitationUnitPreference: PrecipitationUnitPreference,
+    val distanceUnitPreference: DistanceUnitPreference,
+    val pressureUnitPreference: PressureUnitPreference,
+    val weatherCardList: List<WeatherCard>,
+) {
+    companion object {
+        val DEFAULT = AppSettings(
+            temperaturePreference = TemperaturePreference.METRIC,
+            appThemePreference = AppThemePreference.SYSTEM_DEFAULT,
+            appColorPreference = AppColorPreference.DEFAULT,
+            enableWeatherAnimations = false,
+            enableThemeColorWithWeatherAnimations = false,
+            windUnitPreference = WindUnitPreference.KPH,
+            precipitationUnitPreference = PrecipitationUnitPreference.MM_CM,
+            distanceUnitPreference = DistanceUnitPreference.KM,
+            pressureUnitPreference = PressureUnitPreference.HPA,
+            weatherCardList = WeatherCard.entries,
+        )
+    }
+}

@@ -2,11 +2,13 @@
 
 package com.rodrigmatrix.weatheryou.presentation.navigation
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
-import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirectiveWithTwoPanesOnMediumWidth
-import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
+import androidx.compose.material3.adaptive.navigation.ThreePaneScaffoldNavigator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
@@ -28,73 +30,44 @@ import com.rodrigmatrix.weatheryou.home.presentation.navigation.NavigationEntrie
 import com.rodrigmatrix.weatheryou.settings.presentation.settings.SettingsScreen
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalPermissionsApi::class)
+@OptIn(ExperimentalPermissionsApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun WeatherHomeNavHost(
+fun SharedTransitionScope.WeatherHomeNavHost(
     navController: NavHostController,
     homeViewModel: HomeViewModel,
     homeViewState: HomeUiState,
     onUpdateWidgets: () -> Unit,
+    homeScreenNavigator: ThreePaneScaffoldNavigator<Int>,
     modifier: Modifier = Modifier,
 ) {
-    val coroutineScope = rememberCoroutineScope()
     NavHost(
-        navController,
+        navController = navController,
         startDestination = HomeEntry.Locations.route,
         modifier = modifier,
     ) {
         composable(HomeEntry.Locations.route) {
-            val context = LocalContext.current
-            val navigator = rememberListDetailPaneScaffoldNavigator<Int>(
-                calculatePaneScaffoldDirectiveWithTwoPanesOnMediumWidth(currentWindowAdaptiveInfo())
-            )
-            val onNavigateToLocation: (Int) -> Unit = { id ->
-                coroutineScope.launch {
-                    navigator.navigateTo(
-                        pane = ListDetailPaneScaffoldRole.Detail,
-                        contentKey = id,
-                    )
-                }
-            }
             HomeScreen(
                 navController = navController,
                 homeUiState = homeViewState,
-                navigator = navigator,
+                homeViewEffect = homeViewModel.viewEffect,
+                navigator = homeScreenNavigator,
                 onAddLocation = {
                     navController.navigate(NavigationEntries.ADD_LOCATION_ROUTE)
                 },
-                onPermissionGranted = homeViewModel::updateLocations,
+                onPermissionGranted = homeViewModel::onLocationPermissionGranted,
                 onDialogStateChanged = homeViewModel::onDialogStateChanged,
                 onSwipeRefresh = homeViewModel::loadLocations,
                 onLocationSelected = homeViewModel::selectLocation,
                 onDeleteLocation = homeViewModel::deleteLocation,
                 onDeleteLocationConfirmButtonClicked = homeViewModel::deleteLocation,
                 onOrderChanged = homeViewModel::orderLocations,
-                onNavigateToLocation = onNavigateToLocation,
+                onUpdateWidgets = onUpdateWidgets,
+                animatedVisibilityScope = this@composable,
+                sharedTransitionScope = this@WeatherHomeNavHost,
             )
-            LaunchedEffect(homeViewModel) {
-                homeViewModel.viewEffect.collect { viewEffect ->
-                    when (viewEffect) {
-                        is HomeViewEffect.Error -> {
-                            context.toast(viewEffect.stringRes)
-                        }
-
-                        HomeViewEffect.ShowInAppReview -> {
-
-                        }
-                        HomeViewEffect.UpdateWidgets -> {
-                            onUpdateWidgets()
-                        }
-
-                        is HomeViewEffect.OpenLocation -> {
-                            onNavigateToLocation(viewEffect.id)
-                        }
-                    }
-                }
-            }
         }
         composable(HomeEntry.Settings.route) {
-            SettingsScreen(onFetchLocations = {  })
+            SettingsScreen(onFetchLocations = { })
         }
         composable(HomeEntry.About.route) {
             AboutScreen()

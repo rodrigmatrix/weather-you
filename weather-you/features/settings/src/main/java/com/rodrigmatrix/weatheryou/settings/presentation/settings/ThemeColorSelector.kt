@@ -42,7 +42,7 @@ import com.rodrigmatrix.weatheryou.components.theme.ThemeMode
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.settings.presentation.settings.model.AppColorPreferenceOption
 import com.rodrigmatrix.weatheryou.settings.presentation.settings.model.AppThemePreferenceOption
-import com.rodrigmatrix.weatheryou.components.R
+import com.rodrigmatrix.weatheryou.domain.R
 import com.rodrigmatrix.weatheryou.components.ScreenNavigationType
 import com.rodrigmatrix.weatheryou.components.theme.DarkColorScheme
 import com.rodrigmatrix.weatheryou.components.theme.LightColorScheme
@@ -60,11 +60,13 @@ import com.rodrigmatrix.weatheryou.components.theme.mosqueDarkScheme
 import com.rodrigmatrix.weatheryou.components.theme.mosqueLightScheme
 import com.rodrigmatrix.weatheryou.components.theme.peruTanDarkScheme
 import com.rodrigmatrix.weatheryou.components.theme.peruTanLightScheme
+import com.rodrigmatrix.weatheryou.domain.model.AppColorPreference
+import com.rodrigmatrix.weatheryou.domain.model.AppThemePreference
 
 @Composable
 fun ThemeAndColorModeSelector(
-    themeMode: ThemeMode,
-    colorMode: ColorMode,
+    themeMode: AppThemePreference,
+    colorMode: AppColorPreference,
     onClose: () -> Unit,
     onColorChange: (AppColorPreferenceOption) -> Unit,
     onThemeModeChange: (AppThemePreferenceOption) -> Unit,
@@ -296,8 +298,8 @@ private fun ThemeAndColorModeSelectorLightPreview() {
         colorMode = ColorMode.FreshEggplant
     ) {
         ThemeAndColorModeSelector(
-            themeMode = ThemeMode.Light,
-            colorMode = ColorMode.FreshEggplant,
+            themeMode = AppThemePreference.LIGHT,
+            colorMode = AppColorPreference.FRESH_EGGPLANT,
             onClose = {},
             onColorChange = {},
             onThemeModeChange = { },
@@ -313,8 +315,8 @@ private fun ThemeAndColorModeSelectorDarkPreview() {
         colorMode = ColorMode.FreshEggplant
     ) {
         ThemeAndColorModeSelector(
-            themeMode = ThemeMode.Dark,
-            colorMode = ColorMode.FreshEggplant,
+            themeMode = AppThemePreference.DARK,
+            colorMode = AppColorPreference.FRESH_EGGPLANT,
             onClose = {},
             onColorChange = {},
             onThemeModeChange = { },

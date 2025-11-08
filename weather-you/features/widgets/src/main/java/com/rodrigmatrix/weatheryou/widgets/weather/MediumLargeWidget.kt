@@ -227,7 +227,7 @@ private fun DaysList(
                 )
                 .background(ImageProvider(R.drawable.weather_inside_shape_widget))
         ) {
-            itemsIndexed(daysList.take(2)) { index, weatherDay ->
+            itemsIndexed(daysList.drop(1).take(2)) { index, weatherDay ->
                 DayRow(
                     day = weatherDay,
                     index = index,

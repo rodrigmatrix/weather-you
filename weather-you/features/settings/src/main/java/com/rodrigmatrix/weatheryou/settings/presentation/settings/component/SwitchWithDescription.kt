@@ -20,7 +20,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.components.R
 
-
 @Composable
 fun SwitchWithDescription(
     checked: Boolean,

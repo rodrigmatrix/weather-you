@@ -47,7 +47,7 @@ import com.rodrigmatrix.weatheryou.settings.presentation.settings.model.AppColor
 import com.rodrigmatrix.weatheryou.settings.presentation.settings.model.AppThemePreferenceOption
 import com.rodrigmatrix.weatheryou.tv.presentation.theme.mosqueDarkScheme
 import com.rodrigmatrix.weatheryou.tv.presentation.theme.mosqueLightScheme
-import com.rodrigmatrix.weatheryou.components.R
+import com.rodrigmatrix.weatheryou.domain.R
 import com.rodrigmatrix.weatheryou.domain.model.AppColorPreference
 import com.rodrigmatrix.weatheryou.domain.model.AppThemePreference
 import com.rodrigmatrix.weatheryou.tv.presentation.theme.TvDarkColorScheme
@@ -68,8 +68,8 @@ import com.rodrigmatrix.weatheryou.tv.presentation.theme.peruTanLightScheme
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun TvThemeAndColorModeSelector(
-    themeMode: ThemeMode,
-    colorMode: ColorMode,
+    themeMode: AppThemePreference,
+    colorMode: AppColorPreference,
     onClose: () -> Unit,
     onColorChange: (AppColorPreferenceOption) -> Unit,
     onThemeModeChange: (AppThemePreferenceOption) -> Unit,

@@ -1,7 +1,7 @@
 package com.rodrigmatrix.weatheryou.components.extensions
 
 import com.rodrigmatrix.weatheryou.weathericons.R
-import com.rodrigmatrix.weatheryou.components.R as StringsR
+import com.rodrigmatrix.weatheryou.domain.R as StringsR
 import com.rodrigmatrix.weatheryou.domain.model.WeatherCondition
 
 fun WeatherCondition.getAnimatedIcon(isDaylight: Boolean): Int = when (this) {

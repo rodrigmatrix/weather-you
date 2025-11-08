@@ -4,7 +4,7 @@
     android:minWidth="120dp"
     android:minHeight="80dp"
     android:maxResizeHeight="280dp"
-    android:updatePeriodMillis="2100000"
+    android:updatePeriodMillis="1800000"
     android:description="@string/current_weather_small_widget_description"
     android:resizeMode="horizontal|vertical"
     android:widgetCategory="home_screen"

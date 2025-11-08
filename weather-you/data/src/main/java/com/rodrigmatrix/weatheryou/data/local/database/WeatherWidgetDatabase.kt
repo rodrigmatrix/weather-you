@@ -39,7 +39,7 @@ abstract class WeatherWidgetDatabase : RoomDatabase() {
             context.applicationContext,
             WeatherWidgetDatabase::class.java,
             "weather_you_widget_database.db")
-            .fallbackToDestructiveMigration()
+            .fallbackToDestructiveMigration(false)
             .build()
     }
 }

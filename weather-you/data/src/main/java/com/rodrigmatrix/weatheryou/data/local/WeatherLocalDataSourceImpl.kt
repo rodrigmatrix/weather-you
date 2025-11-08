@@ -34,6 +34,11 @@ class WeatherLocalDataSourceImpl(
             .flowOn(coroutineDispatcher)
     }
 
+    override fun getLocation(id: Int): Flow<WeatherLocationEntity> {
+        return locationsDAO.getLocation(id = id)
+            .flowOn(coroutineDispatcher)
+    }
+
     override fun upsertLocation(location: WeatherLocationEntity): Flow<Unit> {
         return flow {
             emit(locationsDAO.upsertLocation(location))

@@ -3,12 +3,11 @@ package com.rodrigmatrix.weatheryou.settings.presentation.settings
 import androidx.lifecycle.viewModelScope
 import com.rodrigmatrix.weatheryou.core.extensions.catch
 import com.rodrigmatrix.weatheryou.core.viewmodel.ViewModel
+import com.rodrigmatrix.weatheryou.domain.model.AppSettings
 import com.rodrigmatrix.weatheryou.domain.usecase.GetAppSettingsUseCase
 import com.rodrigmatrix.weatheryou.domain.usecase.SetAppSettingsUseCase
 import com.rodrigmatrix.weatheryou.settings.presentation.settings.model.AppColorPreferenceOption
 import com.rodrigmatrix.weatheryou.settings.presentation.settings.model.AppThemePreferenceOption
-import com.rodrigmatrix.weatheryou.settings.presentation.settings.model.TemperaturePreferenceOption
-import com.rodrigmatrix.weatheryou.settings.presentation.settings.model.toPreference
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
@@ -43,32 +42,24 @@ class SettingsViewModel(
         setEffect { SettingsViewEffect.OnPermissionChanged }
     }
 
-
-
-    fun onEditUnit() {
-        setState { it.copy(dialogState = SettingsDialogState.UNITS) }
-    }
-
     fun onEditTheme() {
         setState { it.copy(dialogState = SettingsDialogState.THEME) }
     }
 
-    fun onNewUnit(newUnit: TemperaturePreferenceOption) {
+    fun onSettingsUpdate(newSettings: AppSettings) {
         viewModelScope.launch {
-            val appSettings = viewState.value.appSettings.copy(
-                temperaturePreference = newUnit.option
-            )
-            setAppSettingsUseCase(appSettings)
+            setAppSettingsUseCase(newSettings)
                 .flowOn(coroutineDispatcher)
                 .catch()
                 .collect()
         }
+        onDialogStateChanged(SettingsDialogState.HIDDEN)
     }
 
     fun onNewColorTheme(newColor: AppColorPreferenceOption) {
         viewModelScope.launch {
             val appSettings = viewState.value.appSettings.copy(
-                appColorPreference = newColor.option.toPreference()
+                appColorPreference = newColor.option
             )
             setAppSettingsUseCase(appSettings)
                 .flowOn(coroutineDispatcher)
@@ -80,7 +71,7 @@ class SettingsViewModel(
     fun onNewTheme(newTheme: AppThemePreferenceOption) {
         viewModelScope.launch {
             val appSettings = viewState.value.appSettings.copy(
-                appThemePreference = newTheme.option.toPreference()
+                appThemePreference = newTheme.option
             )
             setAppSettingsUseCase(appSettings)
                 .flowOn(coroutineDispatcher)

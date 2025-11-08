@@ -16,13 +16,15 @@ import com.rodrigmatrix.weatheryou.domain.exception.LocationLimitException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
-import com.rodrigmatrix.weatheryou.components.R
+import com.rodrigmatrix.weatheryou.domain.R
 import com.rodrigmatrix.weatheryou.domain.model.City
 import com.rodrigmatrix.weatheryou.domain.model.SearchAutocompleteLocation
+import com.rodrigmatrix.weatheryou.domain.usecase.GetLocationSizeUseCase
 import kotlinx.coroutines.launch
 
 class AddLocationViewModel(
     private val addLocationUseCase: AddLocationUseCase,
+    private val getLocationSizeUseCase: GetLocationSizeUseCase,
     private val getFamousLocationsUseCase: GetFamousLocationsUseCase,
     private val searchLocationUseCase: SearchLocationUseCase,
     private val firebaseCrashlytics: FirebaseCrashlytics,
@@ -41,59 +43,78 @@ class AddLocationViewModel(
         showAds: Boolean = true,
     ) {
         setState { it.copy(isLoading = true) }
-        adsManager.showRewardedInterstitial(
-            activity = activity,
-            showAd = false,
-            flagId = "location_added_rewarded_interstitial_ad_id",
-            onRewardGranted = {
-                viewModelScope.launch {
-                    if (location != null) {
-                        addLocationUseCase(
-                            location.name,
-                            location.lat,
-                            location.long,
-                            location.countryCode,
-                        ).flowOn(coroutineDispatcher)
-                            .onStart { setState { it.copy(isLoading = true) } }
-                            .catch { exception ->
-                                exception.handleError()
-                            }
-                            .collect {
-                                firebaseAnalytics.logEvent("ADDED_LOCATION", bundleOf("name" to location.name))
-                                setEffect { LocationAdded }
-                            }
+        viewModelScope.launch {
+            adsManager.showRewardedInterstitial(
+                activity = activity,
+                showAd = showAds && (getLocationSizeUseCase().firstOrNull() ?: 0) > 1,
+                flagId = "location_added_rewarded_interstitial_ad_id",
+                onRewardGranted = {
+                    viewModelScope.launch {
+                        if (location != null) {
+                            addLocationUseCase(
+                                location.name,
+                                location.lat,
+                                location.long,
+                                location.countryCode,
+                            ).flowOn(coroutineDispatcher)
+                                .onStart { setState { it.copy(isLoading = true) } }
+                                .catch { exception ->
+                                    exception.handleError()
+                                }
+                                .collect {
+                                    checkForReviewRequest()
+                                    firebaseAnalytics.logEvent("ADDED_LOCATION", bundleOf("name" to location.name))
+                                    setEffect { LocationAdded }
+                                }
+                        }
                     }
                 }
+            )
+        }
+    }
+
+    private fun checkForReviewRequest() {
+        viewModelScope.launch {
+            getLocationSizeUseCase().firstOrNull()?.let {
+                if (it >= 2) {
+                    firebaseAnalytics.logEvent("REQUEST_IN_APP_REVIEW", bundleOf(
+                        "locations" to it
+                    ))
+                    setEffect { AddLocationViewEffect.RequestInAppReview }
+                }
             }
-        )
+        }
     }
 
     fun addFamousLocation(city: City, activity: Activity, showAds: Boolean = true) {
         setState { it.copy(isLoading = true) }
-        adsManager.showRewardedInterstitial(
-            activity = activity,
-            showAd = false,
-            flagId = "location_added_rewarded_interstitial_ad_id",
-            onRewardGranted = {
-                viewModelScope.launch {
-                    addLocationUseCase(
-                        activity.getString(city.name),
-                        city.lat,
-                        city.long,
-                        city.countryCode,
-                    ).flowOn(coroutineDispatcher)
-                        .onStart { setState { it.copy(isLoading = true) } }
-                        .catch { exception ->
-                            firebaseAnalytics.logEvent("ADD_FAMOUS_LOCATION_ERROR", bundleOf("error" to exception.localizedMessage))
-                            exception.handleError()
-                        }
-                        .collect {
-                            firebaseAnalytics.logEvent("ADDED_FAMOUS_LOCATION", bundleOf("countryCode" to city.countryCode))
-                            setEffect { LocationAdded }
-                        }
+        viewModelScope.launch {
+            adsManager.showRewardedInterstitial(
+                activity = activity,
+                showAd = true,
+                flagId = "location_added_rewarded_interstitial_ad_id",
+                onRewardGranted = {
+                    viewModelScope.launch {
+                        addLocationUseCase(
+                            activity.getString(city.name),
+                            city.lat,
+                            city.long,
+                            city.countryCode,
+                        ).flowOn(coroutineDispatcher)
+                            .onStart { setState { it.copy(isLoading = true) } }
+                            .catch { exception ->
+                                firebaseAnalytics.logEvent("ADD_FAMOUS_LOCATION_ERROR", bundleOf("error" to exception.localizedMessage))
+                                exception.handleError()
+                            }
+                            .collect {
+                                checkForReviewRequest()
+                                firebaseAnalytics.logEvent("ADDED_FAMOUS_LOCATION", bundleOf("countryCode" to city.countryCode))
+                                setEffect { LocationAdded }
+                            }
+                    }
                 }
-            }
-        )
+            )
+        }
     }
 
     private fun getFamousLocations() {

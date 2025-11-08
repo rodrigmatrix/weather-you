@@ -1,10 +1,25 @@
 package com.rodrigmatrix.weatheryou.presentation.app
 
 import android.app.Activity
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetValue
+import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirectiveWithTwoPanesOnMediumWidth
+import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldLayout
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
@@ -17,6 +32,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.platform.LocalContext
@@ -24,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.glance.appwidget.updateAll
 import androidx.navigation.compose.rememberNavController
 import androidx.window.core.layout.WindowWidthSizeClass
+import com.rodrigmatrix.weatheryou.components.particle.WeatherAnimationsBackground
 import com.rodrigmatrix.weatheryou.components.theme.ColorMode
 import com.rodrigmatrix.weatheryou.components.theme.ThemeMode
 import com.rodrigmatrix.weatheryou.components.theme.ThemeSettings
@@ -36,15 +53,18 @@ import com.rodrigmatrix.weatheryou.domain.usecase.GetAppSettingsUseCase
 import com.rodrigmatrix.weatheryou.home.presentation.home.HomeViewModel
 import com.rodrigmatrix.weatheryou.home.presentation.navigation.HomeNavigationRail
 import com.rodrigmatrix.weatheryou.home.presentation.navigation.HomeNavigationSuite
+import com.rodrigmatrix.weatheryou.home.presentation.navigation.NavigationEntries
 import com.rodrigmatrix.weatheryou.presentation.navigation.WeatherHomeNavHost
 import com.rodrigmatrix.weatheryou.settings.utils.AppThemeManager
 import com.rodrigmatrix.weatheryou.widgets.weather.CurrentWeatherWidget
 import com.rodrigmatrix.weatheryou.widgets.weather.animated.CurrentAnimatedWeatherWidget
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3AdaptiveApi::class,
+    ExperimentalSharedTransitionApi::class
+)
 @Composable
 fun WeatherYouMobileApp(
     getAppSettingsUseCase: GetAppSettingsUseCase = koinInject<GetAppSettingsUseCase>(),
@@ -61,7 +81,7 @@ fun WeatherYouMobileApp(
     var currentDestination by remember {
         mutableStateOf(navController.currentDestination?.route.orEmpty())
     }
-    val homeViewModel = getViewModel<HomeViewModel>()
+    val homeViewModel = koinViewModel<HomeViewModel>()
     val homeViewState by homeViewModel.viewState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
     val conditionsScaffoldState = rememberModalBottomSheetState(
@@ -106,11 +126,37 @@ fun WeatherYouMobileApp(
     navController.addOnDestinationChangedListener { _, destination, _ ->
         currentDestination = destination.route.orEmpty()
     }
-    Box(Modifier.blur(blurValue)) {
+    val homeScreenNavigator = rememberListDetailPaneScaffoldNavigator<Int>(
+        calculatePaneScaffoldDirectiveWithTwoPanesOnMediumWidth(currentWindowAdaptiveInfo())
+    )
+    val infiniteTransition = rememberInfiniteTransition(label = "particleTick")
+    val particleTick by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1_000_000f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(
+                durationMillis = 100_000,
+                easing = LinearEasing,
+            ),
+            repeatMode = RepeatMode.Restart,
+        ),
+        label = "particleTick",
+    )
+    val adaptiveInfo = currentWindowAdaptiveInfo()
+    val customNavSuiteType = with (adaptiveInfo) {
+        if (windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.EXPANDED) {
+            NavigationSuiteType.NavigationDrawer
+        } else {
+            NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(adaptiveInfo)
+        }
+    }
+    val navSuiteType = NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(adaptiveInfo)
+    Box(Modifier.blur(blurValue).fillMaxSize()) {
         WeatherYouAppState(
             appSettings = appSettings,
             currentDestination = currentDestination,
             conditionsScaffoldState = conditionsScaffoldState,
+            particleTick = particleTick.toLong(),
         ) {
             WeatherYouTheme(
                 themeMode = themeMode,
@@ -120,15 +166,16 @@ fun WeatherYouMobileApp(
                     enableThemeColorForWeatherAnimations = appSettings.enableThemeColorWithWeatherAnimations,
                 )
             ) {
-                val adaptiveInfo = currentWindowAdaptiveInfo()
-                val customNavSuiteType = with (adaptiveInfo) {
-                    if (windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.EXPANDED) {
-                        NavigationSuiteType.NavigationDrawer
-                    } else {
-                        NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(adaptiveInfo)
+                if (WeatherYouTheme.themeSettings.showWeatherAnimations && navSuiteType == NavigationSuiteType.NavigationRail) {
+                    homeViewState.getSelectedOrFirstLocation()?.let {
+                        WeatherAnimationsBackground(
+                            weatherLocation = it,
+                            particleTick = WeatherYouAppState.particleTick,
+                            modifier = Modifier.fillMaxSize(),
+                        )
                     }
                 }
-                val navSuiteType = NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(adaptiveInfo)
+
                 NavigationSuiteScaffoldLayout(
                     layoutType = customNavSuiteType,
                     navigationSuite = {
@@ -139,26 +186,36 @@ fun WeatherYouMobileApp(
                                 homeViewState = homeViewState,
                                 appSettings = appSettings,
                             )
-                        } else {
-                            HomeNavigationSuite(
-                                navController = navController,
-                                currentDestination = currentDestination,
-                                homeViewState = homeViewState,
-                            )
-                        }
+                        } else null
                     }
                 ) {
-                    WeatherHomeNavHost(
-                        homeViewModel = homeViewModel,
-                        homeViewState = homeViewState,
-                        navController = navController,
-                        onUpdateWidgets = {
-                            coroutineScope.launch {
-                                CurrentWeatherWidget().updateAll(context)
-                                CurrentAnimatedWeatherWidget().updateAll(context)
+                    Box {
+                        SharedTransitionLayout {
+                            WeatherHomeNavHost(
+                                homeViewModel = homeViewModel,
+                                homeViewState = homeViewState,
+                                navController = navController,
+                                onUpdateWidgets = {
+                                    coroutineScope.launch {
+                                        CurrentWeatherWidget().updateAll(context)
+                                        CurrentAnimatedWeatherWidget().updateAll(context)
+                                    }
+                                },
+                                homeScreenNavigator = homeScreenNavigator,
+                            )
+                            if (navSuiteType != NavigationSuiteType.NavigationRail) {
+                                HomeNavigationSuite(
+                                    navController = navController,
+                                    currentDestination = currentDestination,
+                                    homeScreenNavigator = homeScreenNavigator,
+                                    onSearchClick = {
+                                        navController.navigate(NavigationEntries.ADD_LOCATION_ROUTE)
+                                    },
+                                    modifier = Modifier.align(Alignment.BottomCenter),
+                                )
                             }
-                        },
-                    )
+                        }
+                    }
                 }
             }
         }

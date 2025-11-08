@@ -30,7 +30,11 @@ import androidx.compose.ui.unit.dp
 import kotlin.random.Random
 
 @Composable
-fun Thunder(particleAnimationIteration: Long, width: Int, height: Int) {
+fun Thunder(
+    particleAnimationIteration: Long,
+    width: Int,
+    height: Int
+) {
     val thunderPath by remember { mutableStateOf(ThunderPath()) }
     val thunderIteration = (particleAnimationIteration / THUNDER_PHASE).toInt()
 

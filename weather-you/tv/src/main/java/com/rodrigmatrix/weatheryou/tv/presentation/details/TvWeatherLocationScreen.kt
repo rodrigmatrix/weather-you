@@ -39,14 +39,16 @@ import androidx.tv.material3.CardDefaults
 import androidx.tv.material3.ClickableSurfaceDefaults
 import androidx.tv.material3.Glow
 import androidx.tv.material3.Surface
-import com.rodrigmatrix.weatheryou.components.R
+import com.rodrigmatrix.weatheryou.domain.R
 import com.rodrigmatrix.weatheryou.components.WeatherYouDivider
 import com.rodrigmatrix.weatheryou.components.details.CurrentWeatherContent
 import com.rodrigmatrix.weatheryou.components.details.DayContent
 import com.rodrigmatrix.weatheryou.components.details.ExpandedCardContent
+import com.rodrigmatrix.weatheryou.components.details.FeelsLikeCardContent
 import com.rodrigmatrix.weatheryou.components.details.FutureDaysForecastContent
 import com.rodrigmatrix.weatheryou.components.details.HourlyForecastContent
 import com.rodrigmatrix.weatheryou.components.details.HumidityCardContent
+import com.rodrigmatrix.weatheryou.components.details.PressureCardContent
 import com.rodrigmatrix.weatheryou.components.details.SunriseSunsetCardContent
 import com.rodrigmatrix.weatheryou.components.details.UvIndexCardContent
 import com.rodrigmatrix.weatheryou.components.details.VisibilityCardContent
@@ -63,6 +65,7 @@ import com.rodrigmatrix.weatheryou.tv.presentation.theme.md_theme_dark_secondary
 @Composable
 fun TvWeatherDetailsScreen(
     weatherLocation: WeatherLocation,
+    particleTick: Long,
     onExpandDay: (WeatherDay) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -77,6 +80,7 @@ fun TvWeatherDetailsScreen(
         if (WeatherYouTheme.themeSettings.showWeatherAnimations) {
             WeatherAnimationsBackground(
                 weatherLocation = weatherLocation,
+                particleTick = particleTick,
             )
         }
         TvWeatherLocationScreen(
@@ -239,18 +243,18 @@ fun TvWeatherLocationScreen(
             Row {
                 Column(Modifier.weight(1f)) {
                     TvCard(modifier = Modifier.padding(start = 16.dp, end = 8.dp)) {
-                        WindCardContent(
-                            weatherLocation.windSpeed,
-                            weatherLocation.windDirection,
+                        FeelsLikeCardContent(
+                            feelsLikeTemp = weatherLocation.feelsLike,
+                            actualTemp = weatherLocation.currentWeather,
                         )
                     }
-
                 }
                 Column(Modifier.weight(1f)) {
                     TvCard(modifier = Modifier.padding(start = 8.dp, end = 16.dp)) {
-                        HumidityCardContent(
-                            weatherLocation.humidity,
-                            weatherLocation.dewPoint,
+                        WindCardContent(
+                            windSpeed = weatherLocation.windSpeed,
+                            windGustSpeed = weatherLocation.windGust,
+                            windDirection = weatherLocation.windDirection,
                         )
                     }
                 }
@@ -268,6 +272,26 @@ fun TvWeatherLocationScreen(
                 Column(Modifier.weight(1f)) {
                     TvCard(modifier = Modifier.padding(start = 8.dp, end = 16.dp)) {
                         UvIndexCardContent(weatherLocation.uvIndex)
+                    }
+                }
+            }
+        }
+        item {
+            Row {
+                Column(Modifier.weight(1f)) {
+                    TvCard(modifier = Modifier.padding(start = 16.dp, end = 8.dp)) {
+                        HumidityCardContent(
+                            weatherLocation.humidity,
+                            weatherLocation.dewPoint,
+                        )
+                    }
+                }
+                Column(Modifier.weight(1f)) {
+                    TvCard(modifier = Modifier.padding(start = 8.dp, end = 16.dp)) {
+                        PressureCardContent(
+                            pressure = weatherLocation.pressure,
+                            trend = weatherLocation.pressureTrend,
+                        )
                     }
                 }
             }

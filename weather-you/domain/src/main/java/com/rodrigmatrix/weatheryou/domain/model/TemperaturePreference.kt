@@ -1,6 +1,11 @@
 package com.rodrigmatrix.weatheryou.domain.model
 
-enum class TemperaturePreference {
-    METRIC,
-    IMPERIAL
+import com.rodrigmatrix.weatheryou.domain.R
+
+enum class TemperaturePreference(
+    val title: Int,
+) {
+    METRIC(R.string.metric_preference),
+    IMPERIAL(R.string.imperial_preference),
+    KELVIN(R.string.kelvin),
 }

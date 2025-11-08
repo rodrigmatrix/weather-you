@@ -15,16 +15,13 @@ import androidx.compose.ui.unit.Density
 import com.rodrigmatrix.weatheryou.domain.model.AppColorPreference
 import com.rodrigmatrix.weatheryou.domain.model.AppSettings
 import com.rodrigmatrix.weatheryou.domain.model.AppThemePreference
+import com.rodrigmatrix.weatheryou.domain.model.DistanceUnitPreference
+import com.rodrigmatrix.weatheryou.domain.model.PrecipitationUnitPreference
 import com.rodrigmatrix.weatheryou.domain.model.TemperaturePreference
+import com.rodrigmatrix.weatheryou.domain.model.WindUnitPreference
 
 val LocalWeatherYouAppSettings = compositionLocalOf {
-    AppSettings(
-        temperaturePreference = TemperaturePreference.METRIC,
-        appThemePreference = AppThemePreference.SYSTEM_DEFAULT,
-        appColorPreference = AppColorPreference.DEFAULT,
-        enableWeatherAnimations = false,
-        enableThemeColorWithWeatherAnimations = false,
-    )
+    AppSettings.DEFAULT
 }
 
 val LocalWeatherYouCurrentDestination = compositionLocalOf {
@@ -36,17 +33,24 @@ val LocalWeatherYouConditionsScaffoldState = compositionLocalOf<SheetState?> {
     null
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+val LocalWeatherYouParticleState = compositionLocalOf<Long> {
+    0
+}
+
 @Composable
 fun WeatherYouAppState(
     appSettings: AppSettings,
     currentDestination: String,
-    conditionsScaffoldState: SheetState,
+    conditionsScaffoldState: SheetState?,
+    particleTick: Long,
     content: @Composable () -> Unit,
 ) {
     CompositionLocalProvider(
         LocalWeatherYouAppSettings provides appSettings,
         LocalWeatherYouCurrentDestination provides currentDestination,
-        LocalWeatherYouConditionsScaffoldState provides conditionsScaffoldState
+        LocalWeatherYouConditionsScaffoldState provides conditionsScaffoldState,
+        LocalWeatherYouParticleState provides particleTick,
     ) {
         content()
     }
@@ -66,4 +70,8 @@ object WeatherYouAppState {
     val conditionsScaffoldState: SheetState?
         @Composable
         get() = LocalWeatherYouConditionsScaffoldState.current
+
+    val particleTick: Long
+        @Composable
+        get() = LocalWeatherYouParticleState.current
 }

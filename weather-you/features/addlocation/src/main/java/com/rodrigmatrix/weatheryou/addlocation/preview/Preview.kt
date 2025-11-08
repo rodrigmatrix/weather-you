@@ -1,6 +1,6 @@
 package com.rodrigmatrix.weatheryou.addlocation.preview
 
-import com.rodrigmatrix.weatheryou.components.R
+import com.rodrigmatrix.weatheryou.domain.R
 import com.rodrigmatrix.weatheryou.domain.model.City
 
 val PreviewFamousCities = listOf(

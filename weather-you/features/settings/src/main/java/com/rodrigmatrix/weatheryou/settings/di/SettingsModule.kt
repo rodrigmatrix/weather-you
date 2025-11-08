@@ -12,12 +12,7 @@ import org.koin.dsl.module
 object SettingsModule {
 
     fun loadModules() {
-        loadKoinModules(presentationModule + domainModule + otherModule)
-    }
-
-    private val domainModule = module {
-        factory { GetAppSettingsUseCase(settingsRepository = get()) }
-        factory { SetAppSettingsUseCase(settingsRepository = get()) }
+        loadKoinModules(presentationModule + otherModule)
     }
 
     private val presentationModule = module {

@@ -13,6 +13,8 @@ interface WeatherLocalDataSource {
 
     fun getLocation(latitude: Double, longitude: Double): Flow<WeatherLocationEntity?>
 
+    fun getLocation(id: Int): Flow<WeatherLocationEntity>
+
     fun upsertLocation(location: WeatherLocationEntity): Flow<Unit>
 
     fun deleteLocation(weatherLocation: WeatherLocation): Flow<Unit>

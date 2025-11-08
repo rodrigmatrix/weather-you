@@ -19,7 +19,10 @@ import com.rodrigmatrix.weatheryou.core.state.LocalWeatherYouAppSettings
 import com.rodrigmatrix.weatheryou.domain.model.AppColorPreference
 import com.rodrigmatrix.weatheryou.domain.model.AppSettings
 import com.rodrigmatrix.weatheryou.domain.model.AppThemePreference
+import com.rodrigmatrix.weatheryou.domain.model.DistanceUnitPreference
+import com.rodrigmatrix.weatheryou.domain.model.PrecipitationUnitPreference
 import com.rodrigmatrix.weatheryou.domain.model.TemperaturePreference
+import com.rodrigmatrix.weatheryou.domain.model.WindUnitPreference
 import com.rodrigmatrix.weatheryou.domain.usecase.DeleteWidgetLocationUseCase
 import com.rodrigmatrix.weatheryou.domain.usecase.GetAppSettingsUseCase
 import com.rodrigmatrix.weatheryou.domain.usecase.GetWidgetTemperatureUseCase
@@ -68,13 +71,7 @@ class CurrentAnimatedWeatherWidget(
         val appSettingsFlow = getAppSettingsUseCase()
         provideContent {
             val weather by weatherFlow.collectAsState(null)
-            val appSettings by appSettingsFlow.collectAsState(AppSettings(
-                temperaturePreference = TemperaturePreference.METRIC,
-                enableWeatherAnimations = false,
-                enableThemeColorWithWeatherAnimations = false,
-                appColorPreference = AppColorPreference.DEFAULT,
-                appThemePreference = AppThemePreference.SYSTEM_DEFAULT,
-            ))
+            val appSettings by appSettingsFlow.collectAsState(AppSettings.DEFAULT)
             val size = LocalSize.current
             CompositionLocalProvider(
                 LocalWeatherYouAppSettings provides appSettings,

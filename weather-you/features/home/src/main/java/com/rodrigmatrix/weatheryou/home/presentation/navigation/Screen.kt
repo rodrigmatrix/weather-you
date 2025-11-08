@@ -3,7 +3,7 @@ package com.rodrigmatrix.weatheryou.home.presentation.navigation
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.rodrigmatrix.weatheryou.home.R
-import com.rodrigmatrix.weatheryou.components.R as Strings
+import com.rodrigmatrix.weatheryou.domain.R as Strings
 
 enum class HomeEntry(
     val route: String,

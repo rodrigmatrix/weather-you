@@ -20,7 +20,7 @@ import com.rodrigmatrix.weatheryou.components.WeatherIcon
 import com.rodrigmatrix.weatheryou.components.WeatherYouDivider
 import com.rodrigmatrix.weatheryou.core.extensions.*
 import com.rodrigmatrix.weatheryou.domain.model.WeatherDay
-import com.rodrigmatrix.weatheryou.components.R
+import com.rodrigmatrix.weatheryou.domain.R
 import com.rodrigmatrix.weatheryou.components.WeatherYouCard
 import com.rodrigmatrix.weatheryou.components.extensions.getString
 import com.rodrigmatrix.weatheryou.components.preview.PreviewFutureDaysForecast
@@ -78,13 +78,13 @@ fun FutureDaysForecastContent(
         )
     },
     expandButton: @Composable () -> Unit = {
-        ExpandButton(
-            isExpanded = isExpanded,
-            contentDescription = stringResource(R.string.show_all_days_forecast),
-            onExpandButtonClick = {
-                onExpandedButtonClick(it)
-            },
-        )
+//        ExpandButton(
+//            isExpanded = isExpanded,
+//            contentDescription = stringResource(R.string.show_all_days_forecast),
+//            onExpandButtonClick = {
+//                onExpandedButtonClick(it)
+//            },
+//        )
     },
 ) {
     Column(modifier.fillMaxWidth()) {

@@ -5,6 +5,7 @@ import com.rodrigmatrix.weatheryou.data.model.visualcrossing.HourResponse
 import com.rodrigmatrix.weatheryou.data.model.visualcrossing.VisualCrossingWeatherResponse
 import com.rodrigmatrix.weatheryou.domain.model.MoonPhase
 import com.rodrigmatrix.weatheryou.domain.model.PrecipitationType
+import com.rodrigmatrix.weatheryou.domain.model.PressureTrend
 import com.rodrigmatrix.weatheryou.domain.model.TemperaturePreference
 import com.rodrigmatrix.weatheryou.domain.model.WeatherDay
 import com.rodrigmatrix.weatheryou.domain.model.WeatherHour
@@ -59,6 +60,8 @@ class VisualCrossingRemoteMapper(
             maxWeekTemperature = source.days?.maxOf { it.tempmax ?: 0.0 } ?: 0.0,
             cloudCover = 0.0,
             countryCode = "",
+            pressureTrend = PressureTrend.Steady,
+            windGust = 0.0,
         )
     }
 
@@ -113,6 +116,9 @@ class VisualCrossingRemoteMapper(
                 uvIndex = it.uvindex ?: 0.0,
                 snowfallIntensity = it.snow ?: 0.0,
                 precipitationAmount = it.precip ?: 0.0,
+                pressureTrend = PressureTrend.Steady,
+                pressure = it.pressure ?: 0.0,
+                windGust = it.windgust ?: 0.0,
             )
         }
     }

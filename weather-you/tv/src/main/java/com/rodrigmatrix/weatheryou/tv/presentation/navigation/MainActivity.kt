@@ -3,6 +3,12 @@ package com.rodrigmatrix.weatheryou.tv.presentation.navigation
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -35,6 +42,7 @@ import com.rodrigmatrix.weatheryou.components.theme.ThemeSettings
 import com.rodrigmatrix.weatheryou.tv.R
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.core.state.LocalWeatherYouAppSettings
+import com.rodrigmatrix.weatheryou.core.state.WeatherYouAppState
 import com.rodrigmatrix.weatheryou.domain.model.AppColorPreference
 import com.rodrigmatrix.weatheryou.domain.model.AppThemePreference
 import com.rodrigmatrix.weatheryou.domain.usecase.GetAppSettingsUseCase
@@ -48,6 +56,7 @@ class MainActivity : AppCompatActivity() {
     private val getAppSettingsUseCase by inject<GetAppSettingsUseCase>()
     private val appThemeManager: AppThemeManager by inject()
 
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -78,74 +87,100 @@ class MainActivity : AppCompatActivity() {
                     appSettings = it
                 }
             }
-            WeatherYouTvTheme(
-                themeMode = themeMode,
-                colorMode = colorMode,
-                themeSettings = ThemeSettings(
-                    showWeatherAnimations = appSettings.enableWeatherAnimations,
-                    enableThemeColorForWeatherAnimations = appSettings.enableThemeColorWithWeatherAnimations,
+            val navController = rememberNavController()
+            var currentDestination by remember {
+                mutableStateOf(navController.currentDestination?.route.orEmpty())
+            }
+            navController.addOnDestinationChangedListener { _, destination, _ ->
+                currentDestination = destination.route.orEmpty()
+            }
+            val infiniteTransition = rememberInfiniteTransition(label = "particleTick")
+            val particleTick by infiniteTransition.animateFloat(
+                initialValue = 0f,
+                targetValue = 1_000_000f,
+                animationSpec = infiniteRepeatable(
+                    animation = tween(
+                        durationMillis = 100_000,
+                        easing = LinearEasing,
+                    ),
+                    repeatMode = RepeatMode.Restart,
                 ),
+                label = "particleTick",
+            )
+            WeatherYouAppState(
+                appSettings = appSettings,
+                currentDestination = currentDestination,
+                conditionsScaffoldState = null,
+                particleTick = particleTick.toLong(),
             ) {
-                val navController = rememberNavController()
-                NavigationDrawer(
-                    drawerContent = {
-                        Column {
-                            Spacer(Modifier.height(8.dp))
-                            NavigationDrawerItem(
-                                selected = false,
-                                onClick = { },
-                                leadingContent = {
-                                    Image(
-                                        painter = painterResource(id = R.drawable.ic_launcher),
-                                        contentDescription = null,
-                                        modifier = Modifier.clip(CircleShape),
-                                    )
-                                },
-                                modifier = Modifier
-                                    .focusable(enabled = false)
-                                    .focusProperties {
-                                        canFocus = false
-                                    }
-                                    .padding(horizontal = 8.dp),
-                            ) {
-                                Text(
-                                    text = stringResource(id = R.string.app_name),
-                                    style = WeatherYouTheme.typography.headlineSmall,
-                                )
-                            }
-                            Column(
-                                verticalArrangement = Arrangement.spacedBy(
-                                    space = 8.dp,
-                                    alignment = Alignment.CenterVertically,
-                                ),
-                                modifier = Modifier.fillMaxHeight(),
-                            ) {
-                                TvScreenEntry.entries.forEach { entry ->
-                                    val route = entry.route.javaClass.canonicalName
-                                    NavigationDrawerItem(
-                                        selected = navController.currentDestination?.route == route,
-                                        onClick = {
-                                            navController.navigate(entry.route)
-                                        },
-                                        leadingContent = {
-                                            Icon(
-                                                imageVector = entry.icon,
-                                                contentDescription = null,
-                                            )
-                                        },
-                                        modifier = Modifier.padding(horizontal = 8.dp),
-                                    ) {
-                                        Text(
-                                            text = stringResource(entry.stringRes),
-                                            style = WeatherYouTheme.typography.titleMedium,
+                WeatherYouTvTheme(
+                    themeMode = themeMode,
+                    colorMode = colorMode,
+                    themeSettings = ThemeSettings(
+                        showWeatherAnimations = appSettings.enableWeatherAnimations,
+                        enableThemeColorForWeatherAnimations = appSettings.enableThemeColorWithWeatherAnimations,
+                    ),
+                ) {
+                    NavigationDrawer(
+                        drawerContent = {
+                            Column {
+                                Spacer(Modifier.height(8.dp))
+                                NavigationDrawerItem(
+                                    selected = false,
+                                    onClick = { },
+                                    leadingContent = {
+                                        Image(
+                                            painter = painterResource(id = R.drawable.ic_launcher),
+                                            contentDescription = null,
+                                            modifier = Modifier.clip(CircleShape),
                                         )
+                                    },
+                                    modifier = Modifier
+                                        .focusable(enabled = false)
+                                        .focusProperties {
+                                            canFocus = false
+                                        }
+                                        .padding(horizontal = 8.dp),
+                                ) {
+                                    Text(
+                                        text = stringResource(id = R.string.app_name),
+                                        style = WeatherYouTheme.typography.headlineSmall,
+                                    )
+                                }
+                                Column(
+                                    verticalArrangement = Arrangement.spacedBy(
+                                        space = 8.dp,
+                                        alignment = Alignment.CenterVertically,
+                                    ),
+                                    modifier = Modifier.fillMaxHeight(),
+                                ) {
+                                    TvScreenEntry.entries.forEach { entry ->
+                                        val route = entry.route.javaClass.canonicalName
+                                        NavigationDrawerItem(
+                                            selected = navController.currentDestination?.route == route,
+                                            onClick = {
+                                                navController.navigate(entry.route)
+                                            },
+                                            leadingContent = {
+                                                Icon(
+                                                    imageVector = entry.icon,
+                                                    contentDescription = null,
+                                                )
+                                            },
+                                            modifier = Modifier.padding(horizontal = 8.dp),
+                                        ) {
+                                            Text(
+                                                text = stringResource(entry.stringRes),
+                                                style = WeatherYouTheme.typography.titleMedium,
+                                            )
+                                        }
                                     }
                                 }
                             }
-                        }
-                    },
-                ) {
-                    WeatherYouTvNavHost(navController)
+                        },
+                    ) {
+                        WeatherYouTvNavHost(navController)
+                    }
                 }
             }
         }

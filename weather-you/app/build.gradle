@@ -4,8 +4,6 @@ plugins {
     id 'kotlin-kapt'
     id 'kotlin-parcelize'
     id 'kotlinx-serialization'
-    id 'com.google.gms.google-services'
-    id 'com.google.firebase.crashlytics'
     alias(libs.plugins.compose.compiler)
 }
 
@@ -63,6 +61,18 @@ android {
             applicationIdSuffix ".debug"
         }
     }
+    flavorDimensions "version"
+    productFlavors {
+        googlePlay {
+            dimension "version"
+            apply plugin: 'com.google.gms.google-services'
+            apply plugin: 'com.google.firebase.crashlytics'
+        }
+        fdroid {
+            dimension "version"
+            versionNameSuffix "-fdroid"
+        }
+    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
@@ -86,20 +96,18 @@ android {
     packagingOptions {
         resources {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
+            excludes += "/META-INF/versions/9/OSGI-INF/MANIFEST.MF"
         }
     }
     namespace 'com.rodrigmatrix.weatheryou'
 }
 
 static def computeVersionName() {
-    return String.format('%d.%d.%d', Sdk.phoneVersionMajor, Sdk.phoneVersionMinor, Sdk.phoneVersionPatch)
+    return String.format('%d.%d.%d', Sdk.phoneVersionMajor, Sdk.phoneVersionMinor, Sdk.phoneVersionPatch) + "_mobile"
 }
 
 static def computeVersionCode() {
-    return ((Sdk.phoneVersionMajor * 100000)
-    + (Sdk.phoneVersionMinor * 10000)
-    + (Sdk.phoneVersionPatch * 1000)
-    + Integer.valueOf(System.getenv("CIRCLE_BUILD_NUM") ?: Sdk.localVersionCode))
+    return System.getenv("CIRCLE_BUILD_NUM") ?: Sdk.localVersionCode
 }
 
 dependencies {
@@ -161,7 +169,6 @@ dependencies {
     implementation(libs.firebase.crashlytics)
     implementation(libs.firebase.analytics)
 
-    implementation(libs.workManager)
 
     implementation(libs.google.play.location)
     implementation(libs.google.play.review)
