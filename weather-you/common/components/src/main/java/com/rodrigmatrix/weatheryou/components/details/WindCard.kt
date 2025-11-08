@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -34,11 +35,13 @@ import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.domain.R
 import com.rodrigmatrix.weatheryou.components.theme.weatherTextColor
 import com.rodrigmatrix.weatheryou.core.extensions.speedString
+import com.rodrigmatrix.weatheryou.core.extensions.windDirectionIndicator
 import java.lang.Math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -46,6 +49,7 @@ import kotlin.math.sin
 @Composable
 fun WindCardContent(
     windSpeed: Double,
+    windGustSpeed: Double,
     windDirection: Double,
     modifier: Modifier = Modifier
 ) {
@@ -77,14 +81,26 @@ fun WindCardContent(
             }
             Text(
                 text = windSpeed.speedString(),
-                style = WeatherYouTheme.typography.titleLarge,
+                style = WeatherYouTheme.typography.titleSmall,
                 color = WeatherYouTheme.colorScheme.weatherTextColor,
                 modifier = Modifier
             )
         }
         WindDirectionsVisualizer(
-            windDirection,
-            Modifier.align(Alignment.CenterHorizontally)
+            windDirection = windDirection,
+            windGustSpeed = windGustSpeed,
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+        )
+        Text(
+            text = buildAnnotatedString {
+                append(stringResource(R.string.gusts))
+                append(": ")
+                append(windGustSpeed.speedString())
+                append(" ")
+                append(windDirection.windDirectionIndicator())
+            },
+            color = WeatherYouTheme.colorScheme.weatherTextColor,
+            style = WeatherYouTheme.typography.bodyMedium,
         )
     }
 }
@@ -92,14 +108,15 @@ fun WindCardContent(
 @Composable
 fun WindDirectionsVisualizer(
     windDirection: Double,
-    modifier: Modifier = Modifier
+    windGustSpeed: Double,
+    modifier: Modifier = Modifier,
 ) {
     var animate by remember { mutableStateOf(false) }
     val arrowAngle: Float by animateFloatAsState(
         targetValue = windDirection.toFloat() * -1,
         animationSpec = tween(
             durationMillis = if (animate) 1000 else 0,
-            easing = FastOutSlowInEasing
+            easing = FastOutSlowInEasing,
         ),
         label = "",
     )
@@ -111,7 +128,7 @@ fun WindDirectionsVisualizer(
     val westString = stringResource(R.string.west_char)
     Box(
         modifier = modifier
-            .size(140.dp)
+            .size(120.dp)
     ) {
         Icon(
             painter = painterResource(com.rodrigmatrix.weatheryou.weathericons.R.drawable.ic_arrow_wind),
@@ -150,7 +167,6 @@ fun WindDirectionsVisualizer(
                     drawText(eastString, canvasWidth - 80f, center.y, paint)
                 }
             }
-
         }
     }
     LaunchedEffect(true) {
@@ -168,7 +184,7 @@ internal fun Marker(
     val ternaryColor = WeatherYouTheme.colorScheme.tertiary
     Box(
         modifier
-            .size(130.dp)
+            .size(120.dp)
             .drawBehind {
                 val drawMarkerSize = if (drawMarker) 20f else 0f
                 val theta = (angle - 90) * PI.toFloat() / 180f
@@ -194,6 +210,7 @@ fun WindCardPreview() {
     WeatherYouTheme {
         WindCardContent(
             windSpeed = 10.0,
+            windGustSpeed = 15.0,
             windDirection = 251.0,
         )
     }

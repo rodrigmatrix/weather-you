@@ -4,6 +4,7 @@ import com.rodrigmatrix.weatheryou.data.local.model.WeatherDayEntity
 import com.rodrigmatrix.weatheryou.data.local.model.WeatherEntity
 import com.rodrigmatrix.weatheryou.data.local.model.WeatherHourEntity
 import com.rodrigmatrix.weatheryou.data.local.model.WeatherLocationEntity
+import com.rodrigmatrix.weatheryou.domain.model.PressureTrend
 import com.rodrigmatrix.weatheryou.domain.model.WeatherCondition
 import com.rodrigmatrix.weatheryou.domain.model.WeatherDay
 import com.rodrigmatrix.weatheryou.domain.model.WeatherHour
@@ -47,6 +48,8 @@ fun WeatherEntity.toWeatherLocation(
     minWeekTemperature = minWeekTemperature,
     maxWeekTemperature = maxWeekTemperature,
     cloudCover = cloudCover,
+    pressureTrend = PressureTrend.valueOf(pressureTrend),
+    windGust = windGust,
 )
 
 fun WeatherDayEntity.toWeatherDay(timeZone: String) = WeatherDay(
@@ -91,6 +94,9 @@ fun WeatherHourEntity.toWeatherHour(timeZone: String) = WeatherHour(
     windDirection = windDirection,
     uvIndex = uvIndex,
     snowfallIntensity = snowfallIntensity,
+    pressureTrend = PressureTrend.valueOf(pressureTrend),
+    pressure = pressure,
+    windGust = windGust,
 )
 
 fun WeatherLocation.toWeatherEntity() = WeatherEntity(
@@ -124,6 +130,8 @@ fun WeatherLocation.toWeatherEntity() = WeatherEntity(
     minWeekTemperature = minWeekTemperature,
     maxWeekTemperature = maxWeekTemperature,
     cloudCover = cloudCover,
+    pressureTrend = pressureTrend.name,
+    windGust = windGust,
 )
 
 fun WeatherLocation.toWeatherLocationEntity() = WeatherLocationEntity(
@@ -178,4 +186,7 @@ fun WeatherHour.toWeatherHour() = WeatherHourEntity(
     windDirection = windDirection,
     uvIndex = uvIndex,
     snowfallIntensity = snowfallIntensity,
+    pressure = pressure,
+    pressureTrend = pressureTrend.name,
+    windGust = windGust,
 )

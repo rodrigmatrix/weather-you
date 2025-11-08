@@ -13,12 +13,18 @@ import com.rodrigmatrix.weatheryou.domain.model.TemperaturePreference
 fun WindCard(
     windSpeed: Double,
     windDirection: Double,
+    windGustSpeed: Double,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    WeatherYouCard(modifier) {
+    WeatherYouCard(
+        onClick = onClick,
+        modifier = modifier,
+    ) {
         WindCardContent(
             windSpeed = windSpeed,
             windDirection = windDirection,
+            windGustSpeed = windGustSpeed,
         )
     }
 }
@@ -31,6 +37,8 @@ fun WindCardPreview() {
         WindCard(
             windSpeed = 10.0,
             windDirection = 251.0,
+            windGustSpeed = 15.0,
+            onClick = {}
         )
     }
 }

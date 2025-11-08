@@ -151,6 +151,7 @@ internal fun TvWeatherLocationsScreen(
                 },
                 onTemperatureTypeChange = conditionsViewModel::onTemperatureTypeChange,
                 scrollState = scrollState,
+                onTypeChange = { },
                 onDismissRequest = {
                     coroutineScope.launch {
                         conditionsViewModel.hideConditions()

@@ -17,11 +17,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -43,10 +46,12 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
 import com.rodrigmatrix.weatheryou.components.location.RequestBackgroundLocationDialog
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
+import com.rodrigmatrix.weatheryou.core.state.WeatherYouAppState
 import com.rodrigmatrix.weatheryou.domain.R
 import com.rodrigmatrix.weatheryou.domain.model.AppSettings
 import com.rodrigmatrix.weatheryou.domain.model.DistanceUnitPreference
 import com.rodrigmatrix.weatheryou.domain.model.PrecipitationUnitPreference
+import com.rodrigmatrix.weatheryou.domain.model.PressureUnitPreference
 import com.rodrigmatrix.weatheryou.domain.model.TemperaturePreference
 import com.rodrigmatrix.weatheryou.domain.model.WindUnitPreference
 import com.rodrigmatrix.weatheryou.settings.presentation.settings.component.SwitchWithDescription
@@ -201,6 +206,16 @@ fun SettingsScreen(
             },
         )
 
+        SettingsDialogState.PressureUnit -> UnitsDialog(
+            title = R.string.pressure,
+            itemTitle = { it.title },
+            selected = viewState.appSettings.pressureUnitPreference,
+            entries = PressureUnitPreference.entries,
+            onNewUnit = {
+                onSettingsUpdate(viewState.appSettings.copy(pressureUnitPreference = it))
+            },
+            onDismissRequest = onDismissDialog
+        )
     }
     Column(
         Modifier
@@ -208,6 +223,7 @@ fun SettingsScreen(
             .background(WeatherYouTheme.colorScheme.background)
             .statusBarsPadding()
             .navigationBarsPadding()
+            .verticalScroll(rememberScrollState())
     ) {
         Spacer(Modifier.height(10.dp))
         SettingTitle(stringResource(R.string.units))
@@ -244,6 +260,15 @@ fun SettingsScreen(
             selected = stringResource(viewState.appSettings.distanceUnitPreference.title),
             onClick = {
                 onDialogStateChanged(SettingsDialogState.DistanceUnit)
+            },
+            modifier = Modifier
+        )
+        Spacer(Modifier.height(10.dp))
+        SettingWithOption(
+            title = stringResource(R.string.pressure),
+            selected = stringResource(viewState.appSettings.pressureUnitPreference.title),
+            onClick = {
+                onDialogStateChanged(SettingsDialogState.PressureUnit)
             },
             modifier = Modifier
         )
@@ -305,7 +330,7 @@ fun SettingsScreen(
                 )
             }
         }
-//        Spacer(Modifier.height(10.dp))
+        Spacer(Modifier.height(100.dp))
 //        SwitchWithDescription(
 //            checked = viewState.appSettings.enableThemeColorWithWeatherAnimations,
 //            description = stringResource(R.string.enable_theme_color_inside_weather_animations),

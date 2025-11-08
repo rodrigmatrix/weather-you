@@ -175,6 +175,57 @@
     <string name="precipitation_unit">Precipitation</string>
     <string name="distance_unit">Distance</string>
 
+    <string name="kelvin">Kelvin</string>
+    <string name="conditions">Conditions</string>
+    <string name="pressure">Pressure</string>
+    
+    <string name="milibars">mbar</string>
+    <string name="hectopascals">hPa</string>
+    <string name="inches_of_mercury">inHg</string>
+    <string name="millimeters_of_mercury">mmHg</string>
+    <string name="kilopascals">kPa</string>
+
+    <string name="feels_like_cooler_desc">Feels cooler than the actual temperature</string>
+    <string name="feels_like_warmer_desc">Feels warmer than the actual temperature</string>
+    <string name="feels_like_same_desc">Feels the same as the actual temperature</string>
+
+    <string name="gusts">Gusts</string>
+    <string name="wind_dir_n">N</string>
+    <string name="wind_dir_nne">NNE</string>
+    <string name="wind_dir_ne">NE</string>
+    <string name="wind_dir_ene">ENE</string>
+    <string name="wind_dir_e">E</string>
+    <string name="wind_dir_ese">ESE</string>
+    <string name="wind_dir_se">SE</string>
+    <string name="wind_dir_sse">SSE</string>
+    <string name="wind_dir_s">S</string>
+    <string name="wind_dir_ssw">SSW</string>
+    <string name="wind_dir_sw">SW</string>
+    <string name="wind_dir_wsw">WSW</string>
+    <string name="wind_dir_w">W</string>
+    <string name="wind_dir_wnw">WNW</string>
+    <string name="wind_dir_nw">NW</string>
+    <string name="wind_dir_nnw">NNW</string>
+
+    <string name="bft_scale">Beaufort Scale</string>
+    <string name="description">Description</string>
+    <string name="bft_scale_short">bft</string>
+
+    <!-- Beaufort Scale Descriptions -->
+    <string name="bft_desc_0">Calm</string>
+    <string name="bft_desc_1">Light air</string>
+    <string name="bft_desc_2">Light breeze</string>
+    <string name="bft_desc_3">Gentle breeze</string>
+    <string name="bft_desc_4">Moderate breeze</string>
+    <string name="bft_desc_5">Fresh breeze</string>
+    <string name="bft_desc_6">Strong breeze</string>
+    <string name="bft_desc_7">High wind</string>
+    <string name="bft_desc_8">Gale</string>
+    <string name="bft_desc_9">Strong gale</string>
+    <string name="bft_desc_10">Storm</string>
+    <string name="bft_desc_11">Violent storm</string>
+    <string name="bft_desc_12">Hurricane-force</string>
+
     <string name="weather_trend_up">Warmer tomorrow, with a high of %s</string>
     <string name="weather_trend_down">Cooler tomorrow, with a high of %s</string>
 </resources>

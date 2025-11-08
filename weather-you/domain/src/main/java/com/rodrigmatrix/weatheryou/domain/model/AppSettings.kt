@@ -9,6 +9,8 @@ data class AppSettings(
     val windUnitPreference: WindUnitPreference,
     val precipitationUnitPreference: PrecipitationUnitPreference,
     val distanceUnitPreference: DistanceUnitPreference,
+    val pressureUnitPreference: PressureUnitPreference,
+    val weatherCardList: List<WeatherCard>,
 ) {
     companion object {
         val DEFAULT = AppSettings(
@@ -20,6 +22,8 @@ data class AppSettings(
             windUnitPreference = WindUnitPreference.KPH,
             precipitationUnitPreference = PrecipitationUnitPreference.MM_CM,
             distanceUnitPreference = DistanceUnitPreference.KM,
+            pressureUnitPreference = PressureUnitPreference.HPA,
+            weatherCardList = WeatherCard.entries,
         )
     }
 }

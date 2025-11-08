@@ -132,6 +132,7 @@ fun AboutScreen(
                 .align(Alignment.CenterHorizontally)
                 .padding(start = 16.dp, end = 16.dp)
         )
+        Spacer(Modifier.height(100.dp))
     }
 }
 

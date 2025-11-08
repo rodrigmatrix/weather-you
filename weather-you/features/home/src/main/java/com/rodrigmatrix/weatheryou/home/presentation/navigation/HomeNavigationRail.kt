@@ -123,18 +123,7 @@ fun HomeNavigationRail(
                 containerColor = color,
             ),
             state = state,
-            modifier = Modifier.background(
-                if (appSettings.enableWeatherAnimations && currentDestination == HomeEntry.Locations.route) {
-                    Brush.verticalGradient(
-                        homeViewState.getSelectedOrFirstLocation()?.getGradientList() ?: listOf(
-                            NavigationRailDefaults.ContainerColor,
-                            NavigationRailDefaults.ContainerColor
-                        )
-                    )
-                } else {
-                    SolidColor(Color.Transparent)
-                }
-            ),
+            modifier = Modifier.background(SolidColor(Color.Transparent)),
         ) {
             HomeEntry.entries.forEach { screen ->
                 WideNavigationRailItem(

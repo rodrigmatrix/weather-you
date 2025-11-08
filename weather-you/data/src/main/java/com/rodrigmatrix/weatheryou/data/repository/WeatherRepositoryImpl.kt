@@ -229,6 +229,7 @@ class WeatherRepositoryImpl(
                         forceUpdate = true,
                     )?.also {
                         setSavedLocation(it, widgetId)
+                            .firstOrNull()
                     }
                 } else {
                     getLocationsList().firstOrNull()?.firstOrNull()?.let { location ->
@@ -245,6 +246,7 @@ class WeatherRepositoryImpl(
                             name = location.name,
                         )?.also {
                             setSavedLocation(it, widgetId)
+                                .firstOrNull()
                         }
                     }
                 }

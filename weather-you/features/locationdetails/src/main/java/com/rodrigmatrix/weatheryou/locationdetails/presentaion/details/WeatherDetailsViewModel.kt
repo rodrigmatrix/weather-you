@@ -2,11 +2,14 @@ package com.rodrigmatrix.weatheryou.locationdetails.presentaion.details
 
 import androidx.lifecycle.viewModelScope
 import com.rodrigmatrix.weatheryou.core.viewmodel.ViewModel
+import com.rodrigmatrix.weatheryou.domain.model.WeatherCard
 import com.rodrigmatrix.weatheryou.domain.model.WeatherDay
 import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 import com.rodrigmatrix.weatheryou.domain.usecase.GetAppSettingsUseCase
 import com.rodrigmatrix.weatheryou.domain.usecase.GetLocationUseCase
+import com.rodrigmatrix.weatheryou.domain.usecase.SetAppSettingsUseCase
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
@@ -17,6 +20,7 @@ class WeatherDetailsViewModel(
     private val weatherLocation: WeatherLocation?,
     private val getLocationUseCase: GetLocationUseCase,
     private val getAppSettingsUseCase: GetAppSettingsUseCase,
+    private val setAppSettingsUseCase: SetAppSettingsUseCase,
 ) : ViewModel<WeatherDetailsViewState, WeatherDetailsViewEffect>(
     WeatherDetailsViewState()
 ) {
@@ -29,6 +33,8 @@ class WeatherDetailsViewModel(
                         it.copy(
                             enableThemeColorWithWeatherAnimations = settings.enableThemeColorWithWeatherAnimations,
                             enableWeatherAnimations = settings.enableWeatherAnimations,
+                            appSettings = settings,
+                            weatherCardList = settings.weatherCardList,
                         )
                     }
                 }
@@ -87,6 +93,16 @@ class WeatherDetailsViewModel(
     fun onFullScreenModeChange(isFullScreenMode: Boolean) {
         setState {
             it.copy(isFullScreenMode = isFullScreenMode)
+        }
+    }
+
+    fun onWeatherCardListOrderChange(list: List<WeatherCard>) {
+        viewModelScope.launch {
+            setAppSettingsUseCase(
+                viewState.value.appSettings.copy(
+                    weatherCardList = list,
+                )
+            ).firstOrNull()
         }
     }
 

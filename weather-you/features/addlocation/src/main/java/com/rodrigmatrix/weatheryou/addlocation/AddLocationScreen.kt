@@ -120,73 +120,75 @@ fun AddLocationScreen(
     onSearchButtonClicked: () -> Unit,
 ) {
     val focusRequester = remember { FocusRequester() }
-    Scaffold(
-        topBar = {
-            SearchBar(
-                query = viewState.searchText,
-                onQueryChange = onQueryChanged,
-                onSearchFocusChange = {
-                    if (it) {
-                        focusRequester.requestFocus()
-                    }
-                },
-                onClearQuery = onClearQuery,
-                searching = viewState.isLoading,
-                onSearchButtonClicked = onSearchButtonClicked,
-                keyboardActions = KeyboardActions(
-                    onSearch = {
-                        onSearchButtonClicked()
-                    }
-                ),
-                modifier = Modifier
-                    .padding(bottom = 8.dp),
-            )
-        },
-        containerColor = WeatherYouTheme.colorScheme.background,
-        modifier = Modifier.statusBarsPadding()
-    ) { paddingValues ->
-        Column(Modifier.padding(paddingValues)) {
-            if (viewState.showKeepTyping) {
-                Text(
-                    text = stringResource(Strings.string.keep_typing),
-                    color = WeatherYouTheme.colorScheme.onBackground,
-                    style = WeatherYouTheme.typography.titleLarge,
+    Column(Modifier.background(WeatherYouTheme.colorScheme.background)) {
+        Scaffold(
+            topBar = {
+                SearchBar(
+                    query = viewState.searchText,
+                    onQueryChange = onQueryChanged,
+                    onSearchFocusChange = {
+                        if (it) {
+                            focusRequester.requestFocus()
+                        }
+                    },
+                    onClearQuery = onClearQuery,
+                    searching = viewState.isLoading,
+                    onSearchButtonClicked = onSearchButtonClicked,
+                    keyboardActions = KeyboardActions(
+                        onSearch = {
+                            onSearchButtonClicked()
+                        }
+                    ),
                     modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(bottom = 20.dp)
+                        .padding(bottom = 8.dp),
+                )
+            },
+            containerColor = WeatherYouTheme.colorScheme.background,
+            modifier = Modifier.statusBarsPadding()
+        ) { paddingValues ->
+            Column(Modifier.padding(paddingValues)) {
+                if (viewState.showKeepTyping) {
+                    Text(
+                        text = stringResource(Strings.string.keep_typing),
+                        color = WeatherYouTheme.colorScheme.onBackground,
+                        style = WeatherYouTheme.typography.titleLarge,
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .padding(bottom = 20.dp)
+                    )
+                }
+                if (viewState.showClickToSearch && viewState.isLoading.not()) {
+                    Text(
+                        text = stringResource(Strings.string.click_to_search),
+                        color = WeatherYouTheme.colorScheme.onBackground,
+                        style = WeatherYouTheme.typography.titleLarge,
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .padding(bottom = 20.dp)
+                    )
+                }
+                if (viewState.showEmptyState) {
+                    Text(
+                        text = stringResource(Strings.string.no_results_found),
+                        color = WeatherYouTheme.colorScheme.onBackground,
+                        style = WeatherYouTheme.typography.titleLarge,
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .padding(bottom = 20.dp)
+                    )
+                }
+                if (viewState.locationsList.isNotEmpty()) {
+                    LocationSelectList(
+                        viewState.locationsList,
+                        onLocationClick,
+                        Modifier.focusRequester(focusRequester)
+                    )
+                }
+                LocationSuggestions(
+                    viewState.famousLocationsList,
+                    onLocationClick = onFamousLocationClicked,
                 )
             }
-            if (viewState.showClickToSearch && viewState.isLoading.not()) {
-                Text(
-                    text = stringResource(Strings.string.click_to_search),
-                    color = WeatherYouTheme.colorScheme.onBackground,
-                    style = WeatherYouTheme.typography.titleLarge,
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(bottom = 20.dp)
-                )
-            }
-            if (viewState.showEmptyState) {
-                Text(
-                    text = stringResource(Strings.string.no_results_found),
-                    color = WeatherYouTheme.colorScheme.onBackground,
-                    style = WeatherYouTheme.typography.titleLarge,
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(bottom = 20.dp)
-                )
-            }
-            if (viewState.locationsList.isNotEmpty()) {
-                LocationSelectList(
-                    viewState.locationsList,
-                    onLocationClick,
-                    Modifier.focusRequester(focusRequester)
-                )
-            }
-            LocationSuggestions(
-                viewState.famousLocationsList,
-                onLocationClick = onFamousLocationClicked,
-            )
         }
     }
 }

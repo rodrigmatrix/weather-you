@@ -6,7 +6,9 @@ import com.rodrigmatrix.weatheryou.domain.model.AppSettings
 import com.rodrigmatrix.weatheryou.domain.model.AppThemePreference
 import com.rodrigmatrix.weatheryou.domain.model.DistanceUnitPreference
 import com.rodrigmatrix.weatheryou.domain.model.PrecipitationUnitPreference
+import com.rodrigmatrix.weatheryou.domain.model.PressureUnitPreference
 import com.rodrigmatrix.weatheryou.domain.model.TemperaturePreference
+import com.rodrigmatrix.weatheryou.domain.model.WeatherCard
 import com.rodrigmatrix.weatheryou.domain.model.WindUnitPreference
 
 fun AppSettingsEntity.mapToDomain(): AppSettings {
@@ -37,7 +39,9 @@ fun AppSettingsEntity.mapToDomain(): AppSettings {
         appThemePreference = safeEnumValueOf(appThemePreference, AppThemePreference.SYSTEM_DEFAULT),
         appColorPreference = safeEnumValueOf(appColorPreference, AppColorPreference.DYNAMIC),
         enableWeatherAnimations = enableWeatherAnimations,
-        enableThemeColorWithWeatherAnimations = enableThemeColorWithWeatherAnimations
+        enableThemeColorWithWeatherAnimations = enableThemeColorWithWeatherAnimations,
+        pressureUnitPreference = PressureUnitPreference.MBAR,
+        weatherCardList = WeatherCard.entries,
     )
 }
 

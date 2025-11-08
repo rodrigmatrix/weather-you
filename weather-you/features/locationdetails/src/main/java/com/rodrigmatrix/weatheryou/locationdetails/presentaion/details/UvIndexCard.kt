@@ -13,9 +13,13 @@ import com.rodrigmatrix.weatheryou.components.details.UvIndexCardContent
 @Composable
 fun UvIndexCard(
     uvIndex: Double,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    WeatherYouCard(modifier) {
+    WeatherYouCard(
+        onClick = onClick,
+        modifier = modifier
+    ) {
         UvIndexCardContent(uvIndex = uvIndex)
     }
 }
@@ -27,6 +31,7 @@ fun UvIndexCardPreview() {
     WeatherYouTheme {
         UvIndexCard(
             uvIndex = 5.0,
+            onClick = {},
         )
     }
 }

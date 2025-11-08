@@ -2,6 +2,7 @@ package com.rodrigmatrix.weatheryou.components
 
 import android.view.MotionEvent
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -89,6 +90,7 @@ fun WeatherYouCard(
     } else {
         WeatherYouTheme.colorScheme.secondaryContainer
     },
+    border: BorderStroke? = null,
     content: @Composable () -> Unit
 ) {
     if (isDismissible) {
@@ -115,8 +117,8 @@ fun WeatherYouCard(
                     color = color,
                     shape = shape,
                     onClick = onClick,
-                    modifier = modifier
-                        .fillMaxWidth(),
+                    border = border,
+                    modifier = modifier.fillMaxWidth(),
                     content = content
                 )
             }
@@ -126,6 +128,7 @@ fun WeatherYouCard(
             color = color,
             shape = shape,
             onClick = onClick,
+            border = border,
             modifier = modifier
                 .fillMaxWidth(),
             content = content

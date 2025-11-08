@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "7d7e8f0a2af3e372ba698aa81bea8264",
+    "identityHash": "a8676d161b1c748a1f6be652b42d6036",
     "entities": [
       {
         "tableName": "locations",
@@ -56,9 +56,7 @@
           "columnNames": [
             "id"
           ]
-        },
-        "indices": [],
-        "foreignKeys": []
+        }
       },
       {
         "tableName": "weatherWidgetLocationCache",
@@ -112,13 +110,11 @@
           "columnNames": [
             "id"
           ]
-        },
-        "indices": [],
-        "foreignKeys": []
+        }
       },
       {
         "tableName": "weather",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, `latitude` REAL NOT NULL, `longitude` REAL NOT NULL, `isCurrentLocation` INTEGER NOT NULL, `currentWeather` REAL NOT NULL, `currentCondition` TEXT NOT NULL, `maxTemperature` REAL NOT NULL, `lowestTemperature` REAL NOT NULL, `feelsLike` REAL NOT NULL, `currentTime` TEXT NOT NULL, `isDaylight` INTEGER NOT NULL, `expirationDate` TEXT NOT NULL, `timeZone` TEXT NOT NULL, `precipitationProbability` REAL NOT NULL, `precipitationType` TEXT NOT NULL, `humidity` REAL NOT NULL, `dewPoint` REAL NOT NULL, `windSpeed` REAL NOT NULL, `windDirection` REAL NOT NULL, `uvIndex` REAL NOT NULL, `sunrise` TEXT NOT NULL, `sunset` TEXT NOT NULL, `visibility` REAL NOT NULL, `pressure` REAL NOT NULL, `countryCode` TEXT NOT NULL, `minWeekTemperature` REAL NOT NULL, `maxWeekTemperature` REAL NOT NULL, `cloudCover` REAL NOT NULL, `days` TEXT NOT NULL, `hours` TEXT NOT NULL, PRIMARY KEY(`latitude`, `longitude`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, `latitude` REAL NOT NULL, `longitude` REAL NOT NULL, `isCurrentLocation` INTEGER NOT NULL, `currentWeather` REAL NOT NULL, `currentCondition` TEXT NOT NULL, `maxTemperature` REAL NOT NULL, `lowestTemperature` REAL NOT NULL, `feelsLike` REAL NOT NULL, `currentTime` TEXT NOT NULL, `isDaylight` INTEGER NOT NULL, `expirationDate` TEXT NOT NULL, `timeZone` TEXT NOT NULL, `precipitationProbability` REAL NOT NULL, `precipitationType` TEXT NOT NULL, `humidity` REAL NOT NULL, `dewPoint` REAL NOT NULL, `windSpeed` REAL NOT NULL, `windDirection` REAL NOT NULL, `uvIndex` REAL NOT NULL, `sunrise` TEXT NOT NULL, `sunset` TEXT NOT NULL, `visibility` REAL NOT NULL, `pressure` REAL NOT NULL, `countryCode` TEXT NOT NULL, `minWeekTemperature` REAL NOT NULL, `maxWeekTemperature` REAL NOT NULL, `cloudCover` REAL NOT NULL, `pressureTrend` TEXT NOT NULL, `windGust` REAL NOT NULL, `days` TEXT NOT NULL, `hours` TEXT NOT NULL, PRIMARY KEY(`latitude`, `longitude`))",
         "fields": [
           {
             "fieldPath": "name",
@@ -289,6 +285,18 @@
             "notNull": true
           },
           {
+            "fieldPath": "pressureTrend",
+            "columnName": "pressureTrend",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "windGust",
+            "columnName": "windGust",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
             "fieldPath": "days",
             "columnName": "days",
             "affinity": "TEXT",
@@ -307,9 +315,7 @@
             "latitude",
             "longitude"
           ]
-        },
-        "indices": [],
-        "foreignKeys": []
+        }
       },
       {
         "tableName": "currentLocation",
@@ -363,15 +369,12 @@
           "columnNames": [
             "id"
           ]
-        },
-        "indices": [],
-        "foreignKeys": []
+        }
       }
     ],
-    "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7d7e8f0a2af3e372ba698aa81bea8264')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a8676d161b1c748a1f6be652b42d6036')"
     ]
   }
 }

@@ -7,4 +7,5 @@ enum class TemperaturePreference(
 ) {
     METRIC(R.string.metric_preference),
     IMPERIAL(R.string.imperial_preference),
+    KELVIN(R.string.kelvin),
 }
