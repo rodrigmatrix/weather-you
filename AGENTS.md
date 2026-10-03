@@ -1,0 +1,14 @@
+# Android App Delivery Workflow
+
+For development and code review in this repository, read `.agents/workflows/android-delivery.md` before starting. This is the required local execution procedure for the user's Android workflow.
+
+- Dot-source `.agents/scripts/android-environment.ps1` in each new command session. Use its explicit H: JDK 21/SDK/AVD paths and `$AndroidDelivery.GradleRoot`; WeatherYou's Gradle project is nested inside the repository.
+- For implementation requests, complete code/architecture review, affected builds and focused checks, APK installation, and QA on the affected device targets before reporting Done. Record a real blocker and incomplete checks when validation cannot finish. Continue independent checks that remain possible.
+- Check Codex usage limits before implementation. If either applicable window has less than 50% remaining, route implementation to Antigravity CLI with Gemini 3.8 Flash Medium. Codex owns orchestration and final review. Use `.agents/scripts/invoke-android-specialist.ps1` for bounded, logged specialist invocations.
+- Preserve other active work. Keep a resumable checkpoint at `.agents/task-status/<task-id>.md` with stage, command/session identifiers, results, artifact paths, blockers, and next action. A Markdown task board does not schedule itself or resume an idle chat automatically.
+- Never print or transmit private configuration, credential files, signing keys, or full environment dumps. Carry that restriction into every delegated prompt. Keep production publishing/deployment actions subject to the user's explicit authorization.
+- Emulator cleanup: close task-owned instances immediately after their device checks finish, and on task completion/failure/cancellation or a wait that needs no running device. Preserve evidence, use graceful shutdown, verify serial/PID exit, and record cleanup status. Retain only for an immediate follow-up check or explicit debugging request; record the reason and coordinate shared instances with their owner.
+
+- QA evidence reply: after every QA pass, publish the actual per-device/check results in the owning chat with clickable absolute-path links to qa-report.md, relevant screenshots and sanitized build/test/runtime logs; show representative screenshot previews where supported. Include failed/blocked/not-run checks, reproduction steps, remaining prerequisites, and emulator cleanup status. Collect evidence before shutdown and verify linked artifacts exist.
+
+- Git milestone commits: the user authorizes local commits after completed features/fixes and coherent important checkpoints. Codex commits only task-owned files/hunks after the required review/checks, preserving unrelated staged/unstaged work. Label partial checkpoints and outstanding checks honestly. Record the commit hash and validation status in the checkpoint, QA report, and final reply; subagents commit only when explicitly delegated an isolated workspace.
