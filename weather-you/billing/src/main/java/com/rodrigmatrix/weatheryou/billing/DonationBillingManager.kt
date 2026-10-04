@@ -221,6 +221,16 @@ class DonationBillingManager(
         refreshOwnedPurchases()
     }
 
+    /** Clears local test entitlement and publishes revocation to a paired watch. */
+    suspend fun resetSimulatedDonationForDebug() = reconciliationMutex.withLock {
+        settingsRepository.setIsPremiumUser(false).first()
+        _ownedProductIds.value = emptySet()
+        _purchaseState.value = DonationPurchaseState.IDLE
+        _restoreState.value = DonationRestoreState.IDLE
+        _acknowledgementIssue.value = false
+        publishEntitlementToWatch(false)
+    }
+
     private fun refreshOwnedPurchases() {
         if (!billingClient.isReady) {
             if (_restoreState.value == DonationRestoreState.RESTORING) {

@@ -1,12 +1,13 @@
 package com.rodrigmatrix.weatheryou.presentation.donation
 
-import android.app.Activity
 import android.content.Intent
 import android.util.Log
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.widget.TextView
+import androidx.activity.ComponentActivity
+import androidx.lifecycle.lifecycleScope
 import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.BillingResult
 import com.android.billingclient.api.Purchase
@@ -16,18 +17,40 @@ import com.rodrigmatrix.weatheryou.presentation.navigation.MainActivity
 import org.json.JSONArray
 import org.json.JSONObject
 import org.koin.android.ext.android.getKoin
+import kotlinx.coroutines.launch
 
 /** Debug-only entry point for exercising purchase callback UI without Play Store billing. */
-class DonationStateSimulatorActivity : Activity() {
+class DonationStateSimulatorActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val state = intent.getStringExtra(EXTRA_STATE)
+        val state = intent.getStringExtra(DONATION_MOCK_STATE_EXTRA)
         val message = TextView(this).apply {
-            text = "Applying local donation state: ${state ?: "missing"}"
+            text = "Preparing local donation test: ${state ?: "missing"}"
             textSize = 18f
             setPadding(32, 32, 32, 32)
         }
         setContentView(message)
+
+        when (state) {
+            "offers" -> {
+                DonationMockCatalog.setEnabled(this, true)
+                returnToMain()
+                return
+            }
+            "live" -> {
+                DonationMockCatalog.setEnabled(this, false)
+                returnToMain()
+                return
+            }
+            "reset" -> {
+                lifecycleScope.launch {
+                    getKoin().get<DonationBillingManager>().resetSimulatedDonationForDebug()
+                    DonationMockCatalog.setEnabled(this@DonationStateSimulatorActivity, false)
+                    returnToMain()
+                }
+                return
+            }
+        }
 
         runCatching { applyState(state) }
             .onFailure { message.text = "Could not simulate state: ${it.javaClass.simpleName}" }
@@ -41,12 +64,16 @@ class DonationStateSimulatorActivity : Activity() {
         }, 750)
 
         Handler(Looper.getMainLooper()).postDelayed({
-            startActivity(
-                Intent(this, MainActivity::class.java)
-                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP),
-            )
-            finish()
+            returnToMain()
         }, 1_500)
+    }
+
+    private fun returnToMain() {
+        startActivity(
+            Intent(this, MainActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP),
+        )
+        finish()
     }
 
     private fun applyState(state: String?) {
@@ -70,7 +97,7 @@ class DonationStateSimulatorActivity : Activity() {
 
     private fun simulatePurchase(manager: DonationBillingManager, state: Int, acknowledged: Boolean) {
         val purchase = testPurchase(state, acknowledged)
-        Log.i(LOG_TAG, "simulated purchase state=${purchase.purchaseState} acknowledged=${purchase.isAcknowledged}")
+        Log.i(LOG_TAG, "simulated product=${purchase.products.firstOrNull()} state=${purchase.purchaseState} acknowledged=${purchase.isAcknowledged}")
         manager.onPurchasesUpdated(
             billingResult(BillingClient.BillingResponseCode.OK),
             mutableListOf(purchase),
@@ -78,7 +105,7 @@ class DonationStateSimulatorActivity : Activity() {
     }
 
     private fun testPurchase(state: Int, acknowledged: Boolean): Purchase {
-        val productId = intent.getStringExtra(EXTRA_PRODUCT)
+        val productId = intent.getStringExtra(DONATION_MOCK_PRODUCT_ID_EXTRA)
             ?.takeIf { it in DonationProducts.all }
             ?: DonationProducts.all.first()
         // Billing Library 8 maps the raw Play JSON value 4 to PurchaseState.PENDING (2).
@@ -97,7 +124,5 @@ class DonationStateSimulatorActivity : Activity() {
 
     private companion object {
         const val LOG_TAG = "DonationStateSimulator"
-        const val EXTRA_STATE = "state"
-        const val EXTRA_PRODUCT = "product"
     }
 }
