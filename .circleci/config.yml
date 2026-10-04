@@ -36,7 +36,8 @@ jobs:
       # Restore Gradle cache using CircleCI's built-in caching
       - restore_cache:
           keys:
-            - gradle-cache-{{ checksum "weather-you/build.gradle" }}  # Updated path to build.gradle
+            - gradle-cache-v2-{{ arch }}-{{ checksum "build.gradle" }}-{{ checksum "gradle/libs.versions.toml" }}-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+            - gradle-cache-v2-{{ arch }}-
 
       # Load .env file and export variables
       - run:
@@ -55,6 +56,7 @@ jobs:
       # Build .aab files
       - run:
           name: Build .aab files
+          no_output_timeout: 30m
           command: ./gradlew :app:bundleRelease :tv:bundleRelease
 
       # Upload .aab files to Google Play Console using Fastlane
@@ -70,8 +72,10 @@ jobs:
       # Save Gradle cache using CircleCI's built-in caching
       - save_cache:
           paths:
-            - ~/project/weather-you/.gradle  # Updated path to .gradle directory
-          key: gradle-cache-{{ checksum "weather-you/build.gradle" }}  # Updated path to build.gradle
+            - ~/.gradle/caches
+            - ~/.gradle/wrapper
+            - ~/project/weather-you/.gradle
+          key: gradle-cache-v2-{{ arch }}-{{ checksum "build.gradle" }}-{{ checksum "gradle/libs.versions.toml" }}-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
 
   build-and-upload-to-artifacts:
     executor:
@@ -100,7 +104,8 @@ jobs:
       # Restore Gradle cache using CircleCI's built-in caching
       - restore_cache:
           keys:
-            - gradle-cache-{{ checksum "weather-you/build.gradle" }}  # Updated path to build.gradle
+            - gradle-cache-v2-{{ arch }}-{{ checksum "build.gradle" }}-{{ checksum "gradle/libs.versions.toml" }}-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+            - gradle-cache-v2-{{ arch }}-
 
       # Load .env file and export variables
       - run:
@@ -113,6 +118,7 @@ jobs:
       # Build .apk files
       - run:
           name: Build .apk files
+          no_output_timeout: 30m
           command: |
             set -euo pipefail
             # CI artifacts use a disposable key; the Play upload job uses its own protected signing key.
@@ -148,8 +154,10 @@ jobs:
       # Save Gradle cache using CircleCI's built-in caching
       - save_cache:
           paths:
-            - ~/project/weather-you/.gradle  # Updated path to .gradle directory
-          key: gradle-cache-{{ checksum "weather-you/build.gradle" }}  # Updated path to build.gradle
+            - ~/.gradle/caches
+            - ~/.gradle/wrapper
+            - ~/project/weather-you/.gradle
+          key: gradle-cache-v2-{{ arch }}-{{ checksum "build.gradle" }}-{{ checksum "gradle/libs.versions.toml" }}-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
 
 workflows:
   version: 2
