@@ -104,7 +104,7 @@ jobs:
               'releaseKeyStore=../ci-only.keystore' \
               'releaseStorePassword=ci-only' > keystore.properties
             chmod 600 keystore.properties
-            ./gradlew :app:assembleFdroidRelease :app:assembleGooglePlayRelease :tv:assembleRelease
+            ./gradlew :app:assembleFdroidRelease :app:assembleGooglePlayRelease :tv:assembleRelease --stacktrace
 
       # Upload .apk files to CircleCI artifacts
       - store_artifacts:
