@@ -87,6 +87,20 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@0723195856401067f7a2779048b490ace7a47d7c # v5
 
+      - name: Build pinned ComposeCharts dependency
+        shell: bash
+        run: |
+          set -euo pipefail
+          compose_charts_dir="$(mktemp -d "$RUNNER_TEMP/composecharts.XXXXXX")"
+          git -C "$compose_charts_dir" init
+          git -C "$compose_charts_dir" remote add origin https://github.com/rodrigmatrix/ComposeCharts.git
+          git -C "$compose_charts_dir" fetch --depth 1 origin 454b00e8a41d70c45b47e4e02b86494b69cdb335
+          git -C "$compose_charts_dir" checkout --detach FETCH_HEAD
+          (cd "$compose_charts_dir" && GRADLE_USER_HOME="$RUNNER_TEMP/gradle-composecharts" ./gradlew :compose-charts:assembleRelease)
+          mkdir -p weather-you/features/locationdetails/libs
+          cp "$compose_charts_dir/compose-charts/build/outputs/aar/compose-charts-release.aar" \
+            weather-you/features/locationdetails/libs/compose-charts-android-1.0.aar
+
       - name: Prepare Google Play Firebase configuration
         shell: bash
         env:
