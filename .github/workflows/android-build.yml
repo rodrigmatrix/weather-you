@@ -1,0 +1,125 @@
+name: Android build artifacts
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+    branches:
+      - main
+      - dev
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-build-${{ github.event.pull_request.head.repo.full_name || github.repository }}-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' }}
+
+jobs:
+  build-apks:
+    name: Build mobile and TV release APKs
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Set up Java 21
+        uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd # v4.0.4
+        with:
+          packages: platform-tools
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@0723195856401067f7a2779048b490ace7a47d7c # v5
+
+      - name: Build pinned ComposeCharts dependency
+        shell: bash
+        run: |
+          set -euo pipefail
+          compose_charts_dir="$(mktemp -d "$RUNNER_TEMP/composecharts.XXXXXX")"
+          git -C "$compose_charts_dir" init
+          git -C "$compose_charts_dir" remote add origin https://github.com/rodrigmatrix/ComposeCharts.git
+          git -C "$compose_charts_dir" fetch --depth 1 origin 454b00e8a41d70c45b47e4e02b86494b69cdb335
+          git -C "$compose_charts_dir" checkout --detach FETCH_HEAD
+          (cd "$compose_charts_dir" && GRADLE_USER_HOME="$RUNNER_TEMP/gradle-composecharts" bash ./gradlew --no-daemon :compose-charts:assembleRelease)
+          mkdir -p weather-you/features/locationdetails/libs
+          cp "$compose_charts_dir/compose-charts/build/outputs/aar/compose-charts-release.aar" \
+            weather-you/features/locationdetails/libs/compose-charts-android-1.0.aar
+
+      - name: Prepare disposable CI signing key
+        working-directory: weather-you
+        shell: bash
+        run: |
+          set -euo pipefail
+          key_path="app/weather-you-ci-only.keystore"
+          keytool -genkeypair -noprompt \
+            -keystore "$key_path" \
+            -storepass ci-only \
+            -keypass ci-only \
+            -alias ci-only \
+            -dname "CN=WeatherYou CI,O=WeatherYou,C=US" \
+            -validity 30 \
+            -keyalg RSA \
+            -keysize 2048
+          cp "$key_path" tv/weather-you-ci-only.keystore
+          printf '%s\n' \
+            'releaseKeyAlias=ci-only' \
+            'releaseKeyPassword=ci-only' \
+            'releaseKeyStore=weather-you-ci-only.keystore' \
+            'releaseStorePassword=ci-only' > keystore.properties
+          chmod 600 keystore.properties
+
+      - name: Set unique CI version code
+        shell: bash
+        run: |
+          set -euo pipefail
+          version_code=$((520067 + GITHUB_RUN_NUMBER))
+          if (( version_code > 2100000000 )); then
+            echo "CI version code exceeds Android's supported maximum."
+            exit 1
+          fi
+          echo "VERSION_CODE=$version_code" >> "$GITHUB_ENV"
+
+      - name: Build mobile and TV release APKs
+        working-directory: weather-you
+        shell: bash
+        run: |
+          bash ./gradlew \
+            --no-daemon \
+            --no-parallel \
+            --max-workers=2 \
+            -Dorg.gradle.jvmargs="-Xmx4g -Dfile.encoding=UTF-8" \
+            :app:assembleFdroidRelease \
+            :app:assembleGooglePlayRelease \
+            :tv:assembleRelease \
+            --stacktrace
+
+      - name: Upload release APK artifacts
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: weather-you-release-apks-${{ github.run_number }}
+          if-no-files-found: error
+          retention-days: 14
+          path: |
+            weather-you/app/build/outputs/apk/fdroid/release/app-fdroid-release.apk
+            weather-you/app/build/outputs/apk/googlePlay/release/app-googlePlay-release.apk
+            weather-you/tv/build/outputs/apk/release/tv-release.apk
+
+      - name: Remove temporary signing and build material
+        if: ${{ always() }}
+        shell: bash
+        run: |
+          rm -f weather-you/keystore.properties
+          rm -f weather-you/app/weather-you-ci-only.keystore
+          rm -f weather-you/tv/weather-you-ci-only.keystore
+          rm -f weather-you/features/locationdetails/libs/compose-charts-android-1.0.aar
+          rm -rf "$RUNNER_TEMP"/composecharts.* "$RUNNER_TEMP/gradle-composecharts"
