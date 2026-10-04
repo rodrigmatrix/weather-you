@@ -69,6 +69,17 @@ jobs:
       - checkout:
           path: ~/project  # Checkout the repository into the ~/project directory
 
+      - run:
+          name: Decode Keystore Properties
+          command: |
+            set -euo pipefail
+            if [ -z "${BASE64_KEYSTORE_PROPERTIES:-}" ]; then
+              echo "BASE64_KEYSTORE_PROPERTIES must be configured in CircleCI for release artifact builds." >&2
+              exit 1
+            fi
+            printf '%s' "$BASE64_KEYSTORE_PROPERTIES" | base64 --decode > keystore.properties
+            chmod 600 keystore.properties
+
       # Restore Gradle cache using CircleCI's built-in caching
       - restore_cache:
           keys:
