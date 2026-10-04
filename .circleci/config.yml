@@ -80,7 +80,7 @@ jobs:
   build-and-upload-to-artifacts:
     executor:
       name: android/android_machine
-      resource_class: large  # Release minification needs more CPU and RAM than the medium runner provides.
+      resource_class: 2xlarge  # User requested the largest CircleCI runner for release artifact builds.
       tag: default
     working_directory: ~/project/weather-you  # Set the working directory
     steps:
