@@ -69,18 +69,6 @@ jobs:
       - checkout:
           path: ~/project  # Checkout the repository into the ~/project directory
 
-      - run:
-          name: Prepare CI-only signing properties
-          command: |
-            set -euo pipefail
-            cat > keystore.properties <<'EOF'
-            releaseKeyAlias=ci-only
-            releaseKeyPassword=ci-only
-            releaseKeyStore=ci-only.keystore
-            releaseStorePassword=ci-only
-            EOF
-            chmod 600 keystore.properties
-
       # Restore Gradle cache using CircleCI's built-in caching
       - restore_cache:
           keys:
@@ -97,18 +85,37 @@ jobs:
       # Build .apk files
       - run:
           name: Build .apk files
-          command: ./gradlew :app:assembleFdroidDebug :app:assembleGooglePlayDebug :tv:assembleDebug
+          command: |
+            set -euo pipefail
+            # CI artifacts use a disposable key; the Play upload job uses its own protected signing key.
+            trap 'rm -f keystore.properties ci-only.keystore' EXIT
+            keytool -genkeypair -noprompt \
+              -keystore ci-only.keystore \
+              -storepass ci-only \
+              -keypass ci-only \
+              -alias ci-only \
+              -dname "CN=WeatherYou CI,O=WeatherYou,C=US" \
+              -validity 2 \
+              -keyalg RSA \
+              -keysize 2048
+            printf '%s\n' \
+              'releaseKeyAlias=ci-only' \
+              'releaseKeyPassword=ci-only' \
+              'releaseKeyStore=../ci-only.keystore' \
+              'releaseStorePassword=ci-only' > keystore.properties
+            chmod 600 keystore.properties
+            ./gradlew :app:assembleFdroidRelease :app:assembleGooglePlayRelease :tv:assembleRelease
 
       # Upload .apk files to CircleCI artifacts
       - store_artifacts:
-          path: app/build/outputs/apk/fdroid/debug/app-fdroid-debug.apk
-          destination: app-fdroid-debug.apk
+          path: app/build/outputs/apk/fdroid/release/app-fdroid-release.apk
+          destination: app-fdroid-release.apk
       - store_artifacts:
-          path: app/build/outputs/apk/googlePlay/debug/app-googlePlay-debug.apk
-          destination: app-googlePlay-debug.apk
+          path: app/build/outputs/apk/googlePlay/release/app-googlePlay-release.apk
+          destination: app-googlePlay-release.apk
       - store_artifacts:
-          path: tv/build/outputs/apk/debug/tv-debug.apk
-          destination: tv-debug.apk
+          path: tv/build/outputs/apk/release/tv-release.apk
+          destination: tv-release.apk
 
       # Save Gradle cache using CircleCI's built-in caching
       - save_cache:
