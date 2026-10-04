@@ -104,8 +104,6 @@ jobs:
               'releaseKeyStore=../ci-only.keystore' \
               'releaseStorePassword=ci-only' > keystore.properties
             chmod 600 keystore.properties
-            # This job only creates downloadable artifacts; pin a valid versionCode independent of CI env setup.
-            export CIRCLE_BUILD_NUM=520066
             ./gradlew :app:assembleFdroidRelease :app:assembleGooglePlayRelease :tv:assembleRelease --stacktrace
 
       # Upload .apk files to CircleCI artifacts

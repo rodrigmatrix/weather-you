@@ -10,6 +10,8 @@ plugins {
 def keyStorePropertiesFile = rootProject.file("keystore.properties")
 def keyStoreProperties = new Properties()
 keyStoreProperties.load(new FileInputStream(keyStorePropertiesFile))
+def buildNumber = System.getenv("CIRCLE_BUILD_NUM")?.trim()
+def buildVersionCode = buildNumber?.isInteger() ? buildNumber.toInteger() : Sdk.localVersionCode
 
 android {
     compileSdk Sdk.compileSdk
@@ -22,7 +24,7 @@ android {
         applicationId Sdk.applicationId
         minSdk Sdk.phoneMinSdk
         targetSdk Sdk.targetSdk
-        versionCode computeVersionCode()
+        versionCode buildVersionCode
         versionName computeVersionName()
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -104,10 +106,6 @@ android {
 
 static def computeVersionName() {
     return String.format('%d.%d.%d', Sdk.phoneVersionMajor, Sdk.phoneVersionMinor, Sdk.phoneVersionPatch) + "_mobile"
-}
-
-static def computeVersionCode() {
-    return System.getenv("CIRCLE_BUILD_NUM") ?: Sdk.localVersionCode
 }
 
 dependencies {

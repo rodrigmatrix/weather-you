@@ -10,6 +10,8 @@ plugins {
 def keyStorePropertiesFile = rootProject.file("keystore.properties")
 def keyStoreProperties = new Properties()
 keyStoreProperties.load(new FileInputStream(keyStorePropertiesFile))
+def buildNumber = System.getenv("CIRCLE_BUILD_NUM")?.trim()
+def buildVersionCode = buildNumber?.isInteger() ? buildNumber.toInteger() : Sdk.localVersionCode
 
 android {
     namespace "com.rodrigmatrix.weatheryou.tv"
@@ -19,7 +21,7 @@ android {
         applicationId Sdk.applicationId
         minSdk Sdk.tvMinSdk
         targetSdk Sdk.targetSdk
-        versionCode computeVersionCode()
+        versionCode buildVersionCode
         versionName computeVersionName()
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -81,10 +83,6 @@ android {
 
 static def computeVersionName() {
     return String.format('%d.%d.%d', Sdk.tvVersionMajor, Sdk.tvVersionMinor, Sdk.tvVersionPatch) + "_tv"
-}
-
-static def computeVersionCode() {
-    return System.getenv("CIRCLE_BUILD_NUM") ?: Sdk.localVersionCode
 }
 
 dependencies {
