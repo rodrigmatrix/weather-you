@@ -92,7 +92,16 @@ jobs:
       - name: Build mobile and TV release APKs
         working-directory: weather-you
         shell: bash
-        run: bash ./gradlew --no-daemon :app:assembleFdroidRelease :app:assembleGooglePlayRelease :tv:assembleRelease --stacktrace
+        run: |
+          bash ./gradlew \
+            --no-daemon \
+            --no-parallel \
+            --max-workers=2 \
+            -Dorg.gradle.jvmargs="-Xmx4g -Dfile.encoding=UTF-8" \
+            :app:assembleFdroidRelease \
+            :app:assembleGooglePlayRelease \
+            :tv:assembleRelease \
+            --stacktrace
 
       - name: Upload release APK artifacts
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
