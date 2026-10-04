@@ -15,6 +15,20 @@ jobs:
           path: ~/project  # Checkout the repository into the ~/project directory
 
       - run:
+          name: Build pinned ComposeCharts dependency
+          command: |
+            set -euo pipefail
+            compose_charts_dir="$(mktemp -d ../composecharts.XXXXXX)"
+            git -C "$compose_charts_dir" init
+            git -C "$compose_charts_dir" remote add origin https://github.com/rodrigmatrix/ComposeCharts.git
+            git -C "$compose_charts_dir" fetch --depth 1 origin 454b00e8a41d70c45b47e4e02b86494b69cdb335
+            git -C "$compose_charts_dir" checkout --detach FETCH_HEAD
+            (cd "$compose_charts_dir" && ./gradlew :compose-charts:assembleRelease)
+            mkdir -p features/locationdetails/libs
+            cp "$compose_charts_dir/compose-charts/build/outputs/aar/compose-charts-release.aar" \
+              features/locationdetails/libs/compose-charts-android-1.0.aar
+
+      - run:
           name: Decode Keystore File
           command: |
             echo $BASE64_KEYSTORE_PROPERTIES | base64 --decode > keystore.properties
@@ -68,6 +82,20 @@ jobs:
     steps:
       - checkout:
           path: ~/project  # Checkout the repository into the ~/project directory
+
+      - run:
+          name: Build pinned ComposeCharts dependency
+          command: |
+            set -euo pipefail
+            compose_charts_dir="$(mktemp -d ../composecharts.XXXXXX)"
+            git -C "$compose_charts_dir" init
+            git -C "$compose_charts_dir" remote add origin https://github.com/rodrigmatrix/ComposeCharts.git
+            git -C "$compose_charts_dir" fetch --depth 1 origin 454b00e8a41d70c45b47e4e02b86494b69cdb335
+            git -C "$compose_charts_dir" checkout --detach FETCH_HEAD
+            (cd "$compose_charts_dir" && ./gradlew :compose-charts:assembleRelease)
+            mkdir -p features/locationdetails/libs
+            cp "$compose_charts_dir/compose-charts/build/outputs/aar/compose-charts-release.aar" \
+              features/locationdetails/libs/compose-charts-android-1.0.aar
 
       # Restore Gradle cache using CircleCI's built-in caching
       - restore_cache:
