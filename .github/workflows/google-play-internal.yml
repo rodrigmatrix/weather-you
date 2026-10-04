@@ -223,7 +223,28 @@ jobs:
       - name: Build Google Play release bundle
         working-directory: weather-you
         shell: bash
-        run: bash ./gradlew --no-daemon :app:bundleGooglePlayRelease
+        env:
+          WEATHERKIT_TOKEN: ${{ secrets.WEATHERKIT_TOKEN }}
+          WEATHERKIT_ID: ${{ secrets.WEATHERKIT_ID }}
+          WEATHERKIT_KID: ${{ secrets.WEATHERKIT_KID }}
+          WEATHERKIT_ISS: ${{ secrets.WEATHERKIT_ISS }}
+          WEATHERKIT_SUB: ${{ secrets.WEATHERKIT_SUB }}
+        run: |
+          set -euo pipefail
+          : "${WEATHERKIT_TOKEN:?Missing WEATHERKIT_TOKEN environment secret}"
+          : "${WEATHERKIT_ID:?Missing WEATHERKIT_ID environment secret}"
+          : "${WEATHERKIT_KID:?Missing WEATHERKIT_KID environment secret}"
+          : "${WEATHERKIT_ISS:?Missing WEATHERKIT_ISS environment secret}"
+          : "${WEATHERKIT_SUB:?Missing WEATHERKIT_SUB environment secret}"
+          if [[ ! "$WEATHERKIT_TOKEN" =~ ^[A-Za-z0-9+/]+={0,2}$ ]]; then
+            echo "WEATHERKIT_TOKEN must be single-line Base64."
+            exit 1
+          fi
+          bash ./gradlew --no-daemon :app:bundleGooglePlayRelease
+
+      - name: Verify Google Play bundle exists
+        shell: bash
+        run: test -s weather-you/app/build/outputs/bundle/googlePlayRelease/app-googlePlay-release.aab
 
       - name: Authenticate to Google Cloud using GitHub OIDC
         id: google-auth
