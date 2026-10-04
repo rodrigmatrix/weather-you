@@ -66,7 +66,7 @@ fun WeatherYouTvNavHost(
         }
 
         composable<TvRoutes.About> {
-            AboutScreen()
+            AboutScreen(showTvDonationNotice = true)
         }
     }
 }

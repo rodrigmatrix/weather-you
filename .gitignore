@@ -276,3 +276,6 @@ fabric.properties
 !/gradle/wrapper/gradle-wrapper.jar
 
 # End of https://www.toptal.com/developers/gitignore/api/gradle,androidstudio,android,firebase,macos
+
+# Local WeatherYou upload signing material
+/weather-you/app/keystore/

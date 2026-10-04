@@ -84,7 +84,11 @@ static def computeVersionName() {
 }
 
 static def computeVersionCode() {
-    return System.getenv("CIRCLE_BUILD_NUM") ?: Sdk.localVersionCode
+    def buildNumber = System.getenv("VERSION_CODE") ?: System.getenv("CIRCLE_BUILD_NUM")
+    if (buildNumber == null || !buildNumber.trim().isInteger()) {
+        return Sdk.localVersionCode
+    }
+    return buildNumber.trim().toInteger()
 }
 
 dependencies {

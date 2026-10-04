@@ -12,13 +12,6 @@ android {
         minSdk Sdk.phoneMinSdk
         targetSdk Sdk.targetSdk
 
-        def localProperties = new Properties()
-        if (rootProject.file("local.properties").exists()) {
-            localProperties.load(new FileInputStream(rootProject.file("local.properties")))
-        }
-        def password = System.getenv("WEATHERYOU_PREMIUM_PASSWORD") ?: localProperties['weatheryou.premiumpassword']
-        buildConfigField "String", "PREMIUM_PASSWORD", "\"" + password + "\""
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
@@ -34,7 +27,6 @@ android {
     }
     buildFeatures {
         compose true
-        buildConfig true
     }
     composeOptions {
         kotlinCompilerExtensionVersion libs.versions.composeCompilerVersion.get()

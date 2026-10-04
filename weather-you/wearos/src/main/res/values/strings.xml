@@ -17,5 +17,10 @@
     <string name="day_weather_complication_label">Current Weather</string>
     <string name="uv_index_complication_label">UV Index</string>
     <string name="precipitation_chance_complication_label">Precipitation Chance</string>
+    <string name="watch_donation_required">Donate in the WeatherYou phone app to unlock the watch app.</string>
+    <string name="watch_check_entitlement">Check again</string>
+    <string name="watch_checking_entitlement">Checking with your phone…</string>
+    <string name="watch_phone_not_synced">Open WeatherYou on your paired phone, then check again.</string>
+    <string name="watch_phone_unavailable">Could not check right now. Connect your watch to your phone and retry.</string>
 
 </resources>

@@ -13,16 +13,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,51 +32,11 @@ import com.rodrigmatrix.weatheryou.about.R
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.domain.R as Strings
 import com.rodrigmatrix.weatheryou.presentation.about.model.SocialNetwork
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
-import com.rodrigmatrix.weatheryou.about.BuildConfig
-import com.rodrigmatrix.weatheryou.domain.repository.SettingsRepository
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
-import org.koin.compose.koinInject
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AboutScreen(
-    settingsRepository: SettingsRepository = koinInject(),
-    coroutineScope: CoroutineScope = rememberCoroutineScope(),
+    donationContent: @Composable () -> Unit = {},
+    showTvDonationNotice: Boolean = false,
 ) {
-    var showPremiumDialog by remember { mutableStateOf(false) }
-    var password by remember { mutableStateOf("") }
-    if (showPremiumDialog) {
-        AlertDialog(
-            onDismissRequest = { }
-        ) {
-            Column {
-                OutlinedTextField(
-                    value = password,
-                    onValueChange = {
-                        password = it
-                    },
-                )
-                Button(
-                    onClick = {
-                        if (password == BuildConfig.PREMIUM_PASSWORD) {
-                            coroutineScope.launch {
-                                settingsRepository
-                                    .setIsPremiumUser(true)
-                                    .collect {
-                                        showPremiumDialog = false
-                                    }
-                            }
-                        }
-                    }
-                ) { }
-            }
-        }
-    }
     Column(
         Modifier
             .fillMaxSize()
@@ -90,21 +44,12 @@ fun AboutScreen(
             .verticalScroll(rememberScrollState())
             .padding(bottom = 100.dp)
     ) {
-        var clicks by remember { mutableIntStateOf(0) }
         Spacer(Modifier.statusBarsPadding())
         Image(
             painter = painterResource(R.drawable.ic_about),
             contentDescription = stringResource(Strings.string.image_of_developer),
             contentScale = ContentScale.FillBounds,
             modifier = Modifier
-                .clickable(
-                    onClick = {
-                        clicks++
-                        if (clicks >= 20) {
-                            showPremiumDialog = true
-                        }
-                    }
-                )
                 .padding(top = 16.dp)
                 .size(130.dp)
                 .clip(CircleShape)
@@ -132,6 +77,16 @@ fun AboutScreen(
                 .align(Alignment.CenterHorizontally)
                 .padding(start = 16.dp, end = 16.dp)
         )
+        if (showTvDonationNotice) {
+            Text(
+                text = stringResource(R.string.tv_donation_notice),
+                style = WeatherYouTheme.typography.bodyLarge,
+                color = WeatherYouTheme.colorScheme.onBackground,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 24.dp),
+            )
+        }
+        donationContent()
         Spacer(Modifier.height(100.dp))
     }
 }

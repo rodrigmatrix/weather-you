@@ -107,7 +107,11 @@ static def computeVersionName() {
 }
 
 static def computeVersionCode() {
-    return System.getenv("CIRCLE_BUILD_NUM") ?: Sdk.localVersionCode
+    def buildNumber = System.getenv("VERSION_CODE") ?: System.getenv("CIRCLE_BUILD_NUM")
+    if (buildNumber == null || !buildNumber.trim().isInteger()) {
+        return Sdk.localVersionCode
+    }
+    return buildNumber.trim().toInteger()
 }
 
 dependencies {
@@ -115,6 +119,7 @@ dependencies {
     implementation project(LocalModules.data)
     implementation project(LocalModules.core)
     implementation project(LocalModules.ads)
+    googlePlayImplementation project(":billing")
 
     implementation project(LocalModules.components)
     implementation project(LocalModules.home)
@@ -173,7 +178,7 @@ dependencies {
     implementation(libs.google.play.location)
     implementation(libs.google.play.review)
     implementation(libs.google.play.ads)
-    implementation(libs.google.play.billing)
+    googlePlayImplementation(libs.google.play.billing)
 
     implementation(libs.jodaTime)
 

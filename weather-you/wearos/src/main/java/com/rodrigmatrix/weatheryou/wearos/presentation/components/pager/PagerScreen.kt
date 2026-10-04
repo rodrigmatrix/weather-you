@@ -23,7 +23,6 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.foundation.ExperimentalWearFoundationApi
 import androidx.wear.compose.foundation.HierarchicalFocusCoordinator
-import androidx.wear.compose.foundation.OnFocusChange
 import androidx.wear.compose.material.HorizontalPageIndicator
 import androidx.wear.compose.material.PageIndicatorState
 import androidx.wear.compose.material.Scaffold
@@ -96,15 +95,8 @@ fun PagerScaffold(
     val key = remember { Any() }
 
     DisposableEffect(key) {
+        scaffoldState.addScreen(key, timeText, null)
         onDispose {
-            scaffoldState.removeScreen(key)
-        }
-    }
-
-    OnFocusChange { focused ->
-        if (focused) {
-            scaffoldState.addScreen(key, timeText, null)
-        } else {
             scaffoldState.removeScreen(key)
         }
     }

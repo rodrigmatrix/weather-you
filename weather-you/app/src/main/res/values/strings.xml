@@ -1,3 +1,12 @@
 <resources>
+    <string name="donation_title">Support WeatherYou</string>
+    <string name="donation_benefits">Your donation removes mobile ads, unlocks up to 10 weather locations, and gives you access to WeatherYou Watch.</string>
+    <string name="donation_thank_you">Thank you for supporting WeatherYou!</string>
+    <string name="donation_tier_1">Supporter · %1$s</string>
+    <string name="donation_tier_2">Weather friend · %1$s</string>
+    <string name="donation_tier_3">Patron · %1$s</string>
+    <string name="donation_prices_unavailable">Donation options are unavailable right now.</string>
+    <string name="donation_restore">Refresh purchases</string>
+    <string name="donation_acknowledgement_pending">Google Play could not confirm the donation yet. Refresh purchases to try again.</string>
     <string name="app_name">WeatherYou</string>
 </resources>

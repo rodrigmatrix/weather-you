@@ -10,6 +10,7 @@ import com.rodrigmatrix.weatheryou.ads.di.WeatherYouAdsModule
 import com.rodrigmatrix.weatheryou.data.di.WeatherYouDataModules
 import com.rodrigmatrix.weatheryou.home.di.HomeModule
 import com.rodrigmatrix.weatheryou.locationdetails.di.LocationDetailsModule
+import com.rodrigmatrix.weatheryou.presentation.donation.initializeDonationFeature
 import com.rodrigmatrix.weatheryou.presentation.di.WeatherYouAppModules
 import com.rodrigmatrix.weatheryou.settings.di.SettingsModule
 import com.rodrigmatrix.weatheryou.settings.utils.AppThemeManager
@@ -37,6 +38,7 @@ class WeatherYouApp: Application() {
             WeatherYouAppModules.loadModules()
             WeatherYouAdsModule.loadModules()
         }
+        initializeDonationFeature()
         startAdMob()
         initRemoteConfig()
         setAppTheme()

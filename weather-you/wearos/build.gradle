@@ -60,6 +60,7 @@ android {
     packagingOptions {
         resources {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
+            excludes += '/META-INF/versions/9/OSGI-INF/MANIFEST.MF'
         }
     }
 }
@@ -74,6 +75,7 @@ dependencies {
     implementation(libs.androidx.ktx)
     implementation(libs.androidx.lifecycle)
     implementation(libs.androidx.splash.screen)
+    implementation(libs.kotlin.coroutines.android)
 
      implementation platform(libs.compose.bom)
     implementation(libs.compose.ui)

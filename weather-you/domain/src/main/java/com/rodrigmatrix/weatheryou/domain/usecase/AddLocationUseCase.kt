@@ -30,8 +30,9 @@ class AddLocationUseCase(
                 maxLocations = 4
             }
             val isPremium = settingsRepository.getIsPremiumUser().firstOrNull() == true
-            if (!isPremium && (locationsCount >= maxLocations)) {
-                throw LocationLimitException(maxLocations)
+            val allowedLocations = if (isPremium) 10 else maxLocations
+            if (locationsCount >= allowedLocations) {
+                throw LocationLimitException(allowedLocations)
             } else{
                 emitAll(weatherRepository.addLocation(name, latitude, longitude, countryCode))
             }

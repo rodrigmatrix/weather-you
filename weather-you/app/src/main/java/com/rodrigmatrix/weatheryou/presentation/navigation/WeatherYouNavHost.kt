@@ -21,6 +21,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.rodrigmatrix.weatheryou.addlocation.AddLocationScreen
 import com.rodrigmatrix.weatheryou.core.extensions.toast
 import com.rodrigmatrix.weatheryou.presentation.about.AboutScreen
+import com.rodrigmatrix.weatheryou.presentation.donation.DonationFeatureContent
 import com.rodrigmatrix.weatheryou.home.presentation.home.HomeScreen
 import com.rodrigmatrix.weatheryou.home.presentation.home.HomeUiState
 import com.rodrigmatrix.weatheryou.home.presentation.home.HomeViewEffect
@@ -70,7 +71,7 @@ fun SharedTransitionScope.WeatherHomeNavHost(
             SettingsScreen(onFetchLocations = { })
         }
         composable(HomeEntry.About.route) {
-            AboutScreen()
+            AboutScreen(donationContent = { DonationFeatureContent() })
         }
         composable(NavigationEntries.ADD_LOCATION_ROUTE) {
             AddLocationScreen(navController)
