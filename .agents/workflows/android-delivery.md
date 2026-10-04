@@ -11,9 +11,9 @@ This runbook applies to implementation requests in this repository. Codex orches
 
 ## Codex usage routing
 
-Use `get_usage_limits` when available. For the applicable `codex` limit bucket, compute `remaining = max(0, 100 - usedPercent)` for each reported non-null primary and secondary window. Route implementation to Antigravity CLI if either window has less than 50% remaining. At exactly 50% or above in both windows, Codex may implement directly. Missing values are unknown, not zero. Preserve the last verified routing decision during a temporary read failure, mark it stale, and continue independent preflight/review; ask for a percentage only if no verified decision exists and routing is necessary. Recheck at task start and before a new implementation stage after a long build or compaction; do not interrupt a running compiler solely to change routing.
+Use `get_usage_limits` when available. For the applicable `codex` limit bucket, compute `remaining = max(0, 100 - usedPercent)` for each reported non-null primary and secondary window. Route implementation to Antigravity CLI if either window has less than 40% remaining. At exactly 40% or above in both windows, Codex may implement directly. Missing values are unknown, not zero. Preserve the last verified routing decision during a temporary read failure, mark it stale, and continue independent preflight/review; ask for a percentage only if no verified decision exists and routing is necessary. Recheck at task start and before a new implementation stage after a long build or compaction; do not interrupt a running compiler solely to change routing.
 
-Use `gemini-3.8-flash-medium` after verifying that slug is available through the installed CLI. At either usage level, run the requested independent Android architecture and QA reviews through Antigravity when accessible. Below 50%, Codex keeps planning, queue updates, final diff review, and result reporting; Antigravity does repository implementation.
+Use `gemini-3.8-flash-medium` after verifying that slug is available through the installed CLI. At either usage level, run the requested independent Android architecture and QA reviews through Antigravity when accessible. Below 40%, Codex keeps planning, queue updates, final diff review, and result reporting; Antigravity does repository implementation.
 
 ## Antigravity execution
 
