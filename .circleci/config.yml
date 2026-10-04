@@ -87,6 +87,12 @@ jobs:
       - checkout:
           path: ~/project  # Checkout the repository into the ~/project directory
 
+      # Keep the source dependency's Gradle journal separate from WeatherYou's Gradle process.
+      - restore_cache:
+          keys:
+            - gradle-cache-v3-{{ arch }}-{{ checksum "build.gradle" }}-{{ checksum "gradle/libs.versions.toml" }}-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+            - gradle-cache-v2-{{ arch }}-
+
       - run:
           name: Build pinned ComposeCharts dependency
           command: |
@@ -96,16 +102,10 @@ jobs:
             git -C "$compose_charts_dir" remote add origin https://github.com/rodrigmatrix/ComposeCharts.git
             git -C "$compose_charts_dir" fetch --depth 1 origin 454b00e8a41d70c45b47e4e02b86494b69cdb335
             git -C "$compose_charts_dir" checkout --detach FETCH_HEAD
-            (cd "$compose_charts_dir" && ./gradlew :compose-charts:assembleRelease)
+            (cd "$compose_charts_dir" && GRADLE_USER_HOME="$HOME/.gradle-composecharts" ./gradlew :compose-charts:assembleRelease)
             mkdir -p features/locationdetails/libs
             cp "$compose_charts_dir/compose-charts/build/outputs/aar/compose-charts-release.aar" \
               features/locationdetails/libs/compose-charts-android-1.0.aar
-
-      # Restore Gradle cache using CircleCI's built-in caching
-      - restore_cache:
-          keys:
-            - gradle-cache-v2-{{ arch }}-{{ checksum "build.gradle" }}-{{ checksum "gradle/libs.versions.toml" }}-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
-            - gradle-cache-v2-{{ arch }}-
 
       # Load .env file and export variables
       - run:
@@ -156,8 +156,10 @@ jobs:
           paths:
             - ~/.gradle/caches
             - ~/.gradle/wrapper
+            - ~/.gradle-composecharts/caches
+            - ~/.gradle-composecharts/wrapper
             - ~/project/weather-you/.gradle
-          key: gradle-cache-v2-{{ arch }}-{{ checksum "build.gradle" }}-{{ checksum "gradle/libs.versions.toml" }}-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+          key: gradle-cache-v3-{{ arch }}-{{ checksum "build.gradle" }}-{{ checksum "gradle/libs.versions.toml" }}-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
 
 workflows:
   version: 2
