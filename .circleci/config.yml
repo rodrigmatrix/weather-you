@@ -70,14 +70,15 @@ jobs:
           path: ~/project  # Checkout the repository into the ~/project directory
 
       - run:
-          name: Decode Keystore Properties
+          name: Prepare CI-only signing properties
           command: |
             set -euo pipefail
-            if [ -z "${BASE64_KEYSTORE_PROPERTIES:-}" ]; then
-              echo "BASE64_KEYSTORE_PROPERTIES must be configured in CircleCI for release artifact builds." >&2
-              exit 1
-            fi
-            printf '%s' "$BASE64_KEYSTORE_PROPERTIES" | base64 --decode > keystore.properties
+            cat > keystore.properties <<'EOF'
+            releaseKeyAlias=ci-only
+            releaseKeyPassword=ci-only
+            releaseKeyStore=ci-only.keystore
+            releaseStorePassword=ci-only
+            EOF
             chmod 600 keystore.properties
 
       # Restore Gradle cache using CircleCI's built-in caching
@@ -96,15 +97,18 @@ jobs:
       # Build .apk files
       - run:
           name: Build .apk files
-          command: ./gradlew :app:assembleRelease :tv:assembleRelease
+          command: ./gradlew :app:assembleFdroidDebug :app:assembleGooglePlayDebug :tv:assembleDebug
 
       # Upload .apk files to CircleCI artifacts
       - store_artifacts:
-          path: app/build/outputs/apk/release/app-release.apk
-          destination: app-release.apk
+          path: app/build/outputs/apk/fdroid/debug/app-fdroid-debug.apk
+          destination: app-fdroid-debug.apk
       - store_artifacts:
-          path: tv/build/outputs/apk/release/tv-release.apk
-          destination: tv-release.apk
+          path: app/build/outputs/apk/googlePlay/debug/app-googlePlay-debug.apk
+          destination: app-googlePlay-debug.apk
+      - store_artifacts:
+          path: tv/build/outputs/apk/debug/tv-debug.apk
+          destination: tv-debug.apk
 
       # Save Gradle cache using CircleCI's built-in caching
       - save_cache:
