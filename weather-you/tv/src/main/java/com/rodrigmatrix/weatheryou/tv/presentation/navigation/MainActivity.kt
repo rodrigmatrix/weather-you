@@ -3,12 +3,6 @@ package com.rodrigmatrix.weatheryou.tv.presentation.navigation
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
@@ -43,6 +37,7 @@ import com.rodrigmatrix.weatheryou.tv.R
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.core.state.LocalWeatherYouAppSettings
 import com.rodrigmatrix.weatheryou.core.state.WeatherYouAppState
+import com.rodrigmatrix.weatheryou.core.state.produceParticleTick
 import com.rodrigmatrix.weatheryou.domain.model.AppColorPreference
 import com.rodrigmatrix.weatheryou.domain.model.AppThemePreference
 import com.rodrigmatrix.weatheryou.domain.usecase.GetAppSettingsUseCase
@@ -94,24 +89,15 @@ class MainActivity : AppCompatActivity() {
             navController.addOnDestinationChangedListener { _, destination, _ ->
                 currentDestination = destination.route.orEmpty()
             }
-            val infiniteTransition = rememberInfiniteTransition(label = "particleTick")
-            val particleTick by infiniteTransition.animateFloat(
-                initialValue = 0f,
-                targetValue = 1_000_000f,
-                animationSpec = infiniteRepeatable(
-                    animation = tween(
-                        durationMillis = 100_000,
-                        easing = LinearEasing,
-                    ),
-                    repeatMode = RepeatMode.Restart,
-                ),
-                label = "particleTick",
+            val particleTick = produceParticleTick(
+                appSettings.enableWeatherAnimations &&
+                    currentDestination == TvRoutes.Home.javaClass.canonicalName
             )
             WeatherYouAppState(
                 appSettings = appSettings,
                 currentDestination = currentDestination,
                 conditionsScaffoldState = null,
-                particleTick = particleTick.toLong(),
+                particleTick = particleTick,
             ) {
                 WeatherYouTvTheme(
                     themeMode = themeMode,

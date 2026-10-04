@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -65,7 +66,7 @@ import com.rodrigmatrix.weatheryou.tv.presentation.theme.md_theme_dark_secondary
 @Composable
 fun TvWeatherDetailsScreen(
     weatherLocation: WeatherLocation,
-    particleTick: Long,
+    particleTick: State<Long>,
     onExpandDay: (WeatherDay) -> Unit,
     modifier: Modifier = Modifier,
 ) {

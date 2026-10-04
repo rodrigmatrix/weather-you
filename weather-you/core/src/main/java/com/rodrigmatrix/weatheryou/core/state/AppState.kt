@@ -8,6 +8,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.State
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -34,8 +35,8 @@ val LocalWeatherYouConditionsScaffoldState = compositionLocalOf<SheetState?> {
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-val LocalWeatherYouParticleState = compositionLocalOf<Long> {
-    0
+val LocalWeatherYouParticleState = compositionLocalOf<State<Long>> {
+    androidx.compose.runtime.mutableStateOf(0L)
 }
 
 @Composable
@@ -43,7 +44,7 @@ fun WeatherYouAppState(
     appSettings: AppSettings,
     currentDestination: String,
     conditionsScaffoldState: SheetState?,
-    particleTick: Long,
+    particleTick: State<Long> = androidx.compose.runtime.mutableStateOf(0L),
     content: @Composable () -> Unit,
 ) {
     CompositionLocalProvider(
@@ -71,7 +72,7 @@ object WeatherYouAppState {
         @Composable
         get() = LocalWeatherYouConditionsScaffoldState.current
 
-    val particleTick: Long
+    val particleTick: State<Long>
         @Composable
         get() = LocalWeatherYouParticleState.current
 }

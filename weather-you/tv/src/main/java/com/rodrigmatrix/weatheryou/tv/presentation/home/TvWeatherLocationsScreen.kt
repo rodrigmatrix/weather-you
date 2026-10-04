@@ -29,6 +29,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -82,7 +83,7 @@ import org.koin.androidx.compose.koinViewModel
 internal fun TvWeatherLocationsScreen(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel,
-    particleTick: Long,
+    particleTick: State<Long>,
     conditionsViewModel: ConditionsViewModel = koinViewModel(),
     locationPermissionState: MultiplePermissionsState = rememberMultiplePermissionsState(
         permissions = listOf(
@@ -166,7 +167,7 @@ internal fun TvWeatherLocationsScreen(
 @Composable
 private fun TvWeatherLocationsScreen(
     uiState: HomeUiState,
-    particleTick: Long,
+    particleTick: State<Long>,
     showLocationPermissionRequest: Boolean,
     onRequestPermission: () -> Unit,
     onWeatherLocationClicked: (WeatherLocation) -> Unit,
@@ -280,7 +281,7 @@ private fun WeatherLocationsLoadingState(
 @Composable
 private fun TvWeatherLocationsContent(
     locationsList: List<WeatherLocation>,
-    particleTick: Long,
+    particleTick: State<Long>,
     currentLocation: WeatherLocation?,
     onWeatherLocationClicked: (WeatherLocation) -> Unit,
     onDeleteLocation: (WeatherLocation) -> Unit,
@@ -390,7 +391,7 @@ fun WeatherLocationsEmptyState(
 @Composable
 private fun WeatherLocationsList(
     weatherLocationsList: List<WeatherLocation>,
-    particleTick: Long,
+    particleTick: State<Long>,
     currentLocation: WeatherLocation?,
     onWeatherLocationClicked: (WeatherLocation) -> Unit,
     onDeleteLocation: (WeatherLocation) -> Unit,
@@ -421,6 +422,7 @@ private fun WeatherLocationsList(
                             particleTick = particleTick,
                             weatherLocation = weatherLocation,
                             modifier = Modifier.height(130.dp),
+                            animateParticles = false,
                         )
                     }
                     WeatherLocationCardContent(

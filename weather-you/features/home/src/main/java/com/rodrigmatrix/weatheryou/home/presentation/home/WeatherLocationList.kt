@@ -28,6 +28,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -54,7 +55,7 @@ import sh.calvin.reorderable.rememberReorderableLazyGridState
 @Composable
 fun WeatherLocationList(
     weatherLocationList: List<WeatherLocation>,
-    particleTick: Long,
+    particleTick: State<Long>,
     isRefreshingLocations: Boolean,
     selectedLocation: WeatherLocation?,
     onItemClick: (WeatherLocation) -> Unit,
@@ -162,7 +163,7 @@ fun WeatherLocationList(
 @Composable
 fun WeatherLocation(
     weatherLocation: WeatherLocation,
-    particleTick: Long,
+    particleTick: State<Long>,
     isSelected: Boolean,
     isRefreshingLocations: Boolean,
     onItemClick: (WeatherLocation) -> Unit,
@@ -229,6 +230,7 @@ fun WeatherLocation(
                             weatherLocation = weatherLocation,
                             particleTick = particleTick,
                             modifier = Modifier.height(130.dp),
+                            animateParticles = false,
                         )
                     }
                     WeatherLocationCardContent(

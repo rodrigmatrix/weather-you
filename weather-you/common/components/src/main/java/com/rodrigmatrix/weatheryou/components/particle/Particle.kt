@@ -1,27 +1,13 @@
 package com.rodrigmatrix.weatheryou.components.particle
 
-import android.annotation.SuppressLint
-import android.util.Log
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.keyframes
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -36,7 +22,6 @@ import kotlin.math.sin
 import kotlin.random.Random
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.unit.dp
 import com.rodrigmatrix.weatheryou.components.R
@@ -48,7 +33,7 @@ import kotlin.math.absoluteValue
 @Composable
 fun Clouds(
     tint: ColorFilter,
-    particleAnimationIteration: Long,
+    particleAnimationIteration: State<Long>,
     cloudCount: Int,
     modifier: Modifier = Modifier,
 ) {
@@ -148,14 +133,9 @@ class ParticleSystemHelper(
                 particle.y > frameHeight || particle.x < 0 || particle.x > frameWidth
             }
             PrecipitationSourceEdge.RIGHT -> {
-                val result = particle.y - particle.height > frameHeight ||
+                particle.y - particle.height > frameHeight ||
                         particle.y + particle.height < 0 ||
                         particle.x + particle.width < 0
-
-                if (result) {
-                    Log.d("isOutOfFrame", "$result $particle $frameWidth $frameHeight")
-                }
-                result
             }
             PrecipitationSourceEdge.BOTTOM -> {
                 particle.y < 0 || particle.x < 0 || particle.x > frameWidth
@@ -244,52 +224,25 @@ private fun Int.ifZero(function: () -> Int): Int {
 }
 
 
-@SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun Particles(
     modifier: Modifier = Modifier,
-    iteration: Long,
-    blinkAnimation: Boolean = false,
+    iteration: State<Long>,
     parameters: PrecipitationsParameters
 ) {
-
-    var particles by remember {
-        mutableStateOf(
-            listOf<Particle>()
-        )
-    }
     BoxWithConstraints(
         modifier = modifier
             .fillMaxSize()
     ) {
-        val particleGenerator by remember {
-            mutableStateOf(
-                ParticleSystemHelper(
-                    parameters, constraints.maxWidth, constraints.maxHeight
-                )
-            )
+        val particleGenerator = remember(parameters, constraints.maxWidth, constraints.maxHeight) {
+            ParticleSystemHelper(parameters, constraints.maxWidth, constraints.maxHeight)
         }
-        val blinkAnimationList = if (blinkAnimation) {
-            val infiniteTransition = rememberInfiniteTransition(label = "")
-            particleGenerator.particles.map {
-                infiniteTransition.animateFloat(
-                    initialValue = 0f,
-                    targetValue = 1f,
-                    animationSpec = infiniteRepeatable(
-                        animation = tween(Random.nextInt(from = 1000, until = 5000)),
-                        repeatMode = RepeatMode.Reverse
-                    ), label = ""
-                )
-            }
-        } else {
-            emptyList()
-        }
+        val linePathEffect = remember { PathEffect.cornerPathEffect(20f) }
         Canvas(
             modifier = Modifier.fillMaxSize(),
             onDraw = {
                 particleGenerator.generateParticles()
-                particleGenerator.updateParticles(iteration)
-                particles = particleGenerator.particles
+                particleGenerator.updateParticles(iteration.value)
                 particleGenerator.particles.forEachIndexed { index, particle ->
                     when (parameters.shape) {
                         is PrecipitationShape.Circle -> {
@@ -297,7 +250,9 @@ fun Particles(
                                 color = parameters.shape.color,
                                 radius = particle.width,
                                 center = Offset(particle.x, particle.y),
-                                alpha = blinkAnimationList.getOrNull(index)?.value ?: 1f,
+                                alpha = if (parameters.blinkStars) {
+                                    0.55f + ((iteration.value / 700L + index * 37L) % 100L) / 220f
+                                } else 1f,
                             )
                         }
                         is PrecipitationShape.Line -> {
@@ -309,7 +264,7 @@ fun Particles(
                             ).toFloat()
                             drawLine(
                                 color = parameters.shape.color,
-                                pathEffect = PathEffect.cornerPathEffect(20f),
+                                pathEffect = linePathEffect,
                                 start = Offset(particle.x, particle.y),
                                 end = Offset(endX, endY),
                                 strokeWidth = particle.width
@@ -375,11 +330,12 @@ data class PrecipitationsParameters(
     val minAngle: Int,
     val maxAngle: Int,
     val shape: PrecipitationShape,
-    val sourceEdge: PrecipitationSourceEdge
+    val sourceEdge: PrecipitationSourceEdge,
+    val blinkStars: Boolean = false,
 )
 
 val snowParameters = PrecipitationsParameters(
-    particleCount = 200,
+    particleCount = 100,
     distancePerStep = 5,
     minSpeed = 0.1f,
     maxSpeed = 1f,
@@ -394,7 +350,7 @@ val snowParameters = PrecipitationsParameters(
 )
 
 val rainParameters = PrecipitationsParameters(
-    particleCount = 600,
+    particleCount = 160,
     distancePerStep = 30,
     minSpeed = 0.7f,
     maxSpeed = 1f,
@@ -411,7 +367,7 @@ val rainParameters = PrecipitationsParameters(
 )
 
 val hailParameters = PrecipitationsParameters(
-    particleCount = 200,
+    particleCount = 100,
     distancePerStep = 10,
     minSpeed = 0.6f,
     maxSpeed = 1f,
@@ -426,7 +382,7 @@ val hailParameters = PrecipitationsParameters(
 )
 
 val starsParameters = PrecipitationsParameters(
-    particleCount = 600,
+    particleCount = 48,
     distancePerStep = 0,
     minSpeed = 0f,
     maxSpeed = 1f,
@@ -437,7 +393,8 @@ val starsParameters = PrecipitationsParameters(
         maxRadius = 4,
         color = Color.White,
     ),
-    sourceEdge = PrecipitationSourceEdge.TOP
+    sourceEdge = PrecipitationSourceEdge.TOP,
+    blinkStars = true,
 )
 
 @Preview
@@ -451,7 +408,7 @@ fun RainPreview() {
             )
         )
     ) {
-        Particles(iteration = particleTick.toLong(), parameters = rainParameters)
+    Particles(iteration = particleTick, parameters = rainParameters)
     }
 }
 
@@ -466,7 +423,7 @@ fun SnowPreview() {
             )
         )
     ) {
-        Particles(iteration = particleTick.toLong(), parameters = snowParameters)
+    Particles(iteration = particleTick, parameters = snowParameters)
     }
 }
 
@@ -487,7 +444,7 @@ fun CloudsPreview() {
                 Color.Black.copy(alpha = 0.2f),
                 BlendMode.SrcAtop
             ),
-            particleAnimationIteration = particleTick.toLong(),
+            particleAnimationIteration = particleTick,
             cloudCount = 8
         )
     }
@@ -506,7 +463,7 @@ fun ThunderstormPreview() {
         )
     ) {
         Thunder(
-            particleAnimationIteration = particleTick.toLong(),
+            particleAnimationIteration = particleTick,
             width = 600,
             height = 400,
         )

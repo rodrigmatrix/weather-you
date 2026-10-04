@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
@@ -21,6 +23,20 @@ fun WeatherAnimationsBackground(
     weatherLocation: WeatherLocation,
     particleTick: Long,
     modifier: Modifier = Modifier,
+) {
+    WeatherAnimationsBackground(
+        weatherLocation = weatherLocation,
+        particleTick = rememberUpdatedState(particleTick),
+        modifier = modifier,
+    )
+}
+
+@Composable
+fun WeatherAnimationsBackground(
+    weatherLocation: WeatherLocation,
+    particleTick: State<Long>,
+    modifier: Modifier = Modifier,
+    animateParticles: Boolean = true,
 ) {
     Crossfade(
         targetState = weatherLocation,
@@ -205,9 +221,11 @@ fun WeatherAnimationsBackground(
                 // Consider if thunderstorms are typical
             }
         }
+        cloudCount = cloudCount.coerceAtMost(MAX_ANIMATED_CLOUDS)
 
         WeatherAnimationsBackground(
             particle = particleTick,
+            animateParticles = animateParticles,
             modifier = contentModifier, // Use the new contentModifier
             cloudsFraction = cloudsFraction,
             starsFraction = starsFraction,
@@ -223,9 +241,12 @@ fun WeatherAnimationsBackground(
     }
 }
 
+private const val MAX_ANIMATED_CLOUDS = 12
+
 @Composable
 private fun WeatherAnimationsBackground(
-    particle: Long,
+    particle: State<Long>,
+    animateParticles: Boolean,
     modifier: Modifier = Modifier,
     cloudsFraction: Float,
     starsFraction: Float,
@@ -239,17 +260,16 @@ private fun WeatherAnimationsBackground(
     isDaylight: Boolean,
 ) {
    Box(modifier = modifier) {
-       if (starsCount > 0 && !isDaylight) {
+       if (animateParticles && starsCount > 0 && !isDaylight) {
            Particles(
                iteration = particle,
                parameters = starsParameters.copy(particleCount = starsCount),
-               blinkAnimation = true,
                modifier = Modifier
                    .fillMaxSize()
                    .fillMaxHeight(fraction = starsFraction),
            )
        }
-       if (cloudCount > 0) {
+       if (animateParticles && cloudCount > 0) {
            Clouds(
                tint = ColorFilter.tint(
                    Color.Black.copy(alpha = 0.2f),
@@ -262,14 +282,14 @@ private fun WeatherAnimationsBackground(
                    .fillMaxSize()
            )
        }
-       if (isThunderstorm) {
+       if (animateParticles && isThunderstorm) {
            Thunder(
                particleAnimationIteration = particle,
                width = 400, // Consider making these dynamic or passed as params
                height = 600
            )
        }
-       if (isRaining) {
+       if (animateParticles && isRaining) {
            // The rainIntensity parameter was removed from the private function,
            // so we use a default or derive it if needed inside Particles
            Particles(
@@ -277,13 +297,13 @@ private fun WeatherAnimationsBackground(
                parameters = rainParameters, // If rainParameters needs intensity, it must be part of the object
            )
        }
-       if (isHailing) {
+       if (animateParticles && isHailing) {
            Particles(
                iteration = particle,
                parameters = hailParameters,
            )
        }
-       if (isSnowing) {
+       if (animateParticles && isSnowing) {
            Particles(
                iteration = particle,
                parameters = snowParameters,
