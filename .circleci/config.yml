@@ -15,6 +15,20 @@ jobs:
           path: ~/project  # Checkout the repository into the ~/project directory
 
       - run:
+          name: Build pinned ComposeCharts dependency
+          command: |
+            set -euo pipefail
+            compose_charts_dir="$(mktemp -d ../composecharts.XXXXXX)"
+            git -C "$compose_charts_dir" init
+            git -C "$compose_charts_dir" remote add origin https://github.com/rodrigmatrix/ComposeCharts.git
+            git -C "$compose_charts_dir" fetch --depth 1 origin 454b00e8a41d70c45b47e4e02b86494b69cdb335
+            git -C "$compose_charts_dir" checkout --detach FETCH_HEAD
+            (cd "$compose_charts_dir" && ./gradlew :compose-charts:assembleRelease)
+            mkdir -p features/locationdetails/libs
+            cp "$compose_charts_dir/compose-charts/build/outputs/aar/compose-charts-release.aar" \
+              features/locationdetails/libs/compose-charts-android-1.0.aar
+
+      - run:
           name: Decode Keystore File
           command: |
             echo $BASE64_KEYSTORE_PROPERTIES | base64 --decode > keystore.properties
@@ -22,7 +36,8 @@ jobs:
       # Restore Gradle cache using CircleCI's built-in caching
       - restore_cache:
           keys:
-            - gradle-cache-{{ checksum "weather-you/build.gradle" }}  # Updated path to build.gradle
+            - gradle-cache-v2-{{ arch }}-{{ checksum "build.gradle" }}-{{ checksum "gradle/libs.versions.toml" }}-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+            - gradle-cache-v2-{{ arch }}-
 
       # Load .env file and export variables
       - run:
@@ -41,6 +56,7 @@ jobs:
       # Build .aab files
       - run:
           name: Build .aab files
+          no_output_timeout: 30m
           command: ./gradlew :app:bundleRelease :tv:bundleRelease
 
       # Upload .aab files to Google Play Console using Fastlane
@@ -56,23 +72,40 @@ jobs:
       # Save Gradle cache using CircleCI's built-in caching
       - save_cache:
           paths:
-            - ~/project/weather-you/.gradle  # Updated path to .gradle directory
-          key: gradle-cache-{{ checksum "weather-you/build.gradle" }}  # Updated path to build.gradle
+            - ~/.gradle/caches
+            - ~/.gradle/wrapper
+            - ~/project/weather-you/.gradle
+          key: gradle-cache-v2-{{ arch }}-{{ checksum "build.gradle" }}-{{ checksum "gradle/libs.versions.toml" }}-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
 
   build-and-upload-to-artifacts:
     executor:
       name: android/android_machine
-      resource_class: medium  # Adjust resource class as needed
+      resource_class: large
       tag: default
     working_directory: ~/project/weather-you  # Set the working directory
     steps:
       - checkout:
           path: ~/project  # Checkout the repository into the ~/project directory
 
-      # Restore Gradle cache using CircleCI's built-in caching
+      # Keep the source dependency's Gradle journal separate from WeatherYou's Gradle process.
       - restore_cache:
           keys:
-            - gradle-cache-{{ checksum "weather-you/build.gradle" }}  # Updated path to build.gradle
+            - gradle-cache-v3-{{ arch }}-{{ checksum "build.gradle" }}-{{ checksum "gradle/libs.versions.toml" }}-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+            - gradle-cache-v2-{{ arch }}-
+
+      - run:
+          name: Build pinned ComposeCharts dependency
+          command: |
+            set -euo pipefail
+            compose_charts_dir="$(mktemp -d ../composecharts.XXXXXX)"
+            git -C "$compose_charts_dir" init
+            git -C "$compose_charts_dir" remote add origin https://github.com/rodrigmatrix/ComposeCharts.git
+            git -C "$compose_charts_dir" fetch --depth 1 origin 454b00e8a41d70c45b47e4e02b86494b69cdb335
+            git -C "$compose_charts_dir" checkout --detach FETCH_HEAD
+            (cd "$compose_charts_dir" && GRADLE_USER_HOME="$HOME/.gradle-composecharts" ./gradlew :compose-charts:assembleRelease)
+            mkdir -p features/locationdetails/libs
+            cp "$compose_charts_dir/compose-charts/build/outputs/aar/compose-charts-release.aar" \
+              features/locationdetails/libs/compose-charts-android-1.0.aar
 
       # Load .env file and export variables
       - run:
@@ -85,12 +118,35 @@ jobs:
       # Build .apk files
       - run:
           name: Build .apk files
-          command: ./gradlew :app:assembleRelease :tv:assembleRelease
+          no_output_timeout: 30m
+          command: |
+            set -euo pipefail
+            # CI artifacts use a disposable key; the Play upload job uses its own protected signing key.
+            trap 'rm -f keystore.properties ci-only.keystore' EXIT
+            keytool -genkeypair -noprompt \
+              -keystore ci-only.keystore \
+              -storepass ci-only \
+              -keypass ci-only \
+              -alias ci-only \
+              -dname "CN=WeatherYou CI,O=WeatherYou,C=US" \
+              -validity 2 \
+              -keyalg RSA \
+              -keysize 2048
+            printf '%s\n' \
+              'releaseKeyAlias=ci-only' \
+              'releaseKeyPassword=ci-only' \
+              'releaseKeyStore=../ci-only.keystore' \
+              'releaseStorePassword=ci-only' > keystore.properties
+            chmod 600 keystore.properties
+            ./gradlew :app:assembleFdroidRelease :app:assembleGooglePlayRelease :tv:assembleRelease --stacktrace
 
       # Upload .apk files to CircleCI artifacts
       - store_artifacts:
-          path: app/build/outputs/apk/release/app-release.apk
-          destination: app-release.apk
+          path: app/build/outputs/apk/fdroid/release/app-fdroid-release.apk
+          destination: app-fdroid-release.apk
+      - store_artifacts:
+          path: app/build/outputs/apk/googlePlay/release/app-googlePlay-release.apk
+          destination: app-googlePlay-release.apk
       - store_artifacts:
           path: tv/build/outputs/apk/release/tv-release.apk
           destination: tv-release.apk
@@ -98,20 +154,17 @@ jobs:
       # Save Gradle cache using CircleCI's built-in caching
       - save_cache:
           paths:
-            - ~/project/weather-you/.gradle  # Updated path to .gradle directory
-          key: gradle-cache-{{ checksum "weather-you/build.gradle" }}  # Updated path to build.gradle
+            - ~/.gradle/caches
+            - ~/.gradle/wrapper
+            - ~/.gradle-composecharts/caches
+            - ~/.gradle-composecharts/wrapper
+            - ~/project/weather-you/.gradle
+          key: gradle-cache-v3-{{ arch }}-{{ checksum "build.gradle" }}-{{ checksum "gradle/libs.versions.toml" }}-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
 
 workflows:
   version: 2
-  upload-to-play:
-    jobs:
-      - build-and-upload-to-play:
-          filters:
-            branches:
-              only: 
-                - main
-                - dev
-
+  # Play uploads are triggered manually by .github/workflows/google-play-internal.yml.
+  # Keep pushes to main/dev from silently publishing a bundle.
   upload-to-artifacts:
     jobs:
       - build-and-upload-to-artifacts:
