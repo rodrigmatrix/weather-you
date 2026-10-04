@@ -10,7 +10,7 @@ plugins {
 def keyStorePropertiesFile = rootProject.file("keystore.properties")
 def keyStoreProperties = new Properties()
 keyStoreProperties.load(new FileInputStream(keyStorePropertiesFile))
-def buildNumber = System.getenv("CIRCLE_BUILD_NUM")?.trim()
+def buildNumber = (System.getenv("VERSION_CODE") ?: System.getenv("CIRCLE_BUILD_NUM"))?.trim()
 def buildVersionCode = buildNumber?.isInteger() ? buildNumber.toInteger() : Sdk.localVersionCode
 
 android {
