@@ -163,15 +163,8 @@ jobs:
 
 workflows:
   version: 2
-  upload-to-play:
-    jobs:
-      - build-and-upload-to-play:
-          filters:
-            branches:
-              only: 
-                - main
-                - dev
-
+  # Play uploads are triggered manually by .github/workflows/google-play-internal.yml.
+  # Keep pushes to main/dev from silently publishing a bundle.
   upload-to-artifacts:
     jobs:
       - build-and-upload-to-artifacts:
