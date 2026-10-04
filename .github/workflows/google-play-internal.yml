@@ -82,10 +82,61 @@ jobs:
           java-version: "21"
 
       - name: Set up Android SDK
-        uses: android-actions/setup-android@9fc6c4e9069bf8d3d10b2204b1fb8f6ef7065407 # v3
+        uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd # v4.0.4
+        with:
+          packages: platform-tools
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@0723195856401067f7a2779048b490ace7a47d7c # v5
+
+      - name: Validate Google Play Firebase configuration
+        shell: bash
+        env:
+          GOOGLE_SERVICES_JSON_BASE64: ${{ secrets.WEATHER_YOU_GOOGLE_SERVICES_JSON_BASE64 }}
+        run: |
+          set -euo pipefail
+          : "${GOOGLE_SERVICES_JSON_BASE64:?Missing WEATHER_YOU_GOOGLE_SERVICES_JSON_BASE64 environment secret}"
+          python3 - <<'PY'
+          import base64
+          import binascii
+          import json
+          import os
+
+          encoded = os.environ["GOOGLE_SERVICES_JSON_BASE64"]
+          try:
+              decoded = base64.b64decode("".join(encoded.split()), validate=True)
+              config = json.loads(decoded.decode("utf-8"))
+          except (binascii.Error, UnicodeDecodeError, json.JSONDecodeError):
+              raise SystemExit(
+                  "WEATHER_YOU_GOOGLE_SERVICES_JSON_BASE64 must decode to valid google-services.json. "
+                  "Replace the google-play-internal environment secret with a fresh base64 encoding."
+              )
+
+          clients = config.get("client") if isinstance(config, dict) else None
+          package_name = "com.rodrigmatrix.weatheryou"
+
+          def has_package(client):
+              if not isinstance(client, dict):
+                  return False
+              client_info = client.get("client_info")
+              if not isinstance(client_info, dict):
+                  return False
+              android_info = client_info.get("android_client_info")
+              return (
+                  isinstance(android_info, dict)
+                  and android_info.get("package_name") == package_name
+              )
+
+          if not isinstance(clients, list) or not any(
+              has_package(client) for client in clients
+          ):
+              raise SystemExit(
+                  "The decoded Google Play Firebase configuration does not contain the WeatherYou Android package. "
+                  "Replace the google-play-internal environment secret with the correct configuration."
+              )
+
+          print("Google Play Firebase configuration is valid.")
+          PY
 
       - name: Build pinned ComposeCharts dependency
         shell: bash
@@ -96,7 +147,7 @@ jobs:
           git -C "$compose_charts_dir" remote add origin https://github.com/rodrigmatrix/ComposeCharts.git
           git -C "$compose_charts_dir" fetch --depth 1 origin 454b00e8a41d70c45b47e4e02b86494b69cdb335
           git -C "$compose_charts_dir" checkout --detach FETCH_HEAD
-          (cd "$compose_charts_dir" && GRADLE_USER_HOME="$RUNNER_TEMP/gradle-composecharts" ./gradlew :compose-charts:assembleRelease)
+          (cd "$compose_charts_dir" && GRADLE_USER_HOME="$RUNNER_TEMP/gradle-composecharts" ./gradlew --no-daemon :compose-charts:assembleRelease)
           mkdir -p weather-you/features/locationdetails/libs
           cp "$compose_charts_dir/compose-charts/build/outputs/aar/compose-charts-release.aar" \
             weather-you/features/locationdetails/libs/compose-charts-android-1.0.aar
@@ -107,11 +158,10 @@ jobs:
           GOOGLE_SERVICES_JSON_BASE64: ${{ secrets.WEATHER_YOU_GOOGLE_SERVICES_JSON_BASE64 }}
         run: |
           set -euo pipefail
-          : "${GOOGLE_SERVICES_JSON_BASE64:?Missing WEATHER_YOU_GOOGLE_SERVICES_JSON_BASE64 environment secret}"
+          umask 077
           config_path="weather-you/app/src/googlePlay/google-services.json"
           mkdir -p "$(dirname "$config_path")"
-          printf '%s' "$GOOGLE_SERVICES_JSON_BASE64" | base64 --decode > "$config_path"
-          chmod 600 "$config_path"
+          printf '%s' "$GOOGLE_SERVICES_JSON_BASE64" | tr -d '[:space:]' | base64 --decode > "$config_path"
 
       - name: Prepare upload signing key
         shell: bash
@@ -128,7 +178,7 @@ jobs:
           : "${UPLOAD_STORE_PASSWORD:?Missing WEATHER_YOU_UPLOAD_STORE_PASSWORD environment secret}"
 
           key_path="$RUNNER_TEMP/weather-you-upload-key.jks"
-          printf '%s' "$UPLOAD_KEYSTORE_BASE64" | base64 --decode > "$key_path"
+          printf '%s' "$UPLOAD_KEYSTORE_BASE64" | tr -d '[:space:]' | base64 --decode > "$key_path"
           chmod 600 "$key_path"
           export WEATHER_YOU_CI_KEY_PATH="$key_path"
 
@@ -193,10 +243,11 @@ jobs:
           status: completed
           releaseName: ${{ github.ref_name }}-${{ inputs.version_code }}
 
-      - name: Remove temporary signing material
+      - name: Remove temporary signing and build material
         if: ${{ always() }}
         shell: bash
         run: |
           rm -f weather-you/app/src/googlePlay/google-services.json
           rm -f weather-you/keystore.properties
           rm -f "$RUNNER_TEMP/weather-you-upload-key.jks"
+          rm -rf "$RUNNER_TEMP"/composecharts.* "$RUNNER_TEMP/gradle-composecharts"
