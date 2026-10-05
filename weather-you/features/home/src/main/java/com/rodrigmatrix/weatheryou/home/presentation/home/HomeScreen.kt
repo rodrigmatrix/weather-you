@@ -75,6 +75,7 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -268,7 +269,7 @@ fun HomeScreen(
 @Composable
 fun WeatherLocationsListScreen(
     uiState: HomeUiState,
-    particleTick: Long,
+    particleTick: State<Long>,
     navigator: ThreePaneScaffoldNavigator<Int>,
     showLocationPermissionRequest: Boolean,
     onItemClick: (WeatherLocation) -> Unit,

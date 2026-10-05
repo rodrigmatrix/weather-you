@@ -5,12 +5,6 @@ import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -47,12 +41,14 @@ import com.rodrigmatrix.weatheryou.components.theme.ThemeSettings
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.core.state.LocalWeatherYouAppSettings
 import com.rodrigmatrix.weatheryou.core.state.WeatherYouAppState
+import com.rodrigmatrix.weatheryou.core.state.produceParticleTick
 import com.rodrigmatrix.weatheryou.domain.model.AppColorPreference
 import com.rodrigmatrix.weatheryou.domain.model.AppThemePreference
 import com.rodrigmatrix.weatheryou.domain.usecase.GetAppSettingsUseCase
 import com.rodrigmatrix.weatheryou.home.presentation.home.HomeViewModel
 import com.rodrigmatrix.weatheryou.home.presentation.navigation.HomeNavigationRail
 import com.rodrigmatrix.weatheryou.home.presentation.navigation.HomeNavigationSuite
+import com.rodrigmatrix.weatheryou.home.presentation.navigation.HomeEntry
 import com.rodrigmatrix.weatheryou.home.presentation.navigation.NavigationEntries
 import com.rodrigmatrix.weatheryou.presentation.navigation.WeatherHomeNavHost
 import com.rodrigmatrix.weatheryou.settings.utils.AppThemeManager
@@ -129,18 +125,8 @@ fun WeatherYouMobileApp(
     val homeScreenNavigator = rememberListDetailPaneScaffoldNavigator<Int>(
         calculatePaneScaffoldDirectiveWithTwoPanesOnMediumWidth(currentWindowAdaptiveInfo())
     )
-    val infiniteTransition = rememberInfiniteTransition(label = "particleTick")
-    val particleTick by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 1_000_000f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(
-                durationMillis = 100_000,
-                easing = LinearEasing,
-            ),
-            repeatMode = RepeatMode.Restart,
-        ),
-        label = "particleTick",
+    val particleTick = produceParticleTick(
+        appSettings.enableWeatherAnimations && currentDestination == HomeEntry.Locations.route
     )
     val adaptiveInfo = currentWindowAdaptiveInfo()
     val customNavSuiteType = with (adaptiveInfo) {
@@ -156,7 +142,7 @@ fun WeatherYouMobileApp(
             appSettings = appSettings,
             currentDestination = currentDestination,
             conditionsScaffoldState = conditionsScaffoldState,
-            particleTick = particleTick.toLong(),
+            particleTick = particleTick,
         ) {
             WeatherYouTheme(
                 themeMode = themeMode,
@@ -166,7 +152,10 @@ fun WeatherYouMobileApp(
                     enableThemeColorForWeatherAnimations = appSettings.enableThemeColorWithWeatherAnimations,
                 )
             ) {
-                if (WeatherYouTheme.themeSettings.showWeatherAnimations && navSuiteType == NavigationSuiteType.NavigationRail) {
+                if (WeatherYouTheme.themeSettings.showWeatherAnimations &&
+                    navSuiteType == NavigationSuiteType.NavigationRail &&
+                    currentDestination == HomeEntry.Locations.route
+                ) {
                     homeViewState.getSelectedOrFirstLocation()?.let {
                         WeatherAnimationsBackground(
                             weatherLocation = it,
