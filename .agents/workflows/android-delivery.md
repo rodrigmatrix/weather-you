@@ -82,3 +82,14 @@ Never print or send the contents of `local.properties`, `keystore.properties`, `
 Production Play uploads/rollouts, backend migrations/deployments, and account changes require the user's explicit authorization for the concrete action. Prepare reviewable artifacts first. Maintain the user's existing app decisions, including WeatherYou's current client-only donation choice; a workflow review is not authorization to redesign that feature.
 
 References: [Codex repository instructions](https://learn.chatgpt.com/docs/agent-configuration/agents-md), [Antigravity custom agents](https://antigravity.google/docs/subagents?tab=cli), [CLI terminal results](https://www.antigravity.google/docs/cli/headless/), [Gradle Java compatibility](https://docs.gradle.org/current/userguide/compatibility.html).
+
+## Standing WeatherYou PR and Internal Track Delivery
+
+The user authorized this standing workflow on 2026-10-04: for each requested WeatherYou Android app change, prepare and push a focused branch, open a pull request targeting `dev`, and publish the merged build to Google Play's **Internal testing** track after the required checks pass. This standing authorization covers internal testing only; it does not authorize Production releases or other Play tracks.
+
+1. Create a task-specific branch from the current `dev` branch and preserve unrelated checkout changes. Include a concise change summary and actual build/device QA limitations in the PR description.
+2. Wait for the PR's required CI checks and complete the repository-mandated review, builds, and QA. Merge to `dev` only when required checks pass. If checks fail or a concrete blocker prevents required validation, do not merge or dispatch publishing; explain the blocker and next action.
+3. After the merge completes, dispatch `.github/workflows/google-play-internal.yml` from `dev` with `confirm_upload=true` and the next unused Android version code. Verify the completed GitHub Actions run and that its release appears on Play Console's Internal testing track. The workflow remains manual-dispatch-only; never publish automatically from every `dev` push, since not every push necessarily belongs to an authorized WeatherYou change.
+4. Report the PR, merge commit, upload run, Play release name/version code, QA evidence, and emulator cleanup. Keep the local task checkpoint and QA report current. Do not claim the upload completed until both the workflow and Play track confirm it.
+
+Do not re-request authorization for this routine internal-test flow unless the target app/track or requested scope materially changes. Production publishing still requires separate explicit authorization.
