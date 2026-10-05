@@ -93,4 +93,3 @@ The user authorized this standing workflow on 2026-10-04: for each requested Wea
 4. Report the PR, merge commit, upload run, Play release name/version code, QA evidence, and emulator cleanup. Keep the local task checkpoint and QA report current. Do not claim the upload completed until both the workflow and Play track confirm it.
 
 Do not re-request authorization for this routine internal-test flow unless the target app/track or requested scope materially changes. Production publishing still requires separate explicit authorization.
-
