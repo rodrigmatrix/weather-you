@@ -441,8 +441,18 @@ class WeatherRepositoryImpl(
             )
         weatherLocalDataSource.upsertCurrentLocation(currentLocation.toEntity())
             .firstOrNull()
-        if (forceUpdate || currentLocationData == null || currentLocationData.expirationDate.isBefore(currentLocationData.timeZone.getCurrentTime())) {
-            val location = fetchLocation(
+        val weatherExpired = currentLocationData == null ||
+            currentLocationData.expirationDate.isBefore(currentLocationData.timeZone.getCurrentTime())
+        val shouldRefreshWeather = WeatherRefreshPolicy.shouldRefreshCurrentLocationWeather(
+            forceUpdate = forceUpdate,
+            weatherExpired = weatherExpired,
+            cachedLatitude = currentLocationData?.latitude,
+            cachedLongitude = currentLocationData?.longitude,
+            currentLatitude = currentLocation.latitude,
+            currentLongitude = currentLocation.longitude,
+        )
+        val location = if (shouldRefreshWeather) {
+            fetchLocation(
                 latitude = currentLocation.latitude,
                 longitude = currentLocation.longitude,
                 countryCode = currentLocation.countryCode,
@@ -454,20 +464,19 @@ class WeatherRepositoryImpl(
                 emit(Result.success(currentLocationData))
             }.map {
                 it.getOrNull()
-            }.firstOrNull()?.copy(
-                    id = -1,
-                    orderIndex = -1,
-                    countryCode = currentLocation.countryCode,
-                    name = currentLocation.name,
-                    isCurrentLocation = true,
-                    widgetId = widgetId,
-                )?.also {
-                    weatherLocalDataSource.upsertCurrentWeather(it.toWeatherEntity())
-                        .firstOrNull()
-                }
-            return location ?: currentLocationData
+            }.firstOrNull() ?: currentLocationData
         } else {
-            return currentLocationData
+            currentLocationData
+        }
+        return location?.copy(
+            id = -1,
+            orderIndex = -1,
+            name = currentLocation.name,
+            isCurrentLocation = true,
+            widgetId = widgetId,
+        )?.also {
+            weatherLocalDataSource.upsertCurrentWeather(it.toWeatherEntity())
+                .firstOrNull()
         }
     }
 
