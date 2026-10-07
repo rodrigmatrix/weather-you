@@ -7,7 +7,6 @@ import android.os.Build
 import androidx.core.app.ActivityCompat
 import androidx.core.os.bundleOf
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.rodrigmatrix.weatheryou.data.exception.CurrentLocationNotFoundException
 import com.rodrigmatrix.weatheryou.data.local.UserLocationDataSource
 import com.rodrigmatrix.weatheryou.data.local.WeatherLocalDataSource
 import com.rodrigmatrix.weatheryou.data.local.model.WeatherLocationEntity
@@ -344,16 +343,16 @@ class WeatherRepositoryImpl(
         )
         return if (hasLocationPermission && (forceUpdate || minutesBetween.minutes > 60 || currentLocationEntity == null)) {
             userLocationDataSource.getCurrentLocation()
-                .firstOrNull() ?: try {
-                    userLocationDataSource.getLastKnownLocation().firstOrNull()
-                } catch (e: Exception) {
-                    currentLocationEntity?.also {
-                        firebaseAnalytics.logEvent("LOCATION_SERVICES_ERROR", bundleOf(
-                            "error" to "Both current and last known location failed",
-                            "last_known_error" to e.localizedMessage
-                        ))
-                    }
-                }
+                .firstOrNullOrFallback(userLocationDataSource.getLastKnownLocation()) { stage, failure ->
+                    firebaseAnalytics.logEvent(
+                        "LOCATION_SERVICES_ERROR",
+                        bundleOf(
+                            "stage" to stage,
+                            "error_type" to failure.javaClass.simpleName,
+                            "has_cached_location" to (currentLocationEntity != null),
+                        ),
+                    )
+                } ?: currentLocationEntity
         } else {
             currentLocationEntity
         }
