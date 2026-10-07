@@ -112,6 +112,7 @@ import kotlin.math.roundToInt
 fun WeatherDetailsScreen(
     weatherLocation: WeatherLocation?,
     isUpdating: Boolean,
+    onUsableForecastDisplayed: () -> Unit = {},
     onCloseClick: () -> Unit,
     onDeleteLocationClicked: () -> Unit,
     onFullScreenModeChange: (Boolean) -> Unit,
@@ -133,6 +134,12 @@ fun WeatherDetailsScreen(
 ) {
     val viewState by viewModel.viewState.collectAsState()
     val conditionsViewState by conditionsViewModel.viewState.collectAsState()
+
+    LaunchedEffect(viewState.isLoading, viewState.weatherLocation, viewState.futureDaysList) {
+        if (!viewState.isLoading && viewState.weatherLocation != null && viewState.futureDaysList.isNotEmpty()) {
+            onUsableForecastDisplayed()
+        }
+    }
 
     WeatherYouTheme(
         themeMode = if (WeatherYouTheme.themeSettings.showWeatherAnimations) {

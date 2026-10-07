@@ -38,6 +38,7 @@ fun SharedTransitionScope.WeatherHomeNavHost(
     homeViewModel: HomeViewModel,
     homeViewState: HomeUiState,
     onUpdateWidgets: () -> Unit,
+    onUsableForecastDisplayed: () -> Unit = {},
     homeScreenNavigator: ThreePaneScaffoldNavigator<Int>,
     modifier: Modifier = Modifier,
 ) {
@@ -63,6 +64,7 @@ fun SharedTransitionScope.WeatherHomeNavHost(
                 onDeleteLocationConfirmButtonClicked = homeViewModel::deleteLocation,
                 onOrderChanged = homeViewModel::orderLocations,
                 onUpdateWidgets = onUpdateWidgets,
+                onUsableForecastDisplayed = onUsableForecastDisplayed,
                 animatedVisibilityScope = this@composable,
                 sharedTransitionScope = this@WeatherHomeNavHost,
             )

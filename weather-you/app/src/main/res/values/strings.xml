@@ -37,6 +37,15 @@
     <string name="donation_mock_cancel_action">Simulate cancellation</string>
     <string name="donation_reset_simulated_action">Reset simulated donation</string>
     <string name="donation_close">Close</string>
+    <string name="donation_not_now">Not now</string>
+    <string name="donation_conversion_headline">Support WeatherYou</string>
+    <string name="donation_conversion_intro">Your one-time contribution helps maintain the app. Every option includes the same supporter benefits.</string>
+    <string name="donation_conversion_benefits_title">Your support unlocks</string>
+    <string name="donation_tier_one_time">One-time contribution</string>
+    <string name="donation_conversion_continue">Continue with %1$s · %2$s</string>
+    <string name="donation_conversion_preview_tier_action">Preview %1$s</string>
+    <string name="donation_conversion_once_note">No subscription. Every amount includes the same benefits.</string>
+    <string name="donation_conversion_back_to_weather">Back to WeatherYou</string>
     <string name="donation_processing">Waiting for Google Play to confirm your donation…</string>
     <string name="donation_pending">Your payment is pending. Your supporter benefits will turn on after Google Play confirms it.</string>
     <string name="donation_payment_failed">Google Play couldn’t complete or confirm the payment. Please try again.</string>

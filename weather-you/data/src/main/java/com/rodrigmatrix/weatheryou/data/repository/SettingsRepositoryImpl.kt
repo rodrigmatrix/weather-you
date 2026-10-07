@@ -27,4 +27,16 @@ class SettingsRepositoryImpl(
     override fun setIsPremiumUser(premium: Boolean): Flow<Unit> {
         return settingsLocalDataSource.setIsPremiumUser(premium)
     }
+
+    override fun getSupportPromptDismissedAtMillis(): Flow<Long?> {
+        return settingsLocalDataSource.getSupportPromptDismissedAtMillis()
+    }
+
+    override fun setSupportPromptDismissedAtMillis(timestampMillis: Long): Flow<Unit> {
+        return settingsLocalDataSource.setSupportPromptDismissedAtMillis(timestampMillis)
+    }
+
+    override fun getHasSeenUsableForecast(): Flow<Boolean> = settingsLocalDataSource.getHasSeenUsableForecast()
+
+    override fun setHasSeenUsableForecast(): Flow<Unit> = settingsLocalDataSource.setHasSeenUsableForecast()
 }
