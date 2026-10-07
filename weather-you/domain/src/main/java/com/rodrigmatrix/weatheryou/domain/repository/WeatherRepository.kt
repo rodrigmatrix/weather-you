@@ -14,7 +14,10 @@ interface WeatherRepository {
 
     fun getLocationsList(): Flow<List<WeatherLocation>>
 
-    fun fetchLocationsList(forceUpdate: Boolean): Flow<Unit>
+    fun fetchLocationsList(
+        forceUpdate: Boolean,
+        forceUpdateLocation: WeatherLocation? = null,
+    ): Flow<Unit>
 
     fun fetchWidgetLocationsList(forceUpdate: Boolean): Flow<Unit>
 

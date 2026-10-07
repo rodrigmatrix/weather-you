@@ -102,7 +102,10 @@ class WeatherRepositoryImpl(
         }
     }
 
-    override fun fetchLocationsList(forceUpdate: Boolean): Flow<Unit> {
+    override fun fetchLocationsList(
+        forceUpdate: Boolean,
+        forceUpdateLocation: WeatherLocation?,
+    ): Flow<Unit> {
         return weatherLocalDataSource.getAllLocations()
             .map { weatherLocations ->
                 var currentLocationUpdated = false
@@ -112,7 +115,10 @@ class WeatherRepositoryImpl(
                 while (!currentLocationUpdated && retryCount < maxRetries) {
                     try {
                         getOrUpdateCurrentLocation(
-                            forceUpdate = forceUpdate,
+                            forceUpdate = WeatherRefreshPolicy.shouldForceCurrentLocation(
+                                forceUpdate = forceUpdate,
+                                forceUpdateLocationIsCurrent = forceUpdateLocation?.isCurrentLocation,
+                            ),
                             hasLocationPermission = hasLocationPermission()
                         )
                         currentLocationUpdated = true
@@ -137,7 +143,14 @@ class WeatherRepositoryImpl(
                         longitude = weatherEntity.longitude,
                         countryCode = weatherEntity.countryCode,
                         timeZone = weatherEntity.timeZone,
-                        forceUpdate = forceUpdate,
+                        forceUpdate = WeatherRefreshPolicy.shouldForceSavedLocation(
+                            forceUpdate = forceUpdate,
+                            forceUpdateLocationIsCurrent = forceUpdateLocation?.isCurrentLocation,
+                            forceUpdateLatitude = forceUpdateLocation?.latitude,
+                            forceUpdateLongitude = forceUpdateLocation?.longitude,
+                            latitude = weatherEntity.latitude,
+                            longitude = weatherEntity.longitude,
+                        ),
                     )?.copy(
                         id = weatherEntity.id,
                         name = weatherEntity.name,

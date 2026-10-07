@@ -93,7 +93,11 @@ class HomeViewModel(
     fun refreshLocations() {
         updateLocationsJob?.cancel()
         updateLocationsJob = viewModelScope.launch {
-            updateLocationsOnce(forceUpdate = true)
+            updateLocationsOnce(
+                forceUpdate = true,
+                forceUpdateLocation = viewState.value.selectedWeatherLocation
+                    ?: viewState.value.locationsList.firstOrNull(),
+            )
             startLocationPolling(attempts = 4, delayBeforeFirstAttempt = true)
         }
     }
@@ -107,10 +111,13 @@ class HomeViewModel(
         }
     }
 
-    private suspend fun updateLocationsOnce(forceUpdate: Boolean) {
+    private suspend fun updateLocationsOnce(
+        forceUpdate: Boolean,
+        forceUpdateLocation: WeatherLocation? = null,
+    ) {
         setState { it.copy(isRefreshingLocations = true) }
         var refreshSucceeded = true
-        val result = updateLocationsUseCase(forceUpdate)
+        val result = updateLocationsUseCase(forceUpdate, forceUpdateLocation)
             .flowOn(coroutineDispatcher)
             .catch { exception ->
                 refreshSucceeded = false
