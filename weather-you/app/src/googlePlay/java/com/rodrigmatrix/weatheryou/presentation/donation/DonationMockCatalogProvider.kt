@@ -17,6 +17,10 @@ internal interface DonationMockCatalogProvider {
 
     fun setEnabled(context: Context, enabled: Boolean)
 
+    fun isPromptPreviewEnabled(context: Context): Boolean = false
+
+    fun setPromptPreviewEnabled(context: Context, enabled: Boolean) = Unit
+
     fun offers(): List<DonationMockOffer>
 
     fun launchScenario(activity: Activity, productId: String, state: String)

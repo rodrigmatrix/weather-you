@@ -15,4 +15,12 @@ interface SettingsRepository {
     fun getIsPremiumUser(): Flow<Boolean>
 
     fun setIsPremiumUser(premium: Boolean): Flow<Unit>
+
+    fun getSupportPromptDismissedAtMillis(): Flow<Long?>
+
+    fun setSupportPromptDismissedAtMillis(timestampMillis: Long): Flow<Unit>
+
+    fun getHasSeenUsableForecast(): Flow<Boolean>
+
+    fun setHasSeenUsableForecast(): Flow<Unit>
 }

@@ -4,6 +4,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.rodrigmatrix.weatheryou.data.local.model.AppSettingsEntity
 import com.rodrigmatrix.weatheryou.data.mapper.mapToDomain
@@ -31,6 +32,8 @@ internal const val WEATHER_ANIMATIONS_KEY = "weather_animations_pref"
 internal const val THEME_COLOR_WEATHER_ANIMATIONS_KEY = "theme_color_weather_animations_pref"
 internal const val APP_SETTINGS_KEY = "app_settings_key"
 internal const val IS_PREMIUM_USER_KEY = "is_premium_user_key"
+internal const val SUPPORT_PROMPT_DISMISSED_AT_KEY = "support_prompt_dismissed_at_key"
+internal const val HAS_SEEN_USABLE_FORECAST_KEY = "has_seen_usable_forecast_key"
 internal const val WIND_UNIT_KEY = "wind_unit_pref"
 internal const val PRECIPITATION_UNIT_KEY = "precipitation_unit_pref"
 internal const val DISTANCE_UNIT_KEY = "distance_unit_pref"
@@ -168,6 +171,28 @@ class SettingsLocalDataSourceImpl(
         dataStore.edit { preferences ->
             preferences[booleanPreferencesKey(IS_PREMIUM_USER_KEY)] = premium
         }
+        emit(Unit)
+    }
+
+    override fun getSupportPromptDismissedAtMillis(): Flow<Long?> {
+        return dataStore.data.map { preferences ->
+            preferences[longPreferencesKey(SUPPORT_PROMPT_DISMISSED_AT_KEY)]
+        }
+    }
+
+    override fun setSupportPromptDismissedAtMillis(timestampMillis: Long): Flow<Unit> = flow {
+        dataStore.edit { preferences ->
+            preferences[longPreferencesKey(SUPPORT_PROMPT_DISMISSED_AT_KEY)] = timestampMillis
+        }
+        emit(Unit)
+    }
+
+    override fun getHasSeenUsableForecast(): Flow<Boolean> = dataStore.data.map { preferences ->
+        preferences[booleanPreferencesKey(HAS_SEEN_USABLE_FORECAST_KEY)] ?: false
+    }
+
+    override fun setHasSeenUsableForecast(): Flow<Unit> = flow {
+        dataStore.edit { preferences -> preferences[booleanPreferencesKey(HAS_SEEN_USABLE_FORECAST_KEY)] = true }
         emit(Unit)
     }
 

@@ -79,6 +79,7 @@ class HomeViewModel(
                             locationsList = weatherLocationsList,
                             selectedWeatherLocation = getSelectedWeatherLocation(weatherLocationsList),
                             isLoading = false,
+                            isLocationsLoaded = true,
                         )
                     }
                 }

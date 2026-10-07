@@ -7,6 +7,7 @@ import com.rodrigmatrix.weatheryou.domain.model.WeatherLocation
 
 data class HomeUiState(
     val isLoading: Boolean = false,
+    val isLocationsLoaded: Boolean = false,
     val isRefreshingLocations: Boolean = false,
     val locationsList: List<WeatherLocation> = emptyList(),
     val selectedWeatherLocation: WeatherLocation? = null,

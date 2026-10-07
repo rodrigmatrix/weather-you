@@ -45,16 +45,19 @@ import com.rodrigmatrix.weatheryou.core.state.produceParticleTick
 import com.rodrigmatrix.weatheryou.domain.model.AppColorPreference
 import com.rodrigmatrix.weatheryou.domain.model.AppThemePreference
 import com.rodrigmatrix.weatheryou.domain.usecase.GetAppSettingsUseCase
+import com.rodrigmatrix.weatheryou.domain.repository.SettingsRepository
 import com.rodrigmatrix.weatheryou.home.presentation.home.HomeViewModel
 import com.rodrigmatrix.weatheryou.home.presentation.navigation.HomeNavigationRail
 import com.rodrigmatrix.weatheryou.home.presentation.navigation.HomeNavigationSuite
 import com.rodrigmatrix.weatheryou.home.presentation.navigation.HomeEntry
 import com.rodrigmatrix.weatheryou.home.presentation.navigation.NavigationEntries
 import com.rodrigmatrix.weatheryou.presentation.navigation.WeatherHomeNavHost
+import com.rodrigmatrix.weatheryou.presentation.donation.DonationSupportPromptOverlay
 import com.rodrigmatrix.weatheryou.settings.utils.AppThemeManager
 import com.rodrigmatrix.weatheryou.widgets.weather.CurrentWeatherWidget
 import com.rodrigmatrix.weatheryou.widgets.weather.animated.CurrentAnimatedWeatherWidget
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.first
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
@@ -65,6 +68,7 @@ import org.koin.compose.koinInject
 fun WeatherYouMobileApp(
     getAppSettingsUseCase: GetAppSettingsUseCase = koinInject<GetAppSettingsUseCase>(),
     appThemeManager: AppThemeManager = koinInject<AppThemeManager>(),
+    settingsRepository: SettingsRepository = koinInject<SettingsRepository>(),
 ) {
     val defaultSettings = LocalWeatherYouAppSettings.current
     val context = LocalContext.current
@@ -137,75 +141,88 @@ fun WeatherYouMobileApp(
         }
     }
     val navSuiteType = NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(adaptiveInfo)
-    Box(Modifier.blur(blurValue).fillMaxSize()) {
-        WeatherYouAppState(
-            appSettings = appSettings,
-            currentDestination = currentDestination,
-            conditionsScaffoldState = conditionsScaffoldState,
-            particleTick = particleTick,
+    WeatherYouAppState(
+        appSettings = appSettings,
+        currentDestination = currentDestination,
+        conditionsScaffoldState = conditionsScaffoldState,
+        particleTick = particleTick,
+    ) {
+        WeatherYouTheme(
+            themeMode = themeMode,
+            colorMode = colorMode,
+            themeSettings = ThemeSettings(
+                showWeatherAnimations = appSettings.enableWeatherAnimations,
+                enableThemeColorForWeatherAnimations = appSettings.enableThemeColorWithWeatherAnimations,
+            )
         ) {
-            WeatherYouTheme(
-                themeMode = themeMode,
-                colorMode = colorMode,
-                themeSettings = ThemeSettings(
-                    showWeatherAnimations = appSettings.enableWeatherAnimations,
-                    enableThemeColorForWeatherAnimations = appSettings.enableThemeColorWithWeatherAnimations,
-                )
-            ) {
-                if (WeatherYouTheme.themeSettings.showWeatherAnimations &&
-                    navSuiteType == NavigationSuiteType.NavigationRail &&
-                    currentDestination == HomeEntry.Locations.route
-                ) {
-                    homeViewState.getSelectedOrFirstLocation()?.let {
-                        WeatherAnimationsBackground(
-                            weatherLocation = it,
-                            particleTick = WeatherYouAppState.particleTick,
-                            modifier = Modifier.fillMaxSize(),
-                        )
+            Box(Modifier.fillMaxSize()) {
+                Box(Modifier.blur(blurValue).fillMaxSize()) {
+                    if (WeatherYouTheme.themeSettings.showWeatherAnimations &&
+                        navSuiteType == NavigationSuiteType.NavigationRail &&
+                        currentDestination == HomeEntry.Locations.route
+                    ) {
+                        homeViewState.getSelectedOrFirstLocation()?.let {
+                            WeatherAnimationsBackground(
+                                weatherLocation = it,
+                                particleTick = WeatherYouAppState.particleTick,
+                                modifier = Modifier.fillMaxSize(),
+                            )
+                        }
                     }
-                }
 
-                NavigationSuiteScaffoldLayout(
-                    layoutType = customNavSuiteType,
-                    navigationSuite = {
-                        if (navSuiteType == NavigationSuiteType.NavigationRail) {
-                            HomeNavigationRail(
-                                navController = navController,
-                                currentDestination = currentDestination,
-                                homeViewState = homeViewState,
-                                appSettings = appSettings,
-                            )
-                        } else null
-                    }
-                ) {
-                    Box {
-                        SharedTransitionLayout {
-                            WeatherHomeNavHost(
-                                homeViewModel = homeViewModel,
-                                homeViewState = homeViewState,
-                                navController = navController,
-                                onUpdateWidgets = {
-                                    coroutineScope.launch {
-                                        CurrentWeatherWidget().updateAll(context)
-                                        CurrentAnimatedWeatherWidget().updateAll(context)
-                                    }
-                                },
-                                homeScreenNavigator = homeScreenNavigator,
-                            )
-                            if (navSuiteType != NavigationSuiteType.NavigationRail) {
-                                HomeNavigationSuite(
+                    NavigationSuiteScaffoldLayout(
+                        layoutType = customNavSuiteType,
+                        navigationSuite = {
+                            if (navSuiteType == NavigationSuiteType.NavigationRail) {
+                                HomeNavigationRail(
                                     navController = navController,
                                     currentDestination = currentDestination,
-                                    homeScreenNavigator = homeScreenNavigator,
-                                    onSearchClick = {
-                                        navController.navigate(NavigationEntries.ADD_LOCATION_ROUTE)
-                                    },
-                                    modifier = Modifier.align(Alignment.BottomCenter),
+                                    homeViewState = homeViewState,
+                                    appSettings = appSettings,
                                 )
+                            } else null
+                        }
+                    ) {
+                        Box {
+                            SharedTransitionLayout {
+                                WeatherHomeNavHost(
+                                    homeViewModel = homeViewModel,
+                                    homeViewState = homeViewState,
+                                    navController = navController,
+                                    onUpdateWidgets = {
+                                        coroutineScope.launch {
+                                            CurrentWeatherWidget().updateAll(context)
+                                            CurrentAnimatedWeatherWidget().updateAll(context)
+                                        }
+                                    },
+                                    onUsableForecastDisplayed = {
+                                        coroutineScope.launch {
+                                            settingsRepository.setHasSeenUsableForecast().first()
+                                        }
+                                    },
+                                    homeScreenNavigator = homeScreenNavigator,
+                                )
+                                if (navSuiteType != NavigationSuiteType.NavigationRail) {
+                                    HomeNavigationSuite(
+                                        navController = navController,
+                                        currentDestination = currentDestination,
+                                        homeScreenNavigator = homeScreenNavigator,
+                                        onSearchClick = {
+                                            navController.navigate(NavigationEntries.ADD_LOCATION_ROUTE)
+                                        },
+                                        modifier = Modifier.align(Alignment.BottomCenter),
+                                    )
+                                }
                             }
                         }
                     }
                 }
+
+                DonationSupportPromptOverlay(
+                    homeUiState = homeViewState,
+                    isLocationsScreen = currentDestination == HomeEntry.Locations.route,
+                    modifier = Modifier.fillMaxSize(),
+                )
             }
         }
     }
