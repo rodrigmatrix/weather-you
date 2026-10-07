@@ -9,6 +9,7 @@ import com.rodrigmatrix.weatheryou.domain.model.SearchAutocompleteLocation
 import com.rodrigmatrix.weatheryou.domain.repository.SearchRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 
@@ -30,7 +31,7 @@ class SearchRepositoryImpl(
                 )
             }
         }.catch {
-            searchLocalDataSource.searchLocation(locationName).map {
+            emitAll(searchLocalDataSource.searchLocation(locationName).map {
                 it.map { location ->
                     SearchAutocompleteLocation(
                         name = "${location.city} - ${location.state} ${location.country}",
@@ -40,7 +41,7 @@ class SearchRepositoryImpl(
                         timezone = "",
                     )
                 }
-            }
+            })
         }
     }
 

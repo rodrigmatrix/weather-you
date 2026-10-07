@@ -1,5 +1,6 @@
 package com.rodrigmatrix.weatheryou.data.repository
 
+import java.io.IOException
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
@@ -44,28 +45,45 @@ class WeatherRepositoryImpl(
         longitude: Double,
         countryCode: String,
     ): Flow<Unit> {
-        return searchRepository.getTimezone(latitude, longitude)
-            .flatMapLatest { timezone ->
-                val weatherEntity = WeatherLocationEntity(
-                    latitude = latitude,
-                    orderIndex = getLocationsSize().firstOrNull() ?: 0,
-                    longitude = longitude,
-                    name = name,
-                    countryCode = countryCode.uppercase(),
-                    timeZone = timezone,
-                )
+        return flow {
+            val existingLocation = weatherLocalDataSource.getLocation(latitude, longitude).firstOrNull()
+            if (existingLocation != null) {
                 getOrUpdateLocation(
-                    name = name,
-                    latitude = latitude,
-                    longitude = longitude,
-                    countryCode = countryCode.uppercase(),
-                    timeZone = timezone,
-                    forceUpdate = true,
-                )
-                weatherLocalDataSource.upsertLocation(weatherEntity)
+                    name = existingLocation.name,
+                    latitude = existingLocation.latitude,
+                    longitude = existingLocation.longitude,
+                    countryCode = existingLocation.countryCode,
+                    timeZone = existingLocation.timeZone,
+                    forceUpdate = false,
+                ) ?: throw IOException("Weather is not available for this location yet")
+                emit(Unit)
+                return@flow
             }
-    }
 
+            val timezone = searchRepository.getTimezone(latitude, longitude).firstOrNull().orEmpty()
+            check(timezone.isNotBlank()) { "Unable to determine the selected location's time zone" }
+
+            getOrUpdateLocation(
+                name = name,
+                latitude = latitude,
+                longitude = longitude,
+                countryCode = countryCode.uppercase(),
+                timeZone = timezone,
+                forceUpdate = true,
+            ) ?: throw IOException("Weather is not available for this location yet")
+
+            val weatherEntity = WeatherLocationEntity(
+                latitude = latitude,
+                orderIndex = getLocationsSize().firstOrNull() ?: 0,
+                longitude = longitude,
+                name = name,
+                countryCode = countryCode.uppercase(),
+                timeZone = timezone,
+            )
+            weatherLocalDataSource.upsertLocation(weatherEntity).firstOrNull()
+            emit(Unit)
+        }
+    }
     override fun fetchLocation(
         latitude: Double,
         longitude: Double,
@@ -207,7 +225,7 @@ class WeatherRepositoryImpl(
                     if (weatherWidget.isCurrentLocation) {
                         getWidgetCurrentLocation(
                             widgetId = widgetId,
-                            forceUpdate = true,
+                            forceUpdate = false,
                         )
                     } else {
                         getOrUpdateLocation(
@@ -216,7 +234,7 @@ class WeatherRepositoryImpl(
                             longitude = weatherWidget.longitude,
                             countryCode = weatherWidget.countryCode,
                             timeZone = weatherWidget.timeZone,
-                            forceUpdate = true,
+                            forceUpdate = false,
                             widgetId = widgetId,
                         )?.copy(
                             widgetId = widgetId,
@@ -226,7 +244,7 @@ class WeatherRepositoryImpl(
                 } ?: if (hasLocationPermission()) {
                     getWidgetCurrentLocation(
                         widgetId = widgetId,
-                        forceUpdate = true,
+                        forceUpdate = false,
                     )?.also {
                         setSavedLocation(it, widgetId)
                             .firstOrNull()
@@ -239,7 +257,7 @@ class WeatherRepositoryImpl(
                             longitude = location.longitude,
                             countryCode = location.countryCode,
                             timeZone = location.timeZone,
-                            forceUpdate = true,
+                            forceUpdate = false,
                             widgetId = widgetId,
                         )?.copy(
                             widgetId = widgetId,

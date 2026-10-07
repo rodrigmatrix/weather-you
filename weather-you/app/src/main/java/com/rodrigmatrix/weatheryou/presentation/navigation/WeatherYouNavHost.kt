@@ -57,7 +57,7 @@ fun SharedTransitionScope.WeatherHomeNavHost(
                 },
                 onPermissionGranted = homeViewModel::onLocationPermissionGranted,
                 onDialogStateChanged = homeViewModel::onDialogStateChanged,
-                onSwipeRefresh = homeViewModel::loadLocations,
+                onSwipeRefresh = homeViewModel::refreshLocations,
                 onLocationSelected = homeViewModel::selectLocation,
                 onDeleteLocation = homeViewModel::deleteLocation,
                 onDeleteLocationConfirmButtonClicked = homeViewModel::deleteLocation,

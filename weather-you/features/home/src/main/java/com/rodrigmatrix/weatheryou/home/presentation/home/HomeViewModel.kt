@@ -17,8 +17,7 @@ import com.rodrigmatrix.weatheryou.domain.usecase.UpdateLocationsListOrderUseCas
 import com.rodrigmatrix.weatheryou.home.presentation.home.HomeViewEffect.Error
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
@@ -45,9 +44,7 @@ class HomeViewModel(
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ): ViewModel<HomeUiState, HomeViewEffect>(HomeUiState()) {
 
-    private var updateCount = 0
-
-    private var updateLocationsJob = SupervisorJob() + coroutineDispatcher
+    private var updateLocationsJob: Job? = null
 
     init {
         loadLocations()
@@ -78,9 +75,6 @@ class HomeViewModel(
                         )
                     )
                     setState {
-                        if (weatherLocationsList.size >= 2) {
-                            setEffect { HomeViewEffect.ShowInAppReview }
-                        }
                         it.copy(
                             locationsList = weatherLocationsList,
                             selectedWeatherLocation = getSelectedWeatherLocation(weatherLocationsList),
@@ -92,38 +86,50 @@ class HomeViewModel(
     }
 
     fun updateLocations() {
-        updateLocationsJob.cancelChildren()
-        updateCount = 0
+        updateLocationsJob?.cancel()
+        startLocationPolling(attempts = 5, delayBeforeFirstAttempt = false)
+    }
+
+    fun refreshLocations() {
+        updateLocationsJob?.cancel()
         updateLocationsJob = viewModelScope.launch {
-            while (updateCount < 5) {
-                updateCount++
-                setState { it.copy(isRefreshingLocations = true) }
-                updateLocationsUseCase()
-                    .flowOn(coroutineDispatcher)
-                    .catch {
-                        firebaseAnalytics.logEvent("UPDATE_LOCATIONS_ERROR", bundleOf("error" to it.localizedMessage))
-                        setState {
-                            it.copy(
-                                isRefreshingLocations = false,
-                                isLoading = false,
-                            )
-                        }
-                    }
-                    .firstOrNull().let {
-                        firebaseAnalytics.logEvent("UPDATED_LOCATIONS", bundleOf())
-                        setState {
-                            it.copy(
-                                isLoading = false,
-                                isRefreshingLocations = false
-                            )
-                        }
-                        setEffect { HomeViewEffect.UpdateWidgets }
-                    }
-                delay(FIVE_MINUTES_MILLI)
+            updateLocationsOnce(forceUpdate = true)
+            startLocationPolling(attempts = 4, delayBeforeFirstAttempt = true)
+        }
+    }
+
+    private fun startLocationPolling(attempts: Int, delayBeforeFirstAttempt: Boolean) {
+        updateLocationsJob = viewModelScope.launch {
+            repeat(attempts) { refreshIndex ->
+                if (delayBeforeFirstAttempt || refreshIndex > 0) delay(FIVE_MINUTES_MILLI)
+                updateLocationsOnce(forceUpdate = false)
             }
         }
     }
 
+    private suspend fun updateLocationsOnce(forceUpdate: Boolean) {
+        setState { it.copy(isRefreshingLocations = true) }
+        var refreshSucceeded = true
+        val result = updateLocationsUseCase(forceUpdate)
+            .flowOn(coroutineDispatcher)
+            .catch { exception ->
+                refreshSucceeded = false
+                firebaseAnalytics.logEvent("UPDATE_LOCATIONS_ERROR", bundleOf("error" to exception.localizedMessage))
+            }
+            .firstOrNull()
+        refreshSucceeded = refreshSucceeded && result != null
+
+        setState {
+            it.copy(
+                isLoading = false,
+                isRefreshingLocations = false,
+            )
+        }
+        if (refreshSucceeded) {
+            firebaseAnalytics.logEvent("UPDATED_LOCATIONS", bundleOf())
+            setEffect { HomeViewEffect.UpdateWidgets }
+        }
+    }
     fun onLocationPermissionGranted() {
         viewModelScope.launch {
             setState { it.copy(isRefreshingLocations = true, isLoading = true) }

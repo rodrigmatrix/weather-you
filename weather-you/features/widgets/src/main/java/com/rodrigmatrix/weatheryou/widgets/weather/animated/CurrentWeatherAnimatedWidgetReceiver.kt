@@ -7,12 +7,9 @@ import android.os.Bundle
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.updateAll
-import com.rodrigmatrix.weatheryou.domain.usecase.UpdateLocationsUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import org.koin.core.component.KoinComponent
@@ -23,7 +20,6 @@ class CurrentWeatherAnimatedWidgetReceiver: GlanceAppWidgetReceiver(), KoinCompo
     override val glanceAppWidget: GlanceAppWidget = CurrentAnimatedWeatherWidget()
 
     private val coroutineScope = MainScope()
-    private val updateLocationsUseCase by inject<UpdateLocationsUseCase>()
 
     override fun onUpdate(
         context: Context,
@@ -31,37 +27,29 @@ class CurrentWeatherAnimatedWidgetReceiver: GlanceAppWidgetReceiver(), KoinCompo
         appWidgetIds: IntArray
     ) {
         super.onUpdate(context, appWidgetManager, appWidgetIds)
-        updateLocations(context)
+        updateWidget(context)
     }
 
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
         when (intent.action) {
             Intent.ACTION_TIME_CHANGED,
-            Intent.ACTION_TIMEZONE_CHANGED -> updateLocations(context)
+            Intent.ACTION_TIMEZONE_CHANGED -> updateWidget(context)
         }
     }
 
-    private fun updateLocations(context: Context) {
+    private fun updateWidget(context: Context) {
+        val pendingResult = goAsync()
         coroutineScope.launch(Dispatchers.IO) {
             try {
-                // Fetch fresh weather data first
-                updateLocationsUseCase(forceUpdate = true)
-                    .flowOn(Dispatchers.IO)
-                    .firstOrNull()
-                
-                // Then update all widgets
                 glanceAppWidget.updateAll(context)
-            } catch (e: Exception) {
-                // Even if data fetch fails, try to update with cached data
-                try {
-                    glanceAppWidget.updateAll(context)
-                } catch (updateError: Exception) {
-                }
+            } catch (_: Exception) {
+                // Preserve the persisted widget content; Glance can retry its own update.
+            } finally {
+                pendingResult.finish()
             }
         }
     }
-
     override fun onAppWidgetOptionsChanged(
         context: Context,
         appWidgetManager: AppWidgetManager,
@@ -69,12 +57,6 @@ class CurrentWeatherAnimatedWidgetReceiver: GlanceAppWidgetReceiver(), KoinCompo
         newOptions: Bundle
     ) {
         super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
-        // Update the widget when options change
-        coroutineScope.launch(Dispatchers.IO) {
-            try {
-                glanceAppWidget.updateAll(context)
-            } catch (e: Exception) {
-            }
-        }
+        updateWidget(context)
     }
 }

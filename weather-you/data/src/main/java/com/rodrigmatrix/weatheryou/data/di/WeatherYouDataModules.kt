@@ -65,6 +65,7 @@ import org.koin.core.context.loadKoinModules
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 private val Context.weatherYouDataStore by preferencesDataStore("weather_you_data_store")
 
@@ -270,6 +271,7 @@ object WeatherYouDataModules {
         }
         single {
             val interceptor = OkHttpClient.Builder().apply {
+                callTimeout(20, TimeUnit.SECONDS)
                 if (BuildConfig.DEBUG) {
                     val logging = HttpLoggingInterceptor()
                     logging.setLevel(HttpLoggingInterceptor.Level.BODY)
@@ -311,6 +313,7 @@ object WeatherYouDataModules {
         }
         single(named(LOCATION_IQ)) {
             val interceptor = OkHttpClient.Builder().apply {
+                callTimeout(20, TimeUnit.SECONDS)
                 if (BuildConfig.DEBUG) {
                     val logging = HttpLoggingInterceptor()
                     logging.setLevel(HttpLoggingInterceptor.Level.BASIC)
