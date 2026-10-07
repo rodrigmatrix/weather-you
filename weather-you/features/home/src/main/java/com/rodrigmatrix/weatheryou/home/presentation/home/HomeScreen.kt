@@ -243,10 +243,6 @@ fun HomeScreen(
                     context.toast(viewEffect.stringRes)
                 }
 
-                HomeViewEffect.ShowInAppReview -> {
-
-                }
-
                 HomeViewEffect.UpdateWidgets -> {
                     onUpdateWidgets()
                 }
@@ -286,11 +282,11 @@ fun WeatherLocationsListScreen(
     val pullToRefreshState = rememberPullToRefreshState()
     PullToRefreshBox(
         state = pullToRefreshState,
-        isRefreshing = uiState.isLoading,
+        isRefreshing = uiState.isRefreshingLocations,
         onRefresh = onSwipeRefresh,
         indicator = {
             PullToRefreshDefaults.LoadingIndicator(
-                isRefreshing = uiState.isLoading,
+                isRefreshing = uiState.isRefreshingLocations,
                 state = pullToRefreshState,
                 modifier = Modifier.align(Alignment.TopCenter),
             )

@@ -26,6 +26,12 @@ class WeatherKitRemoteMapper(
         timezone: String,
         countryCode: String,
     ): WeatherLocation {
+        if (source.currentWeather == null || source.forecastDaily?.days.isNullOrEmpty()) {
+            throw IllegalStateException("WeatherKit response is missing required current or daily weather data")
+        }
+        val expirationTime = source.currentWeather.metadata?.expireTime
+            ?.takeIf { runCatching { DateTime.parse(it) }.isSuccess }
+            ?: throw IllegalStateException("WeatherKit response is missing a valid expiration time")
         val daysList = source.forecastDaily?.days?.mapDaysList(
             source.forecastHourly?.hours,
             timezone,
@@ -61,7 +67,7 @@ class WeatherKitRemoteMapper(
             pressure = source.currentWeather?.pressure ?: 0.0,
             days = daysList,
             hours = source.forecastHourly?.hours?.getTodayForecast(timezone).orEmpty(),
-            expirationDate = source.currentWeather?.metadata?.expireTime.toDateTime(timezone),
+            expirationDate = expirationTime.toDateTime(timezone),
             maxWeekTemperature = daysList.maxOf { it.maxTemperature },
             minWeekTemperature = daysList.minOf { it.minTemperature },
             cloudCover = source.currentWeather?.cloudCover.toPercentage(),
@@ -84,7 +90,7 @@ class WeatherKitRemoteMapper(
                 precipitationProbability = it.precipitationChance.toPercentage(),
                 precipitationType = it.precipitationType.toPrecipitationType(),
                 windSpeed = it.windSpeedAvg ?: 0.0,
-                humidity = hours.orEmpty().maxOf { it.humidity.toPercentage() },
+                humidity = hours.orEmpty().maxOfOrNull { it.humidity.toPercentage() } ?: 0.0,
                 sunrise = it.sunrise.toDateTime(timezone),
                 sunset = it.sunrise.toDateTime(timezone),
                 precipitationAmount = it.precipitationAmount ?: 0.0,

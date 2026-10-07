@@ -13,6 +13,7 @@ import com.rodrigmatrix.weatheryou.addlocation.AddLocationViewEffect.LocationAdd
 import com.rodrigmatrix.weatheryou.addlocation.AddLocationViewEffect.ShowError
 import com.rodrigmatrix.weatheryou.ads.manager.AdsManager
 import com.rodrigmatrix.weatheryou.domain.exception.LocationLimitException
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -33,6 +34,8 @@ class AddLocationViewModel(
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ): ViewModel<AddLocationViewState, AddLocationViewEffect>(AddLocationViewState()) {
 
+    private var searchJob: Job? = null
+
     init {
         getFamousLocations()
     }
@@ -42,6 +45,7 @@ class AddLocationViewModel(
         activity: Activity,
         showAds: Boolean = true,
     ) {
+        if (viewState.value.isLoading) return
         setState { it.copy(isLoading = true) }
         viewModelScope.launch {
             adsManager.showRewardedInterstitial(
@@ -87,6 +91,7 @@ class AddLocationViewModel(
     }
 
     fun addFamousLocation(city: City, activity: Activity, showAds: Boolean = true) {
+        if (viewState.value.isLoading) return
         setState { it.copy(isLoading = true) }
         viewModelScope.launch {
             adsManager.showRewardedInterstitial(
@@ -131,9 +136,11 @@ class AddLocationViewModel(
     }
 
     fun onQueryChanged(searchText: String) {
+        searchJob?.cancel()
         setState {
             it.copy(
                 searchText = searchText,
+                locationsList = emptyList(),
                 isLoading = false,
                 showKeepTyping = searchText.length < 3 && searchText.isNotEmpty(),
                 showClickToSearch = searchText.length >= 3,
@@ -143,12 +150,18 @@ class AddLocationViewModel(
     }
 
     fun search() {
-        viewModelScope.launch {
-            searchLocationUseCase(viewState.value.searchText)
+        val query = viewState.value.searchText.trim()
+        if (query.length < 3) return
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            searchLocationUseCase(query)
                 .flowOn(coroutineDispatcher)
                 .onStart {
                     setState {
-                        it.copy(isLoading = true)
+                        it.copy(
+                            locationsList = emptyList(),
+                            isLoading = true,
+                        )
                     }
                 }
                 .catch { exception ->
@@ -156,7 +169,7 @@ class AddLocationViewModel(
                     exception.logError()
                 }
                 .collect { locations ->
-                    firebaseAnalytics.logEvent("SEARCHED_LOCATION", bundleOf("name" to viewState.value.searchText))
+                    firebaseAnalytics.logEvent("SEARCHED_LOCATION", bundleOf("name" to query))
                     setState {
                         it.copy(
                             locationsList = locations,
@@ -168,7 +181,6 @@ class AddLocationViewModel(
                 }
         }
     }
-
     private fun Throwable.handleError() {
         firebaseCrashlytics.recordException(this)
         firebaseAnalytics.logEvent("ADD_LOCATION_ERROR", bundleOf("error" to this.localizedMessage))
