@@ -39,7 +39,13 @@ class UserLocationDataSourceImpl(
     @SuppressLint("MissingPermission")
     override fun getLastKnownLocation(): Flow<CurrentLocation> {
         return flow {
-            val location = getLocationManagerLocation() ?: locationServices.lastLocation.await()
+            val location = getRecentLocationManagerLocation() ?: locationServices.lastLocation.await()
+                ?.takeIf {
+                    LocationFreshnessPolicy.isRecent(
+                        it.elapsedRealtimeNanos,
+                        SystemClock.elapsedRealtimeNanos(),
+                    )
+                }
                 ?: throw CurrentLocationNotFoundException()
             val address = withTimeoutOrNull(GEOCODER_TIMEOUT_MILLIS) {
                 getGeocoderLocation(location).firstOrNull()
@@ -84,16 +90,12 @@ class UserLocationDataSourceImpl(
     }
 
     @SuppressLint("MissingPermission")
-    private fun getLocationManagerLocation(): Location? {
-        return getLocationManagerLocations().maxByOrNull(Location::getElapsedRealtimeNanos)
-    }
-
-    @SuppressLint("MissingPermission")
     private fun getRecentLocationManagerLocation(): Location? {
-        val nowElapsedRealtimeNanos = SystemClock.elapsedRealtimeNanos()
-        return getLocationManagerLocations()
-            .filter { LocationFreshnessPolicy.isRecent(it.elapsedRealtimeNanos, nowElapsedRealtimeNanos) }
-            .maxByOrNull { it.elapsedRealtimeNanos }
+        return LocationFreshnessPolicy.newestRecent(
+            locations = getLocationManagerLocations(),
+            nowElapsedRealtimeNanos = SystemClock.elapsedRealtimeNanos(),
+            timestamp = Location::getElapsedRealtimeNanos,
+        )
     }
 
     @SuppressLint("MissingPermission")

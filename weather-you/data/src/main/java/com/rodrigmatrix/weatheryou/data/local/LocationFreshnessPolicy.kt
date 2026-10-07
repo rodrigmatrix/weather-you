@@ -12,4 +12,12 @@ internal object LocationFreshnessPolicy {
         val ageMillis = (nowElapsedRealtimeNanos - locationElapsedRealtimeNanos) / NANOS_PER_MILLI
         return ageMillis <= MAX_CACHED_LOCATION_AGE_MILLIS
     }
+
+    fun <T> newestRecent(
+        locations: Iterable<T>,
+        nowElapsedRealtimeNanos: Long,
+        timestamp: (T) -> Long,
+    ): T? = locations.asSequence()
+        .filter { isRecent(timestamp(it), nowElapsedRealtimeNanos) }
+        .maxByOrNull(timestamp)
 }
