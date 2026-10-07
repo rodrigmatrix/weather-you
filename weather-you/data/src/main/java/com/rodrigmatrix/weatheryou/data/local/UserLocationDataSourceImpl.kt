@@ -1,6 +1,7 @@
 package com.rodrigmatrix.weatheryou.data.local
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
@@ -12,6 +13,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
 import com.rodrigmatrix.weatheryou.data.exception.CurrentLocationNotFoundException
+import com.rodrigmatrix.weatheryou.domain.R
 import com.rodrigmatrix.weatheryou.domain.model.CurrentLocation
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
@@ -28,6 +30,7 @@ import java.util.TimeZone
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class UserLocationDataSourceImpl(
+    private val context: Context,
     private val locationServices: FusedLocationProviderClient,
     private val locationManager: LocationManager,
     private val geoCoder: Geocoder,
@@ -38,7 +41,10 @@ class UserLocationDataSourceImpl(
         return flow {
             val location = getLocationManagerLocation() ?: locationServices.lastLocation.await()
                 ?: throw CurrentLocationNotFoundException()
-            emit(getGeocoderLocation(location).firstOrNull()?.toCurrentLocation() ?: throw CurrentLocationNotFoundException())
+            val address = withTimeoutOrNull(GEOCODER_TIMEOUT_MILLIS) {
+                getGeocoderLocation(location).firstOrNull()
+            } ?: throw CurrentLocationNotFoundException()
+            emit(location.toCurrentLocation(address))
         }
     }
 
@@ -48,7 +54,10 @@ class UserLocationDataSourceImpl(
             val location = getRecentLocationManagerLocation()
                 ?: getCurrentPlayServicesLocation()
                 ?: throw CurrentLocationNotFoundException()
-            emit(getGeocoderLocation(location).firstOrNull()?.toCurrentLocation() ?: throw CurrentLocationNotFoundException())
+            val address = withTimeoutOrNull(GEOCODER_TIMEOUT_MILLIS) {
+                getGeocoderLocation(location).firstOrNull()
+            }
+            emit(location.toCurrentLocation(address))
         }.catch {
             if (it is CancellationException) throw it
             throw CurrentLocationNotFoundException()
@@ -104,12 +113,20 @@ class UserLocationDataSourceImpl(
         }
     }
 
-    private fun Address.toCurrentLocation(): CurrentLocation {
+    private fun Location.toCurrentLocation(address: Address?): CurrentLocation {
+        val addressName = address?.let {
+            listOfNotNull(it.subAdminArea, it.adminArea, it.countryName)
+                .map(String::trim)
+                .filter(String::isNotEmpty)
+                .joinToString(",")
+                .takeIf(String::isNotBlank)
+        }
+        val fallbackName = context.getString(R.string.current_location).trim()
         return CurrentLocation(
-            name = "$subAdminArea,$adminArea,$countryName",
-            latitude = this.latitude,
-            longitude = this.longitude,
-            countryCode = this.countryCode,
+            name = CurrentLocationFallbackPolicy.resolveName(addressName, fallbackName),
+            latitude = latitude,
+            longitude = longitude,
+            countryCode = address?.countryCode.orEmpty(),
             timezone = TimeZone.getDefault().id,
             lastUpdate = DateTime.now(),
         )
@@ -151,5 +168,6 @@ class UserLocationDataSourceImpl(
     private companion object {
         const val LOCATION_REQUEST_TIMEOUT_MILLIS = 10 * 1000L
         const val LOCATION_REQUEST_TIMEOUT_GRACE_MILLIS = 2 * 1000L
+        const val GEOCODER_TIMEOUT_MILLIS = 5 * 1000L
     }
 }

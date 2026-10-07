@@ -178,6 +178,7 @@ object WeatherYouDataModules {
         }
         factory<UserLocationDataSource> {
             UserLocationDataSourceImpl(
+                context = androidContext(),
                 locationServices = get(),
                 locationManager = androidContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager,
                 geoCoder = get(),
