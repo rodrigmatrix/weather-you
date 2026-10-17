@@ -29,6 +29,9 @@ import com.rodrigmatrix.weatheryou.domain.usecase.GetAppSettingsUseCase
 import com.rodrigmatrix.weatheryou.domain.usecase.GetWidgetTemperatureUseCase
 import com.rodrigmatrix.weatheryou.widgets.weather.MediumLargeLoading
 import com.rodrigmatrix.weatheryou.widgets.weather.MediumLargeUnavailable
+import com.rodrigmatrix.weatheryou.widgets.weather.WidgetDisplayState
+import com.rodrigmatrix.weatheryou.widgets.weather.hasInternetConnection
+import com.rodrigmatrix.weatheryou.widgets.weather.resolveWidgetDisplayState
 import com.rodrigmatrix.weatheryou.widgets.weather.widgetRefreshFailedKey
 import com.rodrigmatrix.weatheryou.widgets.weather.widgetStateDefinition
 import com.rodrigmatrix.weatheryou.widgets.weather.openMainActivity
@@ -70,17 +73,24 @@ class CurrentAnimatedWeatherWidget(
         val glanceWidgetManager = GlanceAppWidgetManager(context)
         val appWidgetId = glanceWidgetManager.getAppWidgetId(id).toString()
         val weatherFlow = getWidgetTemperatureUseCase(appWidgetId)
+        val cachedWeather = weatherFlow.firstOrNull()
         val appSettingsFlow = getAppSettingsUseCase()
+        val isConnected = context.hasInternetConnection()
         provideContent {
-            val weather by weatherFlow.collectAsState(null)
+            val weather by weatherFlow.collectAsState(cachedWeather)
             val appSettings by appSettingsFlow.collectAsState(AppSettings.DEFAULT)
             val refreshFailed = currentState<Preferences>()[widgetRefreshFailedKey] == true
+            val displayState = resolveWidgetDisplayState(
+                hasWeather = weather != null,
+                refreshFailed = refreshFailed,
+                isConnected = isConnected,
+            )
             val size = LocalSize.current
             CompositionLocalProvider(
                 LocalWeatherYouAppSettings provides appSettings,
             ) {
                 GlanceTheme {
-                    if (weather != null) {
+                    if (displayState == WidgetDisplayState.WEATHER && weather != null) {
                         when (size) {
                             smallMode -> AnimatedSmallWidget(
                                 weather = weather!!,
@@ -106,7 +116,7 @@ class CurrentAnimatedWeatherWidget(
                             )
                         }
                     } else {
-                        if (refreshFailed) {
+                        if (displayState == WidgetDisplayState.UNAVAILABLE) {
                             MediumLargeUnavailable(onWidgetClicked = openMainActivity(context, null))
                         } else {
                             MediumLargeLoading(onWidgetClicked = openMainActivity(context, null))

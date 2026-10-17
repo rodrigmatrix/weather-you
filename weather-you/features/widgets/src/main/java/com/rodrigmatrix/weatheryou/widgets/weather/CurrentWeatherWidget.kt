@@ -32,6 +32,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -62,17 +63,24 @@ class CurrentWeatherWidget: GlanceAppWidget(), KoinComponent {
         val glanceWidgetManager = GlanceAppWidgetManager(context)
         val appWidgetId = glanceWidgetManager.getAppWidgetId(id).toString()
         val weatherFlow = getWidgetTemperatureUseCase(appWidgetId)
+        val cachedWeather = weatherFlow.firstOrNull()
         val appSettingsFlow = getAppSettingsUseCase()
+        val isConnected = context.hasInternetConnection()
         provideContent {
-            val weather by weatherFlow.collectAsState(null)
+            val weather by weatherFlow.collectAsState(cachedWeather)
             val appSettings by appSettingsFlow.collectAsState(AppSettings.DEFAULT)
             val refreshFailed = currentState<Preferences>()[widgetRefreshFailedKey] == true
+            val displayState = resolveWidgetDisplayState(
+                hasWeather = weather != null,
+                refreshFailed = refreshFailed,
+                isConnected = isConnected,
+            )
             val size = LocalSize.current
             CompositionLocalProvider(
                 LocalWeatherYouAppSettings provides appSettings,
             ) {
                 GlanceTheme {
-                    if (weather != null) {
+                    if (displayState == WidgetDisplayState.WEATHER && weather != null) {
                         when (size) {
                             smallMode -> SmallWidget(
                                 weather = weather!!,
@@ -85,7 +93,7 @@ class CurrentWeatherWidget: GlanceAppWidget(), KoinComponent {
                             )
                         }
                     } else {
-                        if (refreshFailed) {
+                        if (displayState == WidgetDisplayState.UNAVAILABLE) {
                             MediumLargeUnavailable(onWidgetClicked = openMainActivity(context, null))
                         } else {
                             MediumLargeLoading(onWidgetClicked = openMainActivity(context, null))
