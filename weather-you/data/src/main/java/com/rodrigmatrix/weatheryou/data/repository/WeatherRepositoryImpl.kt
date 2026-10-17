@@ -10,6 +10,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.rodrigmatrix.weatheryou.data.local.UserLocationDataSource
 import com.rodrigmatrix.weatheryou.data.local.WeatherLocalDataSource
 import com.rodrigmatrix.weatheryou.data.local.model.WeatherLocationEntity
+import com.rodrigmatrix.weatheryou.data.local.model.WeatherWidgetLocationEntity
 import com.rodrigmatrix.weatheryou.data.mapper.getCurrentTime
 import com.rodrigmatrix.weatheryou.data.mapper.toDomain
 import com.rodrigmatrix.weatheryou.data.mapper.toEntity
@@ -154,7 +155,37 @@ class WeatherRepositoryImpl(
     }
 
     override fun fetchWidgetLocationsList(forceUpdate: Boolean): Flow<Unit> {
-        return flowOf(Unit)
+        return flow {
+            val widgetLocations = weatherLocalDataSource.getWidgetWeatherList()
+                .firstOrNull()
+                .orEmpty()
+                .distinctWeatherRefreshLocations()
+
+            widgetLocations.forEach { widgetLocation ->
+                val weather = if (widgetLocation.isCurrentLocation) {
+                    getWidgetCurrentLocation(
+                        widgetId = widgetLocation.id,
+                        forceUpdate = forceUpdate,
+                    )
+                } else {
+                    getOrUpdateLocation(
+                        name = widgetLocation.name,
+                        latitude = widgetLocation.latitude,
+                        longitude = widgetLocation.longitude,
+                        countryCode = widgetLocation.countryCode,
+                        timeZone = widgetLocation.timeZone,
+                        forceUpdate = forceUpdate,
+                        widgetId = widgetLocation.id,
+                    )
+                }
+
+                if (weather == null || weather.expirationDate.isBefore(weather.timeZone.getCurrentTime())) {
+                    throw IOException("Widget weather refresh did not produce fresh data")
+                }
+            }
+
+            emit(Unit)
+        }
     }
 
     override fun deleteLocation(weatherLocation: WeatherLocation): Flow<Unit> {
@@ -213,58 +244,54 @@ class WeatherRepositoryImpl(
         )
     }
 
+    override fun ensureWidgetLocation(widgetId: String): Flow<Unit> = flow {
+        val savedLocation = weatherLocalDataSource.getWidgetLocation(widgetId).firstOrNull()
+        if (savedLocation == null) {
+            val defaultLocation = getLocationsList()
+                .firstOrNull()
+                ?.let { locations ->
+                    locations.firstOrNull { it.isCurrentLocation } ?: locations.firstOrNull()
+                }
+                ?: throw IOException("No cached location is available for this widget")
+
+            setSavedLocation(defaultLocation, widgetId).firstOrNull()
+        }
+        emit(Unit)
+    }
+
     override fun deleteWidgetWeather(widgetId: String): Flow<Unit> {
         return weatherLocalDataSource.deleteWidgetLocation(widgetId)
     }
 
     override fun getWidgetWeather(widgetId: String): Flow<WeatherLocation?> {
         return weatherLocalDataSource.getWidgetLocation(widgetId)
-            .map { weatherWidget ->
-                weatherWidget?.let {
-                    if (weatherWidget.isCurrentLocation) {
-                        getWidgetCurrentLocation(
-                            widgetId = widgetId,
-                            forceUpdate = false,
-                        )
-                    } else {
-                        getOrUpdateLocation(
-                            name = weatherWidget.name,
-                            latitude = weatherWidget.latitude,
-                            longitude = weatherWidget.longitude,
-                            countryCode = weatherWidget.countryCode,
-                            timeZone = weatherWidget.timeZone,
-                            forceUpdate = false,
+            .flatMapLatest { weatherWidget ->
+                if (weatherWidget == null) {
+                    getLocationsList().map { locations ->
+                        (locations.firstOrNull { it.isCurrentLocation } ?: locations.firstOrNull())
+                            ?.copy(widgetId = widgetId)
+                    }
+                } else if (weatherWidget.isCurrentLocation) {
+                    weatherLocalDataSource.getCurrentLocationWeather().map { weather ->
+                        weather?.toWeatherLocation(
+                            id = -1,
+                            orderIndex = -1,
                             widgetId = widgetId,
                         )?.copy(
-                            widgetId = widgetId,
                             name = weatherWidget.name,
+                            countryCode = weatherWidget.countryCode,
                         )
-                    }
-                } ?: if (hasLocationPermission()) {
-                    getWidgetCurrentLocation(
-                        widgetId = widgetId,
-                        forceUpdate = false,
-                    )?.also {
-                        setSavedLocation(it, widgetId)
-                            .firstOrNull()
                     }
                 } else {
-                    getLocationsList().firstOrNull()?.firstOrNull()?.let { location ->
-                        getOrUpdateLocation(
-                            name = location.name,
-                            latitude = location.latitude,
-                            longitude = location.longitude,
-                            countryCode = location.countryCode,
-                            timeZone = location.timeZone,
-                            forceUpdate = false,
+                    weatherLocalDataSource.getWeather(
+                        weatherWidget.latitude,
+                        weatherWidget.longitude,
+                    ).map { weather ->
+                        weather?.toWeatherLocation(
+                            id = -1,
+                            orderIndex = -1,
                             widgetId = widgetId,
-                        )?.copy(
-                            widgetId = widgetId,
-                            name = location.name,
-                        )?.also {
-                            setSavedLocation(it, widgetId)
-                                .firstOrNull()
-                        }
+                        )?.copy(name = weatherWidget.name)
                     }
                 }
         }
@@ -488,3 +515,12 @@ class WeatherRepositoryImpl(
                     android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
     }
 }
+
+internal fun List<WeatherWidgetLocationEntity>.distinctWeatherRefreshLocations(): List<WeatherWidgetLocationEntity> =
+    distinctBy { location ->
+        if (location.isCurrentLocation) {
+            "current"
+        } else {
+            "${location.latitude},${location.longitude}"
+        }
+    }

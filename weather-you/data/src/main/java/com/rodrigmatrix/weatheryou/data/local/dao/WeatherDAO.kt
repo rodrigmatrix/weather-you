@@ -11,10 +11,10 @@ interface WeatherDAO {
     suspend fun upsertWeather(weather: WeatherEntity)
 
     @Query("SELECT * FROM weather WHERE latitude LIKE :latitude AND longitude LIKE :longitude")
-    fun getLocationWeather(latitude: Double, longitude: Double): Flow<WeatherEntity>
+    fun getLocationWeather(latitude: Double, longitude: Double): Flow<WeatherEntity?>
 
     @Query("SELECT * FROM weather WHERE isCurrentLocation LIKE 1")
-    fun getCurrentLocationWeather(): Flow<WeatherEntity>
+    fun getCurrentLocationWeather(): Flow<WeatherEntity?>
 
     @Query("DELETE FROM weather WHERE latitude LIKE :latitude AND longitude LIKE :longitude")
     fun deleteWeather(latitude: Double, longitude: Double)

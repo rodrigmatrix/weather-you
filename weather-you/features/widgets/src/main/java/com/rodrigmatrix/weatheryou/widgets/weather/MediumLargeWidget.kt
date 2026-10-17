@@ -307,6 +307,39 @@ fun MediumLargeLoading(
     }
 }
 
+@Composable
+fun MediumLargeUnavailable(
+    onWidgetClicked: Action,
+    modifier: GlanceModifier = GlanceModifier,
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+            .background(ImageProvider(R.drawable.weather_outside_shape_widget))
+            .fillMaxSize()
+            .clickable(onWidgetClicked)
+            .padding(16.dp)
+    ) {
+        Text(
+            text = "Weather unavailable",
+            style = TextStyle(
+                color = GlanceTheme.colors.onPrimaryContainer,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+            ),
+        )
+        Spacer(modifier = GlanceModifier.height(8.dp))
+        Text(
+            text = "Tap to retry",
+            style = TextStyle(
+                color = GlanceTheme.colors.onPrimaryContainer,
+                fontSize = 14.sp,
+            ),
+        )
+    }
+}
+
 @OptIn(ExperimentalGlancePreviewApi::class)
 @Preview(widthDp = 400, heightDp = 400)
 @Composable
