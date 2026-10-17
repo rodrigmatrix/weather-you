@@ -7,9 +7,11 @@ import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.glance.appwidget.updateAll
+import androidx.work.ExistingWorkPolicy
 import androidx.lifecycle.lifecycleScope
 import com.rodrigmatrix.weatheryou.components.theme.WeatherYouTheme
 import com.rodrigmatrix.weatheryou.widgets.weather.CurrentWeatherWidget
+import com.rodrigmatrix.weatheryou.widgets.weather.enqueueWidgetWeatherRefresh
 import com.rodrigmatrix.weatheryou.widgets.weather.animated.CurrentAnimatedWeatherWidget
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -42,6 +44,10 @@ class CurrentWeatherWidgetConfigurationActivity : AppCompatActivity() {
                                 CurrentAnimatedWeatherWidget().updateAll(this@CurrentWeatherWidgetConfigurationActivity)
                                 CurrentWeatherWidget().updateAll(this@CurrentWeatherWidgetConfigurationActivity)
                             }
+                            enqueueWidgetWeatherRefresh(
+                                context = this@CurrentWeatherWidgetConfigurationActivity,
+                                existingWorkPolicy = ExistingWorkPolicy.APPEND_OR_REPLACE,
+                            )
                             setResult(RESULT_OK, resultValue)
                             finish()
                         }

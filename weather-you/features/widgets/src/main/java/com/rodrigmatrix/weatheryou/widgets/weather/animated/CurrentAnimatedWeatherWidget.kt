@@ -6,15 +6,16 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.datastore.preferences.core.Preferences
 import androidx.glance.GlanceId
 import androidx.glance.GlanceTheme
 import androidx.glance.LocalSize
+import androidx.glance.currentState
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.provideContent
 import androidx.glance.state.GlanceStateDefinition
-import androidx.glance.state.PreferencesGlanceStateDefinition
 import com.rodrigmatrix.weatheryou.core.state.LocalWeatherYouAppSettings
 import com.rodrigmatrix.weatheryou.domain.model.AppColorPreference
 import com.rodrigmatrix.weatheryou.domain.model.AppSettings
@@ -27,11 +28,13 @@ import com.rodrigmatrix.weatheryou.domain.usecase.DeleteWidgetLocationUseCase
 import com.rodrigmatrix.weatheryou.domain.usecase.GetAppSettingsUseCase
 import com.rodrigmatrix.weatheryou.domain.usecase.GetWidgetTemperatureUseCase
 import com.rodrigmatrix.weatheryou.widgets.weather.MediumLargeLoading
+import com.rodrigmatrix.weatheryou.widgets.weather.MediumLargeUnavailable
+import com.rodrigmatrix.weatheryou.widgets.weather.widgetRefreshFailedKey
+import com.rodrigmatrix.weatheryou.widgets.weather.widgetStateDefinition
 import com.rodrigmatrix.weatheryou.widgets.weather.openMainActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -61,17 +64,17 @@ class CurrentAnimatedWeatherWidget(
 
     private val scope = CoroutineScope(SupervisorJob())
 
-    override val stateDefinition: GlanceStateDefinition<*> = PreferencesGlanceStateDefinition
+    override val stateDefinition: GlanceStateDefinition<*> = widgetStateDefinition
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         val glanceWidgetManager = GlanceAppWidgetManager(context)
         val appWidgetId = glanceWidgetManager.getAppWidgetId(id).toString()
         val weatherFlow = getWidgetTemperatureUseCase(appWidgetId)
-            .onStart { emit(null) }
         val appSettingsFlow = getAppSettingsUseCase()
         provideContent {
             val weather by weatherFlow.collectAsState(null)
             val appSettings by appSettingsFlow.collectAsState(AppSettings.DEFAULT)
+            val refreshFailed = currentState<Preferences>()[widgetRefreshFailedKey] == true
             val size = LocalSize.current
             CompositionLocalProvider(
                 LocalWeatherYouAppSettings provides appSettings,
@@ -103,9 +106,11 @@ class CurrentAnimatedWeatherWidget(
                             )
                         }
                     } else {
-                        MediumLargeLoading(
-                            onWidgetClicked = openMainActivity(context, null),
-                        )
+                        if (refreshFailed) {
+                            MediumLargeUnavailable(onWidgetClicked = openMainActivity(context, null))
+                        } else {
+                            MediumLargeLoading(onWidgetClicked = openMainActivity(context, null))
+                        }
                     }
                 }
             }

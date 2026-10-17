@@ -6,13 +6,16 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.datastore.preferences.core.Preferences
 import androidx.glance.GlanceId
 import androidx.glance.GlanceTheme
 import androidx.glance.LocalSize
+import androidx.glance.currentState
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.provideContent
+import androidx.glance.state.GlanceStateDefinition
 import com.rodrigmatrix.weatheryou.components.theme.LocalWeatherYouThemeSettingsEnabled
 import com.rodrigmatrix.weatheryou.core.state.LocalWeatherYouAppSettings
 import com.rodrigmatrix.weatheryou.domain.model.AppColorPreference
@@ -29,7 +32,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -46,6 +48,8 @@ class CurrentWeatherWidget: GlanceAppWidget(), KoinComponent {
         setOf(smallMode, mediumMode, largeMode)
     )
 
+    override val stateDefinition: GlanceStateDefinition<*> = widgetStateDefinition
+
     private val getWidgetTemperatureUseCase by inject<GetWidgetTemperatureUseCase>()
 
     private val getAppSettingsUseCase by inject<GetAppSettingsUseCase>()
@@ -58,11 +62,11 @@ class CurrentWeatherWidget: GlanceAppWidget(), KoinComponent {
         val glanceWidgetManager = GlanceAppWidgetManager(context)
         val appWidgetId = glanceWidgetManager.getAppWidgetId(id).toString()
         val weatherFlow = getWidgetTemperatureUseCase(appWidgetId)
-            .onStart{ emit(null) }
         val appSettingsFlow = getAppSettingsUseCase()
         provideContent {
             val weather by weatherFlow.collectAsState(null)
             val appSettings by appSettingsFlow.collectAsState(AppSettings.DEFAULT)
+            val refreshFailed = currentState<Preferences>()[widgetRefreshFailedKey] == true
             val size = LocalSize.current
             CompositionLocalProvider(
                 LocalWeatherYouAppSettings provides appSettings,
@@ -81,9 +85,11 @@ class CurrentWeatherWidget: GlanceAppWidget(), KoinComponent {
                             )
                         }
                     } else {
-                        MediumLargeLoading(
-                            onWidgetClicked = openMainActivity(context, null),
-                        )
+                        if (refreshFailed) {
+                            MediumLargeUnavailable(onWidgetClicked = openMainActivity(context, null))
+                        } else {
+                            MediumLargeLoading(onWidgetClicked = openMainActivity(context, null))
+                        }
                     }
                 }
             }

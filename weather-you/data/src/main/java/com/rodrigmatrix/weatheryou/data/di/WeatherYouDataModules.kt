@@ -104,6 +104,7 @@ object WeatherYouDataModules {
         factory { FetchLocationUseCase(weatherRepository = get()) }
         factory { GetRemoteConfigLongUseCase(remoteConfigRepository = get()) }
         factory { GetWidgetTemperatureUseCase(weatherRepository = get()) }
+        factory { EnsureWidgetLocationUseCase(weatherRepository = get()) }
         factory { SetWidgetLocationUseCase(weatherRepository = get()) }
         factory { DeleteWidgetLocationUseCase(weatherRepository = get()) }
         factory { GetLocationSizeUseCase(weatherRepository = get()) }

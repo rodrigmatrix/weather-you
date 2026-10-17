@@ -43,6 +43,7 @@ dependencies {
     implementation(libs.androidx.ktx)
     implementation(libs.androidx.lifecycle)
     implementation(libs.androidx.window)
+    implementation(libs.workManager)
 
     implementation(libs.kotlin.stdlib)
     implementation(libs.kotlin.coroutines.android)
