@@ -17,11 +17,14 @@ import com.rodrigmatrix.weatheryou.domain.usecase.EnsureWidgetLocationUseCase
 import com.rodrigmatrix.weatheryou.widgets.weather.animated.CurrentAnimatedWeatherWidget
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withTimeoutOrNull
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import java.io.IOException
 import java.util.concurrent.TimeUnit
 
 internal const val MAX_SYNC_ATTEMPTS = 3
+internal const val WIDGET_WEATHER_REFRESH_TIMEOUT_MILLIS = 60_000L
 
 internal fun shouldRetryWidgetWeatherSync(runAttemptCount: Int): Boolean =
     runAttemptCount + 1 < MAX_SYNC_ATTEMPTS
@@ -46,6 +49,20 @@ fun enqueueWidgetWeatherRefresh(
     )
 }
 
+internal suspend fun runWidgetWeatherRefreshWithTimeout(
+    timeoutMillis: Long = WIDGET_WEATHER_REFRESH_TIMEOUT_MILLIS,
+    refresh: suspend () -> Unit,
+) {
+    val completed = withTimeoutOrNull(timeoutMillis) {
+        refresh()
+        true
+    } ?: false
+
+    if (!completed) {
+        throw IOException("Widget weather refresh timed out after $timeoutMillis ms")
+    }
+}
+
 class WidgetWeatherSyncWorker(
     appContext: Context,
     workerParameters: WorkerParameters,
@@ -56,10 +73,12 @@ class WidgetWeatherSyncWorker(
 
     override suspend fun doWork(): Result {
         return try {
-            updateWidgetRefreshState(applicationContext, failed = false)
-            ensureLocationsForActiveWidgets()
-            updateWidgetLocationsUseCase().first()
-            updateWidgetRefreshState(applicationContext, failed = false)
+            runWidgetWeatherRefreshWithTimeout {
+                updateWidgetRefreshState(applicationContext, failed = false)
+                ensureLocationsForActiveWidgets()
+                updateWidgetLocationsUseCase().first()
+                updateWidgetRefreshState(applicationContext, failed = false)
+            }
             Result.success()
         } catch (cancelled: CancellationException) {
             kotlinx.coroutines.withContext(kotlinx.coroutines.NonCancellable) {

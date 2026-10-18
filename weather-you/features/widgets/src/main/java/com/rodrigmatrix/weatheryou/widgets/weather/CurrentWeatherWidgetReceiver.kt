@@ -35,6 +35,5 @@ class CurrentWeatherWidgetReceiver: GlanceAppWidgetReceiver() {
         newOptions: Bundle
     ) {
         super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
-        enqueueWidgetWeatherRefresh(context)
     }
 }

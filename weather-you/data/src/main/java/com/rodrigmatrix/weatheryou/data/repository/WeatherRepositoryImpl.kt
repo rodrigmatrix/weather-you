@@ -160,6 +160,7 @@ class WeatherRepositoryImpl(
                 .firstOrNull()
                 .orEmpty()
                 .distinctWeatherRefreshLocations()
+            var refreshFailed = false
 
             widgetLocations.forEach { widgetLocation ->
                 val weather = if (widgetLocation.isCurrentLocation) {
@@ -184,8 +185,15 @@ class WeatherRepositoryImpl(
                 }
 
                 if (weather == null || weather.expirationDate.isBefore(weather.timeZone.getCurrentTime())) {
-                    throw IOException("Widget weather refresh did not produce fresh data")
+                    // One failing widget should not prevent the remaining distinct locations
+                    // from refreshing. Fresh results are cached, so a retry only revisits stale
+                    // locations instead of repeating successful API calls.
+                    refreshFailed = true
                 }
+            }
+
+            if (refreshFailed) {
+                throw IOException("Widget weather refresh did not produce fresh data")
             }
 
             emit(Unit)
