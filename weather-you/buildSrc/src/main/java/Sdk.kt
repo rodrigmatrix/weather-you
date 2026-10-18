@@ -17,7 +17,7 @@ object Sdk {
     const val tvVersionMinor = 0
     const val tvVersionPatch = 0
 
-    const val localVersionCode = 520069
+    const val localVersionCode = 520070
 
     const val applicationId = "com.rodrigmatrix.weatheryou"
 }

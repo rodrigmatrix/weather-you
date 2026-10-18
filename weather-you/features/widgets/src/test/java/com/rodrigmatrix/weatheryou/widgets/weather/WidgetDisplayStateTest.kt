@@ -4,6 +4,9 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.io.IOException
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 
 class WidgetDisplayStateTest {
 
@@ -45,6 +48,24 @@ class WidgetDisplayStateTest {
             WidgetDisplayState.LOADING,
             resolveWidgetDisplayState(hasWeather = false, refreshFailed = false, refreshRunning = null),
         )
+    }
+
+    @Test
+    fun widgetRefreshCompletingWithinDeadlineSucceeds() = runBlocking {
+        runWidgetWeatherRefreshWithTimeout(timeoutMillis = 100) {
+            delay(1)
+        }
+    }
+
+    @Test
+    fun widgetRefreshTimeoutBecomesAnIOException() = runBlocking {
+        val result = runCatching {
+            runWidgetWeatherRefreshWithTimeout(timeoutMillis = 1) {
+                delay(100)
+            }
+        }
+
+        assertTrue(result.exceptionOrNull() is IOException)
     }
 
     @Test
