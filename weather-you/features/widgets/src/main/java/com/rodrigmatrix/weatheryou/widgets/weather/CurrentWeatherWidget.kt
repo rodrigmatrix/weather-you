@@ -65,15 +65,16 @@ class CurrentWeatherWidget: GlanceAppWidget(), KoinComponent {
         val weatherFlow = getWidgetTemperatureUseCase(appWidgetId)
         val cachedWeather = weatherFlow.firstOrNull()
         val appSettingsFlow = getAppSettingsUseCase()
-        val isConnected = context.hasInternetConnection()
+        val refreshRunningFlow = widgetWeatherRefreshRunningFlow(context)
         provideContent {
             val weather by weatherFlow.collectAsState(cachedWeather)
             val appSettings by appSettingsFlow.collectAsState(AppSettings.DEFAULT)
+            val refreshRunning by refreshRunningFlow.collectAsState<Boolean, Boolean?>(null)
             val refreshFailed = currentState<Preferences>()[widgetRefreshFailedKey] == true
             val displayState = resolveWidgetDisplayState(
                 hasWeather = weather != null,
                 refreshFailed = refreshFailed,
-                isConnected = isConnected,
+                refreshRunning = refreshRunning,
             )
             val size = LocalSize.current
             CompositionLocalProvider(
