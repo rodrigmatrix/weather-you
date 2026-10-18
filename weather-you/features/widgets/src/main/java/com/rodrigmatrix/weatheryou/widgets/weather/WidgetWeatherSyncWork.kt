@@ -21,8 +21,10 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.util.concurrent.TimeUnit
 
-private const val WIDGET_WEATHER_SYNC_WORK = "widget_weather_sync"
-private const val MAX_SYNC_ATTEMPTS = 3
+internal const val MAX_SYNC_ATTEMPTS = 3
+
+internal fun shouldRetryWidgetWeatherSync(runAttemptCount: Int): Boolean =
+    runAttemptCount + 1 < MAX_SYNC_ATTEMPTS
 
 fun enqueueWidgetWeatherRefresh(
     context: Context,
@@ -54,17 +56,21 @@ class WidgetWeatherSyncWorker(
 
     override suspend fun doWork(): Result {
         return try {
+            updateWidgetRefreshState(applicationContext, failed = false)
             ensureLocationsForActiveWidgets()
             updateWidgetLocationsUseCase().first()
             updateWidgetRefreshState(applicationContext, failed = false)
             Result.success()
         } catch (cancelled: CancellationException) {
+            kotlinx.coroutines.withContext(kotlinx.coroutines.NonCancellable) {
+                updateWidgetRefreshState(applicationContext, failed = true)
+            }
             throw cancelled
         } catch (failure: Exception) {
-            if (runAttemptCount < MAX_SYNC_ATTEMPTS) {
+            updateWidgetRefreshState(applicationContext, failed = true)
+            if (shouldRetryWidgetWeatherSync(runAttemptCount)) {
                 Result.retry()
             } else {
-                updateWidgetRefreshState(applicationContext, failed = true)
                 Result.failure()
             }
         }

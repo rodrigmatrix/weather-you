@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import app.cash.turbine.test
+import org.joda.time.DateTime
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Test
@@ -72,6 +73,52 @@ class WidgetWeatherRepositoryTest {
         val distinct = locations.distinctWeatherRefreshLocations()
 
         assertEquals(listOf("1", "3", "4"), distinct.map { it.id })
+    }
+
+    @Test
+    fun `refresh does not call remote source for fresh cached widget weather`() = runBlocking {
+        val remoteDataSource = mockk<WeatherYouRemoteDataSource>(relaxed = true)
+        val localDataSource = mockk<WeatherLocalDataSource>()
+        val widgetLocation = widgetLocation("42", -23.55, -46.63)
+        every { localDataSource.getWidgetWeatherList() } returns flowOf(listOf(widgetLocation))
+        every { localDataSource.getWeather(-23.55, -46.63) } returns flowOf(cachedWeather())
+
+        val repository = WeatherRepositoryImpl(
+            weatherYouRemoteDataSource = remoteDataSource,
+            weatherLocalDataSource = localDataSource,
+            userLocationDataSource = mockk<UserLocationDataSource>(relaxed = true),
+            searchRepository = mockk<SearchRepository>(relaxed = true),
+            applicationContext = mockk(relaxed = true),
+            firebaseAnalytics = mockk<FirebaseAnalytics>(relaxed = true),
+        )
+
+        repository.fetchWidgetLocationsList(forceUpdate = false).first()
+
+        verify(exactly = 1) { localDataSource.getWeather(-23.55, -46.63) }
+        verify(exactly = 0) { remoteDataSource.getWeather(any<Double>(), any<Double>(), any(), any()) }
+    }
+
+    @Test
+    fun `ensuring widget location does not retry when there is no cached location`() = runBlocking {
+        val localDataSource = mockk<WeatherLocalDataSource>()
+        every { localDataSource.getWidgetLocation("42") } returns flowOf(null)
+        every { localDataSource.getAllLocations() } returns flowOf(emptyList())
+        every { localDataSource.getCurrentLocation() } returns flowOf(null)
+
+        val remoteDataSource = mockk<WeatherYouRemoteDataSource>(relaxed = true)
+        val repository = WeatherRepositoryImpl(
+            weatherYouRemoteDataSource = remoteDataSource,
+            weatherLocalDataSource = localDataSource,
+            userLocationDataSource = mockk<UserLocationDataSource>(relaxed = true),
+            searchRepository = mockk<SearchRepository>(relaxed = true),
+            applicationContext = mockk(relaxed = true),
+            firebaseAnalytics = mockk<FirebaseAnalytics>(relaxed = true),
+        )
+
+        repository.ensureWidgetLocation("42").first()
+
+        verify(exactly = 0) { localDataSource.saveWidgetLocation(any()) }
+        verify(exactly = 0) { remoteDataSource.getWeather(any<Double>(), any<Double>(), any(), any()) }
     }
 
     @Test
@@ -141,9 +188,9 @@ class WidgetWeatherRepositoryTest {
         maxTemperature = 25.0,
         lowestTemperature = 18.0,
         feelsLike = 21.0,
-        currentTime = "2026-10-17 12:00:00",
+        currentTime = DateTime.now().toString("yyyy-MM-dd HH:mm:ss"),
         isDaylight = true,
-        expirationDate = "2026-10-17 13:00:00",
+        expirationDate = DateTime.now().plusHours(1).toString("yyyy-MM-dd HH:mm:ss"),
         timeZone = "America/Sao_Paulo",
         precipitationProbability = 0.0,
         precipitationType = "Clear",
@@ -152,8 +199,8 @@ class WidgetWeatherRepositoryTest {
         windSpeed = 2.0,
         windDirection = 180.0,
         uvIndex = 3.0,
-        sunrise = "2026-10-17 06:00:00",
-        sunset = "2026-10-17 18:00:00",
+        sunrise = DateTime.now().withTimeAtStartOfDay().plusHours(6).toString("yyyy-MM-dd HH:mm:ss"),
+        sunset = DateTime.now().withTimeAtStartOfDay().plusHours(18).toString("yyyy-MM-dd HH:mm:ss"),
         visibility = 10.0,
         pressure = 1013.0,
         countryCode = "BR",

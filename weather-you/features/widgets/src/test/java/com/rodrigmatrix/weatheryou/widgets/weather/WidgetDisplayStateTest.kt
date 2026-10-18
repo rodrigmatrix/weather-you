@@ -1,6 +1,8 @@
 package com.rodrigmatrix.weatheryou.widgets.weather
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class WidgetDisplayStateTest {
@@ -9,7 +11,7 @@ class WidgetDisplayStateTest {
     fun cachedWeatherWinsEvenWhenOfflineOrRefreshFailed() {
         assertEquals(
             WidgetDisplayState.WEATHER,
-            resolveWidgetDisplayState(hasWeather = true, refreshFailed = true, isConnected = false),
+            resolveWidgetDisplayState(hasWeather = true, refreshFailed = true, refreshRunning = false),
         )
     }
 
@@ -17,7 +19,7 @@ class WidgetDisplayStateTest {
     fun offlineWithoutCachedWeatherIsUnavailable() {
         assertEquals(
             WidgetDisplayState.UNAVAILABLE,
-            resolveWidgetDisplayState(hasWeather = false, refreshFailed = false, isConnected = false),
+            resolveWidgetDisplayState(hasWeather = false, refreshFailed = false, refreshRunning = false),
         )
     }
 
@@ -25,15 +27,39 @@ class WidgetDisplayStateTest {
     fun failedRefreshWithoutCachedWeatherIsUnavailable() {
         assertEquals(
             WidgetDisplayState.UNAVAILABLE,
-            resolveWidgetDisplayState(hasWeather = false, refreshFailed = true, isConnected = true),
+            resolveWidgetDisplayState(hasWeather = false, refreshFailed = true, refreshRunning = true),
         )
     }
 
     @Test
-    fun connectedPendingRefreshWithoutCachedWeatherIsLoading() {
+    fun activeRefreshWithoutCachedWeatherIsLoading() {
         assertEquals(
             WidgetDisplayState.LOADING,
-            resolveWidgetDisplayState(hasWeather = false, refreshFailed = false, isConnected = true),
+            resolveWidgetDisplayState(hasWeather = false, refreshFailed = false, refreshRunning = true),
         )
+    }
+
+    @Test
+    fun unknownRefreshStateShowsLoadingUntilWorkManagerEmits() {
+        assertEquals(
+            WidgetDisplayState.LOADING,
+            resolveWidgetDisplayState(hasWeather = false, refreshFailed = false, refreshRunning = null),
+        )
+    }
+
+    @Test
+    fun queuedRefreshWithoutCachedWeatherDoesNotStayLoading() {
+        assertEquals(
+            WidgetDisplayState.UNAVAILABLE,
+            resolveWidgetDisplayState(hasWeather = false, refreshFailed = false, refreshRunning = false),
+        )
+    }
+
+    @Test
+    fun widgetRefreshStopsAfterThreeTotalAttempts() {
+        assertTrue(shouldRetryWidgetWeatherSync(runAttemptCount = 0))
+        assertTrue(shouldRetryWidgetWeatherSync(runAttemptCount = 1))
+        assertFalse(shouldRetryWidgetWeatherSync(runAttemptCount = 2))
+        assertFalse(shouldRetryWidgetWeatherSync(runAttemptCount = 3))
     }
 }

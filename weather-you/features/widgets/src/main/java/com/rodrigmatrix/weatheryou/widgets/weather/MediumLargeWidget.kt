@@ -331,7 +331,7 @@ fun MediumLargeUnavailable(
         )
         Spacer(modifier = GlanceModifier.height(8.dp))
         Text(
-            text = "Tap to retry",
+            text = "Open WeatherYou to retry",
             style = TextStyle(
                 color = GlanceTheme.colors.onPrimaryContainer,
                 fontSize = 14.sp,

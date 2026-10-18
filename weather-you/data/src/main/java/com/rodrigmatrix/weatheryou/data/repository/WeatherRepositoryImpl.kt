@@ -179,6 +179,10 @@ class WeatherRepositoryImpl(
                     )
                 }
 
+                if (weather == null && widgetLocation.isCurrentLocation && !hasCurrentLocationSource()) {
+                    return@forEach
+                }
+
                 if (weather == null || weather.expirationDate.isBefore(weather.timeZone.getCurrentTime())) {
                     throw IOException("Widget weather refresh did not produce fresh data")
                 }
@@ -252,9 +256,10 @@ class WeatherRepositoryImpl(
                 ?.let { locations ->
                     locations.firstOrNull { it.isCurrentLocation } ?: locations.firstOrNull()
                 }
-                ?: throw IOException("No cached location is available for this widget")
 
-            setSavedLocation(defaultLocation, widgetId).firstOrNull()
+            if (defaultLocation != null) {
+                setSavedLocation(defaultLocation, widgetId).firstOrNull()
+            }
         }
         emit(Unit)
     }
@@ -495,6 +500,10 @@ class WeatherRepositoryImpl(
             hasLocationPermission = hasBackgroundLocationPermission(),
         )
     }
+
+    private suspend fun hasCurrentLocationSource(): Boolean =
+        weatherLocalDataSource.getCurrentLocation().firstOrNull() != null ||
+            hasBackgroundLocationPermission()
 
     private fun hasBackgroundLocationPermission(): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
