@@ -6,6 +6,7 @@ import com.rodrigmatrix.weatheryou.data.local.WeatherLocalDataSource
 import com.rodrigmatrix.weatheryou.data.local.model.WeatherEntity
 import com.rodrigmatrix.weatheryou.data.local.model.WeatherLocationEntity
 import com.rodrigmatrix.weatheryou.data.local.model.WeatherWidgetLocationEntity
+import com.rodrigmatrix.weatheryou.data.mapper.toWeatherLocation
 import com.rodrigmatrix.weatheryou.data.remote.WeatherYouRemoteDataSource
 import com.rodrigmatrix.weatheryou.domain.repository.SearchRepository
 import io.mockk.mockk
@@ -16,9 +17,11 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import app.cash.turbine.test
+import java.io.IOException
 import org.joda.time.DateTime
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class WidgetWeatherRepositoryTest {
@@ -96,6 +99,84 @@ class WidgetWeatherRepositoryTest {
 
         verify(exactly = 1) { localDataSource.getWeather(-23.55, -46.63) }
         verify(exactly = 0) { remoteDataSource.getWeather(any<Double>(), any<Double>(), any(), any()) }
+    }
+
+    @Test
+    fun `refresh continues to other widget locations after one location fails`() = runBlocking {
+        val firstLocation = widgetLocation("1", -23.55, -46.63)
+        val secondLocation = widgetLocation("2", 40.71, -74.00)
+        val expiredAt = DateTime.parse("2000-01-01T00:00:00Z").toString("yyyy-MM-dd HH:mm:ss")
+        val remoteDataSource = mockk<WeatherYouRemoteDataSource>()
+        val localDataSource = mockk<WeatherLocalDataSource>()
+        every { localDataSource.getWidgetWeatherList() } returns flowOf(listOf(firstLocation, secondLocation))
+        every { localDataSource.getWeather(firstLocation.latitude, firstLocation.longitude) } returns flowOf(
+            cachedWeather().copy(
+                latitude = firstLocation.latitude,
+                longitude = firstLocation.longitude,
+                expirationDate = expiredAt,
+            )
+        )
+        every { localDataSource.getWeather(secondLocation.latitude, secondLocation.longitude) } returns flowOf(
+            cachedWeather().copy(
+                latitude = secondLocation.latitude,
+                longitude = secondLocation.longitude,
+                expirationDate = expiredAt,
+            )
+        )
+        every {
+            remoteDataSource.getWeather(
+                firstLocation.latitude,
+                firstLocation.longitude,
+                firstLocation.countryCode,
+                firstLocation.timeZone,
+            )
+        } returns kotlinx.coroutines.flow.emptyFlow()
+        every {
+            remoteDataSource.getWeather(
+                secondLocation.latitude,
+                secondLocation.longitude,
+                secondLocation.countryCode,
+                secondLocation.timeZone,
+            )
+        } returns flowOf(
+            cachedWeather().copy(
+                latitude = secondLocation.latitude,
+                longitude = secondLocation.longitude,
+                expirationDate = DateTime.now().plusHours(2).toString("yyyy-MM-dd HH:mm:ss"),
+            ).toWeatherLocation(id = -1, orderIndex = -1)
+        )
+        every { localDataSource.upsertWeather(any()) } returns flowOf(Unit)
+
+        val repository = WeatherRepositoryImpl(
+            weatherYouRemoteDataSource = remoteDataSource,
+            weatherLocalDataSource = localDataSource,
+            userLocationDataSource = mockk<UserLocationDataSource>(relaxed = true),
+            searchRepository = mockk<SearchRepository>(relaxed = true),
+            applicationContext = mockk(relaxed = true),
+            firebaseAnalytics = mockk<FirebaseAnalytics>(relaxed = true),
+        )
+
+        val result = runCatching {
+            repository.fetchWidgetLocationsList(forceUpdate = false).first()
+        }
+
+        assertTrue("Expected an IOException after both refresh attempts; got ${result.exceptionOrNull()}", result.exceptionOrNull() is IOException)
+        verify(exactly = 1) {
+            remoteDataSource.getWeather(
+                firstLocation.latitude,
+                firstLocation.longitude,
+                firstLocation.countryCode,
+                firstLocation.timeZone,
+            )
+        }
+        verify(exactly = 1) {
+            remoteDataSource.getWeather(
+                secondLocation.latitude,
+                secondLocation.longitude,
+                secondLocation.countryCode,
+                secondLocation.timeZone,
+            )
+        }
     }
 
     @Test
