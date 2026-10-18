@@ -55,6 +55,16 @@ jobs:
           cp "$compose_charts_dir/compose-charts/build/outputs/aar/compose-charts-release.aar" \
             weather-you/features/locationdetails/libs/compose-charts-android-1.0.aar
 
+      - name: Provide non-secret signing placeholders for debug configuration
+        shell: bash
+        run: |
+          cat > weather-you/keystore.properties <<'EOF'
+          releaseKeyAlias=debug-only
+          releaseKeyPassword=debug-only
+          releaseKeyStore=debug-only-unused.jks
+          releaseStorePassword=debug-only
+          EOF
+
       - name: Run data and widget tests and build app
         working-directory: weather-you
         shell: bash
