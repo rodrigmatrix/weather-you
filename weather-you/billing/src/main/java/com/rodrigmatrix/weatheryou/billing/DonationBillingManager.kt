@@ -52,6 +52,8 @@ class DonationBillingManager(
     val restoreState: StateFlow<DonationRestoreState> = _restoreState
     private val _ready = MutableStateFlow(false)
     val ready: StateFlow<Boolean> = _ready
+    private val _purchasesReconciled = MutableStateFlow(false)
+    val purchasesReconciled: StateFlow<Boolean> = _purchasesReconciled
     private val _acknowledgementIssue = MutableStateFlow(false)
     val acknowledgementIssue: StateFlow<Boolean> = _acknowledgementIssue
     private val reconciliationMutex = Mutex()
@@ -140,7 +142,10 @@ class DonationBillingManager(
             QueryPurchasesParams.newBuilder().setProductType(BillingClient.ProductType.INAPP).build(),
         ) { result, purchases ->
             if (result.responseCode == BillingClient.BillingResponseCode.OK) {
-                scope.launch { applyPurchases(purchases, authoritativeSnapshot = true) }
+                scope.launch {
+                    applyPurchases(purchases, authoritativeSnapshot = true)
+                    _purchasesReconciled.value = true
+                }
             }
         }
     }

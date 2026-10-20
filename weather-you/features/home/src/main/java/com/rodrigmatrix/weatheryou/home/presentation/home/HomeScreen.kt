@@ -162,6 +162,7 @@ fun HomeScreen(
         }
     ),
     onUpdateWidgets: () -> Unit,
+    onUsableForecastDisplayed: () -> Unit = {},
     animatedVisibilityScope: AnimatedVisibilityScope,
     sharedTransitionScope: SharedTransitionScope,
 ) {
@@ -232,6 +233,7 @@ fun HomeScreen(
         onRequestPermission = locationPermissionState::launchMultiplePermissionRequest,
         onOrderChanged = onOrderChanged,
         onNavigateToLocation = onNavigateToLocation,
+        onUsableForecastDisplayed = onUsableForecastDisplayed,
         animatedVisibilityScope = animatedVisibilityScope,
         sharedTransitionScope = sharedTransitionScope,
     )
@@ -345,6 +347,7 @@ fun HomeScreen(
     onRequestPermission: () -> Unit,
     onOrderChanged: (List<WeatherLocation>) -> Unit,
     onNavigateToLocation: (Int) -> Unit,
+    onUsableForecastDisplayed: () -> Unit = {},
     animatedVisibilityScope: AnimatedVisibilityScope,
     sharedTransitionScope: SharedTransitionScope,
 ) {
@@ -434,6 +437,7 @@ fun HomeScreen(
                                     WeatherDetailsScreen(
                                         weatherLocation = it,
                                         isUpdating = homeUiState.isRefreshingLocations,
+                                        onUsableForecastDisplayed = onUsableForecastDisplayed,
                                         onCloseClick = {
                                             coroutineScope.launch {
                                                 navigator.navigateBack()

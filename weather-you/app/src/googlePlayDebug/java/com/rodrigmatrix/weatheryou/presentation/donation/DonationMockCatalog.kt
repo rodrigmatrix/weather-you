@@ -19,6 +19,17 @@ internal object DonationMockCatalog : DonationMockCatalogProvider {
             .apply()
     }
 
+    override fun isPromptPreviewEnabled(context: Context): Boolean = context
+        .getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE)
+        .getBoolean(KEY_PROMPT_PREVIEW_ENABLED, false)
+
+    override fun setPromptPreviewEnabled(context: Context, enabled: Boolean) {
+        context.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE)
+            .edit()
+            .putBoolean(KEY_PROMPT_PREVIEW_ENABLED, enabled)
+            .apply()
+    }
+
     override fun offers(): List<DonationMockOffer> = DonationProducts.all.mapIndexed { index, productId ->
         DonationMockOffer(productId = productId, tierIndex = index)
     }
@@ -34,4 +45,5 @@ internal object DonationMockCatalog : DonationMockCatalogProvider {
 
     private const val PREFERENCES = "donation_debug_preferences"
     private const val KEY_ENABLED = "mock_catalog_enabled"
+    private const val KEY_PROMPT_PREVIEW_ENABLED = "prompt_preview_enabled"
 }

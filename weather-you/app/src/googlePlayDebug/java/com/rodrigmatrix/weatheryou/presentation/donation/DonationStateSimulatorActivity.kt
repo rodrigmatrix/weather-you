@@ -32,13 +32,21 @@ class DonationStateSimulatorActivity : ComponentActivity() {
         setContentView(message)
 
         when (state) {
+            "prompt" -> {
+                DonationMockCatalog.setEnabled(this, true)
+                DonationMockCatalog.setPromptPreviewEnabled(this, true)
+                returnToMain()
+                return
+            }
             "offers" -> {
                 DonationMockCatalog.setEnabled(this, true)
+                DonationMockCatalog.setPromptPreviewEnabled(this, false)
                 returnToMain()
                 return
             }
             "live" -> {
                 DonationMockCatalog.setEnabled(this, false)
+                DonationMockCatalog.setPromptPreviewEnabled(this, false)
                 returnToMain()
                 return
             }
@@ -46,6 +54,7 @@ class DonationStateSimulatorActivity : ComponentActivity() {
                 lifecycleScope.launch {
                     getKoin().get<DonationBillingManager>().resetSimulatedDonationForDebug()
                     DonationMockCatalog.setEnabled(this@DonationStateSimulatorActivity, false)
+                    DonationMockCatalog.setPromptPreviewEnabled(this@DonationStateSimulatorActivity, false)
                     returnToMain()
                 }
                 return
